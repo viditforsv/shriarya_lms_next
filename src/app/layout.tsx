@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Cardo, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Header } from "@/components/ui/header";
 import { Footer } from "@/components/ui/footer";
 
@@ -20,6 +21,9 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "ShriArya LMS - Learning Management System",
   description: "A modern learning management system built with Next.js and Supabase",
+  icons: {
+    icon: "/images/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -28,17 +32,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${cardo.variable} ${dmSans.variable}`}>
-        <AuthProvider>
-          <div className="min-h-screen bg-background flex flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="min-h-screen bg-background flex flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useRouter } from 'next/navigation'
 
 export default function TestAuthPage() {
@@ -14,21 +15,30 @@ export default function TestAuthPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading authentication...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading authentication...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4 max-w-4xl">
+        {/* Breadcrumbs */}
+        <Breadcrumb 
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Test Auth", href: "/test-auth", isActive: true },
+          ]} 
+          className="mb-8"
+        />
+        
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Authentication Test Page
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Use this page to test and debug your authentication setup
           </p>
         </div>
@@ -52,26 +62,26 @@ export default function TestAuthPage() {
                 <>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">User ID:</span>
-                    <span className="text-sm text-gray-600 font-mono">
+                    <span className="text-sm text-muted-foreground font-mono">
                       {user.id.substring(0, 8)}...
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Email:</span>
-                    <span className="text-sm text-gray-600">{user.email}</span>
+                    <span className="text-sm text-muted-foreground">{user.email}</span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Full Name:</span>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {user.user_metadata?.full_name || "Not set"}
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Provider:</span>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {user.app_metadata?.provider || "email"}
                     </span>
                   </div>
@@ -98,14 +108,14 @@ export default function TestAuthPage() {
                 <>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Access Token:</span>
-                    <span className="text-sm text-gray-600 font-mono">
+                    <span className="text-sm text-muted-foreground font-mono">
                       {session.access_token.substring(0, 20)}...
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Expires At:</span>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {new Date(session.expires_at! * 1000).toLocaleString()}
                     </span>
                   </div>

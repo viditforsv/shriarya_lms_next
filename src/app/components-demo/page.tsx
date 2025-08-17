@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { PromotionalCard } from "@/components/ui/promotional-card"
 import { Pagination } from "@/components/ui/pagination"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 import { useState, useEffect } from "react"
 
@@ -98,6 +99,11 @@ export default function ComponentsDemoPage() {
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
       </svg>
+    ) },
+    { id: "themes", label: "Themes", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
     ) }
   ]
 
@@ -170,7 +176,7 @@ export default function ComponentsDemoPage() {
           <CardContent className="space-y-8">
             {/* Button 2.png Exact Match */}
             <div>
-              <h4 className="text-lg font-semibold text-[#1b4a56] mb-4">Exact Button 2.png Replica</h4>
+              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Exact Button 2.png Replica</h4>
               <div className="flex flex-wrap gap-4">
                 <Button variant="outline" showArrow>
                   Explore courses
@@ -211,7 +217,7 @@ export default function ComponentsDemoPage() {
           <CardContent className="space-y-8">
             {/* Coral Button Examples */}
             <div>
-              <h4 className="text-lg font-semibold text-[#1b4a56] mb-4">Coral Button Examples</h4>
+              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Coral Button Examples</h4>
               <div className="flex flex-wrap gap-4">
                 <Button variant="coral" showArrow>
                   Take Quiz
@@ -252,7 +258,7 @@ export default function ComponentsDemoPage() {
           <CardContent className="space-y-8">
             {/* Primary Actions */}
             <div>
-              <h4 className="text-lg font-semibold text-[#1b4a56] mb-4">Primary Learning Actions</h4>
+              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Primary Learning Actions</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Button variant="primary" showArrow className="w-full">
                   Start Learning
@@ -268,7 +274,7 @@ export default function ComponentsDemoPage() {
 
             {/* Secondary Actions */}
             <div>
-              <h4 className="text-lg font-semibold text-[#1b4a56] mb-4">Secondary Actions</h4>
+              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Secondary Actions</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Button variant="secondary" showArrow className="w-full">
                   Practice Problems
@@ -284,7 +290,7 @@ export default function ComponentsDemoPage() {
 
             {/* Load More Actions */}
             <div>
-              <h4 className="text-lg font-semibold text-[#1b4a56] mb-4">Content Loading</h4>
+              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Content Loading</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Button variant="loadMore" className="w-full">
                   Load More Lessons
@@ -417,39 +423,39 @@ export default function ComponentsDemoPage() {
   const renderFormsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Mathematics Assessment Forms</h2>
-        <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Forms for quizzes, homework submission, and student progress tracking using our design system</p>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Mathematics Assessment Forms</h2>
+        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Forms for quizzes, homework submission, and student progress tracking using our design system</p>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Basic Input Fields */}
         <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
           <CardHeader className="pb-6">
-            <CardTitle className="text-2xl text-[#1b4a56]">Input Fields</CardTitle>
-            <CardDescription className="text-base text-[#4a6f73]">Different input types and states with our color scheme</CardDescription>
+            <CardTitle className="text-2xl text-[#1e293b]">Input Fields</CardTitle>
+            <CardDescription className="text-base text-[#1e293b]">Different input types and states with our color scheme</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Student Name</label>
+              <label className="text-sm font-medium text-[#1e293b]">Student Name</label>
               <input 
                 type="text" 
                 placeholder="Enter student's full name"
-                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#475569]"
+                className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#1e293b]"
               />
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Student Email</label>
+              <label className="text-sm font-medium text-[#1e293b]">Student Email</label>
               <input 
                 type="email" 
                 placeholder="student@school.edu"
-                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#475569]"
+                className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#1e293b]"
               />
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Math Grade Level</label>
-              <select className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
+              <label className="text-sm font-medium text-[#1e293b]">Math Grade Level</label>
+              <select className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
                 <option>Select Grade</option>
                 <option>Grade 9 (CBSE/ICSE)</option>
                 <option>Grade 10 (CBSE/ICSE)</option>
@@ -459,11 +465,11 @@ export default function ComponentsDemoPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Math Topic</label>
+              <label className="text-sm font-medium text-[#1e293b]">Math Topic</label>
               <textarea 
                 placeholder="Describe the math concept you're learning..."
                 rows={3}
-                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#475569] resize-none"
+                className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] placeholder-[#1e293b] resize-none"
               />
             </div>
           </CardContent>
@@ -472,12 +478,12 @@ export default function ComponentsDemoPage() {
         {/* Validation States */}
         <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
           <CardHeader className="pb-6">
-            <CardTitle className="text-2xl text-[#1b4a56]">Validation States</CardTitle>
-            <CardDescription className="text-base text-[#4a6f73]">Input fields with different validation states</CardDescription>
+            <CardTitle className="text-2xl text-[#1e293b]">Validation States</CardTitle>
+            <CardDescription className="text-base text-[#1e293b]">Input fields with different validation states</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Valid Input</label>
+              <label className="text-sm font-medium text-[#1e293b]">Valid Input</label>
               <input 
                 type="text" 
                 defaultValue="Valid input"
@@ -487,7 +493,7 @@ export default function ComponentsDemoPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Error Input</label>
+              <label className="text-sm font-medium text-[#1e293b]">Error Input</label>
               <input 
                 type="email" 
                 defaultValue="invalid-email"
@@ -497,12 +503,12 @@ export default function ComponentsDemoPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Disabled Input</label>
+              <label className="text-sm font-medium text-[#1e293b]">Disabled Input</label>
               <input 
                 type="text" 
                 defaultValue="Disabled field"
                 disabled
-                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm bg-[#f8fafc] text-[#94a3b8] cursor-not-allowed"
+                className="w-full px-4 py-3 border border-[#feefea] rounded-sm bg-[#fffefd] text-[#1e293b] opacity-50 cursor-not-allowed"
               />
             </div>
           </CardContent>
@@ -514,8 +520,8 @@ export default function ComponentsDemoPage() {
         {/* Math Assessment Form */}
         <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
           <CardHeader className="pb-6">
-            <CardTitle className="text-2xl text-[#1b4a56]">Mathematics Assessment Form</CardTitle>
-            <CardDescription className="text-base text-[#4a6f73]">Form for submitting math homework and assessments</CardDescription>
+            <CardTitle className="text-2xl text-[#1e293b]">Mathematics Assessment Form</CardTitle>
+            <CardDescription className="text-base text-[#1e293b]">Form for submitting math homework and assessments</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -528,8 +534,8 @@ export default function ComponentsDemoPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#1b4a56]">Class/Grade</label>
-                <select className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
+                <label className="text-sm font-medium text-[#1e293b]">Class/Grade</label>
+                <select className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
                   <option>Select Class</option>
                   <option>Grade 9 CBSE</option>
                   <option>Grade 10 CBSE</option>
@@ -540,8 +546,8 @@ export default function ComponentsDemoPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#1b4a56]">Mathematics Topic</label>
-              <select className="w-full px-4 py-3 border border-[#e2e8f0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
+              <label className="text-sm font-medium text-[#1e293b]">Mathematics Topic</label>
+              <select className="w-full px-4 py-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1e293b] focus:border-[#1e293b] transition-all duration-200 bg-white text-[#1e293b] cursor-pointer">
                 <option>Select Topic</option>
                 <option>Algebra</option>
                 <option>Geometry</option>
@@ -717,7 +723,7 @@ export default function ComponentsDemoPage() {
         {/* Math Lesson Card */}
         <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-[#e2e8f0]">
           <CardHeader className="pb-6">
-            <div className="w-14 h-14 bg-[#f1f5f9] rounded-lg flex items-center justify-center mb-4 border border-[#e2e8f0]">
+            <div className="w-14 h-14 bg-[#f1f5f9] rounded-sm flex items-center justify-center mb-4 border border-[#e2e8f0]">
               <div className="h-8 w-8 bg-[#e27447] rounded-sm text-white font-bold text-lg">∫</div>
             </div>
             <CardTitle className="text-xl text-[#1b4a56]">Calculus Fundamentals</CardTitle>
@@ -750,7 +756,7 @@ export default function ComponentsDemoPage() {
         <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 border border-[#e2e8f0]">
           <CardContent className="pt-6">
             <div className="flex items-center mb-6">
-              <div className="w-16 h-16 bg-[#f1f5f9] rounded-lg flex items-center justify-center mr-4 border border-[#e2e8f0]">
+              <div className="w-16 h-16 bg-[#f1f5f9] rounded-sm flex items-center justify-center mr-4 border border-[#e2e8f0]">
                 <span className="text-2xl">📊</span>
               </div>
               <div>
@@ -904,7 +910,7 @@ export default function ComponentsDemoPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-[#81c3c9]/20 p-6 rounded-lg text-center border border-[#4a6f73]">
+                <div key={i} className="bg-[#81c3c9]/20 p-6 rounded-sm text-center border border-[#4a6f73]">
                   <p className="text-sm font-medium text-[#1b4a56]">Grid Item {i + 1}</p>
                   <p className="text-xs text-[#4a6f73] mt-1">Responsive</p>
                 </div>
@@ -921,13 +927,13 @@ export default function ComponentsDemoPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-lg border border-[#4a6f73]">
+              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-sm border border-[#4a6f73]">
                 <p className="text-sm font-medium text-[#1b4a56]">Flex Item 1</p>
               </div>
-              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-lg border border-[#4a6f73]">
+              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-sm border border-[#4a6f73]">
                 <p className="text-sm font-medium text-[#1b4a56]">Flex Item 2</p>
               </div>
-              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-lg border border-[#4a6f73]">
+              <div className="flex-1 bg-[#81c3c9]/20 p-6 rounded-sm border border-[#4a6f73]">
                 <p className="text-sm font-medium text-[#1b4a56]">Flex Item 3</p>
               </div>
             </div>
@@ -1503,7 +1509,7 @@ export default function ComponentsDemoPage() {
           <CardContent className="space-y-4">
             <Button className="focus:ring-2 focus:ring-[#ff2768] focus:ring-offset-2">Focus Ring</Button>
             <Button variant="secondary" className="focus:bg-[#81c3c9]/20">Focus Background</Button>
-            <div className="p-4 border border-[#4a6f73] rounded-lg focus-within:ring-2 focus-within:ring-[#ff2768]">
+            <div className="p-4 border border-[#4a6f73] rounded-sm focus-within:ring-2 focus-within:ring-[#ff2768]">
               <p className="text-sm">Focus container</p>
             </div>
           </CardContent>
@@ -1650,7 +1656,7 @@ export default function ComponentsDemoPage() {
             { name: "DataViz", logo: "DV" }
           ].map((client) => (
             <div key={client.name} className="flex items-center justify-center">
-              <div className="w-20 h-20 bg-[#81c3c9]/20 rounded-lg flex items-center justify-center border border-[#4a6f73]/20 hover:border-[#ff2768] transition-colors group">
+              <div className="w-20 h-20 bg-[#81c3c9]/20 rounded-sm flex items-center justify-center border border-[#4a6f73]/20 hover:border-[#ff2768] transition-colors group">
                 <span className="text-xl font-bold text-[#1b4a56] group-hover:text-[#ff2768] transition-colors">
                   {client.logo}
                 </span>
@@ -1765,7 +1771,7 @@ export default function ComponentsDemoPage() {
                   <label className="block text-sm font-medium text-[#1b4a56] mb-2">First Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                     placeholder="John"
                   />
                 </div>
@@ -1773,7 +1779,7 @@ export default function ComponentsDemoPage() {
                   <label className="block text-sm font-medium text-[#1b4a56] mb-2">Last Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                     placeholder="Doe"
                   />
                 </div>
@@ -1782,13 +1788,13 @@ export default function ComponentsDemoPage() {
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Email</label>
                 <input
                   type="email"
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                   placeholder="john@company.com"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Type</label>
-                <select className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all">
+                <select className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all">
                   <option>Select a project type</option>
                   <option>Website Development</option>
                   <option>Mobile App</option>
@@ -1801,7 +1807,7 @@ export default function ComponentsDemoPage() {
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Description</label>
                 <textarea
                   rows={4}
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                   placeholder="Tell us about your project..."
                 ></textarea>
               </div>
@@ -1837,7 +1843,7 @@ export default function ComponentsDemoPage() {
                   <label className="block text-sm font-medium text-[#1b4a56] mb-2">First Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                     placeholder="John"
                   />
                 </div>
@@ -1845,7 +1851,7 @@ export default function ComponentsDemoPage() {
                   <label className="block text-sm font-medium text-[#1b4a56] mb-2">Last Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                     placeholder="Doe"
                   />
                 </div>
@@ -1854,13 +1860,13 @@ export default function ComponentsDemoPage() {
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Email</label>
                 <input
                   type="email"
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                   placeholder="john@company.com"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Type</label>
-                <select className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all">
+                <select className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all">
                   <option>Select a project type</option>
                   <option>Website Development</option>
                   <option>Mobile App</option>
@@ -1873,7 +1879,7 @@ export default function ComponentsDemoPage() {
                 <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Description</label>
                 <textarea
                   rows={4}
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-lg focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
+                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
                   placeholder="Tell us about your project..."
                 ></textarea>
               </div>
@@ -1905,7 +1911,7 @@ export default function ComponentsDemoPage() {
           <CardDescription>Current screen size detection</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="bg-[#81c3c9]/20 p-6 rounded-lg border border-[#4a6f73]">
+          <div className="bg-[#81c3c9]/20 p-6 rounded-sm border border-[#4a6f73]">
             <p className="text-sm font-medium text-[#1b4a56] mb-4">Current Breakpoint:</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="bg-[#81c3c9]/40 p-3 rounded text-xs text-[#1b4a56]">
@@ -1927,8 +1933,8 @@ export default function ComponentsDemoPage() {
   const renderTestimonialsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Student Success Stories</h2>
-        <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Mathematics learning testimonials from IBDP, CBSE, and ICSE students</p>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Student Success Stories</h2>
+        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Mathematics learning testimonials from IBDP, CBSE, and ICSE students</p>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -1945,22 +1951,22 @@ export default function ComponentsDemoPage() {
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="h-4 w-4 text-yellow-400">★</div>
                 ))}
-                <span className="text-sm text-[#8A8A8A] ml-2">5.0/5.0</span>
+                <span className="text-sm text-[#1e293b] ml-2">5.0/5.0</span>
               </div>
               
               {/* Content */}
-              <blockquote className="text-[#4a6f73] italic">
+              <blockquote className="text-[#1e293b] italic">
                 &ldquo;ShriArya LMS made calculus so much easier to understand. The step-by-step explanations are perfect!&rdquo;
               </blockquote>
               
               {/* Author */}
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-[#81c3c9]/20 rounded-full flex items-center justify-center mr-4 text-xl">
+                <div className="w-12 h-12 bg-[#d6ebf4] rounded-sm flex items-center justify-center mr-4 text-xl">
                   🧮
                 </div>
                 <div>
-                  <div className="font-semibold text-[#1b4a56]">Priya Sharma</div>
-                  <div className="text-sm text-[#4a6f73]">Grade 12 IBDP Student</div>
+                  <div className="font-semibold text-[#1e293b]">Priya Sharma</div>
+                  <div className="text-sm text-[#1e293b]">Grade 12 IBDP Student</div>
                 </div>
               </div>
             </div>
@@ -1980,28 +1986,28 @@ export default function ComponentsDemoPage() {
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="h-4 w-4 text-yellow-400">★</div>
                 ))}
-                <div className="h-4 w-4 text-gray-300">★</div>
-                <span className="text-sm text-[#8A8A8A] ml-2">4.0/5.0</span>
+                <div className="h-4 w-4 text-[#feefea]">★</div>
+                <span className="text-sm text-[#1e293b] ml-2">4.0/5.0</span>
               </div>
               
               {/* Service Badge */}
               <Badge variant="outline" className="text-xs">
-                Patent Portfolio Development
+                Mathematics Tutoring
               </Badge>
               
               {/* Content */}
-              <blockquote className="text-[#4a6f73] italic">
-                &ldquo;Excellent service in developing our IP strategy. The team is highly professional and responsive.&rdquo;
+              <blockquote className="text-[#1e293b] italic">
+                &ldquo;Excellent mathematics tutoring service. The team is highly professional and responsive.&rdquo;
               </blockquote>
               
               {/* Author */}
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-[#ff2768]/20 rounded-full flex items-center justify-center mr-4 text-xl">
+                <div className="w-12 h-12 bg-[#d6ebf4] rounded-sm flex items-center justify-center mr-4 text-xl">
                   👨‍💼
                 </div>
                 <div>
-                  <div className="font-semibold text-[#1b4a56]">Michael Rodriguez</div>
-                  <div className="text-sm text-[#4a6f73]">CEO, Innovation Labs</div>
+                  <div className="font-semibold text-[#1e293b]">Michael Rodriguez</div>
+                  <div className="text-sm text-[#1e293b]">Grade 11 IBDP Student</div>
                 </div>
               </div>
             </div>
@@ -2021,24 +2027,24 @@ export default function ComponentsDemoPage() {
               {[
                 {
                   name: "Dr. Sarah Chen",
-                  role: "CTO, TechStart Inc.",
+                  role: "Grade 12 IBDP Student",
                   rating: 5,
-                  content: "Outstanding patent drafting services. Highly recommend!",
-                  service: "Patent Drafting"
+                  content: "Outstanding mathematics tutoring services. Highly recommend!",
+                  service: "IBDP Math AA HL"
                 },
                 {
                   name: "Michael Rodriguez",
-                  role: "CEO, Innovation Labs",
+                  role: "Grade 11 IBDP Student",
                   rating: 4,
-                  content: "Professional team with deep IP expertise.",
-                  service: "IP Strategy"
+                  content: "Professional team with deep mathematics expertise.",
+                  service: "IBDP Math AI SL"
                 },
                 {
                   name: "Lisa Thompson",
-                  role: "Founder, BioTech Solutions",
+                  role: "Grade 10 ICSE Student",
                   rating: 5,
-                  content: "Excellent global filing support for our patents.",
-                  service: "Global Filing"
+                  content: "Excellent support for board exam preparation.",
+                  service: "ICSE Grade 10"
                 }
               ].map((testimonial, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
@@ -2047,18 +2053,18 @@ export default function ComponentsDemoPage() {
                     <div className="flex items-center mb-4">
                       <div className="flex items-center space-x-1">
                         {[...Array(5)].map((_, i) => (
-                          <div key={i} className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400" : "text-gray-300"}`}>
+                          <div key={i} className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400" : "text-[#feefea]"}`}>
                             ★
                           </div>
                         ))}
                       </div>
-                      <span className="text-sm text-[#8A8A8A] ml-2">
+                      <span className="text-sm text-[#1e293b] ml-2">
                         {testimonial.rating}.0/5.0
                       </span>
                     </div>
 
                     {/* Content */}
-                    <blockquote className="text-[#4a6f73] mb-4 italic text-sm">
+                    <blockquote className="text-[#1e293b] mb-4 italic text-sm">
                       &ldquo;{testimonial.content}&rdquo;
                     </blockquote>
 
@@ -2071,12 +2077,12 @@ export default function ComponentsDemoPage() {
 
                     {/* Author */}
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-[#81c3c9]/20 rounded-full flex items-center justify-center mr-3 text-sm">
+                      <div className="w-10 h-10 bg-[#d6ebf4] rounded-sm flex items-center justify-center mr-3 text-sm">
                         {testimonial.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-semibold text-sm text-[#1b4a56]">{testimonial.name}</div>
-                        <div className="text-xs text-[#4a6f73]">{testimonial.role}</div>
+                        <div className="font-semibold text-sm text-[#1e293b]">{testimonial.name}</div>
+                        <div className="text-xs text-[#1e293b]">{testimonial.role}</div>
                       </div>
                     </div>
                   </CardContent>
@@ -2092,115 +2098,34 @@ export default function ComponentsDemoPage() {
   const renderNavigationSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Mathematics Learning Navigation</h2>
-        <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Navigation for math courses, chapters, and learning paths</p>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Mathematics Learning Navigation</h2>
+        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Navigation for math courses, chapters, and learning paths</p>
       </div>
       
-      {/* Header Component */}
-      <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 mb-8">
-        <CardHeader className="pb-6">
-          <CardTitle className="text-2xl">Header Component</CardTitle>
-          <CardDescription className="text-base">Professional header with navigation and branding</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-white border border-[#4a6f73] rounded-lg overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center h-16">
-                {/* Logo */}
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-[#1b4a56] rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">SA</span>
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold text-[#1b4a56]">ShriArya LMS</h1>
-                    <p className="text-xs text-[#8A8A8A]">Mathematics Learning Platform</p>
-                  </div>
-                </div>
-
-                {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center space-x-8">
-                  {["Home", "Courses", "Practice", "Assessments", "Progress", "Help"].map((item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      className="text-[#1b4a56] hover:text-[#ff2768] px-3 py-2 text-sm font-medium transition-colors"
-                    >
-                      {item}
-                    </a>
-                  ))}
-                </nav>
-
-                {/* Desktop CTA */}
-                <div className="hidden md:flex items-center space-x-4">
-                  <Badge variant="secondary" className="text-xs">
-                    IBDP • CBSE • ICSE
-                  </Badge>
-                  <Button size="sm">Start Learning</Button>
-                </div>
-
-                {/* Mobile menu button */}
-                <div className="md:hidden">
-                  <button className="text-[#1b4a56] hover:text-[#ff2768] p-2">
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Navigation Patterns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Tab Navigation */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
+      {/* Tab Navigation */}
+      <div className="flex justify-center">
+        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 max-w-2xl">
           <CardHeader className="pb-6">
             <CardTitle className="text-2xl">Tab Navigation</CardTitle>
             <CardDescription className="text-base">Tab-based navigation for content organization</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex space-x-1 bg-[#81c3c9]/20 p-1 rounded-lg">
+            <div className="flex space-x-1 bg-[#feefea] p-1 rounded-sm">
               {["Overview", "Lessons", "Practice", "Assessments"].map((tab, index) => (
                 <button
                   key={tab}
-                  className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+                  className={`flex-1 py-2 px-3 text-sm font-medium rounded-sm transition-colors ${
                     index === 0 
-                      ? "bg-white text-[#1b4a56] shadow-sm" 
-                      : "text-[#4a6f73] hover:text-[#1b4a56]"
+                      ? "bg-white text-[#1e293b] shadow-sm" 
+                      : "text-[#1e293b] hover:text-[#e27447]"
                   }`}
                 >
                   {tab}
                 </button>
               ))}
             </div>
-            <p className="text-sm text-[#4a6f73]">
+            <p className="text-sm text-[#1e293b]">
               Tab navigation provides clear content organization and improves user experience.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Breadcrumb Navigation */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Breadcrumb Navigation</CardTitle>
-            <CardDescription className="text-base">Hierarchical navigation showing current location</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <nav className="flex items-center space-x-2 text-sm">
-              <a href="#" className="text-[#4a6f73] hover:text-[#1b4a56] transition-colors">
-                Home
-              </a>
-              <span className="text-[#8A8A8A]">/</span>
-              <a href="#" className="text-[#4a6f73] hover:text-[#1b4a56] transition-colors">
-                Courses
-              </a>
-              <span className="text-[#8A8A8A]">/</span>
-              <span className="text-[#1b4a56] font-medium">Calculus Fundamentals</span>
-            </nav>
-            <p className="text-sm text-[#4a6f73]">
-              Breadcrumbs help users understand their current location and navigate back easily.
             </p>
           </CardContent>
         </Card>
@@ -2390,7 +2315,7 @@ export default function ComponentsDemoPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Primary Dark Blue */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#1e293b] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#1e293b] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Primary Dark Blue</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#1e293b</p>
                 <p className="text-xs text-[#1e293b]">Main buttons, headings, important text</p>
@@ -2398,7 +2323,7 @@ export default function ComponentsDemoPage() {
               
               {/* Orange Accent */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#e27447] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#e27447] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Orange Accent</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#e27447</p>
                 <p className="text-xs text-[#1e293b]">Call-to-action, highlights, buttons</p>
@@ -2406,7 +2331,7 @@ export default function ComponentsDemoPage() {
               
               {/* Pure White */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#ffffff] border border-[#feefea] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#ffffff] border border-[#feefea] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Pure White</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#ffffff</p>
                 <p className="text-xs text-[#1e293b]">Main backgrounds, cards, content areas</p>
@@ -2425,7 +2350,7 @@ export default function ComponentsDemoPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Light Cream */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#feefea] border border-[#1e293b] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#feefea] border border-[#1e293b] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Light Cream</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#feefea</p>
                 <p className="text-xs text-[#1e293b]">Background accent, borders, subtle highlights</p>
@@ -2433,7 +2358,7 @@ export default function ComponentsDemoPage() {
               
               {/* Very Light Cream */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#fffefd] border border-[#feefea] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#fffefd] border border-[#feefea] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Very Light Cream</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#fffefd</p>
                 <p className="text-xs text-[#1e293b]">Subtle backgrounds, hover states</p>
@@ -2441,7 +2366,7 @@ export default function ComponentsDemoPage() {
 
               {/* Light Blue */}
               <div className="text-center">
-                <div className="w-24 h-24 bg-[#d6ebf4] border border-[#1e293b] rounded-lg mx-auto mb-4 shadow-lg"></div>
+                <div className="w-24 h-24 bg-[#d6ebf4] border border-[#1e293b] rounded-sm mx-auto mb-4 shadow-lg"></div>
                 <h4 className="font-semibold text-[#1e293b] mb-2">Light Blue</h4>
                 <p className="text-sm text-[#1e293b] mb-2">#d6ebf4</p>
                 <p className="text-xs text-[#1e293b]">Cool backgrounds, section highlights</p>
@@ -2717,6 +2642,113 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+  const renderThemesSection = () => (
+    <section className="mb-20">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Theme System</h2>
+        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Switch between light and dark modes with our streamlined color palette</p>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Theme Toggle Demo */}
+        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl">Theme Toggle</CardTitle>
+            <CardDescription className="text-base">Interactive theme switcher with smooth transitions</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-center">
+              <ThemeToggle />
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-[#1e293b] mb-2">Click the button above to switch themes</p>
+              <p className="text-xs text-[#1e293b] opacity-75">The entire website will smoothly transition between light and dark modes</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Theme Features */}
+        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl">Theme Features</CardTitle>
+            <CardDescription className="text-base">What you get with our theme system</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
+                <span className="text-sm text-[#1e293b]">Automatic system preference detection</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
+                <span className="text-sm text-[#1e293b]">Smooth transitions between themes</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
+                <span className="text-sm text-[#1e293b]">Persistent theme selection</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
+                <span className="text-sm text-[#1e293b]">Optimized for your 6-color palette</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Theme Color Showcase */}
+      <div className="mt-20">
+        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl">Theme Color Showcase</CardTitle>
+            <CardDescription className="text-base">See how our colors adapt in both themes</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Light Theme */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Light Theme</h4>
+                <div className="space-y-3">
+                  <div className="p-4 bg-white border border-[#feefea] rounded-sm">
+                    <p className="text-[#1e293b] font-medium">White Background</p>
+                    <p className="text-[#1e293b] text-sm opacity-75">Primary text on white</p>
+                  </div>
+                  <div className="p-4 bg-[#fffefd] border border-[#feefea] rounded-sm">
+                    <p className="text-[#1e293b] font-medium">Light Cream Background</p>
+                    <p className="text-[#1e293b] text-sm opacity-75">Subtle background variation</p>
+                  </div>
+                  <div className="p-4 bg-[#feefea] border border-[#1e293b] rounded-sm">
+                    <p className="text-[#1e293b] font-medium">Cream Background</p>
+                    <p className="text-[#1e293b] text-sm opacity-75">Accent background</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dark Theme */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Dark Theme</h4>
+                <div className="space-y-3">
+                  <div className="p-4 bg-[#1e293b] border border-[#feefea] rounded-sm">
+                    <p className="text-white font-medium">Dark Blue Background</p>
+                    <p className="text-white text-sm opacity-75">White text on dark</p>
+                  </div>
+                  <div className="p-4 bg-[#fffefd] border border-[#feefea] rounded-sm">
+                    <p className="text-[#1e293b] font-medium">Light Cream Background</p>
+                    <p className="text-[#1e293b] text-sm opacity-75">Subtle background variation</p>
+                  </div>
+                  <div className="p-4 bg-[#feefea] border border-[#1e293b] rounded-sm">
+                    <p className="text-[#1e293b] font-medium">Cream Background</p>
+                    <p className="text-[#1e293b] text-sm opacity-75">Accent background</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  )
+
   const renderContent = () => {
     switch (activeTab) {
       case "buttons":
@@ -2751,6 +2783,8 @@ export default function ComponentsDemoPage() {
         return renderCoursesSection()
       case "contact":
         return renderContactSection()
+      case "themes":
+        return renderThemesSection()
       default:
         return renderButtonsSection()
     }
@@ -2775,7 +2809,7 @@ export default function ComponentsDemoPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-sm text-left transition-all duration-200 ${
                     activeTab === tab.id
                       ? "bg-[#81c3c9]/20 text-[#1b4a56] border border-[#4a6f73]"
                       : "text-[#4a6f73] hover:bg-[#81c3c9]/10 hover:text-[#1b4a56]"

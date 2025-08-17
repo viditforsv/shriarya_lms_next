@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { BookOpen, Users, Award, Clock, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -22,8 +23,8 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
         </div>
       </div>
     )
@@ -39,14 +40,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600">Welcome back, {user.user_metadata?.full_name || user.email}</p>
+              <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {user.user_metadata?.full_name || user.email}</p>
             </div>
             <Button onClick={handleSignOut} variant="outline">
               <LogOut className="mr-2 h-4 w-4" />
@@ -55,6 +56,16 @@ export default function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* Breadcrumbs */}
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb 
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Dashboard", href: "/dashboard", isActive: true },
+          ]} 
+        />
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">

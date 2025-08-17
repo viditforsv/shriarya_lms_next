@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ChevronDown, BookOpen, Users, Clock, Star } from "lucide-react"
 import { useState } from "react"
 
@@ -70,15 +71,23 @@ export default function ComponentsTestPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <h1 className="text-3xl font-bold font-cardo">Course List View Component</h1>
+      {/* Breadcrumbs */}
+      <Breadcrumb 
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Components Test", href: "/components-test", isActive: true },
+        ]} 
+      />
+      
+      <h1 className="text-3xl font-bold">Course List View Component</h1>
       
       {/* Course List Section */}
-      <section className="bg-white rounded-sm shadow-sm border border-gray-100 p-8">
+      <section className="bg-card rounded-sm shadow-sm border border-border p-8">
         {/* Header with Sorting */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-[#1b4a56] mb-2 font-dm-sans">Available Courses</h2>
-            <p className="text-[#4a6f73] font-dm-sans">Browse our comprehensive mathematics courses</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Available Courses</h2>
+            <p className="text-muted-foreground">Browse our comprehensive mathematics courses</p>
           </div>
           
           {/* Sorting Dropdown */}
@@ -86,7 +95,7 @@ export default function ComponentsTestPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-sm px-4 py-2 pr-8 text-sm font-dm-sans focus:outline-none focus:ring-2 focus:ring-[#E57342] focus:border-transparent"
+              className="appearance-none bg-background border border-border rounded-sm px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             >
               <option value="default">Default</option>
               <option value="popular">Most Popular</option>
@@ -95,7 +104,7 @@ export default function ComponentsTestPage() {
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           </div>
         </div>
 

@@ -19,7 +19,7 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
       <nav
         ref={ref}
         aria-label="Breadcrumb"
-        className={cn("flex items-center bg-white p-4 rounded-lg border border-gray-200", className)}
+        className={cn("flex items-center bg-card p-4 rounded-sm", className)}
         {...props}
       >
         <ol className="flex items-center space-x-3">
@@ -29,7 +29,7 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                 // Home icon for first item
                 <a
                   href={item.href || "#"}
-                  className="flex items-center text-[#3A3A3A] hover:text-[#1A1A1A] transition-colors"
+                  className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Home className="w-4 h-4" />
                 </a>
@@ -37,7 +37,12 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                 // Text items
                 <a
                   href={item.href || "#"}
-                  className="text-[#3A3A3A] hover:text-[#1A1A1A] transition-colors font-medium"
+                  className={cn(
+                    "transition-colors font-medium",
+                    item.isActive 
+                      ? "text-foreground" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                 >
                   {item.label}
                 </a>
@@ -45,7 +50,7 @@ const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
               
               {/* Separator (chevron) - don't show after last item */}
               {index < items.length - 1 && (
-                <ChevronRight className="w-4 h-4 text-[#3A3A3A] mx-3" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground mx-3" />
               )}
             </li>
           ))}

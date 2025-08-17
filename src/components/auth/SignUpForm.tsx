@@ -56,7 +56,7 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="fullName">Full Name</Label>
             <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <User className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
               <Input
                 id="fullName"
                 type="text"
@@ -72,7 +72,7 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
               <Input
                 id="email"
                 type="email"
@@ -88,7 +88,7 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
               <Input
                 id="password"
                 type="password"

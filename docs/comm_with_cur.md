@@ -1,3 +1,1 @@
-- Add dark and light mode
-- Complete components first
 - make demo pages using our components

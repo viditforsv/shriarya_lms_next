@@ -1,5 +1,9 @@
 'use client'
 
+import { useState, useEffect } from "react";
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
@@ -7,8 +11,31 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  
+  // Only use auth context after component mounts (client-side only)
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const loading = authContext?.loading;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Prevent SSR rendering issues
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="h-32 w-32 bg-muted rounded-full mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

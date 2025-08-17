@@ -11,7 +11,11 @@ import { useAuth } from "@/contexts/AuthContext"
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const { user, signOut } = useAuth()
+  
+  // Only use auth context after component mounts (client-side only)
+  const authContext = useAuth()
+  const user = isMounted ? authContext?.user : null
+  const signOut = isMounted ? authContext?.signOut : undefined
 
   useEffect(() => {
     setIsMounted(true)
@@ -86,7 +90,7 @@ export function Header() {
           <div className="flex items-center space-x-4">
 
             {/* User Actions */}
-            {user ? (
+            {isMounted && user ? (
               <div className="flex items-center space-x-4">
                 <Badge variant="secondary" className="text-xs">
                   {user.email}
@@ -94,7 +98,7 @@ export function Header() {
                 <Link href="/dashboard">
                   <Button size="sm">Dashboard</Button>
                 </Link>
-                <Button size="sm" variant="outline" onClick={signOut}>
+                <Button size="sm" variant="outline" onClick={signOut || (() => {})}>
                   Sign Out
                 </Button>
               </div>
@@ -169,13 +173,13 @@ export function Header() {
               ))}
 
               <div className="pt-4 pb-3 border-t border-[#feefea]">
-                {user ? (
+                {isMounted && user ? (
                   <div className="space-y-2 px-3">
                     <div className="text-sm text-foreground">{user.email}</div>
                     <Link href="/dashboard">
                       <Button size="sm" className="w-full">Dashboard</Button>
                     </Link>
-                    <Button size="sm" variant="outline" className="w-full" onClick={signOut}>
+                    <Button size="sm" variant="outline" className="w-full" onClick={signOut || (() => {})}>
                       Sign Out
                     </Button>
                   </div>

@@ -5,6 +5,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Header } from "@/components/ui/header";
 import { Footer } from "@/components/ui/footer";
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
+
 const cardo = Cardo({ 
   subsets: ["latin"],
   weight: ["400", "700"],

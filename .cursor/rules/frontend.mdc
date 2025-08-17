@@ -1,0 +1,8 @@
+---
+alwaysApply: false
+---
+
+1. Use minimal designs
+2. Use line icons
+3. Always follow the design system for new pages, elements and components
+4. Dont push to git unless asked to do so.

@@ -1,0 +1,187 @@
+'use client'
+
+import { useAuth } from '@/contexts/AuthContext'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { useRouter } from 'next/navigation'
+
+export default function TestAuthPage() {
+  const { user, session, loading, signOut } = useAuth()
+  const router = useRouter()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading authentication...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Authentication Test Page
+          </h1>
+          <p className="text-gray-600">
+            Use this page to test and debug your authentication setup
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Authentication Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Authentication Status</CardTitle>
+              <CardDescription>Current user and session information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Status:</span>
+                <Badge variant={user ? "default" : "secondary"}>
+                  {user ? "Authenticated" : "Not Authenticated"}
+                </Badge>
+              </div>
+              
+              {user && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">User ID:</span>
+                    <span className="text-sm text-gray-600 font-mono">
+                      {user.id.substring(0, 8)}...
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Email:</span>
+                    <span className="text-sm text-gray-600">{user.email}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Full Name:</span>
+                    <span className="text-sm text-gray-600">
+                      {user.user_metadata?.full_name || "Not set"}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Provider:</span>
+                    <span className="text-sm text-gray-600">
+                      {user.app_metadata?.provider || "email"}
+                    </span>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Session Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Session Details</CardTitle>
+              <CardDescription>Current session information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Session Active:</span>
+                <Badge variant={session ? "default" : "secondary"}>
+                  {session ? "Yes" : "No"}
+                </Badge>
+              </div>
+              
+              {session && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Access Token:</span>
+                    <span className="text-sm text-gray-600 font-mono">
+                      {session.access_token.substring(0, 20)}...
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Expires At:</span>
+                    <span className="text-sm text-gray-600">
+                      {new Date(session.expires_at! * 1000).toLocaleString()}
+                    </span>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Actions */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Test Actions</CardTitle>
+            <CardDescription>Actions you can test</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4">
+              {!user ? (
+                <>
+                  <Button 
+                    onClick={() => router.push('/auth')}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Go to Login
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => router.push('/')}
+                  >
+                    Go to Home
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    onClick={() => router.push('/dashboard')}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    Go to Dashboard
+                  </Button>
+                  <Button 
+                    onClick={() => router.push('/')}
+                    variant="outline"
+                  >
+                    Go to Home
+                  </Button>
+                  <Button 
+                    onClick={async () => {
+                      await signOut()
+                      router.push('/')
+                    }}
+                    variant="destructive"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Debug Information */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Debug Information</CardTitle>
+            <CardDescription>Raw authentication data for debugging</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <pre className="text-xs overflow-auto">
+                {JSON.stringify({ user, session, loading }, null, 2)}
+              </pre>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

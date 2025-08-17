@@ -276,7 +276,7 @@ export default function CourseOverviewTemplate() {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 sticky top-24 h-fit">
               {/* Course Stats */}
               <Card>
                 <CardHeader>

@@ -10,6 +10,9 @@ import { Pagination } from "@/components/ui/pagination"
 
 import { useState, useEffect } from "react"
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
+
 export default function ComponentsDemoPage() {
   const [activeTab, setActiveTab] = useState("buttons")
   const [isMounted, setIsMounted] = useState(false)
@@ -17,6 +20,18 @@ export default function ComponentsDemoPage() {
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  // Prevent SSR rendering issues
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded-sm mb-8"></div>
+          <div className="h-64 bg-muted rounded-sm"></div>
+        </div>
+      </div>
+    )
+  }
 
   const tabs = [
     { id: "colors", label: "Colors", icon: (

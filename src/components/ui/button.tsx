@@ -10,11 +10,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-[#1e293b] text-white hover:bg-[#0f172a] focus:ring-[#1e293b] shadow-sm",
-        secondary: "bg-white text-[#1e293b] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1] focus:ring-[#1e293b] shadow-sm",
-        loadMore: "bg-[#f1f5f9] text-[#475569] hover:bg-[#e2e8f0] focus:ring-[#475569] border border-[#e2e8f0]",
-        outline: "bg-white text-[#1e293b] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[#cbd5e1] focus:ring-[#1e293b] shadow-sm",
-        coral: "bg-[#e27447] text-white hover:bg-[#d1653a] focus:ring-[#e27447] shadow-sm",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary shadow-sm",
+        secondary: "bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 focus:ring-primary shadow-sm",
+        loadMore: "bg-muted text-muted-foreground hover:bg-muted/80 focus:ring-muted-foreground border border-border",
+        outline: "bg-background text-foreground border border-border hover:bg-muted focus:ring-primary shadow-sm",
+        coral: "bg-accent text-accent-foreground hover:bg-accent/90 focus:ring-accent shadow-sm",
+        destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-600 shadow-sm",
       },
       size: {
         default: "h-12 px-6 py-3",

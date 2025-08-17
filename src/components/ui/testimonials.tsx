@@ -2,7 +2,19 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Testimonial, testimonialsDatabase, getFeaturedTestimonials, getTestimonialsByService } from "@/data/testimonials"
+// import { Testimonial, testimonialsDatabase, getFeaturedTestimonials, getTestimonialsByService } from "@/data/testimonials"
+
+interface Testimonial {
+  id: string
+  name: string
+  content: string
+  rating: number
+  service: string
+  category: string[]
+  image?: string
+  position?: string
+  company?: string
+}
 
 interface TestimonialsProps {
   title?: string
@@ -16,10 +28,34 @@ interface TestimonialsProps {
   featuredOnly?: boolean
 }
 
+// Mock data for now
+const mockTestimonials: Testimonial[] = [
+  {
+    id: "1",
+    name: "Sarah Johnson",
+    content: "Excellent learning experience with practical applications.",
+    rating: 5,
+    service: "Mathematics",
+    category: ["IBDP"],
+    position: "Student",
+    company: "IBDP School"
+  },
+  {
+    id: "2",
+    name: "Michael Chen",
+    content: "Great content quality and very user-friendly platform.",
+    rating: 5,
+    service: "Mathematics",
+    category: ["CBSE"],
+    position: "Student",
+    company: "CBSE School"
+  }
+]
+
 export function Testimonials({ 
   title = "What Our Clients Say",
   subtitle = "Trusted by innovators and businesses worldwide",
-  testimonials,
+  testimonials = mockTestimonials,
   showService = true,
   className = "",
   filterByService,
@@ -28,14 +64,12 @@ export function Testimonials({
   featuredOnly = false
 }: TestimonialsProps) {
   // Get testimonials based on filters
-  let displayTestimonials = testimonials || testimonialsDatabase
+  let displayTestimonials = testimonials
 
-  if (featuredOnly) {
-    displayTestimonials = getFeaturedTestimonials()
-  } else if (filterByService) {
-    displayTestimonials = getTestimonialsByService(filterByService)
+  if (filterByService) {
+    displayTestimonials = testimonials.filter(t => t.service === filterByService)
   } else if (filterByCategory) {
-    displayTestimonials = testimonialsDatabase.filter(t => t.category.includes(filterByCategory))
+    displayTestimonials = testimonials.filter(t => t.category.includes(filterByCategory))
   }
 
   // Limit count if specified

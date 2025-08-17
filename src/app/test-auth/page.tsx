@@ -6,10 +6,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function TestAuthPage() {
   const { user, session, loading, signOut } = useAuth()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded-sm mb-8"></div>
+            <div className="h-12 bg-muted rounded-sm mb-8"></div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-64 bg-muted rounded-sm"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -62,7 +90,7 @@ export default function TestAuthPage() {
                 <>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">User ID:</span>
-                    <span className="text-sm text-muted-foreground font-mono">
+                    <span className="text-sm text-muted-foreground font-dm-sans">
                       {user.id.substring(0, 8)}...
                     </span>
                   </div>
@@ -108,7 +136,7 @@ export default function TestAuthPage() {
                 <>
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Access Token:</span>
-                    <span className="text-sm text-muted-foreground font-mono">
+                    <span className="text-sm text-muted-foreground font-dm-sans">
                       {session.access_token.substring(0, 20)}...
                     </span>
                   </div>

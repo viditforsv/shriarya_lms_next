@@ -1,18 +1,21 @@
 'use client'
 
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { 
-  FileText, 
-  Layout, 
-  Users, 
   BookOpen, 
-  ArrowRight,
+  Users, 
+  ArrowRight, 
+  FileText,
+  Layout,
   Sparkles
 } from "lucide-react"
 import Link from "next/link"
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function TemplatesPage() {
   const templateCategories = [
@@ -94,7 +97,7 @@ export default function TemplatesPage() {
               Browse All Templates
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="hover:bg-[#e27447] hover:text-white transition-colors">
               View Documentation
             </Button>
           </div>
@@ -133,9 +136,8 @@ export default function TemplatesPage() {
                           {template.description}
                         </CardDescription>
                         <Link href={template.href}>
-                          <Button variant="outline" className="w-full group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                          <Button size="lg" variant="outline" className="w-[100%] hover:bg-[#e27447] hover:text-white transition-colors">
                             View Template
-                            <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                         </Link>
                       </CardContent>
@@ -161,7 +163,7 @@ export default function TemplatesPage() {
             <Button size="lg" className="bg-accent hover:bg-accent/90">
               Request Custom Template
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="hover:bg-[#e27447] hover:text-white transition-colors">
               Contact Us
             </Button>
           </div>

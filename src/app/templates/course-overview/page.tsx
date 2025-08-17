@@ -5,15 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { 
-  CheckCircle, 
-  Clock, 
-  Users, 
-  BookOpen,
-  Play,
-  Star,
-  Target
-} from "lucide-react"
+import { BookOpen, Users, Clock, Star, CheckCircle, Play, Lock, Award } from "lucide-react"
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function CourseOverviewTemplate() {
   const courseInfo = {
@@ -259,7 +254,7 @@ export default function CourseOverviewTemplate() {
                 <div className="grid gap-4">
                   {learningOutcomes.map((outcome, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <Target className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <Award className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                       <span className="text-muted-foreground">{outcome}</span>
                     </div>
                   ))}
@@ -272,7 +267,7 @@ export default function CourseOverviewTemplate() {
                 <div className="grid gap-4">
                   {requirements.map((requirement, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <Lock className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                       <span className="text-muted-foreground">{requirement}</span>
                     </div>
                   ))}

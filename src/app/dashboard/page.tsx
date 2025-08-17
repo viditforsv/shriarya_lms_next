@@ -4,20 +4,52 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { BookOpen, Users, Award, Clock, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { unstable_noStore as noStore } from 'next/cache'
+
+// Prevent static generation
+noStore()
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth')
     }
   }, [user, loading, router])
+
+  // Prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="animate-pulse">
+          <div className="h-20 bg-muted"></div>
+          <div className="container mx-auto px-4 py-4">
+            <div className="h-8 bg-muted rounded-sm mb-4"></div>
+          </div>
+          <div className="container mx-auto px-4 py-8">
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-32 bg-muted rounded-sm"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -57,15 +89,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Breadcrumbs */}
-      <div className="container mx-auto px-4 py-4">
-        <Breadcrumb 
-          items={[
-            { label: "Home", href: "/" },
-            { label: "Dashboard", href: "/dashboard", isActive: true },
-          ]} 
-        />
-      </div>
+
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">

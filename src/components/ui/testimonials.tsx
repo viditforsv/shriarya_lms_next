@@ -61,7 +61,7 @@ export function Testimonials({
   filterByService,
   filterByCategory,
   maxCount,
-  featuredOnly = false
+
 }: TestimonialsProps) {
   // Get testimonials based on filters
   let displayTestimonials = testimonials

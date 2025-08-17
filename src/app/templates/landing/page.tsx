@@ -4,16 +4,10 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  Star, 
-  Users, 
-  BookOpen,
-  Award,
-  Clock,
-  Play
-} from "lucide-react"
+import { CheckCircle, Star, ArrowRight, Users, Clock, Award, BookOpen, Play } from "lucide-react"
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function LandingPageTemplate() {
   const features = [

@@ -1,8 +1,9 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -13,10 +14,11 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-                <img 
+                <Image 
                   src="/images/logo.webp" 
                   alt="ShriArya LMS Logo" 
-                  className="w-full h-full object-cover"
+                  width={32}
+                  height={32}
                 />
               </div>
               <h3 className="text-xl font-bold text-[#1e293b]">ShriArya LMS</h3>

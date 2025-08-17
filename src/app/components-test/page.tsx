@@ -5,10 +5,35 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ChevronDown, BookOpen, Users, Clock, Star } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic'
 
 export default function ComponentsTestPage() {
   const [sortBy, setSortBy] = useState("default")
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded-sm mb-4"></div>
+          <div className="h-4 bg-muted rounded-sm mb-8"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-32 bg-muted rounded-sm"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const courses = [
     {

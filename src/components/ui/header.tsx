@@ -1,12 +1,12 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useAuth } from "@/contexts/AuthContext"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { ChevronDown, Search } from "lucide-react"
+import Image from "next/image"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -31,10 +31,11 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
-              <img 
+              <Image 
                 src="/images/logo.webp" 
                 alt="ShriArya LMS Logo" 
-                className="w-full h-full object-cover"
+                width={40}
+                height={40}
               />
             </div>
             <div>
@@ -83,9 +84,6 @@ export function Header() {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* User Actions */}
             {user ? (
@@ -171,9 +169,6 @@ export function Header() {
               ))}
 
               <div className="pt-4 pb-3 border-t border-[#feefea]">
-                <div className="px-3 pb-3">
-                  <ThemeToggle />
-                </div>
                 {user ? (
                   <div className="space-y-2 px-3">
                     <div className="text-sm text-foreground">{user.email}</div>

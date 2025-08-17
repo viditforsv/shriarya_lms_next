@@ -1,11 +1,16 @@
-'use client'
+"use client"
 
 import { useState, useEffect } from 'react'
-import { SignInForm } from '@/components/auth/SignInForm'
-import { SignUpForm } from '@/components/auth/SignUpForm'
-import { Card, CardHeader } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardHeader } from "@/components/ui/card"
+import { SignInForm } from "@/components/auth/SignInForm"
+import { SignUpForm } from "@/components/auth/SignUpForm"
 import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { unstable_noStore as noStore } from 'next/cache'
+import Image from 'next/image'
+
+// Prevent static generation
+noStore()
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>('signin')
@@ -22,10 +27,11 @@ export default function AuthPage() {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">
-                <img 
+                <Image 
                   src="/images/logo.webp" 
                   alt="ShriArya LMS Logo" 
-                  className="w-full h-full object-cover" 
+                  width={64}
+                  height={64}
                 />
               </div>
             </div>
@@ -69,10 +75,11 @@ export default function AuthPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">
-              <img 
+              <Image 
                 src="/images/logo.webp" 
                 alt="ShriArya LMS Logo" 
-                className="w-full h-full object-cover" 
+                width={64}
+                height={64}
               />
             </div>
           </div>

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { PromotionalCard } from "@/components/ui/promotional-card"
 import { Pagination } from "@/components/ui/pagination"
-import { ThemeToggle } from "@/components/ui/theme-toggle"
+
 
 import { useState, useEffect } from "react"
 
@@ -1513,6 +1513,7 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderServicesSection = () => (
     <section className="mb-20">
       {/* Project Showcase Cards */}
@@ -1925,6 +1926,7 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderTestimonialsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
@@ -2653,7 +2655,7 @@ export default function ComponentsDemoPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-center">
-              <ThemeToggle />
+              
             </div>
             <div className="text-center">
               <p className="text-sm text-[#1e293b] mb-2">Click the button above to switch themes</p>
@@ -2791,8 +2793,8 @@ export default function ComponentsDemoPage() {
           <div className="p-6">
             <div className="mb-8">
               <Badge variant="secondary" className="mb-2">ShriArya LMS</Badge>
-              <h1 className="text-xl font-bold text-[#1b4a56]">Mathematics Components</h1>
-              <p className="text-sm text-[#4a6f73] mt-2">
+              <h1 className="text-xl font-bold text-[#1b4a56] font-cardo">Mathematics Components</h1>
+              <p className="text-sm text-[#4a6f73] mt-2 font-dm-sans">
                 IBDP • CBSE • ICSE Math Learning
               </p>
             </div>
@@ -2802,7 +2804,7 @@ export default function ComponentsDemoPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-sm text-left transition-all duration-200 ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-sm text-left transition-all duration-200 font-dm-sans ${
                     activeTab === tab.id
                       ? "bg-[#81c3c9]/20 text-[#1b4a56] border border-[#4a6f73]"
                       : "text-[#4a6f73] hover:bg-[#81c3c9]/10 hover:text-[#1b4a56]"

@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -27,11 +26,7 @@ export default function Home() {
       <div className="min-h-screen">
         {/* Breadcrumbs */}
         <div className="container mx-auto px-4 pt-8">
-          <Breadcrumb 
-            items={[
-              { label: "Home", href: "/", isActive: true },
-            ]} 
-          />
+          {/* Removed Breadcrumb component */}
         </div>
         
         {/* Hero Section for Authenticated Users */}
@@ -129,11 +124,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Breadcrumbs */}
       <div className="container mx-auto px-4 pt-8">
-        <Breadcrumb 
-          items={[
-            { label: "Home", href: "/", isActive: true },
-          ]} 
-        />
+        {/* Removed Breadcrumb component */}
       </div>
       
       {/* Hero Section */}

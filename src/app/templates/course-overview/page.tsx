@@ -6,17 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { 
-  ArrowRight, 
   CheckCircle, 
   Clock, 
   Users, 
   BookOpen,
-  Award,
   Play,
   Star,
-  Calendar,
-  Target,
-  BarChart3
+  Target
 } from "lucide-react"
 
 export default function CourseOverviewTemplate() {
@@ -320,7 +316,7 @@ export default function CourseOverviewTemplate() {
                   <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-4 flex items-center justify-center">
                     <Users className="w-8 h-8 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">{courseInfo.instructor}</h4>
+                  <h3 className="font-semibold text-foreground mb-2">{courseInfo.instructor}</h3>
                   <p className="text-sm text-muted-foreground mb-4">Mathematics Expert</p>
                   <Button variant="outline" size="sm" className="w-full">
                     View Profile

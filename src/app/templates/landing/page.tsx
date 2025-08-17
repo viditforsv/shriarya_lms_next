@@ -189,7 +189,7 @@ export default function LandingPageTemplate() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    "{testimonial.content}"
+                    &ldquo;{testimonial.content}&rdquo;
                   </CardDescription>
                 </CardContent>
               </Card>

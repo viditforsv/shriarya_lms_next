@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
-import { ChevronDown, Search, ShoppingBag } from "lucide-react"
+import { ChevronDown, Search } from "lucide-react"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

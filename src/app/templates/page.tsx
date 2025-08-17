@@ -7,10 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { 
   FileText, 
   Layout, 
-  Calendar, 
   Users, 
   BookOpen, 
-  Award,
   ArrowRight,
   Sparkles
 } from "lucide-react"
@@ -157,7 +155,7 @@ export default function TemplatesPage() {
             Need a Custom Template?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Can't find what you're looking for? We can create custom templates tailored to your specific needs.
+            Can&apos;t find what you&apos;re looking for? We can create custom templates tailored to your specific needs.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" className="bg-accent hover:bg-accent/90">

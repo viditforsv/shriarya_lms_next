@@ -17,6 +17,7 @@ export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 export { Separator } from './separator'
 export { ScrollArea, ScrollBar } from './scroll-area'
 export { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from './pagination'
+export { Progress } from './progress'
 
 // Custom Components
 export { Header } from './header'

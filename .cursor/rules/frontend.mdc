@@ -6,3 +6,6 @@ alwaysApply: false
 2. Use line icons
 3. Always follow the design system for new pages, elements and components
 4. Dont push to git unless asked to do so.
+5. Use 16px for paragraphs
+6. Use DM Sans for H3,H4,H5,H6 and paragraphs
+7. Use Rounded-sm for all buttons and badges.

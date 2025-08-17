@@ -1,14 +1,3 @@
-cards
-Badges
-Utilities
-
-Remove
-
-- Web development
-- Navigation
-
-Add
-
-- Breadcrumbs
-
-modify git ignore and Git push
+- Add dark and light mode
+- Complete components first
+- make demo pages using our components

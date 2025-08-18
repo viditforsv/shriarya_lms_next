@@ -79,7 +79,7 @@ export default function GlobalError({
                   <h3 className="text-2xl font-bold text-red-800 mb-4">Need Help?</h3>
                   <p className="text-red-700 mb-6 max-w-2xl mx-auto">
                     If this error persists, please contact our support team with the error details above.
-                    We'll help you resolve this issue as quickly as possible.
+                    We&apos;ll help you resolve this issue as quickly as possible.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button asChild variant="outline" className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white">

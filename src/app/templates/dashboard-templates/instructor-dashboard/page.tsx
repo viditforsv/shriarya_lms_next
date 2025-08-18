@@ -165,7 +165,7 @@ export default function InstructorDashboardTemplate() {
                       </p>
                       <div className="flex items-center space-x-6 text-sm text-muted-foreground">
                         <span>Progress: 45%</span>
-                        <span>Next Lesson: Newton's Laws</span>
+                        <span>Next Lesson: Newton&apos;s Laws</span>
                         <span>Last Updated: 1 day ago</span>
                       </div>
                     </div>

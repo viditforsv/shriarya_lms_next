@@ -101,7 +101,7 @@ export default function DashboardTemplatesIndex() {
             <CardContent>
               <h3 className="text-2xl font-bold text-[#1e293b] mb-4">Need a Custom Dashboard?</h3>
               <p className="text-[#1e293b] mb-6">
-                Can't find the perfect dashboard template? We can create custom dashboards tailored to your specific needs.
+                Can&apos;t find the perfect dashboard template? We can create custom dashboards tailored to your specific needs.
               </p>
               <div className="flex gap-4 justify-center">
                 <Button className="bg-[#e27447] hover:bg-[#e27447]/90">

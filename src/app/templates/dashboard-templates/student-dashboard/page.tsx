@@ -157,7 +157,7 @@ export default function StudentDashboardTemplate() {
                       </p>
                       <div className="flex items-center space-x-6 text-sm text-muted-foreground">
                         <span>Progress: 45%</span>
-                        <span>Next Lesson: Newton's Laws</span>
+                        <span>Next Lesson: Newton&apos;s Laws</span>
                         <span>Due: Friday</span>
                       </div>
                     </div>
@@ -282,7 +282,7 @@ export default function StudentDashboardTemplate() {
               <h3 className="text-xl font-bold text-[#1e293b] mb-4">Study Tips</h3>
               <Card className="bg-[#feefea] border-[#e27447]">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-[#1e293b] mb-3">Today's Tip</h4>
+                  <h4 className="font-semibold text-[#1e293b] mb-3">Today&apos;s Tip</h4>
                   <p className="text-sm text-[#1e293b]">
                     Break your study sessions into 25-minute focused blocks with 5-minute breaks. 
                     This technique, known as the Pomodoro Method, can improve concentration and retention.

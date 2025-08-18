@@ -122,7 +122,7 @@ export default function AboutPageTemplate() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  [Brief description of team member's expertise and contribution]
+                  [Brief description of team member&apos;s expertise and contribution]
                 </p>
               </CardContent>
             </Card>
@@ -137,7 +137,7 @@ export default function AboutPageTemplate() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  [Brief description of team member's expertise and contribution]
+                  [Brief description of team member&apos;s expertise and contribution]
                 </p>
               </CardContent>
             </Card>
@@ -152,7 +152,7 @@ export default function AboutPageTemplate() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  [Brief description of team member's expertise and contribution]
+                  [Brief description of team member&apos;s expertise and contribution]
                 </p>
               </CardContent>
             </Card>

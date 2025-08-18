@@ -11,10 +11,13 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      // Use environment variable for production, fallback to origin for development
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+      return NextResponse.redirect(`${baseUrl}${next}`)
     }
   }
 
   // Return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth?error=Could not authenticate user`)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+  return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
 }

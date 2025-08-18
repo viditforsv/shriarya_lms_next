@@ -170,7 +170,7 @@ export default function LoginPageTemplate() {
               {/* Sign Up Link */}
               <div className="text-center pt-4 border-t border-[#feefea]">
                 <p className="text-sm text-[#4a6f73]">
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link 
                     href="/signup" 
                     className="text-[#e27447] hover:text-[#e27447]/80 font-medium transition-colors"
@@ -192,7 +192,7 @@ export default function LoginPageTemplate() {
             <p><strong>3. Validation:</strong> Add client-side and server-side form validation for email and password fields.</p>
             <p><strong>4. Error Handling:</strong> Display error messages for invalid credentials or network issues.</p>
             <p><strong>5. Loading States:</strong> The template includes loading states - connect them to your actual authentication process.</p>
-            <p><strong>6. Remember Me:</strong> Implement "remember me" functionality using cookies or local storage.</p>
+            <p><strong>6. Remember Me:</strong> Implement &quot;remember me&quot; functionality using cookies or local storage.</p>
             <p><strong>7. Forgot Password:</strong> Create a forgot password page and link it properly.</p>
             <p><strong>8. Redirect Logic:</strong> Add proper redirect logic after successful login.</p>
           </div>

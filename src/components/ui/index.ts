@@ -1,25 +1,28 @@
 // UI Components Export File
 // This file provides a centralized way to import all UI components
 
-// Core UI Components
-export { Avatar, AvatarFallback, AvatarImage } from './avatar'
-export { Badge, badgeVariants } from './badge'
-export { Breadcrumb } from './breadcrumb'
-export { Button, buttonVariants } from './button'
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
-export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './dialog'
-export { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './dropdown-menu'
-export { Footer } from './footer'
-export { Header } from './header'
-export { Input } from './input'
-export { Label } from './label'
-export { Pagination } from './pagination'
-export { Progress } from './progress'
-export { PromotionalCard } from './promotional-card'
-export { ScrollArea, ScrollBar } from './scroll-area'
-export { Separator } from './separator'
-export { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './sheet'
-export { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from './table'
-export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
-export { Testimonials } from './testimonials'
-export { WhatsAppFloat } from './whatsapp-float'
+export * from "./avatar"
+export * from "./badge"
+export * from "./breadcrumb"
+export * from "./button"
+export * from "./card"
+export * from "./dialog"
+export * from "./dropdown-menu"
+export * from "./footer"
+export * from "./form"
+export * from "./header"
+export * from "./input"
+export * from "./label"
+export * from "./pagination"
+export * from "./progress"
+export * from "./promotional-card"
+export * from "./scroll-area"
+export * from "./separator"
+export * from "./sheet"
+export * from "./social-icons"
+export * from "./course-stats"
+export * from "./course-content-section"
+export * from "./table"
+export * from "./tabs"
+export * from "./testimonials"
+export * from "./whatsapp-float"

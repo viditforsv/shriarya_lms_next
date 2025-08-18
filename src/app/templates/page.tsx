@@ -36,6 +36,7 @@ export default function TemplatesPage() {
       icon: <BookOpen className="w-8 h-8 text-green-600" />,
       templates: [
         { name: "Course Overview", href: "/templates/course-overview", badge: "Featured", description: "Course introduction and syllabus" },
+        { name: "Course Page", href: "/templates/course-page", badge: "New", description: "Complete course page with sidebar and content" },
         { name: "Lesson Template", href: "/templates/lesson", description: "Individual lesson layout" },
         { name: "Quiz Template", href: "/templates/quiz", description: "Interactive quiz and assessment" },
         { name: "Certificate", href: "/templates/certificate", description: "Completion certificate design" },

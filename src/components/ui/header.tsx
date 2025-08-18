@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext"
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   
   // Only use auth context after component mounts (client-side only)
   const authContext = useAuth()
@@ -22,11 +23,25 @@ export function Header() {
   }, [])
 
   const navigation = [
-    { name: "Home", href: "/", hasDropdown: true },
-    { name: "Courses", href: "/courses", hasDropdown: true, isActive: true },
-    { name: "Pages", href: "/pages", hasDropdown: true },
-    { name: "Templates", href: "/templates", hasDropdown: true },
+    { name: "Home", href: "/", hasDropdown: false },
+    { 
+      name: "Courses", 
+      href: "/courses", 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
+        { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
+        { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
+        { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
+      ]
+    },
+    { name: "Pages", href: "/pages", hasDropdown: false },
+    { name: "Templates", href: "/templates", hasDropdown: false },
   ]
+
+  const handleDropdownToggle = (name: string) => {
+    setActiveDropdown(activeDropdown === name ? null : name)
+  }
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
@@ -71,17 +86,56 @@ export function Header() {
           <nav className="hidden lg:flex items-center space-x-6">
             {navigation.map((item) => (
               <div key={item.name} className="relative">
-                <Link
-                  href={item.href}
-                  className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors ${
-                    item.isActive 
-                      ? "text-accent" 
-                      : "text-foreground hover:text-accent"
-                  }`}
-                >
-                  <span>{item.name}</span>
-                  {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
-                </Link>
+                {item.hasDropdown ? (
+                  <button
+                    onClick={() => handleDropdownToggle(item.name)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent cursor-pointer"
+                  >
+                    <span>{item.name}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === item.name ? 'rotate-180' : ''}`} />
+                  </button>
+                ) : (
+                  <Link 
+                    href={item.href} 
+                    className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent"
+                  >
+                    {item.name}
+                  </Link>
+                )}
+
+                {/* Dropdown Menu */}
+                {item.hasDropdown && activeDropdown === item.name && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
+                    <div className="p-4">
+                      <div className="grid grid-cols-1 gap-3">
+                        {item.dropdownItems?.map((dropdownItem) => (
+                          <Link
+                            key={dropdownItem.name}
+                            href={dropdownItem.href}
+                            className="flex flex-col p-3 rounded-sm hover:bg-[#feefea] transition-colors group"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <div className="font-medium text-[#1e293b] group-hover:text-[#e27447] transition-colors">
+                              {dropdownItem.name}
+                            </div>
+                            <div className="text-sm text-[#1e293b] opacity-80">
+                              {dropdownItem.description}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="mt-4 pt-4 border-t border-[#feefea]">
+                        <Link
+                          href={item.href}
+                          className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#e27447] hover:bg-[#e27447]/10 rounded-sm transition-colors"
+                          onClick={() => setActiveDropdown(null)}
+                        >
+                          View All Boards
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </nav>
@@ -157,19 +211,40 @@ export function Header() {
 
               {/* Mobile Navigation */}
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center justify-between px-3 py-2 text-base font-medium transition-colors ${
-                    item.isActive 
-                      ? "text-accent" 
-                      : "text-foreground hover:text-accent"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span>{item.name}</span>
-                  {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
-                </Link>
+                <div key={item.name}>
+                  {item.hasDropdown ? (
+                    <div className="px-3 py-2">
+                      <div className="font-medium text-foreground mb-2">{item.name}</div>
+                      <div className="ml-4 space-y-2">
+                        {item.dropdownItems?.map((dropdownItem) => (
+                          <Link
+                            key={dropdownItem.name}
+                            href={dropdownItem.href}
+                            className="block text-sm text-foreground hover:text-accent transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {dropdownItem.name}
+                          </Link>
+                        ))}
+                        <Link
+                          href={item.href}
+                          className="block text-sm text-accent hover:text-accent/80 transition-colors font-medium"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          View All Boards
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="flex items-center justify-between px-3 py-2 text-base font-medium transition-colors text-foreground hover:text-accent"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <span>{item.name}</span>
+                    </Link>
+                  )}
+                </div>
               ))}
 
               <div className="pt-4 pb-3 border-t border-[#feefea]">

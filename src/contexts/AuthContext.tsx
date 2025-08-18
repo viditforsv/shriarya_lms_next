@@ -80,9 +80,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    // Get the current site URL, prioritizing environment variable
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-                   (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
+    // Use environment variable for production, fallback to localhost only for development
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    
+    // Debug logging (remove in production)
+    console.log('AuthContext - Site URL:', siteUrl)
+    console.log('AuthContext - Environment variable:', process.env.NEXT_PUBLIC_SITE_URL)
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

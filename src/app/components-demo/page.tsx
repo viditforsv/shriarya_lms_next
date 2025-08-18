@@ -90,22 +90,15 @@ export default function ComponentsDemoPage() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
     ) },
-    { id: "contact", label: "Contact", icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ) },
-    { id: "themes", label: "Themes", icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
-    ) }
+
+
   ]
 
+  
   const renderButtonsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Mathematics Learning Buttons</h2>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">1.A Mathematics Learning Buttons</h2>
         <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Interactive buttons for math lessons, exercises, and assessments using our streamlined color palette</p>
       </div>
       
@@ -357,68 +350,14 @@ export default function ComponentsDemoPage() {
         </Card>
       </div>
 
-      {/* Our Color Palette Buttons */}
-      <div className="mt-20">
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Our Color Palette Buttons</CardTitle>
-            <CardDescription className="text-base">Buttons showcasing our streamlined 6-color system</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            {/* Primary Colors */}
-            <div>
-              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Primary Colors</h4>
-              <div className="flex flex-wrap gap-4">
-                <Button className="bg-[#1e293b] hover:bg-[#0f172a] text-white border-[#1e293b]">
-                  Dark Blue
-                </Button>
-                <Button className="bg-[#e27447] hover:bg-[#d1653a] text-white border-[#e27447]">
-                  Orange
-                </Button>
-                <Button className="bg-[#ffffff] hover:bg-[#fffefd] text-[#1e293b] border-[#feefea]">
-                  White
-                </Button>
-              </div>
-            </div>
-
-            {/* Background Colors */}
-            <div>
-              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Background Colors</h4>
-              <div className="flex flex-wrap gap-4">
-                <Button className="bg-[#feefea] hover:bg-[#f5e6e0] text-[#1e293b] border-[#feefea]">
-                  Light Cream
-                </Button>
-                <Button className="bg-[#fffefd] hover:bg-[#fef9f6] text-[#1e293b] border-[#feefea]">
-                  Very Light Cream
-                </Button>
-                <Button className="bg-[#d6ebf4] hover:bg-[#c5e0eb] text-[#1e293b] border-[#d6ebf4]">
-                  Light Blue
-                </Button>
-              </div>
-            </div>
-
-            {/* Color Specifications */}
-            <div className="pt-4 border-t border-[#feefea]">
-              <h4 className="text-sm font-medium text-[#1e293b] mb-3">Our Color System:</h4>
-              <ul className="text-xs text-[#1e293b] space-y-2">
-                <li>• <strong>Primary:</strong> #1e293b (Dark Blue), #e27447 (Orange), #ffffff (White)</li>
-                <li>• <strong>Backgrounds:</strong> #feefea (Light Cream), #fffefd (Very Light Cream), #d6ebf4 (Light Blue)</li>
-                <li>• <strong>All borders:</strong> Use cream colors instead of grays</li>
-                <li>• <strong>Text:</strong> #1e293b for dark text, white for light backgrounds</li>
-                <li>• <strong>Hover states:</strong> Slightly darker variations of base colors</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
     </section>
   )
 
+  
   const renderFormsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Mathematics Assessment Forms</h2>
+        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">1.B Mathematics Assessment Forms</h2>
         <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Forms for quizzes, homework submission, and student progress tracking using our design system</p>
       </div>
       
@@ -685,14 +624,125 @@ export default function ComponentsDemoPage() {
             <Button variant="primary" className="flex-1" showArrow>Apply Filters</Button>
           </CardFooter>
         </Card>
+
       </div>
+      
+             {/* Get in Touch Form */}
+       <div className="mt-16 space-y-10">
+         <div className="text-center">
+           <h3 className="text-3xl font-bold text-[#1b4a56] mb-3 font-cardo">Get In Touch</h3>
+           <p className="text-lg text-[#4a6f73] font-dm-sans max-w-2xl mx-auto">
+             Ready to start your mathematics learning journey? Let's discuss how we can help you succeed.
+           </p>
+         </div>
+         
+         <Card className="max-w-3xl mx-auto hover:shadow-xl transition-all duration-300 border border-[#feefea]">
+           <CardContent className="p-10">
+             <form className="space-y-8">
+               {/* Name Fields Row */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div className="space-y-3">
+                   <label className="block text-base font-semibold text-[#1b4a56] font-dm-sans">
+                     First Name *
+                   </label>
+                   <input
+                     type="text"
+                     className="w-full px-5 py-4 border-2 border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] transition-all duration-200 bg-white text-[#1b4a56] placeholder-[#4a6f73] text-base font-dm-sans hover:border-[#d6ebf4]"
+                     placeholder="Enter your first name"
+                     required
+                   />
+                 </div>
+                 <div className="space-y-3">
+                   <label className="block text-base font-semibold text-[#1b4a56] font-dm-sans">
+                     Last Name *
+                   </label>
+                   <input
+                     type="text"
+                     className="w-full px-5 py-4 border-2 border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] transition-all duration-200 bg-white text-[#1b4a56] placeholder-[#4a6f73] text-base font-dm-sans hover:border-[#d6ebf4]"
+                     placeholder="Enter your last name"
+                     required
+                   />
+                 </div>
+               </div>
+               
+               {/* Email Field */}
+               <div className="space-y-3">
+                 <label className="block text-base font-semibold text-[#1b4a56] font-dm-sans">
+                   Email Address *
+                 </label>
+                 <input
+                   type="email"
+                   className="w-full px-5 py-4 border-2 border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] transition-all duration-200 bg-white text-[#1b4a56] placeholder-[#4a6f73] text-base font-dm-sans hover:border-[#d6ebf4]"
+                   placeholder="your.email@example.com"
+                   required
+                 />
+               </div>
+               
+               {/* Project Type Field */}
+               <div className="space-y-3">
+                 <label className="block text-base font-semibold text-[#1b4a56] font-dm-sans">
+                   Project Type *
+                 </label>
+                 <select className="w-full px-5 py-4 border-2 border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] transition-all duration-200 bg-white text-[#1b4a56] font-dm-sans hover:border-[#d6ebf4] cursor-pointer">
+                   <option value="" className="text-[#4a6f73]">Select a project type</option>
+                   <option value="website" className="text-[#1b4a56]">Website Development</option>
+                   <option value="mobile" className="text-[#1b4a56]">Mobile App</option>
+                   <option value="ecommerce" className="text-[#1b4a56]">E-commerce Platform</option>
+                   <option value="custom" className="text-[#1b4a56]">Custom Web Application</option>
+                   <option value="other" className="text-[#1b4a56]">Other</option>
+                 </select>
+               </div>
+
+               {/* Project Description Field */}
+               <div className="space-y-3">
+                 <label className="block text-base font-semibold text-[#1b4a56] font-dm-sans">
+                   Project Description *
+                 </label>
+                 <textarea
+                   rows={5}
+                   className="w-full px-5 py-4 border-2 border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] transition-all duration-200 bg-white text-[#1b4a56] placeholder-[#4a6f73] text-base font-dm-sans hover:border-[#d6ebf4] resize-none"
+                   placeholder="Tell us about your project, requirements, and goals..."
+                   required
+                 ></textarea>
+                 <p className="text-sm text-[#4a6f73] font-dm-sans">
+                   Please provide as much detail as possible to help us understand your needs better.
+                 </p>
+               </div>
+               
+               {/* Submit Button */}
+               <div className="text-center pt-6">
+                 <Button 
+                   variant="primary" 
+                   size="lg" 
+                   className="px-12 py-4 text-lg font-semibold font-dm-sans shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                   showArrow
+                 >
+                   Send Message
+                 </Button>
+               </div>
+             </form>
+           </CardContent>
+         </Card>
+         
+         {/* Additional Info */}
+         <div className="text-center space-y-4">
+           <p className="text-sm text-[#4a6f73] font-dm-sans">
+             * Required fields
+           </p>
+           <p className="text-sm text-[#4a6f73] font-dm-sans">
+             We typically respond within 24 hours during business days.
+           </p>
+         </div>
+       </div>
+      
     </section>
   )
 
+  
   const renderCardsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Mathematics Learning Cards</h2>
+        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">1.C Mathematics Learning Cards</h2>
         <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Cards for lessons, practice problems, and progress tracking using our design system</p>
       </div>
       
@@ -805,10 +855,11 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+
   const renderBadgesSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Mathematics Learning Badges</h2>
+        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">1.D Mathematics Learning Badges</h2>
         <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Small labels for categorization and status using our design system</p>
       </div>
       
@@ -831,10 +882,11 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+
   const renderBreadcrumbsSection = () => (
     <section className="mb-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">Navigation Breadcrumbs</h2>
+        <h2 className="text-4xl font-bold text-[#1b4a56] mb-6">1.E Navigation Breadcrumbs</h2>
         <p className="text-lg text-[#4a6f73] max-w-3xl mx-auto">Hierarchical navigation paths with home icons and chevron separators</p>
       </div>
       
@@ -888,10 +940,11 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+
   const renderLayoutSection = () => (
     <section className="mb-20">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4">Layout Components</h2>
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4">1.F Layout Components</h2>
         <p className="text-[#4a6f73]">Grid systems and layout patterns</p>
       </div>
       
@@ -1822,77 +1875,7 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
-  const renderContactSection = () => (
-    <section className="mb-20">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4">Contact Us</h2>
-        <p className="text-[#4a6f73]">Get in touch for custom solutions</p>
-      </div>
-      
-      <div className="space-y-8">
-        <h3 className="text-2xl font-bold text-[#1b4a56] text-center">Get In Touch</h3>
-        <Card className="max-w-2xl mx-auto hover:shadow-xl transition-all duration-300">
-          <CardContent className="pt-8">
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-[#1b4a56] mb-2">First Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
-                    placeholder="John"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1b4a56] mb-2">Last Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
-                    placeholder="Doe"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1b4a56] mb-2">Email</label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
-                  placeholder="john@company.com"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Type</label>
-                <select className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all">
-                  <option>Select a project type</option>
-                  <option>Website Development</option>
-                  <option>Mobile App</option>
-                  <option>E-commerce Platform</option>
-                  <option>Custom Web Application</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1b4a56] mb-2">Project Description</label>
-                <textarea
-                  rows={4}
-                  className="w-full px-4 py-2 border border-[#4a6f73] rounded-sm focus:ring-2 focus:ring-[#ff2768] focus:border-transparent transition-all"
-                  placeholder="Tell us about your project..."
-                ></textarea>
-              </div>
-              <div className="text-center">
-                <Button className="px-8 py-3 text-lg">
-                  Send Message
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </section>
-  )
+
 
   const renderResponsiveSection = () => (
     <section className="mb-20">
@@ -2371,63 +2354,6 @@ export default function ComponentsDemoPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Color Usage Guidelines */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Color Usage Guidelines</CardTitle>
-            <CardDescription className="text-base">Best practices for using the streamlined color system</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Primary Usage</h4>
-                <ul className="text-sm text-[#1e293b] space-y-2">
-                  <li>• <strong>#1e293b:</strong> Main buttons, headings, important text, borders</li>
-                  <li>• <strong>#e27447:</strong> Call-to-action buttons, highlights, accents</li>
-                  <li>• <strong>#ffffff:</strong> Main content backgrounds, cards, forms</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Background Usage</h4>
-                <ul className="text-sm text-[#1e293b] space-y-2">
-                  <li>• <strong>#feefea:</strong> Background accents, borders, subtle highlights</li>
-                  <li>• <strong>#fffefd:</strong> Hover states, very subtle backgrounds</li>
-                  <li>• <strong>#d6ebf4:</strong> Cool backgrounds, section highlights</li>
-                  <li>• <strong>#ffffff:</strong> Primary content areas, cards, sections</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Color Accessibility */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Color Accessibility</CardTitle>
-            <CardDescription className="text-base">Ensuring colors meet accessibility standards</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Contrast Ratios</h4>
-                <ul className="text-sm text-[#1e293b] space-y-2">
-                  <li>• <strong>Dark Blue on White:</strong> Excellent contrast (15.6:1)</li>
-                  <li>• <strong>Orange on White:</strong> Good contrast (3.4:1)</li>
-                  <li>• <strong>Dark Blue on Cream:</strong> Good contrast (8.2:1)</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Best Practices</h4>
-                <ul className="text-sm text-[#1e293b] space-y-2">
-                  <li>• Use orange (#e27447) sparingly for emphasis</li>
-                  <li>• Ensure sufficient contrast for text readability</li>
-                  <li>• Use cream backgrounds for subtle section separation</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   )
@@ -2639,112 +2565,7 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
-  const renderThemesSection = () => (
-    <section className="mb-20">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">Theme System</h2>
-        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Switch between light and dark modes with our streamlined color palette</p>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Theme Toggle Demo */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Theme Toggle</CardTitle>
-            <CardDescription className="text-base">Interactive theme switcher with smooth transitions</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-center">
-              
-            </div>
-            <div className="text-center">
-              <p className="text-sm text-[#1e293b] mb-2">Click the button above to switch themes</p>
-              <p className="text-xs text-[#1e293b] opacity-75">The entire website will smoothly transition between light and dark modes</p>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Theme Features */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Theme Features</CardTitle>
-            <CardDescription className="text-base">What you get with our theme system</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
-                <span className="text-sm text-[#1e293b]">Automatic system preference detection</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
-                <span className="text-sm text-[#1e293b]">Smooth transitions between themes</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
-                <span className="text-sm text-[#1e293b]">Persistent theme selection</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
-                <span className="text-sm text-[#1e293b]">Optimized for your 6-color palette</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Theme Color Showcase */}
-      <div className="mt-20">
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Theme Color Showcase</CardTitle>
-            <CardDescription className="text-base">See how our colors adapt in both themes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Light Theme */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Light Theme</h4>
-                <div className="space-y-3">
-                  <div className="p-4 bg-white border border-[#feefea] rounded-sm">
-                    <p className="text-[#1e293b] font-medium">White Background</p>
-                    <p className="text-[#1e293b] text-sm opacity-75">Primary text on white</p>
-                  </div>
-                  <div className="p-4 bg-[#fffefd] border border-[#feefea] rounded-sm">
-                    <p className="text-[#1e293b] font-medium">Light Cream Background</p>
-                    <p className="text-[#1e293b] text-sm opacity-75">Subtle background variation</p>
-                  </div>
-                  <div className="p-4 bg-[#feefea] border border-[#1e293b] rounded-sm">
-                    <p className="text-[#1e293b] font-medium">Cream Background</p>
-                    <p className="text-[#1e293b] text-sm opacity-75">Accent background</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dark Theme */}
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Dark Theme</h4>
-                <div className="space-y-3">
-                  <div className="p-4 bg-[#1e293b] border border-[#feefea] rounded-sm">
-                    <p className="text-white font-medium">Dark Blue Background</p>
-                    <p className="text-white text-sm opacity-75">White text on dark</p>
-                  </div>
-                  <div className="p-4 bg-[#fffefd] border border-[#feefea] rounded-sm">
-                    <p className="text-[#1e293b] font-medium">Light Cream Background</p>
-                    <p className="text-[#1e293b] text-sm opacity-75">Subtle background variation</p>
-                  </div>
-                  <div className="p-4 bg-[#feefea] border border-[#1e293b] rounded-sm">
-                    <p className="text-[#1e293b] font-medium">Cream Background</p>
-                    <p className="text-[#1e293b] text-sm opacity-75">Accent background</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </section>
-  )
 
   const renderContent = () => {
     switch (activeTab) {
@@ -2776,10 +2597,8 @@ export default function ComponentsDemoPage() {
         return renderPaginationSection()
       case "courses":
         return renderCoursesSection()
-      case "contact":
-        return renderContactSection()
-      case "themes":
-        return renderThemesSection()
+
+
       default:
         return renderButtonsSection()
     }
@@ -2800,7 +2619,7 @@ export default function ComponentsDemoPage() {
             </div>
             
             <nav className="space-y-2">
-              {tabs.map((tab) => (
+              {tabs.map((tab, index) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
@@ -2810,6 +2629,9 @@ export default function ComponentsDemoPage() {
                       : "text-[#4a6f73] hover:bg-[#81c3c9]/10 hover:text-[#1b4a56]"
                   }`}
                 >
+                  <span className="flex-shrink-0 text-sm font-bold text-[#e27447] w-6 text-center">
+                    {index + 1}
+                  </span>
                   <span className="flex-shrink-0">{tab.icon}</span>
                   <span className="font-medium">{tab.label}</span>
                 </button>

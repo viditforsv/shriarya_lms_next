@@ -1,15 +1,169 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Play, Clock, FileText, Download, Smartphone, Infinity, Award, Share2 } from "lucide-react"
+import { ArrowLeft, Clock, FileText, Download, Smartphone, Infinity, Award, Share2, BookOpen, Users, Star, CheckCircle, Bookmark, Share } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SocialIconsRow, CourseStats, CourseContentSection } from "@/components/ui"
+import { useAuth } from "@/contexts/AuthContext"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
 export default function Class10MathematicsPage() {
+  const { user } = useAuth()
+  const [isEnrolled, setIsEnrolled] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false)
+  const [showFullDescription, setShowFullDescription] = useState(false)
+  const [activeTab, setActiveTab] = useState('overview')
+  const [courseProgress, setCourseProgress] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Simulate course progress (replace with actual data)
+  useEffect(() => {
+    if (user) {
+      // Simulate fetching user progress
+      setCourseProgress(35) // 35% completion
+    }
+  }, [user])
+
+  const handleEnroll = async () => {
+    if (!user) {
+      // Redirect to login
+      window.location.href = '/auth'
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      // Simulate enrollment API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setIsEnrolled(true)
+      setCourseProgress(0) // Reset progress for new enrollment
+    } catch (error) {
+      console.error('Enrollment failed:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked)
+    // Add API call to save bookmark
+  }
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'CBSE Class 10 Mathematics Course',
+        text: 'Master CBSE Class 10 Mathematics with comprehensive lessons and practice problems',
+        url: window.location.href
+      })
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href)
+      alert('Link copied to clipboard!')
+    }
+  }
+
+  const courseContent = [
+    {
+      id: "real-numbers",
+      title: "Real Numbers & Algebra",
+      lectures: 8,
+      duration: "6 hours",
+      lessons: [
+        {
+          id: "1",
+          title: "Introduction to Real Numbers",
+          duration: "45:20",
+          type: "video" as const,
+          hasPreview: true,
+          isLocked: false,
+          isCompleted: true
+        },
+        {
+          id: "2",
+          title: "Euclid's Division Algorithm",
+          duration: "52:15",
+          type: "document" as const,
+          hasPreview: true,
+          isLocked: false,
+          isCompleted: true
+        },
+        {
+          id: "3",
+          title: "Fundamental Theorem of Arithmetic",
+          duration: "38:45",
+          type: "question" as const,
+          hasPreview: true,
+          isLocked: !isEnrolled,
+          isCompleted: false
+        },
+        {
+          id: "4",
+          title: "Real Numbers Practice Problems",
+          duration: "25:30",
+          type: "practice" as const,
+          hasPreview: false,
+          isLocked: !isEnrolled,
+          isCompleted: false
+        }
+      ]
+    },
+    {
+      id: "polynomials",
+      title: "Polynomials & Equations",
+      lectures: 10,
+      duration: "8 hours",
+      lessons: [
+        {
+          id: "5",
+          title: "Introduction to Polynomials",
+          duration: "40:15",
+          type: "video" as const,
+          hasPreview: true,
+          isLocked: !isEnrolled,
+          isCompleted: false
+        },
+        {
+          id: "6",
+          title: "Quadratic Equations",
+          duration: "55:30",
+          type: "video" as const,
+          hasPreview: true,
+          isLocked: !isEnrolled,
+          isCompleted: false
+        }
+      ]
+    },
+    {
+      id: "geometry",
+      title: "Geometry & Triangles",
+      lectures: 12,
+      duration: "10 hours",
+      lessons: [
+        {
+          id: "7",
+          title: "Properties of Triangles",
+          duration: "48:20",
+          type: "video" as const,
+          hasPreview: true,
+          isLocked: !isEnrolled,
+          isCompleted: false
+        }
+      ]
+    }
+  ]
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: BookOpen },
+    { id: 'content', label: 'Content', icon: FileText },
+    { id: 'instructor', label: 'Instructor', icon: Users },
+    { id: 'reviews', label: 'Reviews', icon: Star }
+  ]
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
@@ -30,17 +184,40 @@ export default function Class10MathematicsPage() {
           <div className="lg:col-span-2">
             {/* Course Overview Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              {/* Course Title */}
-              <h1 className="text-4xl font-bold text-[#1e293b] mb-6 leading-tight">
-                Master CBSE Class 10 Mathematics
-              </h1>
-              
-              {/* Learning Objectives */}
-              <div className="mb-8">
-                <span className="text-[#1e293b] font-medium">Learn:</span>
-                <span className="text-muted-foreground ml-2">
-                  Algebra | Geometry | Trigonometry | Statistics | Probability | Coordinate Geometry | Circles | Constructions
-                </span>
+              {/* Course Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex-1">
+                  <h1 className="text-4xl font-bold text-[#1e293b] mb-6 leading-tight">
+                    Master CBSE Class 10 Mathematics
+                  </h1>
+                  
+                  {/* Learning Objectives */}
+                  <div className="mb-8">
+                    <span className="text-[#1e293b] font-medium">Learn:</span>
+                    <span className="text-muted-foreground ml-2">
+                      Algebra | Geometry | Trigonometry | Statistics | Probability | Coordinate Geometry | Circles | Constructions
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-2 ml-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBookmark}
+                    className={isBookmarked ? "text-[#e27447] border-[#e27447]" : ""}
+                  >
+                    <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleShare}
+                  >
+                    <Share className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
               
               {/* Course Statistics */}
@@ -52,6 +229,22 @@ export default function Class10MathematicsPage() {
                 lastUpdated="12/2024"
                 className="mb-8"
               />
+              
+              {/* Progress Bar for Enrolled Users */}
+              {isEnrolled && (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-[#1e293b]">Your Progress</span>
+                    <span className="text-sm text-muted-foreground">{courseProgress}% Complete</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-[#e27447] h-2 rounded-full transition-all duration-500" 
+                      style={{ width: `${courseProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
               
               {/* Instructor Information */}
               <div className="flex items-center space-x-4">
@@ -72,314 +265,267 @@ export default function Class10MathematicsPage() {
               </div>
             </div>
 
-            {/* What You'll Learn Section */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-10">What you&apos;ll learn</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left Column */}
-                <div className="space-y-5">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Master fundamental algebraic concepts and operations</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Solve complex quadratic equations and polynomials</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Understand geometric theorems and proofs</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Apply trigonometric ratios and identities</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Learn coordinate geometry and distance formulas</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Master statistical analysis and probability</span>
-                  </div>
-                </div>
-                
-                {/* Right Column */}
-                <div className="space-y-5">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Prepare for CBSE Board examinations</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Access 80+ hours of video instruction</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Practice with 150+ downloadable resources</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Get expert support and guidance</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Track progress with detailed analytics</span>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-muted-foreground">Earn certificate of completion</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Requirements Section */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Requirements</h2>
-              <ul className="space-y-4">
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-muted-foreground">
-                    There are no skill prerequisites for this course, although it&apos;s helpful if you are familiar with basic mathematical operations and concepts from Class 9.
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-muted-foreground">
-                    You can take this course using a Mac, PC, or Linux machine with a stable internet connection.
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-muted-foreground">
-                    It is recommended that you have a notebook and pen for solving practice problems and taking notes.
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            {/* About This Course Section */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">About This Course</h2>
-              <div className="space-y-6">
-                <p className="text-muted-foreground leading-relaxed">
-                  Welcome to our comprehensive CBSE Class 10 Mathematics course designed to help you master all the essential concepts required for your board examinations. This course covers the complete syllabus with detailed explanations, practical examples, and extensive practice problems.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Our expert instructors have carefully structured the content to build your mathematical foundation step by step, ensuring you understand both the theory and practical applications of each concept.
-                </p>
-                <button className="flex items-center space-x-2 text-[#e27447] hover:text-[#e27447]/80 transition-colors font-medium">
-                  <span>Show More</span>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Course Content Section */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
-              
-              {/* Expanded Section */}
-              <CourseContentSection
-                title="Real Numbers & Algebra"
-                lectures={8}
-                duration="6 hours"
-                lessons={[
-                  {
-                    id: "1",
-                    title: "Introduction to Real Numbers",
-                    duration: "45:20",
-                    type: "video",
-                    hasPreview: true,
-                    isLocked: false
-                  },
-                  {
-                    id: "2",
-                    title: "Euclid's Division Algorithm",
-                    duration: "52:15",
-                    type: "document",
-                    hasPreview: true,
-                    isLocked: false
-                  },
-                  {
-                    id: "3",
-                    title: "Fundamental Theorem of Arithmetic",
-                    duration: "38:45",
-                    type: "question",
-                    hasPreview: true,
-                    isLocked: true
-                  },
-                  {
-                    id: "4",
-                    title: "Real Numbers Practice Problems",
-                    duration: "25:30",
-                    type: "practice",
-                    hasPreview: false,
-                    isLocked: true
-                  }
-                ]}
-                isExpanded={true}
-                className="mb-4"
-              />
-              
-              {/* Collapsed Sections */}
-              <div className="space-y-4">
-                <CourseContentSection
-                  title="Polynomials & Equations"
-                  lectures={10}
-                  duration="8 hours"
-                  lessons={[]}
-                  isExpanded={false}
-                />
-                
-                <CourseContentSection
-                  title="Geometry & Triangles"
-                  lectures={12}
-                  duration="10 hours"
-                  lessons={[]}
-                  isExpanded={false}
-                />
-                
-                <CourseContentSection
-                  title="Trigonometry & Circles"
-                  lectures={18}
-                  duration="12 hours"
-                  lessons={[]}
-                  isExpanded={false}
-                />
+            {/* Tab Navigation */}
+            <div className="bg-white rounded-sm border border-[#feefea] mb-10">
+              <div className="flex border-b border-[#feefea]">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center space-x-2 px-6 py-4 text-sm font-medium transition-colors ${
+                        activeTab === tab.id
+                          ? "text-[#e27447] border-b-2 border-[#e27447]"
+                          : "text-muted-foreground hover:text-[#1e293b]"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{tab.label}</span>
+                    </button>
+                  )
+                })}
               </div>
               
-              {/* More Sections Button */}
-              <div className="mt-8 text-center">
-                <button className="px-8 py-4 border border-[#feefea] rounded-sm bg-white text-[#1e293b] font-medium hover:bg-[#feefea]/30 transition-colors flex items-center space-x-2 mx-auto">
-                  <span>12 More Sections</span>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+              {/* Tab Content */}
+              <div className="p-10">
+                {activeTab === 'overview' && (
+                  <div className="space-y-10">
+                    {/* What You'll Learn Section */}
+                    <div>
+                      <h2 className="text-3xl font-bold text-[#1e293b] mb-10">What you&apos;ll learn</h2>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Column */}
+                        <div className="space-y-5">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Master fundamental algebraic concepts and operations</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Solve complex quadratic equations and polynomials</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Understand geometric theorems and proofs</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Apply trigonometric concepts to real-world problems</span>
+                          </div>
+                        </div>
+                        
+                        {/* Right Column */}
+                        <div className="space-y-5">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Analyze statistical data and probability</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Master coordinate geometry and circles</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Learn geometric constructions and measurements</span>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="text-muted-foreground">Prepare for CBSE board examinations</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-            {/* Instructor Section */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Instructor</h2>
-              
-              <div className="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8">
-                {/* Profile Picture */}
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-sm overflow-hidden border-2 border-[#feefea]">
-                    <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
-                      <img 
-                        src="/images/logo.webp" 
-                        alt="ShriArya Logo" 
-                        className="w-20 h-20 object-contain"
-                        style={{ mixBlendMode: 'multiply' }}
-                      />
+                    {/* Requirements Section */}
+                    <div>
+                      <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Requirements</h2>
+                      <ul className="space-y-4">
+                        <li className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-muted-foreground">
+                            There are no skill prerequisites for this course, although it&apos;s helpful if you are familiar with basic mathematical operations and concepts from Class 9.
+                          </span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-muted-foreground">
+                            You can take this course using a Mac, PC, or Linux machine with a stable internet connection.
+                          </span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-muted-foreground">
+                            It is recommended that you have a notebook and pen for solving practice problems and taking notes.
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* About This Course Section */}
+                    <div>
+                      <h2 className="text-3xl font-bold text-[#1e293b] mb-8">About This Course</h2>
+                      <div className="space-y-6">
+                        <p className="text-muted-foreground leading-relaxed">
+                          Welcome to our comprehensive CBSE Class 10 Mathematics course designed to help you master all the essential concepts required for your board examinations. This course covers the complete syllabus with detailed explanations, practical examples, and extensive practice problems.
+                        </p>
+                        {showFullDescription && (
+                          <>
+                            <p className="text-muted-foreground leading-relaxed">
+                              Our expert instructors have carefully structured the content to build your mathematical foundation step by step, ensuring you understand both the theory and practical applications of each concept.
+                            </p>
+                            <p className="text-muted-foreground leading-relaxed">
+                              Each module includes interactive exercises, real-world examples, and comprehensive assessments to reinforce your learning. You&apos;ll also have access to our community forum where you can ask questions and collaborate with fellow students.
+                            </p>
+                          </>
+                        )}
+                        <button 
+                          onClick={() => setShowFullDescription(!showFullDescription)}
+                          className="flex items-center space-x-2 text-[#e27447] hover:text-[#e27447]/80 transition-colors font-medium"
+                        >
+                          <span>{showFullDescription ? 'Show Less' : 'Show More'}</span>
+                          <svg 
+                            className={`w-4 h-4 transition-transform ${showFullDescription ? 'rotate-180' : ''}`} 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                {/* Instructor Details */}
-                <div className="flex-1">
-                  {/* Name and Title */}
-                  <h3 className="text-2xl font-bold text-[#1e293b] mb-2">ShriArya Mathematics Team</h3>
-                  <p className="text-lg text-muted-foreground mb-6">Professional Mathematics Educators</p>
-                  
-                  {/* Statistics */}
-                  <CourseStats
-                    rating={4.9}
-                    totalRatings={2847}
-                    students={1234}
-                    duration="15 Courses"
-                    className="mb-6"
-                  />
-                  
-                  {/* Bio */}
-                  <div className="space-y-4 mb-6">
-                    <p className="text-muted-foreground leading-relaxed">
-                      Our team of experienced mathematics educators brings together decades of teaching experience in CBSE curriculum. We specialize in making complex mathematical concepts accessible and engaging for students at all levels.
-                    </p>
-                    <p className="text-muted-foreground leading-relaxed">
-                      With a focus on practical applications and real-world examples, we help students build strong mathematical foundations that prepare them not just for exams, but for future academic and professional success.
-                    </p>
+                )}
+
+                {activeTab === 'content' && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
+                    <div className="space-y-4">
+                                             {courseContent.map((section, index) => (
+                         <CourseContentSection
+                           key={section.id}
+                           title={section.title}
+                           lectures={section.lectures}
+                           duration={section.duration}
+                           lessons={section.lessons}
+                           isExpanded={index === 0}
+                           className="mb-4"
+                         />
+                       ))}
+                    </div>
                   </div>
-                  
-                  {/* Social Media Links */}
-                  <SocialIconsRow 
-                    platforms={['facebook', 'twitter', 'instagram', 'linkedin']}
-                    size="md"
-                    variant="outline"
-                  />
-                </div>
+                )}
+
+                {activeTab === 'instructor' && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Your Instructor</h2>
+                    <div className="flex items-start space-x-6">
+                      <div className="w-24 h-24 rounded-full border-2 border-[#feefea] overflow-hidden">
+                        <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
+                          <img 
+                            src="/images/logo.webp" 
+                            alt="ShriArya Logo" 
+                            className="w-16 h-16 object-contain"
+                            style={{ mixBlendMode: 'multiply' }}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-[#1e293b] mb-2">ShriArya Mathematics Team</h3>
+                        <p className="text-muted-foreground mb-4">Expert Mathematics Educators</p>
+                        <p className="text-muted-foreground leading-relaxed mb-4">
+                          Our team of experienced mathematics educators has over 15 years of combined experience in teaching CBSE mathematics. We specialize in making complex mathematical concepts accessible and engaging for students of all levels.
+                        </p>
+                        <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                          <span>⭐ 4.9 Instructor Rating</span>
+                          <span>📚 50+ Courses Created</span>
+                          <span>👥 10,000+ Students</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'reviews' && (
+                  <div>
+                    <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Student Reviews</h2>
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-4 mb-6">
+                        <div className="text-4xl font-bold text-[#1e293b]">4.8</div>
+                        <div>
+                          <div className="flex items-center space-x-1 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star key={star} className={`w-5 h-5 ${star <= 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                            ))}
+                          </div>
+                          <p className="text-sm text-muted-foreground">Based on 2,847 reviews</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="border border-[#feefea] rounded-sm p-4">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex items-center space-x-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
+                              ))}
+                            </div>
+                            <span className="text-sm font-medium text-[#1e293b]">Excellent course!</span>
+                          </div>
+                                                     <p className="text-sm text-muted-foreground mb-2">
+                             &ldquo;This course helped me understand mathematics concepts that I struggled with for months. The explanations are clear and the practice problems are perfect for exam preparation.&rdquo;
+                           </p>
+                          <p className="text-xs text-muted-foreground">- Priya S., Class 10 Student</p>
+                        </div>
+                        
+                        <div className="border border-[#feefea] rounded-sm p-4">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className="flex items-center space-x-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
+                              ))}
+                            </div>
+                            <span className="text-sm font-medium text-[#1e293b]">Highly recommended</span>
+                          </div>
+                                                     <p className="text-sm text-muted-foreground mb-2">
+                             &ldquo;The step-by-step approach and real-world examples make complex topics easy to understand. Great for both beginners and those who want to strengthen their foundation.&rdquo;
+                           </p>
+                          <p className="text-xs text-muted-foreground">- Rahul M., Class 10 Student</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Course Sidebar Card */}
+          {/* Right Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-sm shadow-lg border border-[#feefea] p-6 sticky top-8">
+            <div className="sticky top-8">
               {/* Course Preview Thumbnail */}
               <div className="relative mb-6">
                 <div className="w-full h-48 bg-gradient-to-br from-[#feefea] to-[#fffefd] rounded-sm flex items-center justify-center">
@@ -412,14 +558,36 @@ export default function Class10MathematicsPage() {
 
               {/* Action Buttons */}
               <div className="space-y-3 mb-6">
-                <Button className="w-full bg-[#1e293b] hover:bg-[#1e293b]/90 text-white rounded-sm">
-                  Add to Cart
-                  <ArrowLeft className="w-4 h-4 ml-2 rotate-45" strokeWidth={1.5} />
-                </Button>
-                <Button variant="outline" className="w-full rounded-sm border-black hover:bg-[#feefea]">
-                  Enroll Now
-                  <ArrowLeft className="w-4 h-4 ml-2 rotate-45" strokeWidth={1.5} />
-                </Button>
+                {isEnrolled ? (
+                  <Button className="w-full bg-[#1e27447] hover:bg-[#e27447]/90 text-white rounded-sm">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Continue Learning
+                  </Button>
+                ) : (
+                  <>
+                    <Button className="w-full bg-[#1e293b] hover:bg-[#1e293b]/90 text-white rounded-sm">
+                      Add to Cart
+                      <ArrowLeft className="w-4 h-4 ml-2 rotate-45" strokeWidth={1.5} />
+                    </Button>
+                    <Button 
+                      className="w-full bg-[#e27447] hover:bg-[#e27447]/90 text-white rounded-sm"
+                      onClick={handleEnroll}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Enrolling...</span>
+                        </div>
+                      ) : (
+                        <>
+                          Enroll Now
+                          <ArrowLeft className="w-4 h-4 ml-2 rotate-45" strokeWidth={1.5} />
+                        </>
+                      )}
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* Guarantee */}

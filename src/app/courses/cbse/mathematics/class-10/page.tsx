@@ -19,6 +19,7 @@ export default function Class10MathematicsPage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [courseProgress, setCourseProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['real-numbers']))
 
   // Simulate course progress (replace with actual data)
   useEffect(() => {
@@ -65,6 +66,45 @@ export default function Class10MathematicsPage() {
       navigator.clipboard.writeText(window.location.href)
       alert('Link copied to clipboard!')
     }
+  }
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(sectionId)) {
+        newSet.delete(sectionId)
+      } else {
+        newSet.add(sectionId)
+      }
+      return newSet
+    })
+  }
+
+  const handleLessonClick = (lesson: { id: string; title: string; type: string; isLocked: boolean }) => {
+    if (lesson.isLocked && !isEnrolled) {
+      alert('Please enroll in the course to access this lesson.')
+      return
+    }
+    
+    if (lesson.type === 'video') {
+      // Handle video lesson
+      console.log('Opening video lesson:', lesson.title)
+    } else if (lesson.type === 'document') {
+      // Handle document lesson
+      console.log('Opening document lesson:', lesson.title)
+    } else if (lesson.type === 'question') {
+      // Handle question lesson
+      console.log('Opening question lesson:', lesson.title)
+    } else if (lesson.type === 'practice') {
+      // Handle practice lesson
+      console.log('Opening practice lesson:', lesson.title)
+    }
+  }
+
+  const handlePreviewClick = (lesson: { title: string }, event: React.MouseEvent) => {
+    event.stopPropagation() // Prevent lesson click
+    console.log('Preview lesson:', lesson.title)
+    // Add your preview logic here
   }
 
   const courseContent = [
@@ -423,18 +463,22 @@ export default function Class10MathematicsPage() {
                 {activeTab === 'content' && (
                   <div>
                     <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Click on any section to expand and view the lessons. {!isEnrolled && "Enroll in the course to access all content."}
+                    </p>
                     <div className="space-y-4">
-                                             {courseContent.map((section, index) => (
-                         <CourseContentSection
-                           key={section.id}
-                           title={section.title}
-                           lectures={section.lectures}
-                           duration={section.duration}
-                           lessons={section.lessons}
-                           isExpanded={index === 0}
-                           className="mb-4"
-                         />
-                       ))}
+                                             {courseContent.map((section) => (
+                        <CourseContentSection
+                          key={section.id}
+                          title={section.title}
+                          lectures={section.lectures}
+                          duration={section.duration}
+                          lessons={section.lessons}
+                          isExpanded={expandedSections.has(section.id)}
+                          onToggle={() => toggleSection(section.id)}
+                          className="mb-4"
+                        />
+                      ))}
                     </div>
                   </div>
                 )}

@@ -8,7 +8,6 @@ import {
   BookOpen, 
   Users, 
   ArrowRight, 
-  FileText,
   Layout,
   Sparkles
 } from "lucide-react"
@@ -24,10 +23,10 @@ export default function TemplatesPage() {
       description: "Complete page layouts for different purposes",
       icon: <Layout className="w-8 h-8 text-accent" />,
       templates: [
-        { name: "Landing Page", href: "/templates/landing", badge: "Popular", description: "Modern landing page with hero section" },
-        { name: "About Page", href: "/templates/about", badge: "New", description: "Professional about page layout" },
-        { name: "Contact Page", href: "/templates/contact", description: "Contact form with map integration" },
-        { name: "Pricing Page", href: "/templates/pricing", description: "Pricing tables and plans" },
+        { name: "Landing Page", href: "/templates/page-templates/landing", badge: "Popular", description: "Modern landing page with hero section" },
+        { name: "About Page", href: "/templates/page-templates/about", badge: "New", description: "Professional about page layout" },
+        { name: "Contact Page", href: "/templates/page-templates/contact", description: "Contact form with map integration" },
+        { name: "Pricing Page", href: "/templates/page-templates/pricing", description: "Pricing tables and plans" },
       ]
     },
     {
@@ -35,11 +34,11 @@ export default function TemplatesPage() {
       description: "Templates specifically designed for educational content",
       icon: <BookOpen className="w-8 h-8 text-green-600" />,
       templates: [
-        { name: "Course Overview", href: "/templates/course-overview", badge: "Featured", description: "Course introduction and syllabus" },
+        { name: "Course Overview", href: "/templates/course-templates/course-overview", badge: "Featured", description: "Course introduction and syllabus" },
         { name: "Course Page", href: "/templates/course-page", badge: "New", description: "Complete course page with sidebar and content" },
-        { name: "Lesson Template", href: "/templates/lesson", description: "Individual lesson layout" },
-        { name: "Quiz Template", href: "/templates/quiz", description: "Interactive quiz and assessment" },
-        { name: "Certificate", href: "/templates/certificate", description: "Completion certificate design" },
+        { name: "Lesson Template", href: "/templates/course-templates/lesson", description: "Individual lesson layout" },
+        { name: "Quiz Template", href: "/templates/course-templates/quiz", description: "Interactive quiz and assessment" },
+        { name: "Certificate", href: "/templates/course-templates/certificate", description: "Completion certificate design" },
       ]
     },
     {
@@ -47,23 +46,13 @@ export default function TemplatesPage() {
       description: "Admin and user dashboard layouts",
       icon: <Users className="w-8 h-8 text-purple-600" />,
       templates: [
-        { name: "Student Dashboard", href: "/templates/student-dashboard", description: "Student progress and courses" },
-        { name: "Instructor Dashboard", href: "/templates/instructor-dashboard", description: "Course management interface" },
-        { name: "Admin Panel", href: "/templates/admin-panel", description: "Full administrative interface" },
-        { name: "Analytics Dashboard", href: "/templates/analytics", description: "Data visualization and reports" },
+        { name: "Student Dashboard", href: "/templates/dashboard-templates/student-dashboard", description: "Student progress and courses" },
+        { name: "Instructor Dashboard", href: "/templates/dashboard-templates/instructor-dashboard", description: "Course management interface" },
+        { name: "Admin Panel", href: "/templates/dashboard-templates/admin-panel", description: "Full administrative interface" },
+        { name: "Analytics Dashboard", href: "/templates/dashboard-templates/analytics", description: "Data visualization and reports" },
       ]
     },
-    {
-      title: "Component Templates",
-      description: "Reusable component layouts and patterns",
-      icon: <FileText className="w-8 h-8 text-orange-600" />,
-      templates: [
-        { name: "Navigation Bars", href: "/templates/navigation", description: "Header and navigation patterns" },
-        { name: "Form Templates", href: "/templates/forms", description: "Contact and data entry forms" },
-        { name: "Card Layouts", href: "/templates/cards", description: "Content card variations" },
-        { name: "Modal Templates", href: "/templates/modals", description: "Dialog and overlay patterns" },
-      ]
-    }
+
   ]
 
   return (

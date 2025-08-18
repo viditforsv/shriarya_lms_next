@@ -27,9 +27,9 @@ export default function CoursePageTemplate() {
         {/* Template Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-[#1e293b] mb-4">Course Page Template</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A comprehensive course page template with course overview, learning objectives, requirements, 
-            course content, and instructor information. Perfect for educational platforms and LMS systems.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            A comprehensive course page template featuring course overview, content sections, instructor details, and enrollment sidebar.
+            Based on our CBSE Mathematics Class 10 course design.
           </p>
         </div>
 
@@ -40,15 +40,15 @@ export default function CoursePageTemplate() {
             {/* Course Overview Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
               {/* Course Title */}
-              <h1 className="text-4xl font-bold text-[#1e293b] mb-6 leading-tight">
-                [Course Title]
-              </h1>
+              <h2 className="text-4xl font-bold text-[#1e293b] mb-6 leading-tight">
+                Master [Course Subject] - [Course Level]
+              </h2>
               
               {/* Learning Objectives */}
               <div className="mb-8">
                 <span className="text-[#1e293b] font-medium">Learn:</span>
                 <span className="text-muted-foreground ml-2">
-                  [Topic 1] | [Topic 2] | [Topic 3] | [Topic 4] | [Topic 5] | [Topic 6]
+                  [Topic 1] | [Topic 2] | [Topic 3] | [Topic 4] | [Topic 5] | [Topic 6] | [Topic 7] | [Topic 8]
                 </span>
               </div>
               
@@ -83,7 +83,7 @@ export default function CoursePageTemplate() {
 
             {/* What You'll Learn Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-10">What you&apos;ll learn</h2>
+              <h3 className="text-3xl font-bold text-[#1e293b] mb-10">What you&apos;ll learn</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left Column */}
@@ -94,7 +94,7 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 1]</span>
+                    <span className="text-muted-foreground">Master fundamental concepts and operations</span>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -103,7 +103,7 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 2]</span>
+                    <span className="text-muted-foreground">Solve complex problems and equations</span>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -112,7 +112,34 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 3]</span>
+                    <span className="text-muted-foreground">Understand theoretical foundations</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Apply practical applications</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Learn advanced techniques</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Master statistical analysis</span>
                   </div>
                 </div>
                 
@@ -124,7 +151,7 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 4]</span>
+                    <span className="text-muted-foreground">Prepare for examinations</span>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -133,7 +160,7 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 5]</span>
+                    <span className="text-muted-foreground">Access [X]+ hours of video instruction</span>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -142,7 +169,34 @@ export default function CoursePageTemplate() {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <span className="text-muted-foreground">[Learning Outcome 6]</span>
+                    <span className="text-muted-foreground">Practice with [X]+ downloadable resources</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Get expert support and guidance</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Track progress with detailed analytics</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1e293b] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-muted-foreground">Earn certificate of completion</span>
                   </div>
                 </div>
               </div>
@@ -150,24 +204,24 @@ export default function CoursePageTemplate() {
 
             {/* Requirements Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Requirements</h2>
+              <h3 className="text-3xl font-bold text-[#1e293b] mb-8">Requirements</h3>
               <ul className="space-y-4">
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-muted-foreground">
-                    [Requirement 1]
+                    There are no skill prerequisites for this course, although it&apos;s helpful if you are familiar with basic concepts from previous levels.
                   </span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-muted-foreground">
-                    [Requirement 2]
+                    You can take this course using a Mac, PC, or Linux machine with a stable internet connection.
                   </span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-[#1e293b] rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-muted-foreground">
-                    [Requirement 3]
+                    It is recommended that you have a notebook and pen for solving practice problems and taking notes.
                   </span>
                 </li>
               </ul>
@@ -175,13 +229,13 @@ export default function CoursePageTemplate() {
 
             {/* About This Course Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">About This Course</h2>
+              <h3 className="text-3xl font-bold text-[#1e293b] mb-8">About This Course</h3>
               <div className="space-y-6">
                 <p className="text-muted-foreground leading-relaxed">
-                  [Course description paragraph 1]
+                  Welcome to our comprehensive [Course Subject] course designed to help you master all the essential concepts required for your [examination/learning goals]. This course covers the complete syllabus with detailed explanations, practical examples, and extensive practice problems.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  [Course description paragraph 2]
+                  Our expert instructors have carefully structured the content to build your foundation step by step, ensuring you understand both the theory and practical applications of each concept.
                 </p>
                 <button className="flex items-center space-x-2 text-[#e27447] hover:text-[#e27447]/80 transition-colors font-medium">
                   <span>Show More</span>
@@ -194,17 +248,17 @@ export default function CoursePageTemplate() {
 
             {/* Course Content Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10 mb-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
+              <h3 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h3>
               
               {/* Expanded Section */}
               <CourseContentSection
-                title="[Section Title]"
+                title="[Section 1 Title]"
                 lectures={8}
                 duration="6 hours"
                 lessons={[
                   {
                     id: "1",
-                    title: "[Lesson Title 1]",
+                    title: "Introduction to [Topic]",
                     duration: "45:20",
                     type: "video",
                     hasPreview: true,
@@ -212,7 +266,7 @@ export default function CoursePageTemplate() {
                   },
                   {
                     id: "2",
-                    title: "[Lesson Title 2]",
+                    title: "[Topic] Fundamentals",
                     duration: "52:15",
                     type: "document",
                     hasPreview: true,
@@ -220,10 +274,18 @@ export default function CoursePageTemplate() {
                   },
                   {
                     id: "3",
-                    title: "[Lesson Title 3]",
+                    title: "[Topic] Practice Problems",
                     duration: "38:45",
                     type: "question",
                     hasPreview: true,
+                    isLocked: true
+                  },
+                  {
+                    id: "4",
+                    title: "[Topic] Assessment",
+                    duration: "25:30",
+                    type: "practice",
+                    hasPreview: false,
                     isLocked: true
                   }
                 ]}
@@ -234,7 +296,7 @@ export default function CoursePageTemplate() {
               {/* Collapsed Sections */}
               <div className="space-y-4">
                 <CourseContentSection
-                  title="[Section Title 2]"
+                  title="[Section 2 Title]"
                   lectures={10}
                   duration="8 hours"
                   lessons={[]}
@@ -242,9 +304,17 @@ export default function CoursePageTemplate() {
                 />
                 
                 <CourseContentSection
-                  title="[Section Title 3]"
+                  title="[Section 3 Title]"
                   lectures={12}
                   duration="10 hours"
+                  lessons={[]}
+                  isExpanded={false}
+                />
+                
+                <CourseContentSection
+                  title="[Section 4 Title]"
+                  lectures={18}
+                  duration="12 hours"
                   lessons={[]}
                   isExpanded={false}
                 />
@@ -263,7 +333,7 @@ export default function CoursePageTemplate() {
 
             {/* Instructor Section */}
             <div className="bg-white rounded-sm border border-[#feefea] p-10">
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Instructor</h2>
+              <h3 className="text-3xl font-bold text-[#1e293b] mb-8">Instructor</h3>
               
               <div className="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8">
                 {/* Profile Picture */}
@@ -283,7 +353,7 @@ export default function CoursePageTemplate() {
                 {/* Instructor Details */}
                 <div className="flex-1">
                   {/* Name and Title */}
-                  <h3 className="text-2xl font-bold text-[#1e293b] mb-2">[Instructor Name]</h3>
+                  <h4 className="text-2xl font-bold text-[#1e293b] mb-2">[Instructor Name]</h4>
                   <p className="text-lg text-muted-foreground mb-6">[Instructor Title]</p>
                   
                   {/* Statistics */}
@@ -291,17 +361,17 @@ export default function CoursePageTemplate() {
                     rating={4.9}
                     totalRatings={2847}
                     students={1234}
-                    duration="15 Courses"
+                    duration="[X] Courses"
                     className="mb-6"
                   />
                   
                   {/* Bio */}
                   <div className="space-y-4 mb-6">
                     <p className="text-muted-foreground leading-relaxed">
-                      [Instructor bio paragraph 1]
+                      [Instructor bio paragraph 1] Our team of experienced educators brings together decades of teaching experience in [subject] curriculum. We specialize in making complex concepts accessible and engaging for students at all levels.
                     </p>
                     <p className="text-muted-foreground leading-relaxed">
-                      [Instructor bio paragraph 2]
+                      [Instructor bio paragraph 2] With a focus on practical applications and real-world examples, we help students build strong foundations that prepare them not just for exams, but for future academic and professional success.
                     </p>
                   </div>
                   
@@ -364,25 +434,25 @@ export default function CoursePageTemplate() {
               {/* Guarantee */}
               <div className="text-center mb-6">
                 <p className="text-sm text-muted-foreground">
-                  14-Day Satisfaction Guarantee
+                  [X]-Day Satisfaction Guarantee
                 </p>
               </div>
 
               {/* Course Details */}
               <div className="mb-6">
-                <h3 className="font-semibold text-[#1e293b] mb-4">This course includes:</h3>
+                <h4 className="font-semibold text-[#1e293b] mb-4">This course includes:</h4>
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Clock className="w-5 h-5 text-[#1e293b]" strokeWidth={1.5} />
-                    <span className="text-sm text-muted-foreground">[X] hours on-demand video</span>
+                    <span className="text-sm text-muted-foreground">[X]+ hours on-demand video</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <FileText className="w-5 h-5 text-[#1e293b]" strokeWidth={1.5} />
-                    <span className="text-sm text-muted-foreground">[X] practice worksheets</span>
+                    <span className="text-sm text-muted-foreground">[X]+ practice worksheets</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Download className="w-5 h-5 text-[#1e293b]" strokeWidth={1.5} />
-                    <span className="text-sm text-muted-foreground">[X] downloadable resources</span>
+                    <span className="text-sm text-muted-foreground">[X]+ downloadable resources</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Smartphone className="w-5 h-5 text-[#1e293b]" strokeWidth={1.5} />
@@ -401,10 +471,10 @@ export default function CoursePageTemplate() {
 
               {/* Social Sharing */}
               <div className="border-t border-[#feefea] pt-6">
-                <h3 className="font-semibold text-[#1e293b] mb-4 flex items-center">
+                <h4 className="font-semibold text-[#1e293b] mb-4 flex items-center">
                   <Share2 className="w-4 h-4 mr-2" strokeWidth={1.5} />
                   Share this course
-                </h3>
+                </h4>
                 <SocialIconsRow 
                   platforms={['facebook', 'twitter', 'instagram', 'linkedin']}
                   size="sm"
@@ -416,35 +486,15 @@ export default function CoursePageTemplate() {
         </div>
 
         {/* Template Usage Instructions */}
-        <div className="mt-16 bg-[#feefea] rounded-sm p-8">
-          <h2 className="text-2xl font-bold text-[#1e293b] mb-6">How to Use This Template</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold text-[#1e293b] mb-4">Template Features</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>• Complete course page layout with sidebar</li>
-                <li>• Course overview with statistics and instructor info</li>
-                <li>• Learning objectives in two-column format</li>
-                <li>• Requirements section with bullet points</li>
-                <li>• About course section with expandable content</li>
-                <li>• Interactive course content with expandable sections</li>
-                <li>• Instructor profile with social media links</li>
-                <li>• Pricing sidebar with course details</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#1e293b] mb-4">Customization Steps</h3>
-              <ol className="space-y-2 text-muted-foreground">
-                <li>1. Replace all placeholder text in [brackets]</li>
-                <li>2. Update course statistics and ratings</li>
-                <li>3. Add your course content and lessons</li>
-                <li>4. Update instructor information and bio</li>
-                <li>5. Modify pricing and course details</li>
-                <li>6. Add your logo and branding</li>
-                <li>7. Customize colors to match your theme</li>
-                <li>8. Test responsive behavior on mobile</li>
-              </ol>
-            </div>
+        <div className="mt-20 bg-[#feefea] rounded-sm border border-[#e27447] p-8">
+          <h3 className="text-2xl font-bold text-[#1e293b] mb-6">Template Usage Instructions</h3>
+          <div className="space-y-4 text-[#1e293b]">
+            <p><strong>1. Customization:</strong> Replace all placeholder text in [brackets] with your actual course content.</p>
+            <p><strong>2. Course Details:</strong> Update course title, topics, instructor information, pricing, and statistics.</p>
+            <p><strong>3. Content Sections:</strong> Modify the course content sections to match your curriculum structure.</p>
+            <p><strong>4. Images:</strong> Replace placeholder images with your course thumbnails and instructor photos.</p>
+            <p><strong>5. Styling:</strong> Adjust colors, fonts, and spacing to match your brand guidelines.</p>
+            <p><strong>6. Components:</strong> This template uses our UI components - ensure they are properly imported.</p>
           </div>
         </div>
       </div>

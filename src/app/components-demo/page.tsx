@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { PromotionalCard } from "@/components/ui/promotional-card"
 import { Pagination } from "@/components/ui/pagination"
+import { Sidebar, SidebarItem } from "@/components/ui/sidebar"
 
 
 import { useState, useEffect } from "react"
@@ -632,7 +633,7 @@ export default function ComponentsDemoPage() {
          <div className="text-center">
            <h3 className="text-3xl font-bold text-[#1b4a56] mb-3 font-cardo">Get In Touch</h3>
            <p className="text-lg text-[#4a6f73] font-dm-sans max-w-2xl mx-auto">
-             Ready to start your mathematics learning journey? Let's discuss how we can help you succeed.
+             Ready to start your mathematics learning journey? Let&apos;s discuss how we can help you succeed.
            </p>
          </div>
          
@@ -2604,41 +2605,26 @@ export default function ComponentsDemoPage() {
     }
   }
 
+  // Convert tabs to sidebar items
+  const sidebarItems: SidebarItem[] = tabs.map((tab) => ({
+    id: tab.id,
+    label: tab.label,
+    icon: tab.icon,
+    onClick: () => setActiveTab(tab.id)
+  }))
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#81c3c9]/10 to-[#4a6f73]/10">
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white border-r border-[#4a6f73] min-h-screen">
-          <div className="p-6">
-            <div className="mb-8">
-              <Badge variant="secondary" className="mb-2">ShriArya LMS</Badge>
-              <h1 className="text-xl font-bold text-[#1b4a56] font-cardo">Mathematics Components</h1>
-              <p className="text-sm text-[#4a6f73] mt-2 font-dm-sans">
-                IBDP • CBSE • ICSE Math Learning
-              </p>
-            </div>
-            
-            <nav className="space-y-2">
-              {tabs.map((tab, index) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-sm text-left transition-all duration-200 font-dm-sans ${
-                    activeTab === tab.id
-                      ? "bg-[#81c3c9]/20 text-[#1b4a56] border border-[#4a6f73]"
-                      : "text-[#4a6f73] hover:bg-[#81c3c9]/10 hover:text-[#1b4a56]"
-                  }`}
-                >
-                  <span className="flex-shrink-0 text-sm font-bold text-[#e27447] w-6 text-center">
-                    {index + 1}
-                  </span>
-                  <span className="flex-shrink-0">{tab.icon}</span>
-                  <span className="font-medium">{tab.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
+        <Sidebar
+          title="Mathematics Components"
+          subtitle="IBDP • CBSE • ICSE Math Learning"
+          items={sidebarItems}
+          activeItem={activeTab}
+          onItemClick={(item) => setActiveTab(item.id)}
+          showNumbers={true}
+        />
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">

@@ -11,8 +11,6 @@ import { useAuth } from "@/contexts/AuthContext"
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  
   // Only use auth context after component mounts (client-side only)
   const authContext = useAuth()
   const user = isMounted ? authContext?.user : null
@@ -36,12 +34,17 @@ export function Header() {
       ]
     },
     { name: "Pages", href: "/pages", hasDropdown: false },
-    { name: "Templates", href: "/templates", hasDropdown: false },
+    { 
+      name: "Templates", 
+      href: "/templates", 
+      hasDropdown: true,
+      dropdownItems: [
+        { name: "Page Templates", href: "/templates/page-templates", description: "Landing pages, about pages, contact forms" },
+        { name: "Course Templates", href: "/templates/course-templates", description: "Course pages, lesson layouts, assessments" },
+        { name: "Dashboard Templates", href: "/templates/dashboard-templates", description: "Student, instructor, and admin dashboards" }
+      ]
+    },
   ]
-
-  const handleDropdownToggle = (name: string) => {
-    setActiveDropdown(activeDropdown === name ? null : name)
-  }
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
@@ -87,13 +90,42 @@ export function Header() {
             {navigation.map((item) => (
               <div key={item.name} className="relative">
                 {item.hasDropdown ? (
-                  <button
-                    onClick={() => handleDropdownToggle(item.name)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent cursor-pointer"
-                  >
-                    <span>{item.name}</span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === item.name ? 'rotate-180' : ''}`} />
-                  </button>
+                  <div className="relative group">
+                    <button className="flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent cursor-pointer">
+                      <span>{item.name}</span>
+                      <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-sm shadow-lg border border-[#feefea] z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="p-4">
+                        <div className="grid grid-cols-1 gap-3">
+                          {item.dropdownItems?.map((dropdownItem) => (
+                            <Link
+                              key={dropdownItem.name}
+                              href={dropdownItem.href}
+                              className="flex flex-col p-3 rounded-sm hover:bg-[#feefea] transition-colors group"
+                            >
+                              <div className="font-medium text-[#1e293b] group-hover:text-[#e27447] transition-colors">
+                                {dropdownItem.name}
+                              </div>
+                              <div className="text-sm text-[#1e293b] opacity-80">
+                                {dropdownItem.description}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-[#feefea]">
+                          <Link
+                            href={item.href}
+                            className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#e27447] hover:bg-[#e27447]/10 rounded-sm transition-colors"
+                          >
+                            {item.name === "Courses" ? "View All Boards" : "View All Templates"}
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <Link 
                     href={item.href} 
@@ -101,40 +133,6 @@ export function Header() {
                   >
                     {item.name}
                   </Link>
-                )}
-
-                {/* Dropdown Menu */}
-                {item.hasDropdown && activeDropdown === item.name && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
-                    <div className="p-4">
-                      <div className="grid grid-cols-1 gap-3">
-                        {item.dropdownItems?.map((dropdownItem) => (
-                          <Link
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            className="flex flex-col p-3 rounded-sm hover:bg-[#feefea] transition-colors group"
-                            onClick={() => setActiveDropdown(null)}
-                          >
-                            <div className="font-medium text-[#1e293b] group-hover:text-[#e27447] transition-colors">
-                              {dropdownItem.name}
-                            </div>
-                            <div className="text-sm text-[#1e293b] opacity-80">
-                              {dropdownItem.description}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-[#feefea]">
-                        <Link
-                          href={item.href}
-                          className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#e27447] hover:bg-[#e27447]/10 rounded-sm transition-colors"
-                          onClick={() => setActiveDropdown(null)}
-                        >
-                          View All Boards
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
                 )}
               </div>
             ))}
@@ -231,7 +229,7 @@ export function Header() {
                           className="block text-sm text-accent hover:text-accent/80 transition-colors font-medium"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          View All Boards
+                          {item.name === "Courses" ? "View All Boards" : "View All Templates"}
                         </Link>
                       </div>
                     </div>

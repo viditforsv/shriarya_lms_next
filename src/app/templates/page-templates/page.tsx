@@ -2,63 +2,85 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Layout, FileText, Users, ArrowRight, Lock, User } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 export default function PageTemplatesIndex() {
   const pageTemplates = [
     {
       name: "Landing Page",
-      href: "/templates/page-templates/landing",
-      badge: "Popular",
-      description: "Modern landing page with hero section, features, and call-to-action",
-      icon: <Layout className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/landing"
     },
     {
       name: "About Page",
-      href: "/templates/page-templates/about",
-      badge: "New",
-      description: "Professional about page with company information, team, and mission",
-      icon: <Users className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/about"
     },
     {
       name: "Contact Page",
-      href: "/templates/page-templates/contact",
-      badge: "Featured",
-      description: "Contact form with company information, map, and FAQ section",
-      icon: <FileText className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/contact"
     },
     {
       name: "Pricing Page",
-      href: "/templates/page-templates/pricing",
-      description: "Multiple pricing tiers with feature comparison and FAQ",
-      icon: <Layout className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/pricing"
     },
     {
       name: "Login Page",
-      href: "/templates/page-templates/login",
-      badge: "New",
-      description: "Professional login form with social login options and validation",
-      icon: <Lock className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/login"
     },
     {
       name: "Signup Page",
-      href: "/templates/page-templates/signup",
-      badge: "New",
-      description: "Comprehensive signup form with password requirements and terms",
-      icon: <User className="w-8 h-8 text-[#e27447]" />
+      href: "/templates/page-templates/signup"
+    },
+    {
+      name: "FAQ Page",
+      href: "/templates/page-templates/faq"
+    },
+    {
+      name: "Privacy Policy",
+      href: "/templates/page-templates/privacy"
+    },
+    {
+      name: "Terms of Service",
+      href: "/templates/page-templates/terms"
+    },
+    {
+      name: "Blog Listing",
+      href: "/templates/page-templates/blog"
+    },
+    {
+      name: "Blog Post",
+      href: "/templates/page-templates/blog-post"
+    },
+    {
+      name: "Portfolio",
+      href: "/templates/page-templates/portfolio"
+    },
+    {
+      name: "Services",
+      href: "/templates/page-templates/services"
+    },
+    {
+      name: "Team Page",
+      href: "/templates/page-templates/team"
+    },
+    {
+      name: "Testimonials",
+      href: "/templates/page-templates/testimonials"
+    },
+    {
+      name: "404 Error",
+      href: "/templates/page-templates/404"
     }
   ]
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
-        <div className="mb-12">
+        <div className="mb-8">
           <Link 
             href="/templates" 
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Templates
@@ -66,43 +88,29 @@ export default function PageTemplatesIndex() {
         </div>
 
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-[#1e293b] mb-4">Page Templates</h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Professional page templates designed for businesses, portfolios, and educational platforms. 
-            Each template is fully responsive and ready for customization.
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold text-[#1e293b] mb-2">Page Templates</h1>
+          <p className="text-muted-foreground">
+            Internal page templates for quick reference and development
           </p>
         </div>
 
-        {/* Templates Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {/* Templates Grid - 4 columns on desktop for better space usage */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {pageTemplates.map((template, index) => (
-            <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-[#feefea] hover:border-[#e27447]">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-[#feefea] rounded-full flex items-center justify-center">
-                    {template.icon}
-                  </div>
-                  {template.badge && (
-                    <Badge className="bg-[#feefea] text-[#e27447] border-[#e27447]">
-                      {template.badge}
-                    </Badge>
-                  )}
-                </div>
-                <CardTitle className="text-xl text-[#1e293b]">{template.name}</CardTitle>
+            <Card key={index} className="hover:shadow-md transition-all duration-200 border-[#feefea] hover:border-[#e27447]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
               </CardHeader>
-              <CardContent className="pt-0">
-                <CardDescription className="mb-6 text-[#4a6f73]">
-                  {template.description}
-                </CardDescription>
+              <CardContent className="pt-0 pb-4">
                 <Link href={template.href}>
                   <Button 
-                    size="lg" 
+                    size="sm" 
                     variant="outline" 
-                    className="w-full border-[#1e293b] hover:bg-[#1e293b] hover:text-white transition-colors"
+                    className="w-full border-[#1e293b] hover:bg-[#1e293b] hover:text-white transition-colors text-xs"
                   >
-                    View Template
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    View
+                    <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
                 </Link>
               </CardContent>
@@ -110,24 +118,9 @@ export default function PageTemplatesIndex() {
           ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="text-center mt-20">
-          <Card className="p-8 bg-gradient-to-br from-[#feefea] to-[#fffefd] border-[#e27447] max-w-2xl mx-auto">
-            <CardContent>
-              <h3 className="text-2xl font-bold text-[#1e293b] mb-4">Need a Custom Page?</h3>
-              <p className="text-[#1e293b] mb-6">
-                Can&apos;t find the perfect template? We can create custom pages tailored to your specific needs.
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
-                  Request Custom Page
-                </Button>
-                <Button variant="outline" className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
-                  Contact Us
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Quick Stats */}
+        <div className="mt-12 text-center text-sm text-muted-foreground">
+          {pageTemplates.length} page templates available
         </div>
       </div>
     </div>

@@ -20,14 +20,167 @@ export default function Class10MathematicsPage() {
   const [courseProgress, setCourseProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['real-numbers']))
+  const [courseContent, setCourseContent] = useState<Array<{
+    id: string
+    title: string
+    lectures: number
+    duration: string
+    lessons: Array<{
+      id: string
+      title: string
+      duration: string
+      type: 'video' | 'document' | 'question' | 'practice'
+      hasPreview: boolean
+      isLocked: boolean
+      isCompleted: boolean
+    }>
+  }>>([])
 
-  // Simulate course progress (replace with actual data)
+  // Simulate course progress and set course content (replace with actual data)
   useEffect(() => {
     if (user) {
       // Simulate fetching user progress
       setCourseProgress(35) // 35% completion
     }
-  }, [user])
+
+    // Set course content with current enrollment state
+    const content = [
+      {
+        id: "real-numbers",
+        title: "Real Numbers & Algebra",
+        lectures: 8,
+        duration: "6 hours",
+        lessons: [
+          {
+            id: "1",
+            title: "Introduction to Real Numbers",
+            duration: "45:20",
+            type: "video" as const,
+            hasPreview: true,
+            isLocked: false,
+            isCompleted: true
+          },
+          {
+            id: "2",
+            title: "Euclid's Division Algorithm",
+            duration: "52:15",
+            type: "document" as const,
+            hasPreview: true,
+            isLocked: false,
+            isCompleted: true
+          },
+          {
+            id: "3",
+            title: "Fundamental Theorem of Arithmetic",
+            duration: "38:45",
+            type: "question" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "4",
+            title: "Real Numbers Practice Problems",
+            duration: "25:30",
+            type: "practice" as const,
+            hasPreview: false,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          }
+        ]
+      },
+      {
+        id: "polynomials",
+        title: "Polynomials & Equations",
+        lectures: 10,
+        duration: "8 hours",
+        lessons: [
+          {
+            id: "5",
+            title: "Introduction to Polynomials",
+            duration: "40:15",
+            type: "video" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "6",
+            title: "Polynomial Division",
+            duration: "55:30",
+            type: "video" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "7",
+            title: "Quadratic Equations",
+            duration: "48:20",
+            type: "document" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "8",
+            title: "Polynomial Practice Problems",
+            duration: "30:45",
+            type: "practice" as const,
+            hasPreview: false,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          }
+        ]
+      },
+      {
+        id: "geometry",
+        title: "Geometry & Trigonometry",
+        lectures: 12,
+        duration: "10 hours",
+        lessons: [
+          {
+            id: "9",
+            title: "Coordinate Geometry Basics",
+            duration: "42:15",
+            type: "video" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "10",
+            title: "Distance Formula",
+            duration: "35:20",
+            type: "video" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "11",
+            title: "Trigonometry Introduction",
+            duration: "50:10",
+            type: "document" as const,
+            hasPreview: true,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          },
+          {
+            id: "12",
+            title: "Geometry Practice Problems",
+            duration: "28:30",
+            type: "practice" as const,
+            hasPreview: false,
+            isLocked: !isEnrolled,
+            isCompleted: false
+          }
+        ]
+      }
+    ]
+    
+    setCourseContent(content)
+  }, [user, isEnrolled])
 
   const handleEnroll = async () => {
     if (!user) {
@@ -107,95 +260,7 @@ export default function Class10MathematicsPage() {
     // Add your preview logic here
   }
 
-  const courseContent = [
-    {
-      id: "real-numbers",
-      title: "Real Numbers & Algebra",
-      lectures: 8,
-      duration: "6 hours",
-      lessons: [
-        {
-          id: "1",
-          title: "Introduction to Real Numbers",
-          duration: "45:20",
-          type: "video" as const,
-          hasPreview: true,
-          isLocked: false,
-          isCompleted: true
-        },
-        {
-          id: "2",
-          title: "Euclid's Division Algorithm",
-          duration: "52:15",
-          type: "document" as const,
-          hasPreview: true,
-          isLocked: false,
-          isCompleted: true
-        },
-        {
-          id: "3",
-          title: "Fundamental Theorem of Arithmetic",
-          duration: "38:45",
-          type: "question" as const,
-          hasPreview: true,
-          isLocked: !isEnrolled,
-          isCompleted: false
-        },
-        {
-          id: "4",
-          title: "Real Numbers Practice Problems",
-          duration: "25:30",
-          type: "practice" as const,
-          hasPreview: false,
-          isLocked: !isEnrolled,
-          isCompleted: false
-        }
-      ]
-    },
-    {
-      id: "polynomials",
-      title: "Polynomials & Equations",
-      lectures: 10,
-      duration: "8 hours",
-      lessons: [
-        {
-          id: "5",
-          title: "Introduction to Polynomials",
-          duration: "40:15",
-          type: "video" as const,
-          hasPreview: true,
-          isLocked: !isEnrolled,
-          isCompleted: false
-        },
-        {
-          id: "6",
-          title: "Quadratic Equations",
-          duration: "55:30",
-          type: "video" as const,
-          hasPreview: true,
-          isLocked: !isEnrolled,
-          isCompleted: false
-        }
-      ]
-    },
-    {
-      id: "geometry",
-      title: "Geometry & Triangles",
-      lectures: 12,
-      duration: "10 hours",
-      lessons: [
-        {
-          id: "7",
-          title: "Properties of Triangles",
-          duration: "48:20",
-          type: "video" as const,
-          hasPreview: true,
-          isLocked: !isEnrolled,
-          isCompleted: false
-        }
-      ]
-    }
-  ]
+
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BookOpen },
@@ -460,28 +525,34 @@ export default function Class10MathematicsPage() {
                   </div>
                 )}
 
-                {activeTab === 'content' && (
-                  <div>
-                    <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
-                    <p className="text-muted-foreground mb-6">
-                      Click on any section to expand and view the lessons. {!isEnrolled && "Enroll in the course to access all content."}
-                    </p>
-                    <div className="space-y-4">
-                                             {courseContent.map((section) => (
-                        <CourseContentSection
-                          key={section.id}
-                          title={section.title}
-                          lectures={section.lectures}
-                          duration={section.duration}
-                          lessons={section.lessons}
-                          isExpanded={expandedSections.has(section.id)}
-                          onToggle={() => toggleSection(section.id)}
-                          className="mb-4"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+                                 {activeTab === 'content' && (
+                   <div>
+                     <h2 className="text-3xl font-bold text-[#1e293b] mb-8">Course Content</h2>
+                     <p className="text-muted-foreground mb-6">
+                       Click on any section to expand and view the lessons. {!isEnrolled && "Enroll in the course to access all content."}
+                     </p>
+                     {courseContent.length === 0 ? (
+                       <div className="flex items-center justify-center py-12">
+                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447]"></div>
+                       </div>
+                     ) : (
+                       <div className="space-y-4">
+                         {courseContent.map((section) => (
+                           <CourseContentSection
+                             key={section.id}
+                             title={section.title}
+                             lectures={section.lectures}
+                             duration={section.duration}
+                             lessons={section.lessons}
+                             isExpanded={expandedSections.has(section.id)}
+                             onToggle={() => toggleSection(section.id)}
+                             className="mb-4"
+                           />
+                         ))}
+                       </div>
+                     )}
+                   </div>
+                 )}
 
                 {activeTab === 'instructor' && (
                   <div>

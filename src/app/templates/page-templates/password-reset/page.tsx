@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
+import { safeApostropheText } from '@/lib/utils'
 
 export default function PasswordResetPage() {
   const [isResetMode, setIsResetMode] = useState(true)
@@ -100,7 +101,7 @@ export default function PasswordResetPage() {
                 Reset Password
               </CardTitle>
               <CardDescription>
-                Enter your email address and we'll send you a link to reset your password.
+                {safeApostropheText("Enter your email address and we'll send you a link to reset your password.")}
               </CardDescription>
             </CardHeader>
             <CardContent>

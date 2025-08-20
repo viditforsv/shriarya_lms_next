@@ -51,10 +51,7 @@ export default function Home() {
   if (user) {
     return (
       <div className="min-h-screen">
-        {/* Breadcrumbs */}
-        <div className="container mx-auto px-4 pt-8">
-          {/* Removed Breadcrumb component */}
-        </div>
+        {/* Breadcrumbs removed to eliminate gap */}
         
         {/* Hero Section for Authenticated Users */}
         <section className="bg-gradient-to-br from-secondary to-muted py-20">
@@ -149,10 +146,7 @@ export default function Home() {
   // Original content for unauthenticated users
   return (
     <div className="min-h-screen">
-      {/* Breadcrumbs */}
-      <div className="container mx-auto px-4 pt-8">
-        {/* Removed Breadcrumb component */}
-      </div>
+      {/* Breadcrumbs removed to eliminate gap */}
       
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-secondary to-muted py-20">

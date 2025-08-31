@@ -2,54 +2,73 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, BookOpen, FileText, Users, ArrowRight } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 export default function CourseTemplatesIndex() {
   const courseTemplates = [
+    // Phase 1 (MVP - Launch) - Core Course Components
     {
       name: "Course Overview",
       href: "/templates/course-templates/course-overview",
-      badge: "Featured",
-      description: "Course introduction and syllabus overview template",
-      icon: <BookOpen className="w-8 h-8 text-[#e27447]" />
+      phase: "Phase 1 - MVP"
     },
     {
       name: "Course Page",
       href: "/templates/course-templates/course-page",
-      badge: "New",
-      description: "Complete course page with sidebar and content sections",
-      icon: <FileText className="w-8 h-8 text-[#e27447]" />
+      phase: "Phase 1 - MVP"
     },
     {
       name: "Lesson Template",
       href: "/templates/course-templates/lesson",
-      description: "Individual lesson layout with content and navigation",
-      icon: <BookOpen className="w-8 h-8 text-[#e27447]" />
+      phase: "Phase 1 - MVP"
     },
+    
+    // Phase 2 (Growth) - Learning Enhancements
     {
       name: "Quiz Template",
       href: "/templates/course-templates/quiz",
-      description: "Interactive quiz and assessment template",
-      icon: <FileText className="w-8 h-8 text-[#e27447]" />
+      phase: "Phase 2 - Growth"
     },
     {
-      name: "Certificate",
+      name: "Assignments Template",
+      href: "/templates/course-templates/assignments",
+      phase: "Phase 2 - Growth"
+    },
+    {
+      name: "Question Bank",
+      href: "/templates/course-templates/question-bank",
+      phase: "Phase 2 - Growth"
+    },
+    {
+      name: "Certificate Template",
       href: "/templates/course-templates/certificate",
-      description: "Completion certificate design template",
-      icon: <Users className="w-8 h-8 text-[#e27447]" />
+      phase: "Phase 2 - Growth"
+    },
+    
+    // Phase 3 (Scale) - Advanced Features
+    {
+      name: "Performance Analytics",
+      href: "/templates/course-templates/performance-analytics",
+      phase: "Phase 3 - Scale"
     }
   ]
 
+  // Group templates by phase
+  const groupedTemplates = {
+    "Phase 1 - MVP": courseTemplates.filter(t => t.phase === "Phase 1 - MVP"),
+    "Phase 2 - Growth": courseTemplates.filter(t => t.phase === "Phase 2 - Growth"),
+    "Phase 3 - Scale": courseTemplates.filter(t => t.phase === "Phase 3 - Scale")
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
-        <div className="mb-12">
+        <div className="mb-8">
           <Link 
             href="/templates" 
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Templates
@@ -57,68 +76,46 @@ export default function CourseTemplatesIndex() {
         </div>
 
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-[#1e293b] mb-4">Course Templates</h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Educational templates designed specifically for learning management systems, online courses, 
-            and educational platforms. Each template follows best practices for educational content.
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold text-[#1e293b] mb-2">Course Templates</h1>
+          <p className="text-muted-foreground">
+            Educational course templates organized by development phases for learning management systems
           </p>
         </div>
 
-        {/* Templates Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {courseTemplates.map((template, index) => (
-            <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-[#feefea] hover:border-[#e27447]">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-[#feefea] rounded-full flex items-center justify-center">
-                    {template.icon}
-                  </div>
-                  {template.badge && (
-                    <Badge className="bg-[#feefea] text-[#e27447] border-[#e27447]">
-                      {template.badge}
-                    </Badge>
-                  )}
-                </div>
-                <CardTitle className="text-xl text-[#1e293b]">{template.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <CardDescription className="mb-6 text-[#4a6f73]">
-                  {template.description}
-                </CardDescription>
-                <Link href={template.href}>
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="w-full border-[#1e293b] hover:bg-[#1e293b] hover:text-white transition-colors"
-                  >
-                    View Template
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {/* Templates by Phase */}
+        {Object.entries(groupedTemplates).map(([phase, templates]) => (
+          <div key={phase} className="mb-12">
+            <h2 className="text-xl font-semibold text-[#1e293b] mb-4 border-b border-[#feefea] pb-2">
+              {phase}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {templates.map((template, index) => (
+                <Card key={index} className="hover:shadow-md transition-all duration-200 border-[#feefea] hover:border-[#e27447]">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 pb-4">
+                    <Link href={template.href}>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full border-[#1e293b] hover:bg-[#1e293b] hover:text-white transition-colors text-xs"
+                      >
+                        View
+                        <ArrowRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
 
-        {/* CTA Section */}
-        <div className="text-center mt-20">
-          <Card className="p-8 bg-gradient-to-br from-[#feefea] to-[#fffefd] border-[#e27447] max-w-2xl mx-auto">
-            <CardContent>
-              <h3 className="text-2xl font-bold text-[#1e293b] mb-4">Need a Custom Course Template?</h3>
-              <p className="text-[#1e293b] mb-6">
-                Can&apos;t find the perfect course template? We can create custom educational layouts tailored to your curriculum.
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
-                  Request Custom Template
-                </Button>
-                <Button variant="outline" className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
-                  Contact Us
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Quick Stats */}
+        <div className="mt-12 text-center text-sm text-muted-foreground">
+          {courseTemplates.length} course templates available across {Object.keys(groupedTemplates).length} phases
         </div>
       </div>
     </div>

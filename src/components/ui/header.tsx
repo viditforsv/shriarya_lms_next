@@ -41,7 +41,8 @@ export function Header() {
       dropdownItems: [
         { name: "Page Templates", href: "/templates/page-templates", description: "Landing pages, about pages, contact forms" },
         { name: "Course Templates", href: "/templates/course-templates", description: "Course pages, lesson layouts, assessments" },
-        { name: "Dashboard Templates", href: "/templates/dashboard-templates", description: "Student, instructor, and admin dashboards" }
+        { name: "Dashboard Templates", href: "/templates/dashboard-templates", description: "Student, instructor, and admin dashboards" },
+        { name: "Scale up Templates", href: "/templates/scale-up-templates", description: "Advanced templates for scaling and enterprise" }
       ]
     },
   ]

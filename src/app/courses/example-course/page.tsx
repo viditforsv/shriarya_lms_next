@@ -52,7 +52,7 @@ export default function ExampleCoursePage() {
         <Card>
           <CardHeader>
             <CardTitle>Course Content</CardTitle>
-            <CardDescription>What you'll learn in this course</CardDescription>
+            <CardDescription>What you&apos;ll learn in this course</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

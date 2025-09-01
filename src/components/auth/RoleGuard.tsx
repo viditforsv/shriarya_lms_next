@@ -19,7 +19,7 @@ export function RoleGuard({
   fallback = null,
   showForPublic = false 
 }: RoleGuardProps) {
-  const { user, profile, loading } = useAuth()
+  const { user, profile, loading, hasPermission } = useAuth()
 
   // Show loading state
   if (loading) {
@@ -43,7 +43,6 @@ export function RoleGuard({
 
   // Check permission-based access
   if (requiredPermission) {
-    const { hasPermission } = useAuth()
     if (!hasPermission(requiredPermission)) {
       return <>{fallback}</>
     }

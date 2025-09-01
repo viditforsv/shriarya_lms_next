@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Award, BookOpen, Globe, Target, Heart } from "lucide-react"
+import { Award, BookOpen, Globe, Target, Heart } from "lucide-react"
 import Link from "next/link"
 
 export default function AboutPage() {

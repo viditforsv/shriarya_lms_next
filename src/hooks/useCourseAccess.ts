@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext'
-import { canAccessCourse, getCourseAccessType, CourseAccessConfig } from '@/lib/access-control'
+import { canAccessCourse, getCourseAccessType } from '@/lib/access-control'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 

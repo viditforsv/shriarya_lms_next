@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { RoleGuard, AdminOnly, StudentOnly } from '@/components/auth/RoleGuard'
+import { AdminOnly, StudentOnly } from '@/components/auth/RoleGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'

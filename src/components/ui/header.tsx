@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronDown, Search } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
-import { NAVIGATION_MENU } from "@/lib/access-control"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

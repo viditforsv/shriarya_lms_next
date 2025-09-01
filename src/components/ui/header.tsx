@@ -4,12 +4,13 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ChevronDown, Search } from "lucide-react"
+import { ChevronDown, Search, User, LogOut, Settings } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   // Only use auth context after component mounts (client-side only)
   const authContext = useAuth()
@@ -20,6 +21,20 @@ export function Header() {
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isUserDropdownOpen && !(event.target as Element).closest('.user-dropdown')) {
+        setIsUserDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isUserDropdownOpen])
 
   // Get navigation based on user role
   const getNavigation = () => {
@@ -98,7 +113,7 @@ export function Header() {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Shrivyapar</h1>
+              <h1 className="text-xl font-bold text-foreground">Shriarya</h1>
             </div>
           </Link>
 
@@ -180,16 +195,64 @@ export function Header() {
 
             {/* User Actions */}
             {isMounted && user ? (
-              <div className="flex items-center space-x-4">
-                <Badge variant="secondary" className="text-xs">
-                  {user.email}
-                </Badge>
-                <Link href="/dashboard">
-                  <Button size="sm">Dashboard</Button>
-                </Link>
-                <Button size="sm" variant="outline" onClick={signOut || (() => {})}>
-                  Sign Out
-                </Button>
+              <div className="relative user-dropdown">
+                <button
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
+                >
+                  <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                    <User className="w-4 h-4 text-accent" />
+                  </div>
+                  <span className="hidden md:block">{user.email}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* User Dropdown Menu */}
+                {isUserDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-[#feefea]">
+                        <p className="text-sm font-medium text-[#1e293b]">{user.email}</p>
+                        <p className="text-xs text-muted-foreground">Signed in</p>
+                      </div>
+                      
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                        Dashboard
+                      </Link>
+                      
+                      <Link
+                        href="/profile"
+                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        <User className="w-4 h-4 mr-3 text-[#e27447]" />
+                        Profile
+                      </Link>
+                      
+                      <div className="border-t border-[#feefea] mt-2 pt-2">
+                        <button
+                          onClick={async () => {
+                            try {
+                              await signOut?.()
+                              setIsUserDropdownOpen(false)
+                            } catch (error) {
+                              console.error('Sign out error:', error)
+                            }
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                        >
+                          <LogOut className="w-4 h-4 mr-3 text-[#e27447]" />
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -289,7 +352,18 @@ export function Header() {
                     <Link href="/dashboard">
                       <Button size="sm" className="w-full">Dashboard</Button>
                     </Link>
-                    <Button size="sm" variant="outline" className="w-full" onClick={signOut || (() => {})}>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={async () => {
+                        try {
+                          await signOut?.()
+                        } catch (error) {
+                          console.error('Sign out error:', error)
+                        }
+                      }}
+                    >
                       Sign Out
                     </Button>
                   </div>

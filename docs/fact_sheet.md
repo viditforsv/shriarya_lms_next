@@ -1,4 +1,7 @@
-company name: Shrivyapar Private Limited
+Name of Portal: Shriarya
+Company name: Shrividhya Classes
+Leagal Name: Shrivyapar Private Limited
+Tagline: Ecosystem of Excellence
 Phone number: +91 - 8130711689
 Emails: contact@shrividhya.in
 Admin email public facing: contact@shrividhya.in

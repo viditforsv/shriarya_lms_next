@@ -21,10 +21,10 @@ export function Footer() {
                   height={32}
                 />
               </div>
-              <h3 className="text-xl font-bold text-[#1e293b]">Shrivyapar Private Limited</h3>
+              <h3 className="text-xl font-bold text-[#1e293b]">Shrividhya Classes</h3>
             </div>
             <p className="text-[#1e293b] text-sm">
-              A modern learning management system designed to provide quality education 
+              Ecosystem of Excellence - A modern learning management system designed to provide quality education 
               through interactive courses, comprehensive learning materials, and expert guidance.
             </p>
             <div className="flex space-x-2">
@@ -91,7 +91,7 @@ export function Footer() {
               </p>
               <p className="text-[#e27447] font-medium">📞 +91 - 8130711689</p>
               <div className="text-[#1e293b]">
-                <p className="font-semibold text-[#1e293b]">Shrividhya Learning Platform</p>
+                <p className="font-semibold text-[#1e293b]">Shrividhya Classes</p>
                 <p>2919P, Ground Floor</p>
                 <p>Sushant Lok 2, Sector 57</p>
                 <p>Gurugram, Haryana 122003, IN</p>

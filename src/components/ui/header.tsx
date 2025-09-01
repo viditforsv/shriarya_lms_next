@@ -88,7 +88,7 @@ export function Header() {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
               <Image 
                 src="/images/logo.webp" 
@@ -100,7 +100,7 @@ export function Header() {
             <div>
               <h1 className="text-xl font-bold text-foreground">Shrivyapar</h1>
             </div>
-          </div>
+          </Link>
 
           {/* Categories Dropdown */}
           <div className="hidden lg:flex items-center">

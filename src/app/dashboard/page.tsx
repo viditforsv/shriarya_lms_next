@@ -21,80 +21,84 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Student Dashboard Content */}
         <StudentOnly>
-          <Card>
-            <CardHeader>
-              <CardTitle>My Courses</CardTitle>
-              <CardDescription>View your enrolled courses</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/courses/enrolled">
-                <Button className="w-full">View Courses</Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>My Courses</CardTitle>
+                <CardDescription>View your enrolled courses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/courses/enrolled">
+                  <Button className="w-full">View Courses</Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Progress</CardTitle>
-              <CardDescription>Track your learning progress</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/progress">
-                <Button className="w-full">View Progress</Button>
-              </Link>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Progress</CardTitle>
+                <CardDescription>Track your learning progress</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/progress">
+                  <Button className="w-full">View Progress</Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Assignments</CardTitle>
-              <CardDescription>Check your pending assignments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/assignments">
-                <Button className="w-full">View Assignments</Button>
-              </Link>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Assignments</CardTitle>
+                <CardDescription>Check your pending assignments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/assignments">
+                  <Button className="w-full">View Assignments</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </>
         </StudentOnly>
 
         {/* Admin Dashboard Content */}
         <AdminOnly>
-          <Card>
-            <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Manage students and admins</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/admin/users">
-                <Button className="w-full">Manage Users</Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>Manage students and admins</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/admin/users">
+                  <Button className="w-full">Manage Users</Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Management</CardTitle>
-              <CardDescription>Create and manage courses</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/admin/courses">
-                <Button className="w-full">Manage Courses</Button>
-              </Link>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Course Management</CardTitle>
+                <CardDescription>Create and manage courses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/admin/courses">
+                  <Button className="w-full">Manage Courses</Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Analytics</CardTitle>
-              <CardDescription>View platform analytics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/admin/analytics">
-                <Button className="w-full">View Analytics</Button>
-              </Link>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Analytics</CardTitle>
+                <CardDescription>View platform analytics</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/admin/analytics">
+                  <Button className="w-full">View Analytics</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </>
         </AdminOnly>
 
         {/* Common Dashboard Content */}

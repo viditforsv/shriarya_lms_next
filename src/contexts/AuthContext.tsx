@@ -48,6 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error('Error fetching profile:', error)
+        
+        // If profile doesn't exist, create it
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found, creating new profile for user:', userId)
+          const newProfile = await createProfile(userId)
+          console.log('Created profile:', newProfile)
+          return newProfile
+        }
+        
         return null
       }
 
@@ -61,6 +70,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return data as UserProfile
     } catch (error) {
       console.error('Error fetching profile:', error)
+      return null
+    }
+  }
+
+  // Create user profile if it doesn't exist
+  const createProfile = async (userId: string) => {
+    try {
+      // Get user data from auth.users
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !userData.user) {
+        console.error('Error getting user data:', userError)
+        return null
+      }
+
+      const user = userData.user
+      const email = user.email || ''
+      
+      // Determine role based on email
+      let role: UserRole = 'student'
+      if (email === 'vidit@shrividhya.in') {
+        role = 'admin'
+      }
+
+      // Extract name from user metadata
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
+      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
+      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
+
+      // Insert new profile
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          role: role
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error creating profile:', error)
+        console.error('Profile data attempted:', {
+          id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          role: role
+        })
+        return null
+      }
+
+      console.log('Successfully created profile:', data)
+
+      // Cache the role in session metadata
+      await supabase.auth.updateUser({
+        data: { role: role }
+      })
+
+      return data as UserProfile
+    } catch (error) {
+      console.error('Error creating profile:', error)
       return null
     }
   }
@@ -137,17 +208,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       // Get initial session
       const getSession = async () => {
-        const { data: { session } } = await supabase.auth.getSession()
-        setSession(session)
-        setUser(session?.user ?? null)
-        
-        // Fetch profile if user exists
-        if (session?.user) {
-          const userProfile = await fetchProfile(session.user.id)
-          setProfile(userProfile)
+        try {
+          console.log('Getting initial session...')
+          
+          // Try to get current user first
+          const { data: { user: currentUser } } = await supabase.auth.getUser()
+          console.log('Current user result:', { user: !!currentUser, email: currentUser?.email })
+          
+          // Then get session
+          const { data: { session } } = await supabase.auth.getSession()
+          console.log('Session result:', { session: !!session, user: session?.user?.email })
+          
+          // Use current user if session is not available
+          const user = session?.user || currentUser
+          setSession(session)
+          setUser(user)
+          
+          // Fetch profile if user exists
+          if (user) {
+            const userProfile = await fetchProfile(user.id)
+            setProfile(userProfile)
+          }
+        } catch (error) {
+          console.error('Error getting session:', error)
+        } finally {
+          setLoading(false)
         }
-        
-        setLoading(false)
       }
 
       getSession()
@@ -155,18 +241,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Listen for auth changes
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
-          setSession(session)
-          setUser(session?.user ?? null)
-          
-          // Fetch profile if user exists
-          if (session?.user) {
-            const userProfile = await fetchProfile(session.user.id)
-            setProfile(userProfile)
-          } else {
-            setProfile(null)
+          try {
+            setSession(session)
+            setUser(session?.user ?? null)
+            
+            // Fetch profile if user exists
+            if (session?.user) {
+              const userProfile = await fetchProfile(session.user.id)
+              setProfile(userProfile)
+            } else {
+              setProfile(null)
+            }
+          } catch (error) {
+            console.error('Error in auth state change:', error)
+          } finally {
+            setLoading(false)
           }
-          
-          setLoading(false)
         }
       )
 
@@ -199,8 +289,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    console.log('SignOut function called')
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('SignOut error:', error)
+        throw error
+      }
+      console.log('SignOut successful')
+    } catch (error) {
+      console.error('SignOut failed:', error)
+      throw error
+    }
   }
 
   const signInWithGoogle = async () => {
@@ -224,7 +324,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     profile,
-    loading: !mounted || loading,
+    loading: !mounted,
     signIn,
     signUp,
     signOut,

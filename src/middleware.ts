@@ -28,16 +28,16 @@ export async function middleware(req: NextRequest) {
   
   const { pathname } = req.nextUrl
 
-  // Get session
-  const { data: { session } } = await supabase.auth.getSession()
+  // Get user (more secure than getSession)
+  const { data: { user } } = await supabase.auth.getUser()
 
   // Check if user can access this route
-  const isAuthenticated = !!session
+  const isAuthenticated = !!user
   let userRole: UserRole | undefined
   
-  if (session?.user) {
-    // Try cache first (session metadata)
-    userRole = session.user.user_metadata?.role as UserRole
+  if (user) {
+    // Try cache first (user metadata)
+    userRole = user.user_metadata?.role as UserRole
     
     // Fallback to DB if missing from cache
     if (!userRole) {
@@ -45,7 +45,7 @@ export async function middleware(req: NextRequest) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('role')
-          .eq('id', session.user.id)
+          .eq('id', user.id)
           .single()
         userRole = profile?.role as UserRole
         

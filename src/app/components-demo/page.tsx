@@ -2609,8 +2609,7 @@ export default function ComponentsDemoPage() {
   const sidebarItems: SidebarItem[] = tabs.map((tab) => ({
     id: tab.id,
     label: tab.label,
-    icon: tab.icon,
-    onClick: () => setActiveTab(tab.id)
+    icon: tab.icon
   }))
 
   return (

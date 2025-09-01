@@ -12,11 +12,19 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  // Only use auth context after component mounts (client-side only)
+  // Use auth context directly
   const authContext = useAuth()
-  const user = isMounted ? authContext?.user : null
-  const profile = isMounted ? authContext?.profile : null
-  const signOut = isMounted ? authContext?.signOut : undefined
+  const user = authContext?.user
+  const profile = authContext?.profile
+  const signOut = authContext?.signOut
+
+  // Debug logging
+  console.log('Header - Auth state:', { 
+    user: user?.email, 
+    profile: profile?.role,
+    loading: authContext?.loading,
+    userExists: !!user
+  })
 
   useEffect(() => {
     setIsMounted(true)
@@ -25,7 +33,8 @@ export function Header() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isUserDropdownOpen && !(event.target as Element).closest('.user-dropdown')) {
+      const target = event.target as Element
+      if (isUserDropdownOpen && !target.closest('.user-dropdown')) {
         setIsUserDropdownOpen(false)
       }
     }
@@ -194,7 +203,7 @@ export function Header() {
           <div className="flex items-center space-x-4">
 
             {/* User Actions */}
-            {isMounted && user ? (
+            {user ? (
               <div className="relative user-dropdown">
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
@@ -236,9 +245,13 @@ export function Header() {
                       
                       <div className="border-t border-[#feefea] mt-2 pt-2">
                         <button
-                          onClick={async () => {
+                          onClick={async (e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            console.log('Sign out button clicked')
                             try {
                               await signOut?.()
+                              console.log('Sign out completed successfully')
                               setIsUserDropdownOpen(false)
                             } catch (error) {
                               console.error('Sign out error:', error)
@@ -346,7 +359,7 @@ export function Header() {
               ))}
 
               <div className="pt-4 pb-3 border-t border-[#feefea]">
-                {isMounted && user ? (
+                {user ? (
                   <div className="space-y-2 px-3">
                     <div className="text-sm text-foreground">{user.email}</div>
                     <Link href="/dashboard">
@@ -356,9 +369,13 @@ export function Header() {
                       size="sm" 
                       variant="outline" 
                       className="w-full" 
-                      onClick={async () => {
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        console.log('Mobile sign out button clicked')
                         try {
                           await signOut?.()
+                          console.log('Mobile sign out completed successfully')
                         } catch (error) {
                           console.error('Sign out error:', error)
                         }

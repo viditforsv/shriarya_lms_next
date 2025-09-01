@@ -21,7 +21,7 @@ export function Footer() {
                   height={32}
                 />
               </div>
-              <h3 className="text-xl font-bold text-[#1e293b]">ShriArya LMS</h3>
+              <h3 className="text-xl font-bold text-[#1e293b]">Shrivyapar Private Limited</h3>
             </div>
             <p className="text-[#1e293b] text-sm">
               A modern learning management system designed to provide quality education 
@@ -89,12 +89,12 @@ export function Footer() {
                 </svg>
                 <span>contact@shrividhya.in</span>
               </p>
-              <p className="text-[#e27447] font-medium">📞 +91 8130711689</p>
+              <p className="text-[#e27447] font-medium">📞 +91 - 8130711689</p>
               <div className="text-[#1e293b]">
                 <p className="font-semibold text-[#1e293b]">Shrividhya Learning Platform</p>
                 <p>2919P, Ground Floor</p>
                 <p>Sushant Lok 2, Sector 57</p>
-                <p>Gurugram, Haryana 122002, IN</p>
+                <p>Gurugram, Haryana 122003, IN</p>
               </div>
             </div>
             <div className="space-y-2">
@@ -109,7 +109,7 @@ export function Footer() {
         <div className="border-t border-[#feefea] mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-[#1e293b]">
-              © 2024 ShriArya Learning Solutions. All rights reserved.
+              © 2024 Shrivyapar Private Limited. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm text-[#1e293b]">
               <Link href="/privacy" className="hover:text-[#e27447] transition-colors">Privacy Policy</Link>

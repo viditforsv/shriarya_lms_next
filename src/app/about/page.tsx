@@ -13,7 +13,7 @@ export default function AboutPage() {
         <section className="py-20 bg-gradient-to-br from-secondary to-muted mb-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-5xl font-bold text-foreground mb-6">
-              About ShriArya LMS
+              About Shrivyapar Private Limited
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               Empowering students with comprehensive learning solutions across CBSE, ICSE, IBDP, and IGCSE curricula. 
@@ -28,7 +28,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-[#1e293b] mb-6">Our Mission</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                At ShriArya LMS, our mission is to democratize education by providing high-quality, 
+                At Shrivyapar Private Limited, our mission is to democratize education by providing high-quality, 
                 curriculum-aligned learning resources to students across India and beyond.
               </p>
               <p className="text-lg text-muted-foreground">

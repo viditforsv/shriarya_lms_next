@@ -98,7 +98,7 @@ export function Header() {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">ShriArya</h1>
+              <h1 className="text-xl font-bold text-foreground">Shrivyapar</h1>
             </div>
           </div>
 

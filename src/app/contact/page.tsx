@@ -60,7 +60,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-[#1e293b] mb-2">Email</h4>
-                    <p className="text-muted-foreground">info@shriarya.com</p>
+                    <p className="text-muted-foreground">contact@shrividhya.in</p>
                                          <p className="text-sm text-muted-foreground">We&apos;ll respond within 24 hours</p>
                   </div>
                 </div>
@@ -71,7 +71,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-[#1e293b] mb-2">Phone</h4>
-                    <p className="text-muted-foreground">+91 98765 43210</p>
+                    <p className="text-muted-foreground">+91 - 8130711689</p>
                     <p className="text-sm text-muted-foreground">Mon-Fri from 9am to 6pm</p>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ export default function ContactPage() {
                     <h4 className="font-semibold text-[#1e293b] mb-2">Office</h4>
                     <p className="text-muted-foreground">2919P, Ground Floor</p>
                     <p className="text-muted-foreground">Sushant Lok 2, Sector 57</p>
-                    <p className="text-sm text-muted-foreground">Gurugram, Haryana 122002, India</p>
+                    <p className="text-sm text-muted-foreground">Gurugram, Haryana 122003, India</p>
                   </div>
                 </div>
 

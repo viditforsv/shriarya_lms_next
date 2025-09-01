@@ -14,7 +14,7 @@ export default function DashboardPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {profile?.first_name || user?.email}
+          Welcome back, {profile?.full_name || user?.email}
         </p>
       </div>
 

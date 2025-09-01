@@ -1,14 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { canAccessRoute, getRedirectPath } from '@/lib/access-control'
+import { UserRole } from '@/types/auth'
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  const supabaseResponse = NextResponse.next({
-    request,
-    headers: request.headers,
-  })
-
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
+  
   // Create a Supabase client configured to use cookies
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,46 +14,67 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return req.cookies.getAll()
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value)
-            supabaseResponse.cookies.set(name, value, options)
+            req.cookies.set(name, value)
+            res.cookies.set(name, value, options)
           })
         },
       },
     }
   )
+  
+  const { pathname } = req.nextUrl
 
-  // Refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
-  await supabase.auth.getUser()
+  // Get session
+  const { data: { session } } = await supabase.auth.getSession()
 
-  // Protected routes
-  const protectedRoutes = ['/dashboard', '/courses', '/profile']
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathname.startsWith(route)
-  )
-
-  if (isProtectedRoute) {
-    const { data: { user } } = await supabase.auth.getUser()
+  // Check if user can access this route
+  const isAuthenticated = !!session
+  let userRole: UserRole | undefined
+  
+  if (session?.user) {
+    // Try cache first (session metadata)
+    userRole = session.user.user_metadata?.role as UserRole
     
-    if (!user) {
-      return NextResponse.redirect(new URL('/auth', request.url))
+    // Fallback to DB if missing from cache
+    if (!userRole) {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+        userRole = profile?.role as UserRole
+        
+        // Cache the role in session metadata for future requests
+        if (userRole) {
+          await supabase.auth.updateUser({
+            data: { role: userRole }
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error)
+      }
+    }
+  }
+  
+  const canAccess = canAccessRoute(pathname, userRole, isAuthenticated)
+  
+  if (!canAccess) {
+    const redirectPath = getRedirectPath(pathname, userRole, isAuthenticated)
+    if (redirectPath) {
+      const redirectUrl = new URL(redirectPath, req.url)
+      if (redirectPath === '/auth') {
+        redirectUrl.searchParams.set('redirectTo', pathname)
+      }
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
-  // Redirect authenticated users away from auth pages
-  if (request.nextUrl.pathname.startsWith('/auth')) {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (user) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-  }
-
-  return supabaseResponse
+  return res
 }
 
 export const config = {
@@ -65,8 +84,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 }

@@ -1,203 +1,131 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { Button } from '@/components/ui/button'
+import { RoleGuard, AdminOnly, StudentOnly } from '@/components/auth/RoleGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { BookOpen, Users, Award, Clock, LogOut } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { unstable_noStore as noStore } from 'next/cache'
-
-// Prevent static generation
-noStore()
-
-// Force dynamic rendering to prevent static generation issues
-export const dynamic = 'force-dynamic'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function DashboardPage() {
-  const { user, loading, signOut } = useAuth()
-  const router = useRouter()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth')
-    }
-  }, [user, loading, router])
-
-  // Prevent hydration issues
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="animate-pulse">
-          <div className="h-20 bg-muted"></div>
-          <div className="container mx-auto px-4 py-4">
-            <div className="h-8 bg-muted rounded-sm mb-4"></div>
-          </div>
-          <div className="container mx-auto px-4 py-8">
-            <div className="grid md:grid-cols-4 gap-6 mb-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-32 bg-muted rounded-sm"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
-  const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
-  }
+  const { user, profile, signOut } = useAuth()
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card shadow-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back, {user.user_metadata?.full_name || user.email}</p>
-            </div>
-            <Button onClick={handleSignOut} variant="outline">
-              <LogOut className="mr-2 h-4 w-4" />
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome back, {profile?.first_name || user?.email}
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Student Dashboard Content */}
+        <StudentOnly>
+          <Card>
+            <CardHeader>
+              <CardTitle>My Courses</CardTitle>
+              <CardDescription>View your enrolled courses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/courses/enrolled">
+                <Button className="w-full">View Courses</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Progress</CardTitle>
+              <CardDescription>Track your learning progress</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/progress">
+                <Button className="w-full">View Progress</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Assignments</CardTitle>
+              <CardDescription>Check your pending assignments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/assignments">
+                <Button className="w-full">View Assignments</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </StudentOnly>
+
+        {/* Admin Dashboard Content */}
+        <AdminOnly>
+          <Card>
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+              <CardDescription>Manage students and admins</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/admin/users">
+                <Button className="w-full">Manage Users</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Course Management</CardTitle>
+              <CardDescription>Create and manage courses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/admin/courses">
+                <Button className="w-full">Manage Courses</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics</CardTitle>
+              <CardDescription>View platform analytics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/admin/analytics">
+                <Button className="w-full">View Analytics</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </AdminOnly>
+
+        {/* Common Dashboard Content */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile</CardTitle>
+            <CardDescription>Manage your account settings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/profile">
+              <Button className="w-full">Edit Profile</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Sign Out</CardTitle>
+            <CardDescription>Sign out of your account</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => signOut()}
+            >
               Sign Out
             </Button>
-          </div>
-        </div>
-      </header>
-
-
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">+2 from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Students</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2,847</div>
-              <p className="text-xs text-muted-foreground">+180 from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Certificates</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">573</div>
-              <p className="text-xs text-muted-foreground">+23 from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Study Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">48h</div>
-              <p className="text-xs text-muted-foreground">+4h from last month</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Courses</CardTitle>
-              <CardDescription>Your latest learning activities</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <BookOpen className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Advanced React Patterns</p>
-                    <p className="text-xs text-gray-500">Progress: 75%</p>
-                  </div>
-                  <Badge variant="secondary">In Progress</Badge>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Award className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">TypeScript Fundamentals</p>
-                    <p className="text-xs text-gray-500">Completed</p>
-                  </div>
-                  <Badge variant="default">Completed</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>What would you like to do?</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Browse Courses
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Users className="mr-2 h-4 w-4" />
-                  Join Study Group
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Award className="mr-2 h-4 w-4" />
-                  View Certificates
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

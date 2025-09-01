@@ -22,7 +22,8 @@ export function SignUpForm() {
     setError('')
 
     try {
-      await signUp(email, password, fullName)
+      // All new users are automatically registered as students
+      await signUp(email, password, fullName, 'student')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

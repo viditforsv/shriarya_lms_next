@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ChevronDown, Search } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
+import { NAVIGATION_MENU } from "@/lib/access-control"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -14,38 +15,74 @@ export function Header() {
   // Only use auth context after component mounts (client-side only)
   const authContext = useAuth()
   const user = isMounted ? authContext?.user : null
+  const profile = isMounted ? authContext?.profile : null
   const signOut = isMounted ? authContext?.signOut : undefined
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  const navigation = [
-    { name: "Home", href: "/", hasDropdown: false },
-    { 
-      name: "Courses", 
-      href: "/courses", 
-      hasDropdown: true,
-      dropdownItems: [
-        { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
-        { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
-        { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
-        { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
+  // Get navigation based on user role
+  const getNavigation = () => {
+    if (!isMounted) return []
+    
+    if (profile?.role === 'admin') {
+      return [
+        { name: "Home", href: "/", hasDropdown: false },
+        { 
+          name: "Courses", 
+          href: "/courses", 
+          hasDropdown: true,
+          dropdownItems: [
+            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
+            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
+            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
+            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
+          ]
+        },
+        { name: "Templates", href: "/templates", hasDropdown: false },
+        { name: "Components Demo", href: "/components-demo", hasDropdown: false },
+        { name: "Test Auth", href: "/test-auth", hasDropdown: false },
       ]
-    },
-    { name: "Pages", href: "/pages", hasDropdown: false },
-    { 
-      name: "Templates", 
-      href: "/templates", 
-      hasDropdown: true,
-      dropdownItems: [
-        { name: "Page Templates", href: "/templates/page-templates", description: "Landing pages, about pages, contact forms" },
-        { name: "Course Templates", href: "/templates/course-templates", description: "Course pages, lesson layouts, assessments" },
-        { name: "Dashboard Templates", href: "/templates/dashboard-templates", description: "Student, instructor, and admin dashboards" },
-        { name: "Scale up Templates", href: "/templates/scale-up-templates", description: "Advanced templates for scaling and enterprise" }
+    } else if (user) {
+      // Authenticated users (students)
+      return [
+        { name: "Home", href: "/", hasDropdown: false },
+        { 
+          name: "Courses", 
+          href: "/courses", 
+          hasDropdown: true,
+          dropdownItems: [
+            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
+            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
+            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
+            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
+          ]
+        },
       ]
-    },
-  ]
+    } else {
+      // Public users (not logged in)
+      return [
+        { name: "Home", href: "/", hasDropdown: false },
+        { 
+          name: "Courses", 
+          href: "/courses", 
+          hasDropdown: true,
+          dropdownItems: [
+            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
+            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
+            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
+            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
+          ]
+        },
+        { name: "About", href: "/about", hasDropdown: false },
+        { name: "Contact", href: "/contact", hasDropdown: false },
+        { name: "Pricing", href: "/pricing", hasDropdown: false },
+      ]
+    }
+  }
+
+  const navigation = getNavigation()
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">

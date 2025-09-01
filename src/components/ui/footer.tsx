@@ -87,14 +87,14 @@ export function Footer() {
                 <svg className="w-4 h-4 text-[#1e293b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>info@shriarya.com</span>
+                <span>contact@shrividhya.in</span>
               </p>
-              <p className="text-[#e27447] font-medium">📞 +91 98765 43210</p>
+              <p className="text-[#e27447] font-medium">📞 +91 8130711689</p>
               <div className="text-[#1e293b]">
-                <p className="font-semibold text-[#1e293b]">ShriArya Learning Solutions</p>
-                <p>123 Learning Street</p>
-                <p>Education District</p>
-                <p>Mumbai, Maharashtra 400001, IN</p>
+                <p className="font-semibold text-[#1e293b]">Shrividhya Learning Platform</p>
+                <p>2919P, Ground Floor</p>
+                <p>Sushant Lok 2, Sector 57</p>
+                <p>Gurugram, Haryana 122002, IN</p>
               </div>
             </div>
             <div className="space-y-2">

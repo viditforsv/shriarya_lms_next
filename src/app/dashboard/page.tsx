@@ -65,6 +65,18 @@ export default function DashboardPage() {
           <>
             <Card>
               <CardHeader>
+                <CardTitle>Site Administration</CardTitle>
+                <CardDescription>Access all administrative functions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/admin/site-administration">
+                  <Button className="w-full">Site Administration</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>User Management</CardTitle>
                 <CardDescription>Manage students and admins</CardDescription>
               </CardHeader>

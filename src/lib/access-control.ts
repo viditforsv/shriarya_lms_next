@@ -67,6 +67,7 @@ export const ROUTE_ACCESS: RouteAccess[] = [
 
   // Admin-only routes
   { path: '/admin', accessLevel: 'admin', requiredRole: 'admin' },
+  { path: '/admin/site-administration', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/admin/users', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/admin/courses', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/admin/analytics', accessLevel: 'admin', requiredRole: 'admin' },
@@ -82,6 +83,7 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: '/components-demo', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/components-test', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/test-auth', accessLevel: 'admin', requiredRole: 'admin' },
+  { path: '/debug-auth', accessLevel: 'admin', requiredRole: 'admin' },
   { path: '/templates', accessLevel: 'admin', requiredRole: 'admin' },
 ]
 
@@ -244,10 +246,11 @@ export const NAVIGATION_MENU = {
   ],
   admin: [
     { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Site Administration', href: '/admin/site-administration' },
     { label: 'Users', href: '/admin/users' },
     { label: 'Courses', href: '/admin/courses' },
     { label: 'Analytics', href: '/admin/analytics' },
-    { label: 'Admin Panel', href: '/admin-panel' },
+    { label: 'Templates', href: '/templates' },
     { label: 'Helpdesk', href: '/helpdesk' },
     { label: 'Profile', href: '/profile' },
   ],

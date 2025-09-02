@@ -8,6 +8,7 @@ CREATE TABLE public.courses (
   instructor_id uuid,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  is_free boolean DEFAULT false,
   CONSTRAINT courses_pkey PRIMARY KEY (id),
   CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id)
 );
@@ -38,6 +39,8 @@ CREATE TABLE public.profiles (
   role text DEFAULT 'student'::text CHECK (role = ANY (ARRAY['student'::text, 'admin'::text])),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  avatar_url text,
+  email text NOT NULL,
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );

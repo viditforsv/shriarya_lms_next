@@ -40,11 +40,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch user profile from database
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      console.log('Fetching profile for user ID:', userId)
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
+      })
+      
+      const fetchPromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single()
+
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+
+      console.log('Profile fetch result:', { data, error })
 
       if (error) {
         console.error('Error fetching profile:', error)
@@ -60,11 +71,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return null
       }
 
+      console.log('Successfully fetched profile:', data)
+
       // Cache the role in session metadata for middleware optimization
       if (data?.role) {
-        await supabase.auth.updateUser({
-          data: { role: data.role }
-        })
+        try {
+          await supabase.auth.updateUser({
+            data: { role: data.role }
+          })
+          console.log('Successfully updated user metadata with role:', data.role)
+        } catch (error) {
+          console.error('Error updating user metadata:', error)
+        }
+      } else {
+        console.log('No role found in profile data:', data)
       }
 
       return data as UserProfile
@@ -92,6 +112,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let role: UserRole = 'student'
       if (email === 'vidit@shrividhya.in') {
         role = 'admin'
+        console.log('Setting role to admin for email:', email)
+      } else {
+        console.log('Setting default role student for email:', email)
       }
 
       // Extract name from user metadata
@@ -106,6 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           id: userId,
           first_name: firstName,
           last_name: lastName,
+          email: email,
           role: role
         })
         .select()
@@ -122,12 +146,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return null
       }
 
-      console.log('Successfully created profile:', data)
+      console.log('Successfully created profile with role:', role, 'for email:', email)
 
       // Cache the role in session metadata
-      await supabase.auth.updateUser({
-        data: { role: role }
-      })
+      try {
+        await supabase.auth.updateUser({
+          data: { role: role }
+        })
+        console.log('Successfully updated user metadata with role:', role)
+      } catch (error) {
+        console.error('Error updating user metadata during profile creation:', error)
+      }
 
       return data as UserProfile
     } catch (error) {
@@ -167,26 +196,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data, error } = await supabase.rpc('update_user_role', {
-        target_user_id: userId,
-        new_role: newRole
-      })
+      // Update the role in the profiles table
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', userId)
+        .select()
+        .single()
 
       if (error) {
-        console.error('Error updating user role:', error)
+        console.error('Error updating user role in profiles:', error)
         return false
       }
 
-      // Update cached role in session metadata
+      // Update cached role in session metadata (for current user only)
       if (userId === user?.id) {
-        await supabase.auth.updateUser({
-          data: { role: newRole }
-        })
-        // Refresh profile to update local state
-        await refreshProfile()
+        try {
+          await supabase.auth.updateUser({
+            data: { role: newRole }
+          })
+          console.log('Successfully updated current user metadata with role:', newRole)
+          // Refresh profile to update local state
+          await refreshProfile()
+        } catch (error) {
+          console.error('Error updating current user metadata:', error)
+        }
       }
 
-      return data
+      return !!data
     } catch (error) {
       console.error('Error updating user role:', error)
       return false

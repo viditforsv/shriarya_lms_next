@@ -49,7 +49,14 @@ export function Header() {
   const getNavigation = () => {
     if (!isMounted) return []
     
+    console.log('Header - Navigation check:', {
+      profile: profile?.role,
+      user: user?.email,
+      isMounted
+    })
+    
     if (profile?.role === 'admin') {
+      console.log('Header - Admin navigation being returned')
       return [
         { name: "Home", href: "/", hasDropdown: false },
         { 
@@ -63,6 +70,7 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
         { name: "Templates", href: "/templates", hasDropdown: false },
         { name: "Components Demo", href: "/components-demo", hasDropdown: false },
         { name: "Test Auth", href: "/test-auth", hasDropdown: false },
@@ -233,6 +241,17 @@ export function Header() {
                         <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
                         Dashboard
                       </Link>
+                      
+                      {profile?.role === 'admin' && (
+                        <Link
+                          href="/admin/site-administration"
+                          className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                          Site Administration
+                        </Link>
+                      )}
                       
                       <Link
                         href="/profile"

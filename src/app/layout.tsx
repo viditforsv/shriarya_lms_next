@@ -34,7 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.className} ${cardo.variable} ${dmSans.variable}`}>
+      <body 
+        className={`${dmSans.className} ${cardo.variable} ${dmSans.variable}`}
+        suppressHydrationWarning={true}
+      >
         <AuthProvider>
           <div className="min-h-screen bg-background flex flex-col">
             <Header />

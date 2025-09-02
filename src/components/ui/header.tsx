@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ChevronDown, Search, User, LogOut, Settings } from "lucide-react"
+import { ChevronDown, Search, User, LogOut, Settings, BookOpen } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -70,10 +70,10 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
         { name: "Templates", href: "/templates", hasDropdown: false },
         { name: "Components Demo", href: "/components-demo", hasDropdown: false },
-        { name: "Test Auth", href: "/test-auth", hasDropdown: false },
       ]
     } else if (user) {
       // Authenticated users (students)
@@ -90,6 +90,8 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
+        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
       ]
     } else {
       // Public users (not logged in)
@@ -106,6 +108,7 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "About", href: "/about", hasDropdown: false },
         { name: "Contact", href: "/contact", hasDropdown: false },
         { name: "Pricing", href: "/pricing", hasDropdown: false },
@@ -133,14 +136,6 @@ export function Header() {
               <h1 className="text-xl font-bold text-foreground">Shriarya</h1>
             </div>
           </Link>
-
-          {/* Categories Dropdown */}
-          <div className="hidden lg:flex items-center">
-            <button className="flex items-center space-x-1 text-foreground hover:text-accent px-3 py-2 text-sm font-medium transition-colors">
-              <span>Categories</span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-          </div>
 
           {/* Search Bar */}
           <div className="hidden lg:flex flex-1 max-w-lg mx-4">
@@ -260,6 +255,15 @@ export function Header() {
                       >
                         <User className="w-4 h-4 mr-3 text-[#e27447]" />
                         Profile
+                      </Link>
+                      
+                      <Link
+                        href="/courses/enrolled"
+                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
+                        My Courses
                       </Link>
                       
                       <div className="border-t border-[#feefea] mt-2 pt-2">

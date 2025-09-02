@@ -29,6 +29,7 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   // Public routes (accessible to everyone)
   { path: '/', accessLevel: 'public' },
   { path: '/courses', accessLevel: 'public' },
+  { path: '/courses/free', accessLevel: 'public' },
   { path: '/courses/cbse', accessLevel: 'public' },
   { path: '/courses/ibdp', accessLevel: 'public' },
   { path: '/courses/icse', accessLevel: 'public' },

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { UserProfile, UserRole } from '@/types/auth'
@@ -34,26 +34,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [mounted, setMounted] = useState(false)
+  const [profileCache, setProfileCache] = useState<Map<string, UserProfile>>(new Map())
   const supabase = createClient()
 
-  // Fetch user profile from database
-  const fetchProfile = async (userId: string) => {
+  // Persist profile in localStorage for faster loading
+  useEffect(() => {
+    if (profile && typeof window !== 'undefined') {
+      localStorage.setItem('shriarya-profile', JSON.stringify(profile))
+    }
+  }, [profile])
+
+  // Load profile from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !profile) {
+      const savedProfile = localStorage.getItem('shriarya-profile')
+      if (savedProfile) {
+        try {
+          const parsedProfile = JSON.parse(savedProfile)
+          setProfile(parsedProfile)
+          console.log('Loaded profile from localStorage:', parsedProfile)
+        } catch (error) {
+          console.error('Error parsing saved profile:', error)
+          localStorage.removeItem('shriarya-profile')
+        }
+      }
+    }
+  }, [profile]) // Add profile dependency
+
+    // Fetch user profile from database
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       console.log('Fetching profile for user ID:', userId)
       
+      // Check cache first
+      const cachedProfile = profileCache.get(userId)
+      if (cachedProfile) {
+        console.log('Using cached profile for user:', userId)
+        return cachedProfile
+      }
+      
       // Add timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000) // 5 second timeout
       })
       
       const fetchPromise = supabase
         .from('profiles')
-        .select('*')
+        .select('id, first_name, last_name, email, role, created_at, updated_at')
         .eq('id', userId)
         .single()
 
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as { data: UserProfile | null; error: { code?: string; message?: string } | null }
 
       console.log('Profile fetch result:', { data, error })
 
@@ -64,6 +95,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (error.code === 'PGRST116') {
           console.log('Profile not found, creating new profile for user:', userId)
           const newProfile = await createProfile(userId)
+          if (newProfile) {
+            setProfileCache(prev => new Map(prev).set(userId, newProfile))
+          }
           console.log('Created profile:', newProfile)
           return newProfile
         }
@@ -73,26 +107,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('Successfully fetched profile:', data)
 
-      // Cache the role in session metadata for middleware optimization
-      if (data?.role) {
-        try {
-          await supabase.auth.updateUser({
-            data: { role: data.role }
-          })
-          console.log('Successfully updated user metadata with role:', data.role)
-        } catch (error) {
-          console.error('Error updating user metadata:', error)
-        }
-      } else {
-        console.log('No role found in profile data:', data)
-      }
+      // Cache the profile
+      setProfileCache(prev => new Map(prev).set(userId, data as UserProfile))
+
+      // Remove client-side role update to prevent admin demotion
+      // Role should only be managed server-side for security
 
       return data as UserProfile
     } catch (error) {
       console.error('Error fetching profile:', error)
       return null
     }
-  }
+  }, [supabase, profileCache])
 
   // Create user profile if it doesn't exist
   const createProfile = async (userId: string) => {
@@ -108,14 +134,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const user = userData.user
       const email = user.email || ''
       
-      // Determine role based on email
-      let role: UserRole = 'student'
-      if (email === 'vidit@shrividhya.in') {
-        role = 'admin'
-        console.log('Setting role to admin for email:', email)
-      } else {
-        console.log('Setting default role student for email:', email)
-      }
+      // All new users get student role by default
+      const role: UserRole = 'student'
+      console.log('Setting default role student for email:', email)
 
       // Extract name from user metadata
       const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
@@ -148,15 +169,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log('Successfully created profile with role:', role, 'for email:', email)
 
-      // Cache the role in session metadata
-      try {
-        await supabase.auth.updateUser({
-          data: { role: role }
-        })
-        console.log('Successfully updated user metadata with role:', role)
-      } catch (error) {
-        console.error('Error updating user metadata during profile creation:', error)
-      }
+      // Remove client-side role update to prevent admin demotion
+      // Role should only be managed server-side for security
 
       return data as UserProfile
     } catch (error) {
@@ -239,8 +253,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    setMounted(true)
-    
     // Only run auth logic in browser
     if (typeof window !== 'undefined') {
       // Get initial session
@@ -301,7 +313,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setLoading(false)
     }
-  }, [supabase.auth])
+  }, [supabase.auth, fetchProfile])
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -328,6 +340,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log('SignOut function called')
     try {
+      // Clear localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('shriarya-profile')
+        console.log('Cleared localStorage profile')
+      }
+      
+      // Clear profile cache
+      setProfileCache(new Map())
+      console.log('Cleared profile cache')
+      
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('SignOut error:', error)
@@ -361,7 +383,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     profile,
-    loading: !mounted,
+    loading,
     signIn,
     signUp,
     signOut,

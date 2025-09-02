@@ -109,12 +109,11 @@ export function Footer() {
         <div className="border-t border-[#feefea] mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-[#1e293b]">
-              © 2024 Shrivyapar Private Limited. All rights reserved.
+              © 2019-2025 Shrivyapar Private Limited. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm text-[#1e293b]">
               <Link href="/privacy" className="hover:text-[#e27447] transition-colors">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-[#e27447] transition-colors">Terms of Service</Link>
-              <Link href="/sitemap" className="hover:text-[#e27447] transition-colors">Sitemap</Link>
             </div>
           </div>
         </div>

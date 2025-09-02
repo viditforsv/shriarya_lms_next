@@ -4,7 +4,67 @@ import { useAuth } from '@/contexts/AuthContext'
 import { AdminOnly, StudentOnly } from '@/components/auth/RoleGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { BookOpen, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+
+interface EnrolledCourse {
+  id: string
+  title: string
+  slug: string | null
+  is_free: boolean
+  enrollment: {
+    enrolled_at: string
+  }
+}
+
+export default function DashboardPage() {
+  const { user, profile, signOut } = useAuth()
+  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      if (!user) return
+
+      try {
+        setIsLoadingCourses(true)
+        const { data, error } = await supabase
+          .from('enrollments')
+          .select(`
+            *,
+            courses (*)
+          `)
+          .eq('student_id', user.id)
+          .eq('is_active', true)
+          .order('enrolled_at', { ascending: false })
+          .limit(3)
+
+        if (error) {
+          console.error('Error fetching enrolled courses:', error)
+          return
+        }
+
+        const courses = data?.map(item => ({
+          ...item.courses,
+          enrollment: {
+            enrolled_at: item.enrolled_at
+          }
+        })) || []
+
+        setEnrolledCourses(courses)
+      } catch (err) {
+        console.error('Error fetching enrolled courses:', err)
+      } finally {
+        setIsLoadingCourses(false)
+      }
+    }
+
+    fetchEnrolledCourses()
+  }, [user, supabase])
 
 export default function DashboardPage() {
   const { user, profile, signOut } = useAuth()
@@ -28,9 +88,49 @@ export default function DashboardPage() {
                 <CardDescription>View your enrolled courses</CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/courses/enrolled">
-                  <Button className="w-full">View Courses</Button>
-                </Link>
+                {isLoadingCourses ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#e27447] mx-auto mb-2"></div>
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                  </div>
+                ) : enrolledCourses.length > 0 ? (
+                  <div className="space-y-3">
+                    {enrolledCourses.map((course) => (
+                      <div key={course.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-sm">
+                        <div className="flex items-center space-x-3">
+                          <BookOpen className="w-5 h-5 text-[#e27447]" />
+                          <div>
+                            <p className="font-medium text-sm">{course.title}</p>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant="outline" className="text-xs">
+                                {course.is_free ? 'Free' : 'Paid'}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                Enrolled {new Date(course.enrollment.enrolled_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <Link href={`/courses/${course.slug || course.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <ArrowRight className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                      </div>
+                    ))}
+                    <Link href="/courses/enrolled">
+                      <Button className="w-full mt-3">View All Courses</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <BookOpen className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-3">No courses enrolled yet</p>
+                    <Link href="/courses">
+                      <Button size="sm">Browse Courses</Button>
+                    </Link>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

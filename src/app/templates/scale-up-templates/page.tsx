@@ -12,19 +12,22 @@ export default function ScaleUpTemplatesIndex() {
       name: "Admin Dashboard (advanced)",
       href: "/templates/dashboard-templates/admin-panel",
       category: "Dashboard",
-      description: "Comprehensive administrative interface with advanced controls"
+      description: "Comprehensive administrative interface with advanced controls",
+      ready: true
     },
     {
       name: "Institution Analytics",
       href: "/templates/dashboard-templates/institution-dashboard",
       category: "Dashboard", 
-      description: "Enterprise-level analytics for institutional management"
+      description: "Enterprise-level analytics for institutional management",
+      ready: false
     },
     {
       name: "Teacher Signup",
       href: "/templates/dashboard-templates/teacher-signup",
       category: "Dashboard",
-      description: "Institutional onboarding and teacher registration system"
+      description: "Institutional onboarding and teacher registration system",
+      ready: false
     },
     
     // Advanced Course Templates
@@ -32,7 +35,8 @@ export default function ScaleUpTemplatesIndex() {
       name: "Performance Analytics",
       href: "/templates/course-templates/performance-analytics",
       category: "Course",
-      description: "Advanced learning analytics and personalized recommendations"
+      description: "Advanced learning analytics and personalized recommendations",
+      ready: false
     },
     
     // Advanced Page Templates
@@ -40,19 +44,22 @@ export default function ScaleUpTemplatesIndex() {
       name: "Blog Listing Page",
       href: "/templates/page-templates/blog",
       category: "Page",
-      description: "SEO-optimized blog system for content marketing"
+      description: "SEO-optimized blog system for content marketing",
+      ready: false
     },
     {
       name: "Blog Post Page", 
       href: "/templates/page-templates/blog-post",
       category: "Page",
-      description: "Professional blog post layout with social sharing"
+      description: "Professional blog post layout with social sharing",
+      ready: false
     },
     {
       name: "Case Studies / Testimonials",
       href: "/templates/page-templates/testimonials",
       category: "Page",
-      description: "Social proof and success story presentation"
+      description: "Social proof and success story presentation",
+      ready: false
     }
   ]
 
@@ -105,7 +112,14 @@ export default function ScaleUpTemplatesIndex() {
                         {template.category}
                       </div>
                     </div>
-                    <CardTitle className="text-lg text-[#1e293b]">{template.name}</CardTitle>
+                    <CardTitle className="text-lg text-[#1e293b]">
+                      <div className="relative">
+                        {template.name}
+                        {template.ready && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                        )}
+                      </div>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <p className="text-sm text-muted-foreground mb-4">
@@ -160,7 +174,7 @@ export default function ScaleUpTemplatesIndex() {
 
         {/* Quick Stats */}
         <div className="mt-12 text-center text-sm text-muted-foreground">
-          {scaleUpTemplates.length} scale-up templates available across {Object.keys(groupedTemplates).length} categories
+          {scaleUpTemplates.filter(t => t.ready).length} of {scaleUpTemplates.length} scale-up templates ready
         </div>
       </div>
     </div>

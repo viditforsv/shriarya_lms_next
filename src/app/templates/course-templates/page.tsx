@@ -11,46 +11,54 @@ export default function CourseTemplatesIndex() {
     {
       name: "Course Overview",
       href: "/templates/course-templates/course-overview",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Course Page",
       href: "/templates/course-templates/course-page",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Lesson Template",
       href: "/templates/course-templates/lesson",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: false
     },
     
     // Phase 2 (Growth) - Learning Enhancements
     {
       name: "Quiz Template",
       href: "/templates/course-templates/quiz",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Assignments Template",
       href: "/templates/course-templates/assignments",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Question Bank",
       href: "/templates/course-templates/question-bank",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Certificate Template",
       href: "/templates/course-templates/certificate",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     
     // Phase 3 (Scale) - Advanced Features
     {
       name: "Performance Analytics",
       href: "/templates/course-templates/performance-analytics",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     }
   ]
 
@@ -93,7 +101,12 @@ export default function CourseTemplatesIndex() {
               {templates.map((template, index) => (
                 <Card key={index} className="hover:shadow-md transition-all duration-200 border-[#feefea] hover:border-[#e27447]">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                    <div className="relative">
+                      <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                      {template.ready && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent className="pt-0 pb-4">
                     <Link href={template.href}>
@@ -115,7 +128,7 @@ export default function CourseTemplatesIndex() {
 
         {/* Quick Stats */}
         <div className="mt-12 text-center text-sm text-muted-foreground">
-          {courseTemplates.length} course templates available across {Object.keys(groupedTemplates).length} phases
+          {courseTemplates.filter(t => t.ready).length} of {courseTemplates.length} course templates ready
         </div>
       </div>
     </div>

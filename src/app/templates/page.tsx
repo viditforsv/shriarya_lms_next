@@ -19,7 +19,8 @@ export default function TemplatesPage() {
       icon: <FileText className="w-12 h-12 text-[#1e293b]" />,
       href: "/templates/page-templates",
       count: "26 templates",
-      phase: "Phase 1-3"
+      phase: "Phase 1-3",
+      ready: true
     },
     {
       title: "Course Templates",
@@ -27,7 +28,8 @@ export default function TemplatesPage() {
       icon: <BookOpen className="w-12 h-12 text-[#e27447]" />,
       href: "/templates/course-templates",
       count: "9 templates",
-      phase: "Phase 1-3"
+      phase: "Phase 1-3",
+      ready: true
     },
     {
       title: "Dashboard Templates",
@@ -35,7 +37,8 @@ export default function TemplatesPage() {
       icon: <BarChart3 className="w-12 h-12 text-[#1e293b]" />,
       href: "/templates/dashboard-templates",
       count: "8 templates",
-      phase: "Phase 1-3"
+      phase: "Phase 1-3",
+      ready: true
     },
     {
       title: "Scale up Templates",
@@ -43,7 +46,8 @@ export default function TemplatesPage() {
       icon: <TrendingUp className="w-12 h-12 text-[#e27447]" />,
       href: "/templates/scale-up-templates",
       count: "7 templates",
-      phase: "Phase 3"
+      phase: "Phase 3",
+      ready: false
     }
   ]
 
@@ -70,9 +74,14 @@ export default function TemplatesPage() {
               <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-[#feefea] hover:border-[#e27447]">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4 mb-4">
-                                      <div className="w-16 h-16 bg-[#feefea] rounded-sm flex items-center justify-center border border-[#feefea]">
-                    {category.icon}
-                  </div>
+                    <div className="relative">
+                      <div className="w-16 h-16 bg-[#feefea] rounded-sm flex items-center justify-center border border-[#feefea]">
+                        {category.icon}
+                      </div>
+                      {category.ready && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                      )}
+                    </div>
                     <div>
                       <div className="text-sm text-[#e27447] font-medium">{category.phase}</div>
                       <div className="text-xs text-muted-foreground">{category.count}</div>

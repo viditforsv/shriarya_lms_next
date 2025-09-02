@@ -11,12 +11,14 @@ export default function PageTemplatesIndex() {
     {
       name: "Landing Page (Home)",
       href: "/templates/page-templates/landing",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Courses Listing + Search/Filter",
       href: "/templates/page-templates/courses-listing",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     // Note: Course Detail, Lesson Page are in course-templates, not page-templates
     
@@ -24,51 +26,60 @@ export default function PageTemplatesIndex() {
     {
       name: "Login Page",
       href: "/templates/page-templates/login",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Signup Page (Student, Teacher)",
       href: "/templates/page-templates/signup",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Password Reset + Email Verification",
       href: "/templates/page-templates/password-reset",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: false
     },
     {
       name: "User Profile + Settings",
       href: "/templates/page-templates/user-profile",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: false
     },
     
     // Phase 1 (MVP - Launch) - Business/Info Pages
     {
       name: "Pricing Page",
       href: "/templates/page-templates/pricing",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "About Page",
       href: "/templates/page-templates/about",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Contact Page",
       href: "/templates/page-templates/contact",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     
     // Phase 1 (MVP - Launch) - Compliance
     {
       name: "Privacy Policy",
       href: "/templates/page-templates/privacy",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Terms of Service",
       href: "/templates/page-templates/terms",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     
     // Phase 2 (Growth) - Learning Enhancements
@@ -78,68 +89,80 @@ export default function PageTemplatesIndex() {
     {
       name: "Checkout / Payment Flow",
       href: "/templates/page-templates/checkout",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Subscription / Plan Management",
       href: "/templates/page-templates/subscription-management",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Refund / Guarantee Page",
       href: "/templates/page-templates/refund",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     
     // Phase 2 (Growth) - Support
     {
       name: "FAQ + Support (combined)",
       href: "/templates/page-templates/faq-support",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     {
       name: "Helpdesk Ticketing OR Chatbot",
       href: "/templates/page-templates/helpdesk",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     
     // Phase 3 (Scale) - Marketing/SEO
     {
       name: "Blog Listing Page",
       href: "/templates/page-templates/blog",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     },
     {
       name: "Blog Post Page",
       href: "/templates/page-templates/blog-post",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     },
     {
       name: "Case Studies / Testimonials",
       href: "/templates/page-templates/testimonials",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     },
     
     // Additional Templates (Bonus Features)
     {
       name: "Portfolio",
       href: "/templates/page-templates/portfolio",
-      phase: "Bonus"
+      phase: "Bonus",
+      ready: false
     },
     {
       name: "Services",
       href: "/templates/page-templates/services",
-      phase: "Bonus"
+      phase: "Bonus",
+      ready: false
     },
     {
       name: "Team Page",
       href: "/templates/page-templates/team",
-      phase: "Bonus"
+      phase: "Bonus",
+      ready: false
     },
     {
       name: "404 Error Page",
       href: "/templates/page-templates/404",
-      phase: "Bonus"
+      phase: "Bonus",
+      ready: false
     }
   ]
 
@@ -183,7 +206,12 @@ export default function PageTemplatesIndex() {
               {templates.map((template, index) => (
                 <Card key={index} className="hover:shadow-md transition-all duration-200 border-[#feefea] hover:border-[#e27447]">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                    <div className="relative">
+                      <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                      {template.ready && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent className="pt-0 pb-4">
                     <Link href={template.href}>
@@ -205,7 +233,7 @@ export default function PageTemplatesIndex() {
 
         {/* Quick Stats */}
         <div className="mt-12 text-center text-sm text-muted-foreground">
-          {pageTemplates.length} page templates available across {Object.keys(groupedTemplates).length} phases
+          {pageTemplates.filter(t => t.ready).length} of {pageTemplates.length} page templates ready
           <br />
           <span className="text-xs">Course-specific templates (Quiz, Assignments, Lessons) are in course-templates</span>
         </div>

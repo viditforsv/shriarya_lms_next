@@ -190,7 +190,7 @@ export default function SiteAdministrationPage() {
                     {section.items.map((item) => (
                       <Link key={item.name} href={item.href}>
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           className="w-full justify-start h-auto p-3 hover:bg-white/50"
                         >
                           <div className="flex items-center space-x-3 w-full">

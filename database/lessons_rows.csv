@@ -1,0 +1,5 @@
+id,course_id,title,content,lesson_order,created_at,is_preview,slug
+0d00826b-5db9-4d7b-a178-f0b815c7c3d7,eefe8832-7bd1-4e21-b31f-bc645eeca0b2,Quadratic Equations,Markdown or text here…,4,2025-09-02 17:15:08.447122+00,false,quadratic-equations
+5028ddf5-a9c6-4d2e-a446-a256a3004326,eefe8832-7bd1-4e21-b31f-bc645eeca0b2,Real Numbers – Intro,Markdown or text here…,1,2025-09-02 17:15:08.447122+00,true,real-numbers-intro
+60488f60-ac81-4737-b7ad-44eb07660098,eefe8832-7bd1-4e21-b31f-bc645eeca0b2,Pair of Linear Equations,Markdown or text here…,3,2025-09-02 17:15:08.447122+00,false,pair-linear-equations
+d427d8ab-e15c-43a9-a4ce-7f6b6bda29b7,eefe8832-7bd1-4e21-b31f-bc645eeca0b2,Polynomials – Basics,Markdown or text here…,2,2025-09-02 17:15:08.447122+00,true,polynomials-basics

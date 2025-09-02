@@ -11,46 +11,54 @@ export default function DashboardTemplatesIndex() {
     {
       name: "Student Dashboard (basic)",
       href: "/templates/dashboard-templates/student-dashboard",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     {
       name: "Instructor Dashboard (basic)",
       href: "/templates/dashboard-templates/instructor-dashboard",
-      phase: "Phase 1 - MVP"
+      phase: "Phase 1 - MVP",
+      ready: true
     },
     
     // Phase 2 (Growth) - Enhanced Dashboards
     {
       name: "Student Dashboard (enhanced)",
       href: "/templates/dashboard-templates/student-dashboard",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: true
     },
     {
       name: "Instructor Dashboard (enhanced)",
       href: "/templates/dashboard-templates/instructor-dashboard",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: true
     },
     {
       name: "Analytics (basic)",
       href: "/templates/dashboard-templates/analytics",
-      phase: "Phase 2 - Growth"
+      phase: "Phase 2 - Growth",
+      ready: false
     },
     
     // Phase 3 (Scale) - Advanced Dashboards
     {
       name: "Admin Dashboard (advanced)",
       href: "/templates/dashboard-templates/admin-panel",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: true
     },
     {
       name: "Institution Analytics",
       href: "/templates/dashboard-templates/institution-dashboard",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     },
     {
       name: "Teacher Signup",
       href: "/templates/dashboard-templates/teacher-signup",
-      phase: "Phase 3 - Scale"
+      phase: "Phase 3 - Scale",
+      ready: false
     }
   ]
 
@@ -93,7 +101,12 @@ export default function DashboardTemplatesIndex() {
               {templates.map((template, index) => (
                 <Card key={index} className="hover:shadow-md transition-all duration-200 border-[#feefea] hover:border-[#e27447]">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                    <div className="relative">
+                      <CardTitle className="text-base text-[#1e293b] text-center">{template.name}</CardTitle>
+                      {template.ready && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent className="pt-0 pb-4">
                     <Link href={template.href}>
@@ -115,7 +128,7 @@ export default function DashboardTemplatesIndex() {
 
         {/* Quick Stats */}
         <div className="mt-12 text-center text-sm text-muted-foreground">
-          {dashboardTemplates.length} dashboard templates available across {Object.keys(groupedTemplates).length} phases
+          {dashboardTemplates.filter(t => t.ready).length} of {dashboardTemplates.length} dashboard templates ready
         </div>
       </div>
     </div>

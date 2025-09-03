@@ -6,6 +6,9 @@ export interface Course {
   description: string | null
   is_free: boolean
   price: number | null
+  status: 'draft' | 'published' | 'archived'
+  instructor_id: string | null
+  slug: string | null
   created_at: string
   updated_at: string
 }
@@ -49,16 +52,6 @@ export interface LessonWithResources extends Lesson {
   resources?: Resource[]
 }
 
-export interface Course {
-  id: string
-  title: string
-  description: string | null
-  is_free: boolean
-  price: number | null
-  created_at: string
-  updated_at: string
-}
-
 export interface Enrollment {
   id: string
   user_id: string
@@ -80,6 +73,7 @@ export async function getCourses(): Promise<Course[]> {
   const { data, error } = await supabase
     .from('courses')
     .select('*')
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -98,6 +92,7 @@ export async function getFreeCourses(): Promise<Course[]> {
     .from('courses')
     .select('*')
     .eq('is_free', true)
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
 
   if (error) {

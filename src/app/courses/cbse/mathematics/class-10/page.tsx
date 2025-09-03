@@ -106,24 +106,17 @@ export default function Class10MathematicsPage() {
     })
   }
 
-  const handleLessonClick = (lesson: { id: string; title: string; type: string; isLocked: boolean }) => {
+  const handleLessonClick = (lesson: { id: string; title: string; type: string; isLocked: boolean; slug?: string }) => {
     if (lesson.isLocked && !isEnrolled) {
       alert('Please enroll in the course to access this lesson.')
       return
     }
     
-    if (lesson.type === 'video') {
-      // Handle video lesson
-      console.log('Opening video lesson:', lesson.title)
-    } else if (lesson.type === 'document') {
-      // Handle document lesson
-      console.log('Opening document lesson:', lesson.title)
-    } else if (lesson.type === 'question') {
-      // Handle question lesson
-      console.log('Opening question lesson:', lesson.title)
-    } else if (lesson.type === 'practice') {
-      // Handle practice lesson
-      console.log('Opening practice lesson:', lesson.title)
+    // Navigate to the lesson page
+    if (lesson.slug) {
+      window.location.href = `/courses/cbse/mathematics/class-10/lesson/${lesson.slug}`
+    } else {
+      console.log('Lesson slug not available:', lesson.title)
     }
   }
 

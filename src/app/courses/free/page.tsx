@@ -52,10 +52,10 @@ export default function FreeCoursesPage() {
     try {
       const enrollment = await enroll(courseId)
       if (enrollment) {
-        // Show success message or redirect to course
-        alert('Successfully enrolled! You can now access the course.')
-        // Optionally refresh the page or update UI
-        window.location.reload()
+        // Show success message and redirect to course
+        alert('Successfully enrolled! Redirecting to course...')
+        // Redirect to the course page
+        window.location.href = `/courses/cbse/mathematics/class-10`
       }
     } catch (err) {
       console.error('Enrollment error:', err)

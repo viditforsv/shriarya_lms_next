@@ -66,9 +66,6 @@ export default function DashboardPage() {
     fetchEnrolledCourses()
   }, [user, supabase])
 
-export default function DashboardPage() {
-  const { user, profile, signOut } = useAuth()
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">

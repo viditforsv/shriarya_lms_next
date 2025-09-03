@@ -26,6 +26,7 @@ interface CourseContentSection {
     hasPreview: boolean
     isLocked: boolean
     isCompleted: boolean
+    slug: string | null
   }>
 }
 
@@ -109,7 +110,8 @@ export function useCourseData(courseSlug: string) {
         type: lessonType,
         hasPreview: lesson.is_preview,
         isLocked: !isEnrolled && !lesson.is_preview,
-        isCompleted: false // This should come from actual progress tracking
+        isCompleted: false, // This should come from actual progress tracking
+        slug: lesson.slug
       })
 
       sections[sectionTitle].lectures++
@@ -127,19 +129,43 @@ export function useCourseData(courseSlug: string) {
   }
 
   const extractSectionFromTitle = (title: string): string => {
-    // Customize this logic based on your lesson naming convention
-    if (title.toLowerCase().includes('real numbers') || title.toLowerCase().includes('algebra')) {
-      return 'Real Numbers & Algebra'
-    } else if (title.toLowerCase().includes('polynomial') || title.toLowerCase().includes('equation')) {
-      return 'Polynomials & Equations'
-    } else if (title.toLowerCase().includes('geometry') || title.toLowerCase().includes('trigonometry')) {
-      return 'Geometry & Trigonometry'
-    } else if (title.toLowerCase().includes('coordinate')) {
-      return 'Coordinate Geometry'
-    } else if (title.toLowerCase().includes('statistics') || title.toLowerCase().includes('probability')) {
-      return 'Statistics & Probability'
+    // CBSE Class 10 Mathematics chapter organization
+    const titleLower = title.toLowerCase()
+    
+    if (titleLower.includes('real numbers') || titleLower.includes('euclid') || titleLower.includes('irrational')) {
+      return 'Chapter 1: Real Numbers'
+    } else if (titleLower.includes('polynomial')) {
+      return 'Chapter 2: Polynomials'
+    } else if (titleLower.includes('linear equation')) {
+      return 'Chapter 3: Pair of Linear Equations'
+    } else if (titleLower.includes('quadratic')) {
+      return 'Chapter 4: Quadratic Equations'
+    } else if (titleLower.includes('arithmetic progression') || titleLower.includes('ap')) {
+      return 'Chapter 5: Arithmetic Progressions'
+    } else if (titleLower.includes('triangle')) {
+      return 'Chapter 6: Triangles'
+    } else if (titleLower.includes('coordinate')) {
+      return 'Chapter 7: Coordinate Geometry'
+    } else if (titleLower.includes('trigonometry') && !titleLower.includes('application')) {
+      return 'Chapter 8: Introduction to Trigonometry'
+    } else if (titleLower.includes('application') && titleLower.includes('trigonometry')) {
+      return 'Chapter 9: Applications of Trigonometry'
+    } else if (titleLower.includes('circle') && !titleLower.includes('area')) {
+      return 'Chapter 10: Circles'
+    } else if (titleLower.includes('construction')) {
+      return 'Chapter 11: Constructions'
+    } else if (titleLower.includes('area') && titleLower.includes('circle')) {
+      return 'Chapter 12: Areas Related to Circles'
+    } else if (titleLower.includes('surface area') || titleLower.includes('volume')) {
+      return 'Chapter 13: Surface Areas and Volumes'
+    } else if (titleLower.includes('statistics')) {
+      return 'Chapter 14: Statistics'
+    } else if (titleLower.includes('probability')) {
+      return 'Chapter 15: Probability'
+    } else if (titleLower.includes('mock test') || titleLower.includes('assessment')) {
+      return 'Assessments'
     } else {
-      return 'General Mathematics'
+      return 'Additional Topics'
     }
   }
 

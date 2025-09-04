@@ -12,10 +12,18 @@ interface Section {
   id: string
   lesson_id: string
   section_type: 'text' | 'video' | 'quiz' | 'practice' | 'download'
-  content: any
+  content: SectionContent
   section_order: number
   created_at: string
   updated_at: string
+}
+
+interface SectionContent {
+  title?: string
+  html?: string
+  url?: string
+  fileType?: string
+  [key: string]: unknown
 }
 
 interface SectionEditorProps {
@@ -99,7 +107,7 @@ export function SectionEditor({ lessonId, onSectionsChange }: SectionEditorProps
     }
   }
 
-  const updateSection = async (sectionId: string, content: any) => {
+  const updateSection = async (sectionId: string, content: SectionContent) => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
@@ -361,10 +369,10 @@ export function SectionEditor({ lessonId, onSectionsChange }: SectionEditorProps
 // Section Content Editor Component
 function SectionContentEditor({ section, onSave, onCancel }: {
   section: Section
-  onSave: (content: any) => void
+  onSave: (content: SectionContent) => void
   onCancel: () => void
 }) {
-  const [content, setContent] = useState(section.content || {})
+  const [content, setContent] = useState<SectionContent>(section.content || {})
 
   const handleSave = () => {
     onSave(content)

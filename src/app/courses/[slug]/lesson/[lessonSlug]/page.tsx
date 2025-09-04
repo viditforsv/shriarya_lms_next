@@ -257,7 +257,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
                           <h3>Lesson Content</h3>
                           <p>
                             This is the lesson content for <strong>{lesson.title}</strong>. 
-                            Here you'll find comprehensive notes and explanations.
+                            Here you&apos;ll find comprehensive notes and explanations.
                           </p>
                           <h4>Key Points:</h4>
                           <ul>

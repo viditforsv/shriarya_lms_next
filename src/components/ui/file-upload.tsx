@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 
 interface FileUploadProps {
   lessonId: string
-  onUploadComplete: (resource: any) => void
+  onUploadComplete: (resource: UploadedFile) => void
   acceptedTypes?: string[]
   maxSize?: number // in MB
 }

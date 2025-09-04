@@ -1,6 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
+interface SectionContent {
+  title?: string
+  html?: string
+  url?: string
+  fileType?: string
+  [key: string]: unknown
+}
+
+interface UpdateData {
+  content?: SectionContent
+  section_order?: number
+  updated_at: string
+}
+
 // GET: Fetch lesson sections
 export async function GET(request: NextRequest) {
   try {
@@ -171,7 +185,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const updateData: any = {}
+    const updateData: UpdateData = {}
     if (content !== undefined) updateData.content = content
     if (sectionOrder !== undefined) updateData.section_order = sectionOrder
     updateData.updated_at = new Date().toISOString()
@@ -264,8 +278,7 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-function getDefaultContent(sectionType: string): any {
-  switch (sectionType) {
+function getDefaultContent(sectionType: string): SectionContent {
     case 'text':
       return {
         html: '<p>Enter your lesson content here...</p>',

@@ -72,8 +72,6 @@ export function Header() {
         },
         { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
-        { name: "Templates", href: "/templates", hasDropdown: false },
-        { name: "Components Demo", href: "/components-demo", hasDropdown: false },
       ]
     } else if (user) {
       // Authenticated users (students)

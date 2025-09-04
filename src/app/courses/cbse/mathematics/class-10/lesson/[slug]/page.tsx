@@ -324,6 +324,31 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
                         </div>
                       </div>
                     )}
+
+                    {/* Test PDF File */}
+                    {lesson.title.toLowerCase().includes('real numbers') && (
+                      <div className="mt-6">
+                        <h4 className="font-semibold mb-3">Previous Year Questions:</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-sm">
+                            <div className="flex items-center">
+                              <FileText className="w-4 h-4 text-[#e27447] mr-2" />
+                              <span className="text-sm">IBDP Maths PYQs Marking Scheme - AAHL November 2023 Paper 1 TZ2</span>
+                            </div>
+                            <a 
+                              href="https://shrividhyaclasses.b-cdn.net/ibdp_previous_year_questions/AAHL/2023/November/sv_ibdp_maths_pyqs_marking_scheme_aahl_november2023_paper1_tz2.pdf"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button size="sm" variant="outline">
+                                <Download className="w-4 h-4 mr-1" />
+                                View PDF
+                              </Button>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

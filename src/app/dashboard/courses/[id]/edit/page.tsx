@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle } from "lucide-react"
+import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabase/client"
 import { Course, Lesson } from "@/lib/courses"
+import { SectionEditor } from "@/components/content/section-editor"
 
 interface CourseBuilderProps {
   courseId?: string
@@ -25,7 +26,7 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<'details' | 'lessons' | 'preview'>('details')
+  const [activeTab, setActiveTab] = useState<'details' | 'lessons' | 'content' | 'preview'>('details')
   const [error, setError] = useState<string | null>(null)
 
   const supabase = createClient()
@@ -302,6 +303,17 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
               Lessons ({lessons.length})
             </button>
             <button
+              onClick={() => setActiveTab('content')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'content'
+                  ? 'border-[#e27447] text-[#e27447]'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Layers className="w-4 h-4 inline mr-2" />
+              Content
+            </button>
+            <button
               onClick={() => setActiveTab('preview')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'preview'
@@ -417,6 +429,47 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            )}
+
+            {activeTab === 'content' && (
+              <div className="space-y-6">
+                <Card className="border-[#feefea]">
+                  <CardHeader>
+                    <CardTitle>Content Management</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Select a lesson to manage its content sections
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {lessons.length === 0 ? (
+                      <div className="text-center py-8">
+                        <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium mb-2">No lessons yet</h3>
+                        <p className="text-muted-foreground mb-4">
+                          Create lessons first to add content sections
+                        </p>
+                        <Button onClick={() => setActiveTab('lessons')}>
+                          Go to Lessons
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {lessons.map((lesson) => (
+                          <div key={lesson.id} className="border rounded-lg p-4">
+                            <h3 className="font-medium mb-4">{lesson.title}</h3>
+                            <SectionEditor 
+                              lessonId={lesson.id}
+                              onSectionsChange={(sections) => {
+                                console.log('Sections updated for lesson:', lesson.title, sections)
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             )}
 

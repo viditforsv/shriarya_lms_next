@@ -364,7 +364,7 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
                             <CardTitle className="text-base">Question 1</CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className="mb-3">Use Euclid's division algorithm to find the HCF of 135 and 225.</p>
+                            <p className="mb-3">Use Euclid&apos;s division algorithm to find the HCF of 135 and 225.</p>
                             <div className="bg-gray-50 p-3 rounded-sm">
                               <p className="text-sm text-muted-foreground">Solution:</p>
                               <p className="text-sm">225 = 135 × 1 + 90</p>
@@ -459,7 +459,7 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
                   <div className="text-sm text-muted-foreground">
                     <p>• 15 of 59 lessons completed</p>
                     <p>• Current chapter: Real Numbers</p>
-                    <p>• Next lesson: Euclid's Division Lemma</p>
+                    <p>• Next lesson: Euclid&apos;s Division Lemma</p>
                   </div>
                 </div>
               </CardContent>

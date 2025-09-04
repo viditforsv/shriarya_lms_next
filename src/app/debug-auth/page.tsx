@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/client"
 
+interface TestResult {
+  status?: number
+  data?: unknown
+  error?: string
+}
+
 export default function DebugAuthPage() {
   const { user, profile } = useAuth()
-  const [testResult, setTestResult] = useState<any>(null)
+  const [testResult, setTestResult] = useState<TestResult | null>(null)
   const [loading, setLoading] = useState(false)
   const supabase = createClient()
 

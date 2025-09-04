@@ -9,9 +9,36 @@ import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { CheckCircle, XCircle, AlertCircle, Loader2 } from 'lucide-react'
 
+interface UploadedResource {
+  id: string
+  title: string
+  url: string
+  kind: string
+  file_size: number
+  mime: string
+}
+
+interface TestResult {
+  supabase?: {
+    status: 'success' | 'error'
+    message: string
+    data?: number
+  }
+  api?: {
+    status: 'success' | 'error'
+    message: string
+    data?: number
+  }
+  bunny?: {
+    status: 'success' | 'error'
+    message: string
+    data?: unknown
+  }
+}
+
 export default function TestUploadPage() {
   const { user } = useAuth()
-  const [uploadedResources, setUploadedResources] = useState<any[]>([])
+  const [uploadedResources, setUploadedResources] = useState<UploadedResource[]>([])
   const [connectionStatus, setConnectionStatus] = useState<{
     supabase: 'checking' | 'connected' | 'error'
     bunny: 'checking' | 'connected' | 'error'
@@ -21,9 +48,9 @@ export default function TestUploadPage() {
     bunny: 'checking',
     api: 'checking'
   })
-  const [testResults, setTestResults] = useState<any>({})
+  const [testResults, setTestResults] = useState<TestResult>({})
 
-  const handleUploadComplete = (resource: any) => {
+  const handleUploadComplete = (resource: UploadedResource) => {
     console.log('Upload completed:', resource)
     setUploadedResources(prev => [...prev, resource])
   }
@@ -243,7 +270,7 @@ export default function TestUploadPage() {
               
               {/* Detailed Test Results */}
               <div className="mt-6 space-y-3">
-                {Object.entries(testResults).map(([key, result]: [string, any]) => (
+                {Object.entries(testResults).map(([key, result]: [string, TestResult[keyof TestResult]]) => (
                   <div key={key} className="p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium capitalize">{key}</span>

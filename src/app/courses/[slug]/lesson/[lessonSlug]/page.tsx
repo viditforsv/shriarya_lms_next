@@ -217,7 +217,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as string)} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="video">Video</TabsTrigger>
                 <TabsTrigger value="notes">Notes</TabsTrigger>

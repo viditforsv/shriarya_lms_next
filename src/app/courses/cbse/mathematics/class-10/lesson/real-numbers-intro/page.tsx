@@ -7,26 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-declare global {
-  interface Window {
-    AdobeDC: {
-      View: new (config: { clientId: string; divId: string }) => {
-        previewFile: (
-          fileConfig: {
-            content: { location: { url: string } }
-            metaData: { fileName: string }
-          },
-          options: {
-            showAnnotationTools: boolean
-            showDownloadPDF: boolean
-            showPrintPDF: boolean
-          }
-        ) => void
-      }
-    }
-  }
-}
-
 export default function RealNumbersIntroTestPage() {
   const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'practice'>('notes')
   const [isCompleted, setIsCompleted] = useState(false)

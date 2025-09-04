@@ -62,9 +62,11 @@ export default function GlobalError({
                     Try Again
                   </Button>
                   <Button asChild size="lg" variant="outline">
-                    <Link href="/" className="flex items-center space-x-2">
-                      <Home className="w-5 h-5" />
-                      <span>Go Home</span>
+                    <Link href="/">
+                      <div className="flex items-center space-x-2">
+                        <Home className="w-5 h-5" />
+                        <span>Go Home</span>
+                      </div>
                     </Link>
                   </Button>
                 </div>

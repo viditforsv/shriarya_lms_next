@@ -26,21 +26,27 @@ export default function NotFound() {
           <div className="text-center mb-16">
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button asChild size="lg" className="bg-[#e27447] hover:bg-[#e27447]/90">
-                <Link href="/" className="flex items-center space-x-2">
-                  <Home className="w-5 h-5" />
-                  <span>Go Home</span>
+                <Link href="/">
+                  <div className="flex items-center space-x-2">
+                    <Home className="w-5 h-5" />
+                    <span>Go Home</span>
+                  </div>
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="/courses" className="flex items-center space-x-2">
-                  <BookOpen className="w-5 h-5" />
-                  <span>Browse Courses</span>
+                <Link href="/courses">
+                  <div className="flex items-center space-x-2">
+                    <BookOpen className="w-5 h-5" />
+                    <span>Browse Courses</span>
+                  </div>
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="/templates" className="flex items-center space-x-2">
-                  <FileText className="w-5 h-5" />
-                  <span>View Templates</span>
+                <Link href="/templates">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="w-5 h-5" />
+                    <span>View Templates</span>
+                  </div>
                 </Link>
               </Button>
             </div>

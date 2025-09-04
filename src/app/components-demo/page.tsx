@@ -2662,7 +2662,7 @@ await page.render({
               <div className="p-4 border rounded-sm">
                 <h4 className="font-semibold mb-2">Demo:</h4>
                 <PDFViewer 
-                  url="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf"
+                  url="/sample.pdf"
                   title="Sample PDF Document"
                   height="500px"
                 />

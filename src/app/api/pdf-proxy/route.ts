@@ -7,7 +7,10 @@ export async function GET(request: NextRequest) {
     
     const response = await fetch(pdfUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://courses.shrividhya.in',
+        'Origin': 'https://courses.shrividhya.in',
+        'Host': 'shrividhyaclasses.b-cdn.net'
       }
     })
 

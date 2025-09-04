@@ -91,10 +91,11 @@ export default function PDFTestPage() {
     const originalError = console.error
     const originalInfo = console.info
 
-    console.log = function() {}
-    console.warn = function() {}
-    console.error = function() {}
-    console.info = function() {}
+    // Temporarily enable console for debugging
+    console.log = originalLog
+    console.warn = originalWarn
+    console.error = originalError
+    console.info = originalInfo
 
     // Disable view source
     document.onkeydown = function(e) {
@@ -139,6 +140,8 @@ export default function PDFTestPage() {
           sandbox="allow-same-origin allow-scripts"
           onContextMenu={(e) => e.preventDefault()}
           onDragStart={(e) => e.preventDefault()}
+          onLoad={() => console.log('PDF iframe loaded successfully')}
+          onError={(e) => console.error('PDF iframe error:', e)}
           style={{ userSelect: 'none' }}
         />
         

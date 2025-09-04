@@ -46,7 +46,7 @@ interface Lesson {
   course_id: string
 }
 
-export default function CoursePage({ params }: { params: { slug: string } }) {
+export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { user } = useAuth()
   const [course, setCourse] = useState<Course | null>(null)
   const [lessons, setLessons] = useState<Lesson[]>([])
@@ -54,9 +54,17 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+  const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
   const supabase = createClient()
 
+  // Resolve params
   useEffect(() => {
+    params.then(setResolvedParams)
+  }, [params])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+
     const loadCourse = async () => {
       try {
         setIsLoading(true)
@@ -66,7 +74,7 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
         const { data: courseData, error: courseError } = await supabase
           .from('courses')
           .select('*')
-          .eq('slug', params.slug)
+          .eq('slug', resolvedParams.slug)
           .single()
 
         if (courseError) {
@@ -109,15 +117,13 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
       }
     }
 
-    if (params.slug) {
-      loadCourse()
-    }
-  }, [params.slug, user, supabase])
+    loadCourse()
+  }, [resolvedParams, user, supabase])
 
   const handleLessonClick = (lesson: Lesson) => {
     if (lesson.is_preview || isEnrolled || course?.is_free) {
       if (lesson.slug) {
-        window.location.href = `/courses/${params.slug}/lesson/${lesson.slug}`
+        window.location.href = `/courses/${resolvedParams?.slug}/lesson/${lesson.slug}`
       } else {
         console.log('Lesson slug not available:', lesson.title)
       }

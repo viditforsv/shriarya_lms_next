@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import Script from "next/script"
 
 export default function PDFTestPage() {
   useEffect(() => {
@@ -148,6 +149,24 @@ export default function PDFTestPage() {
             SECURE VIEW ONLY
           </div>
         </div>
+      </div>
+
+      {/* Adobe PDF Embed API */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Adobe PDF Viewer</h2>
+        <div id="adobe-dc-view"></div>
+        <Script src="https://acrobatservices.adobe.com/view-sdk/viewer.js" />
+        <Script id="adobe-pdf-viewer">
+          {`
+            document.addEventListener("adobe_dc_view_sdk.ready", function(){
+              var adobeDCView = new AdobeDC.View({clientId: "eb33596eed8b4ad0b50e4a287ce12fbc", divId: "adobe-dc-view"});
+              adobeDCView.previewFile({
+                content:{location: {url: "https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf"}},
+                metaData:{fileName: "Bodea Brochure.pdf"}
+              }, {});
+            });
+          `}
+        </Script>
       </div>
     </div>
   )

@@ -287,7 +287,7 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
                           
                           <h4>Important Formulas:</h4>
                           <ul>
-                            <li>For any two positive integers a and b, there exist unique integers q and r such that a = bq + r, where 0 ≤ r < b</li>
+                            <li>For any two positive integers a and b, there exist unique integers q and r such that a = bq + r, where 0 &le; r &lt; b</li>
                           </ul>
                         </div>
                       )}

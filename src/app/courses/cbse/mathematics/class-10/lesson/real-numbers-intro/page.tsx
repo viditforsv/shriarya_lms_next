@@ -64,7 +64,7 @@ export default function RealNumbersIntroTestPage() {
           adobeDCView.previewFile({
             content: {
               location: {
-                url: "https://shrividhyaclasses.b-cdn.net/ibdp_previous_year_questions/AAHL/2021/November/sv_ibdp_maths_pyqs_marking_scheme_aahl_november2021_paper1_tz0.pdf"
+                url: "https://www.torontomu.ca/sciencerendezvous/SR2021/A_Brief_Introduction_To_AI.pdf"
               }
             },
             metaData: {

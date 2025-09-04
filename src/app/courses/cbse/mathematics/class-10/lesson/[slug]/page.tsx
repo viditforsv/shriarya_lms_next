@@ -29,7 +29,7 @@ interface Resource {
   duration_sec: number | null
 }
 
-export default function LessonPage({ params }: { params: { slug: string } }) {
+export default function LessonPage({ params }: { params: Promise<{ slug: string }> }) {
   const { user } = useAuth()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [resources, setResources] = useState<Resource[]>([])
@@ -37,12 +37,20 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
   const [error, setError] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
   const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'practice'>('video')
+  const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
 
   const supabase = createClient()
 
   const { hasAccess, loading: accessLoading } = useCourseAccess('cbse-math-10')
 
+  // Resolve params
   useEffect(() => {
+    params.then(setResolvedParams)
+  }, [params])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+
     const fetchLesson = async () => {
       try {
         setIsLoading(true)
@@ -52,7 +60,7 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
         const { data: lessonData, error: lessonError } = await supabase
           .from('lessons')
           .select('*')
-          .eq('slug', params.slug)
+          .eq('slug', resolvedParams.slug)
           .single()
 
         if (lessonError) {
@@ -81,10 +89,8 @@ export default function LessonPage({ params }: { params: { slug: string } }) {
       }
     }
 
-    if (params.slug) {
-      fetchLesson()
-    }
-  }, [params.slug, supabase])
+    fetchLesson()
+  }, [resolvedParams, supabase])
 
   const handleMarkComplete = async () => {
     if (!user || !lesson) return

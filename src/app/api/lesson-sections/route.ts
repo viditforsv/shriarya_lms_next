@@ -279,6 +279,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 function getDefaultContent(sectionType: string): SectionContent {
+  switch (sectionType) {
     case 'text':
       return {
         html: '<p>Enter your lesson content here...</p>',

@@ -91,6 +91,11 @@ export default function ComponentsDemoPage() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
     ) },
+    { id: "teaching", label: "Teaching Components", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    ) },
 
 
   ]
@@ -2566,6 +2571,116 @@ export default function ComponentsDemoPage() {
     </section>
   )
 
+  const renderTeachingSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">Teaching Components</h2>
+        <p className="text-gray-600 text-lg">Interactive components designed for educational content delivery</p>
+      </div>
+
+      {/* PDF Embedding Section */}
+      <div className="mb-12">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">PDF Embedding</CardTitle>
+            <CardDescription>Secure PDF viewer with Adobe PDF Embed API - download and print disabled</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">              
+              <div className="p-4 border rounded-sm">
+                <h4 className="font-semibold mb-2">Implementation:</h4>
+                <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono overflow-x-auto">
+                  <pre>{`// Adobe PDF Embed API Implementation
+const adobeDCView = new AdobeDC.View({
+  clientId: "your-client-id",
+  divId: "adobe-dc-view"
+});
+
+adobeDCView.previewFile({
+  content: { location: { url: "pdf-url" } },
+  metaData: { fileName: "Document Name" }
+}, {
+  showAnnotationTools: false,
+  showDownloadPDF: false,
+  showPrintPDF: false
+});`}</pre>
+                </div>
+              </div>
+
+              <div className="p-4 border rounded-sm">
+                <h4 className="font-semibold mb-2">Demo:</h4>
+                <div className="w-full h-96 border border-gray-200 rounded-sm overflow-hidden">
+                  <div id="adobe-dc-view-demo" className="w-full h-full"></div>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Note: This is a demo placeholder. In production, the PDF would be embedded here.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional Teaching Components */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Video Player</CardTitle>
+            <CardDescription>Custom video player with progress tracking</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm bg-gray-50">
+              <p className="text-sm text-gray-600">
+                Video player component with custom controls, progress tracking, and analytics.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Interactive Quiz</CardTitle>
+            <CardDescription>Multi-format quiz component</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm bg-gray-50">
+              <p className="text-sm text-gray-600">
+                Quiz component supporting multiple choice, true/false, and essay questions.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Progress Tracker</CardTitle>
+            <CardDescription>Student progress visualization</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm bg-gray-50">
+              <p className="text-sm text-gray-600">
+                Progress tracking component with charts and completion status.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Discussion Forum</CardTitle>
+            <CardDescription>Student-teacher interaction</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm bg-gray-50">
+              <p className="text-sm text-gray-600">
+                Discussion forum component for student-teacher interactions.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  )
 
 
   const renderContent = () => {
@@ -2598,6 +2713,8 @@ export default function ComponentsDemoPage() {
         return renderPaginationSection()
       case "courses":
         return renderCoursesSection()
+      case "teaching":
+        return renderTeachingSection()
 
 
       default:

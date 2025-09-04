@@ -151,23 +151,8 @@ export default function PDFTestPage() {
         </div>
       </div>
 
-      {/* Adobe PDF Embed API */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Adobe PDF Viewer</h2>
-        <div id="adobe-dc-view"></div>
-        <Script src="https://acrobatservices.adobe.com/view-sdk/viewer.js" />
-        <Script id="adobe-pdf-viewer">
-          {`
-            document.addEventListener("adobe_dc_view_sdk.ready", function(){
-              var adobeDCView = new AdobeDC.View({clientId: "eb33596eed8b4ad0b50e4a287ce12fbc", divId: "adobe-dc-view"});
-              adobeDCView.previewFile({
-                content:{location: {url: "https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf"}},
-                metaData:{fileName: "Test File"}
-              }, {});
-            });
-          `}
-        </Script>
-      </div>
+      <iframe src="https://shrividhyaclasses.b-cdn.net/html_for_pdf/IBDP_aahl_2021_tz0_nov_paper1_Solutions.html">
+      </iframe>
     </div>
   )
 }

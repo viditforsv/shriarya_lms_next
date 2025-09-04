@@ -19,7 +19,7 @@ interface CourseBuilderProps {
   courseId?: string
 }
 
-export default function CourseBuilder({ params }: { params: { id: string } }) {
+export default function CourseBuilder({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const { user } = useAuth()
   const [course, setCourse] = useState<Course | null>(null)
@@ -28,17 +28,22 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
   const [isSaving, setIsSaving] = useState(false)
   const [activeTab, setActiveTab] = useState<'details' | 'lessons' | 'content' | 'preview'>('details')
   const [error, setError] = useState<string | null>(null)
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
 
   const supabase = createClient()
 
+  // Resolve params
   useEffect(() => {
-    if (params.id) {
-      loadCourse()
-    }
-  }, [params.id])
+    params.then(setResolvedParams)
+  }, [params])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+    loadCourse()
+  }, [resolvedParams])
 
   const loadCourse = async () => {
-    if (!params.id) return
+    if (!resolvedParams) return
 
     try {
       setIsLoading(true)
@@ -48,7 +53,7 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
       const { data: courseData, error: courseError } = await supabase
         .from('courses')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', resolvedParams.id)
         .single()
 
       if (courseError) throw courseError
@@ -58,7 +63,7 @@ export default function CourseBuilder({ params }: { params: { id: string } }) {
       const { data: lessonsData, error: lessonsError } = await supabase
         .from('lessons')
         .select('*')
-        .eq('course_id', params.id)
+        .eq('course_id', resolvedParams.id)
         .order('lesson_order')
 
       if (lessonsError) throw lessonsError

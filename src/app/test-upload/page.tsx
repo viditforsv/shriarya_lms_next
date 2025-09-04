@@ -271,20 +271,22 @@ export default function TestUploadPage() {
               {/* Detailed Test Results */}
               <div className="mt-6 space-y-3">
                 {Object.entries(testResults).map(([key, result]: [string, TestResult[keyof TestResult]]) => (
-                  <div key={key} className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium capitalize">{key}</span>
-                      <Badge className={result.status === 'success' ? 'bg-green-500' : 'bg-red-500'}>
-                        {result.status}
-                      </Badge>
+                  result && (
+                    <div key={key} className="p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium capitalize">{key}</span>
+                        <Badge className={result.status === 'success' ? 'bg-green-500' : 'bg-red-500'}>
+                          {result.status}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600">{result.message}</p>
+                      {result.data !== undefined && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Data: {typeof result.data === 'object' ? JSON.stringify(result.data) : String(result.data)}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-600">{result.message}</p>
-                    {result.data && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Data: {typeof result.data === 'object' ? JSON.stringify(result.data) : result.data}
-                      </p>
-                    )}
-                  </div>
+                  )
                 ))}
               </div>
             </CardContent>

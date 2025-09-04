@@ -196,7 +196,7 @@ export function FileUpload({
           <AlertCircle className="w-5 h-5 text-red-500" />
           <span className="text-sm text-red-700">{error}</span>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => setError(null)}
             className="ml-auto"
@@ -232,7 +232,7 @@ export function FileUpload({
                   Uploaded
                 </Badge>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => removeFile(file.id)}
                 >

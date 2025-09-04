@@ -226,7 +226,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                   Enroll Now
                 </Button>
               ) : (
-                <Link href={`/courses/${params.slug}/lesson/${lessons[0]?.slug || 'introduction'}`}>
+                <Link href={`/courses/${resolvedParams?.slug}/lesson/${lessons[0]?.slug || 'introduction'}`}>
                   <Button className="bg-[#e27447] hover:bg-[#d1653a]">
                     <Play className="w-4 h-4 mr-2" />
                     {isEnrolled ? 'Continue Learning' : 'Start Learning'}

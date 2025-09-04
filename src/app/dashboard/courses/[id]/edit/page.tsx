@@ -216,7 +216,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
   }
 
   // If no courseId, show course creation
-  if (!params.id) {
+  if (!resolvedParams?.id) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-12">

@@ -41,7 +41,7 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string 
 
   const supabase = createClient()
 
-  const { hasAccess, loading: accessLoading } = useCourseAccess('cbse-math-10')
+  const { canAccess } = useCourseAccess('cbse-math-10')
 
   // Resolve params
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string 
     )
   }
 
-  if (!hasAccess && !accessLoading) {
+  if (!canAccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

@@ -109,7 +109,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <Link href={`/courses/${course.slug || course.id}`}>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="outline" size="sm">
                             <ArrowRight className="w-4 h-4" />
                           </Button>
                         </Link>

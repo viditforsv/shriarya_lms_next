@@ -128,7 +128,7 @@ export default function CreateCoursePage() {
               {isLoading ? 'Creating Course...' : 'Start Creating Course'}
             </Button>
             <p className="text-sm text-muted-foreground mt-4">
-              You'll be redirected to the course builder where you can add your content
+              You&apos;ll be redirected to the course builder where you can add your content
             </p>
           </div>
 

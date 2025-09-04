@@ -253,7 +253,7 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold mb-2">What you'll learn</h4>
+                        <h4 className="font-semibold mb-2">What you&apos;ll learn</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           <li>• Comprehensive course materials</li>
                           <li>• Practical exercises and assignments</li>

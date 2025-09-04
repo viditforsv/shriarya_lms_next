@@ -10,6 +10,7 @@ import { Sidebar, SidebarItem } from "@/components/ui/sidebar"
 
 
 import { useState, useEffect } from "react"
+import Link from 'next/link'
 
 export default function ComponentsDemoPage() {
   const [activeTab, setActiveTab] = useState("buttons")
@@ -2379,7 +2380,7 @@ export default function ComponentsDemoPage() {
             <h3 className="text-3xl font-bold text-[#1b4a56] mb-2 font-cardo">Browse Our Top Courses</h3>
             <p className="text-base text-[#4a6f73] font-dm-sans">Lorem ipsum dolor sit amet elit</p>
           </div>
-          <a 
+          <Link 
             href="/courses" 
             className="text-[#E57342] hover:text-[#D56538] font-semibold flex items-center gap-2 mt-4 md:mt-0 font-dm-sans"
           >
@@ -2387,7 +2388,7 @@ export default function ComponentsDemoPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
             </svg>
-          </a>
+          </Link>
         </div>
 
         {/* Course Carousel Container */}

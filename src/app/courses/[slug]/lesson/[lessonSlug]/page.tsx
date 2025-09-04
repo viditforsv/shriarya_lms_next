@@ -37,7 +37,7 @@ interface Course {
   is_free: boolean
 }
 
-export default function LessonPage({ params }: { params: { slug: string; lessonSlug: string } }) {
+export default function LessonPage({ params }: { params: Promise<{ slug: string; lessonSlug: string }> }) {
   const { user } = useAuth()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [course, setCourse] = useState<Course | null>(null)
@@ -45,9 +45,17 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'practice'>('video')
+  const [resolvedParams, setResolvedParams] = useState<{ slug: string; lessonSlug: string } | null>(null)
   const supabase = createClient()
 
+  // Resolve params
   useEffect(() => {
+    params.then(setResolvedParams)
+  }, [params])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+
     const loadLesson = async () => {
       try {
         setIsLoading(true)
@@ -57,7 +65,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
         const { data: courseData, error: courseError } = await supabase
           .from('courses')
           .select('id, title, slug, is_free')
-          .eq('slug', params.slug)
+          .eq('slug', resolvedParams.slug)
           .single()
 
         if (courseError) {
@@ -70,7 +78,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
         const { data: lessonData, error: lessonError } = await supabase
           .from('lessons')
           .select('*')
-          .eq('slug', params.lessonSlug)
+          .eq('slug', resolvedParams.lessonSlug)
           .eq('course_id', courseData.id)
           .single()
 
@@ -101,10 +109,8 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
       }
     }
 
-    if (params.slug && params.lessonSlug) {
-      loadLesson()
-    }
-  }, [params.slug, params.lessonSlug, user, supabase])
+    loadLesson()
+  }, [resolvedParams, user, supabase])
 
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free
@@ -123,7 +129,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
       .single()
 
     if (nextLesson) {
-      window.location.href = `/courses/${params.slug}/lesson/${nextLesson.slug}`
+      window.location.href = `/courses/${resolvedParams?.slug}/lesson/${nextLesson.slug}`
     }
   }
 
@@ -140,7 +146,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
       .single()
 
     if (prevLesson) {
-      window.location.href = `/courses/${params.slug}/lesson/${prevLesson.slug}`
+      window.location.href = `/courses/${resolvedParams?.slug}/lesson/${prevLesson.slug}`
     }
   }
 
@@ -161,7 +167,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
           <p className="text-muted-foreground mb-6">{error || 'The lesson you are looking for does not exist.'}</p>
-          <Link href={`/courses/${params.slug}`}>
+          <Link href={`/courses/${resolvedParams?.slug}`}>
             <Button>Back to Course</Button>
           </Link>
         </div>
@@ -178,7 +184,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
           <p className="text-muted-foreground mb-6">
             Please enroll in this course to access this lesson.
           </p>
-          <Link href={`/courses/${params.slug}`}>
+          <Link href={`/courses/${resolvedParams?.slug}`}>
             <Button>Back to Course</Button>
           </Link>
         </div>
@@ -192,7 +198,7 @@ export default function LessonPage({ params }: { params: { slug: string; lessonS
         {/* Navigation Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <Link href={`/courses/${params.slug}`}>
+            <Link href={`/courses/${resolvedParams?.slug}`}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Course

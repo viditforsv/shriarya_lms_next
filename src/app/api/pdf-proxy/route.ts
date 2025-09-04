@@ -24,14 +24,16 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'inline',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Disposition': 'inline; filename="document.pdf"',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, private',
         'Pragma': 'no-cache',
         'Expires': '0',
         // Security headers
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'SAMEORIGIN',
-        'X-XSS-Protection': '1; mode=block'
+        'X-XSS-Protection': '1; mode=block',
+        'Content-Security-Policy': "frame-ancestors 'self'",
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
       }
     })
   } catch (error) {

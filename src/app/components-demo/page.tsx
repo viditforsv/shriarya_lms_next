@@ -7,6 +7,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { PromotionalCard } from "@/components/ui/promotional-card"
 import { Pagination } from "@/components/ui/pagination"
 import { Sidebar, SidebarItem } from "@/components/ui/sidebar"
+import { PDFViewer } from "@/components/ui/pdf-viewer"
 
 
 import { useState, useEffect } from "react"
@@ -2615,6 +2616,58 @@ adobeDCView.previewFile({
                 </div>
                 <p className="text-sm text-gray-500 mt-2">
                   Note: This is a demo placeholder. In production, the PDF would be embedded here.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* PDF.js Viewer Section */}
+      <div className="mb-12">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">PDF.js Viewer</CardTitle>
+            <CardDescription>Open-source PDF viewer with canvas rendering - download disabled for security</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-4 border rounded-sm">
+                <h4 className="font-semibold mb-2">Implementation:</h4>
+                <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono overflow-x-auto">
+                  <pre>{`// PDF.js Implementation
+import * as pdfjsLib from 'pdfjs-dist'
+
+// Set up worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  \`//cdnjs.cloudflare.com/ajax/libs/pdf.js/\${pdfjsLib.version}/pdf.worker.min.js\`
+
+// Load and render PDF
+const pdf = await pdfjsLib.getDocument(url).promise
+const page = await pdf.getPage(1)
+const canvas = document.getElementById('pdf-canvas')
+const context = canvas.getContext('2d')
+
+const viewport = page.getViewport({ scale: 1.5 })
+canvas.height = viewport.height
+canvas.width = viewport.width
+
+await page.render({
+  canvasContext: context,
+  viewport: viewport
+}).promise`}</pre>
+                </div>
+              </div>
+
+              <div className="p-4 border rounded-sm">
+                <h4 className="font-semibold mb-2">Demo:</h4>
+                <PDFViewer 
+                  url="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf"
+                  title="Sample PDF Document"
+                  height="500px"
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                  This is a sample PDF from Mozilla&apos;s PDF.js demo. The viewer includes page navigation and zoom controls.
                 </p>
               </div>
             </div>

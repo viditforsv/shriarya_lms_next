@@ -185,10 +185,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    const updateData: UpdateData = {}
+    const updateData: UpdateData = {
+      updated_at: new Date().toISOString()
+    }
     if (content !== undefined) updateData.content = content
     if (sectionOrder !== undefined) updateData.section_order = sectionOrder
-    updateData.updated_at = new Date().toISOString()
 
     const { data: updatedSection, error: updateError } = await supabase
       .from('lesson_sections')

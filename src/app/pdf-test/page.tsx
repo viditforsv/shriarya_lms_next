@@ -162,7 +162,7 @@ export default function PDFTestPage() {
               var adobeDCView = new AdobeDC.View({clientId: "eb33596eed8b4ad0b50e4a287ce12fbc", divId: "adobe-dc-view"});
               adobeDCView.previewFile({
                 content:{location: {url: "https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf"}},
-                metaData:{fileName: "Bodea Brochure.pdf"}
+                metaData:{fileName: "Test File"}
               }, {});
             });
           `}

@@ -39,13 +39,13 @@ export default function PageTemplatesIndex() {
       name: "Password Reset + Email Verification",
       href: "/templates/page-templates/password-reset",
       phase: "Phase 1 - MVP",
-      ready: false
+      ready: true
     },
     {
       name: "User Profile + Settings",
       href: "/templates/page-templates/user-profile",
       phase: "Phase 1 - MVP",
-      ready: false
+      ready: true
     },
     
     // Phase 1 (MVP - Launch) - Business/Info Pages
@@ -90,19 +90,19 @@ export default function PageTemplatesIndex() {
       name: "Checkout / Payment Flow",
       href: "/templates/page-templates/checkout",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     {
       name: "Subscription / Plan Management",
       href: "/templates/page-templates/subscription-management",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     {
       name: "Refund / Guarantee Page",
       href: "/templates/page-templates/refund",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     
     // Phase 2 (Growth) - Support
@@ -110,59 +110,41 @@ export default function PageTemplatesIndex() {
       name: "FAQ + Support (combined)",
       href: "/templates/page-templates/faq-support",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
+    },
+    {
+      name: "FAQ Page",
+      href: "/templates/page-templates/faq",
+      phase: "Phase 2 - Growth",
+      ready: true
     },
     {
       name: "Helpdesk Ticketing OR Chatbot",
       href: "/templates/page-templates/helpdesk",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     
     // Phase 3 (Scale) - Marketing/SEO
     {
-      name: "Blog Listing Page",
-      href: "/templates/page-templates/blog",
-      phase: "Phase 3 - Scale",
-      ready: false
-    },
-    {
-      name: "Blog Post Page",
-      href: "/templates/page-templates/blog-post",
-      phase: "Phase 3 - Scale",
-      ready: false
-    },
-    {
       name: "Case Studies / Testimonials",
       href: "/templates/page-templates/testimonials",
       phase: "Phase 3 - Scale",
-      ready: false
+      ready: true
     },
     
     // Additional Templates (Bonus Features)
     {
-      name: "Portfolio",
-      href: "/templates/page-templates/portfolio",
-      phase: "Bonus",
-      ready: false
-    },
-    {
-      name: "Services",
-      href: "/templates/page-templates/services",
-      phase: "Bonus",
-      ready: false
-    },
-    {
       name: "Team Page",
       href: "/templates/page-templates/team",
       phase: "Bonus",
-      ready: false
+      ready: true
     },
     {
       name: "404 Error Page",
       href: "/templates/page-templates/404",
       phase: "Bonus",
-      ready: false
+      ready: true
     }
   ]
 

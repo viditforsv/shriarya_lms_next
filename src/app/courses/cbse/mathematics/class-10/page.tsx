@@ -243,7 +243,7 @@ export default function Class10MathematicsPage() {
                   <div className="w-12 h-12 rounded-full border-2 border-[#feefea] overflow-hidden">
                     <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
                       <img 
-                        src="/images/logo.webp" 
+                        src="/images/main_logo.webp" 
                         alt="ShriArya Logo" 
                         className="w-8 h-8 object-contain"
                         style={{ mixBlendMode: 'multiply' }}
@@ -448,7 +448,7 @@ export default function Class10MathematicsPage() {
                         <div className="w-24 h-24 rounded-full border-2 border-[#feefea] overflow-hidden">
                           <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
                             <img 
-                              src="/images/logo.webp" 
+                              src="/images/main_logo.webp" 
                               alt="ShriArya Logo" 
                               className="w-16 h-16 object-contain"
                               style={{ mixBlendMode: 'multiply' }}

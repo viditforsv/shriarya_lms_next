@@ -38,7 +38,7 @@ export default function DashboardTemplatesIndex() {
       name: "Analytics (basic)",
       href: "/templates/dashboard-templates/analytics",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     
     // Phase 3 (Scale) - Advanced Dashboards
@@ -52,13 +52,13 @@ export default function DashboardTemplatesIndex() {
       name: "Institution Analytics",
       href: "/templates/dashboard-templates/institution-dashboard",
       phase: "Phase 3 - Scale",
-      ready: false
+      ready: true
     },
     {
       name: "Teacher Signup",
       href: "/templates/dashboard-templates/teacher-signup",
       phase: "Phase 3 - Scale",
-      ready: false
+      ready: true
     }
   ]
 

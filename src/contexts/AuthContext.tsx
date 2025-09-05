@@ -61,8 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [profile]) // Add profile dependency
 
-    // Fetch user profile from database
-  const fetchProfile = useCallback(async (userId: string) => {
+    // Fetch user profile from database with retry logic
+  const fetchProfile = useCallback(async (userId: string, retries = 2) => {
     try {
       console.log('Fetching profile for user ID:', userId)
       
@@ -73,9 +73,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return cachedProfile
       }
       
-      // Add timeout to prevent hanging
+      // Add timeout to prevent hanging (increased to 10s)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000) // 5 second timeout
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
       })
       
       const fetchPromise = supabase
@@ -116,6 +116,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return data as UserProfile
     } catch (error) {
       console.error('Error fetching profile:', error)
+      
+      // Retry logic for timeout errors
+      if (retries > 0 && error instanceof Error && error.message.includes('timeout')) {
+        console.log(`Retrying profile fetch (${retries} attempts left)...`)
+        await new Promise(resolve => setTimeout(resolve, 1000)) // Wait 1s before retry
+        return fetchProfile(userId, retries - 1)
+      }
+      
       return null
     }
   }, [supabase, profileCache])
@@ -244,11 +252,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Refresh user profile
+  // Refresh user profile with error handling
   const refreshProfile = async () => {
     if (user) {
-      const userProfile = await fetchProfile(user.id)
-      setProfile(userProfile)
+      try {
+        const userProfile = await fetchProfile(user.id)
+        setProfile(userProfile)
+      } catch (error) {
+        console.error('Error refreshing profile:', error)
+        // Don't crash the app, just log the error
+      }
     }
   }
 
@@ -275,8 +288,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Fetch profile if user exists
           if (user) {
-            const userProfile = await fetchProfile(user.id)
-            setProfile(userProfile)
+            try {
+              const userProfile = await fetchProfile(user.id)
+              setProfile(userProfile)
+            } catch (error) {
+              console.error('Error fetching profile during session init:', error)
+              // Continue without crashing
+            }
           }
         } catch (error) {
           console.error('Error getting session:', error)
@@ -296,8 +314,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             // Fetch profile if user exists
             if (session?.user) {
-              const userProfile = await fetchProfile(session.user.id)
-              setProfile(userProfile)
+              try {
+                const userProfile = await fetchProfile(session.user.id)
+                setProfile(userProfile)
+              } catch (error) {
+                console.error('Error fetching profile during auth state change:', error)
+                // Continue without crashing
+              }
             } else {
               setProfile(null)
             }

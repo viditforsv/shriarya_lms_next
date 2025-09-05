@@ -124,7 +124,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
               <Image 
-                src="/images/logo.webp" 
+                src="/images/main_logo.webp" 
                 alt="ShriArya LMS Logo" 
                 width={40}
                 height={40}

@@ -24,7 +24,7 @@ export default function CourseTemplatesIndex() {
       name: "Lesson Template",
       href: "/templates/course-templates/lesson",
       phase: "Phase 1 - MVP",
-      ready: false
+      ready: true
     },
     
     // Phase 2 (Growth) - Learning Enhancements
@@ -32,25 +32,25 @@ export default function CourseTemplatesIndex() {
       name: "Quiz Template",
       href: "/templates/course-templates/quiz",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     {
       name: "Assignments Template",
       href: "/templates/course-templates/assignments",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     {
       name: "Question Bank",
       href: "/templates/course-templates/question-bank",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     {
       name: "Certificate Template",
       href: "/templates/course-templates/certificate",
       phase: "Phase 2 - Growth",
-      ready: false
+      ready: true
     },
     
     // Phase 3 (Scale) - Advanced Features
@@ -58,7 +58,7 @@ export default function CourseTemplatesIndex() {
       name: "Performance Analytics",
       href: "/templates/course-templates/performance-analytics",
       phase: "Phase 3 - Scale",
-      ready: false
+      ready: true
     }
   ]
 

@@ -28,7 +28,7 @@ export default function AuthPage() {
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">
                 <Image 
-                  src="/images/logo.webp" 
+                  src="/images/main_logo.webp" 
                   alt="ShriArya LMS Logo" 
                   width={64}
                   height={64}
@@ -76,7 +76,7 @@ export default function AuthPage() {
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">
               <Image 
-                src="/images/logo.webp" 
+                src="/images/main_logo.webp" 
                 alt="ShriArya LMS Logo" 
                 width={64}
                 height={64}

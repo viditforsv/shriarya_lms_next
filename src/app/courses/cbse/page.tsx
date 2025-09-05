@@ -81,7 +81,7 @@ export default function CBSECoursesPage() {
             <div className="flex items-center justify-center mb-6">
               <div className="mr-6">
                 <Image 
-                  src="/images/CBSE Logo.svg" 
+                  src="/images/cbse_logo.svg" 
                   alt="CBSE Logo" 
                   width={60}
                   height={60}

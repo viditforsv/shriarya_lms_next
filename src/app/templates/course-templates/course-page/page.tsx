@@ -67,7 +67,7 @@ export default function CoursePageTemplate() {
                 <div className="w-12 h-12 rounded-full border-2 border-[#feefea] overflow-hidden">
                   <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
                     <img 
-                      src="/images/logo.webp" 
+                      src="/images/main_logo.webp" 
                       alt="Instructor Logo" 
                       className="w-8 h-8 object-contain"
                       style={{ mixBlendMode: 'multiply' }}
@@ -341,7 +341,7 @@ export default function CoursePageTemplate() {
                   <div className="w-32 h-32 rounded-sm overflow-hidden border-2 border-[#feefea]">
                     <div className="w-full h-full bg-gradient-to-br from-[#feefea] to-[#fffefd] flex items-center justify-center">
                       <img 
-                        src="/images/logo.webp" 
+                        src="/images/main_logo.webp" 
                         alt="Instructor Logo" 
                         className="w-20 h-20 object-contain"
                         style={{ mixBlendMode: 'multiply' }}
@@ -395,7 +395,7 @@ export default function CoursePageTemplate() {
                   <div className="text-center">
                     <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg mb-3 border border-[#feefea]">
                       <img 
-                        src="/images/logo.webp" 
+                        src="/images/main_logo.webp" 
                         alt="Course Logo" 
                         className="w-10 h-10 object-contain"
                         style={{ mixBlendMode: 'multiply' }}

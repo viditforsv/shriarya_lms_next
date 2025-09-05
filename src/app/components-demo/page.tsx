@@ -8,6 +8,11 @@ import { PromotionalCard } from "@/components/ui/promotional-card"
 import { Pagination } from "@/components/ui/pagination"
 import { Sidebar, SidebarItem } from "@/components/ui/sidebar"
 import { PDFViewer } from "@/components/ui/pdf-viewer"
+import { SignInForm } from "@/components/auth/SignInForm"
+import { SignUpForm } from "@/components/auth/SignUpForm"
+import { RoleGuard } from "@/components/auth/RoleGuard"
+import { CourseEnrollment } from "@/components/CourseEnrollment"
+import { SectionEditor } from "@/components/content/section-editor"
 
 
 import { useState, useEffect } from "react"
@@ -68,11 +73,6 @@ export default function ComponentsDemoPage() {
       </svg>
     ) },
 
-    { id: "responsive", label: "Responsive", icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-      </svg>
-    ) },
     { id: "navigation", label: "Navigation", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -88,14 +88,19 @@ export default function ComponentsDemoPage() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
     ) },
-    { id: "courses", label: "Courses", icon: (
+    { id: "auth", label: "Auth Components", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+      </svg>
+    ) },
+    { id: "course-specific", label: "Course Components", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
     ) },
-    { id: "teaching", label: "Teaching Components", icon: (
+    { id: "content", label: "Content Components", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ) },
 
@@ -105,99 +110,43 @@ export default function ComponentsDemoPage() {
   
   const renderButtonsSection = () => (
     <section className="mb-20">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-[#1e293b] mb-6">1.A Mathematics Learning Buttons</h2>
-        <p className="text-lg text-[#1e293b] max-w-3xl mx-auto">Interactive buttons for math lessons, exercises, and assessments using our streamlined color palette</p>
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">Button Components</h2>
+        <p className="text-gray-600 text-lg">Core button variants and sizes for the LMS</p>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* All Button Variants */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">All Button Variants</CardTitle>
-            <CardDescription className="text-base">Complete showcase of all 4 button styles</CardDescription>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Button Variants */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Button Variants</CardTitle>
+            <CardDescription>All available button styles</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-4">
-                <Button variant="primary" showArrow>Primary</Button>
-                <Button variant="secondary" showArrow>Secondary</Button>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="outline" showArrow>Outline</Button>
-                <Button variant="coral" showArrow>Coral</Button>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="loadMore">Load More</Button>
-                <Button variant="loadMore" showChevron>Show Options</Button>
-              </div>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="coral">Coral</Button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="loadMore">Load More</Button>
+              <Button variant="primary" showArrow>With Arrow</Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Button Sizes Across Variants */}
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Button Sizes</CardTitle>
-            <CardDescription className="text-base">All variants in different sizes</CardDescription>
+        {/* Button Sizes */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Button Sizes</CardTitle>
+            <CardDescription>Available size options</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-4">
-                <Button size="sm" variant="primary">Small</Button>
-                <Button size="sm" variant="secondary">Small</Button>
-                <Button size="sm" variant="coral">Small</Button>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <Button size="default" variant="primary">Default</Button>
-                <Button size="default" variant="outline">Default</Button>
-                <Button size="default" variant="coral">Default</Button>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <Button size="lg" variant="primary">Large</Button>
-                <Button size="lg" variant="secondary">Large</Button>
-                <Button size="lg" variant="coral">Large</Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      {/* Button 2.png Style Showcase */}
-      <div className="mt-20">
-        <Card className="hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl">Button 2.png Style</CardTitle>
-            <CardDescription className="text-base">Exact replica of the Button 2.png design with rounded-sm corners</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            {/* Button 2.png Exact Match */}
-            <div>
-              <h4 className="text-lg font-semibold text-[#1e293b] mb-4">Exact Button 2.png Replica</h4>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="outline" showArrow>
-                  Explore courses
-                </Button>
-                <Button variant="outline" showArrow>
-                  View Lessons
-                </Button>
-                <Button variant="outline" showArrow>
-                  Download Notes
-                </Button>
-              </div>
-            </div>
-
-            {/* Button 2.png Color Specifications */}
-            <div className="pt-4 border-t border-[#feefea]">
-              <h4 className="text-sm font-medium text-[#1e293b] mb-3">Button 2.png Color Specifications:</h4>
-              <ul className="text-xs text-[#1e293b] space-y-2">
-                <li>• <strong>Background:</strong> Pure white (#ffffff)</li>
-                <li>• <strong>Text:</strong> Dark text (#1e293b)</li>
-                <li>• <strong>Border:</strong> Light cream border (#feefea)</li>
-                <li>• <strong>Hover Background:</strong> Very light cream (#fffefd)</li>
-                <li>• <strong>Hover Border:</strong> Light cream (#feefea)</li>
-                <li>• <strong>Corner Radius:</strong> rounded-sm (2px)</li>
-                <li>• <strong>Arrow Icon:</strong> Same color as text (#1e293b)</li>
-              </ul>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="sm" variant="primary">Small</Button>
+              <Button size="default" variant="primary">Default</Button>
+              <Button size="lg" variant="primary">Large</Button>
             </div>
           </CardContent>
         </Card>
@@ -2737,6 +2686,152 @@ await page.render({
   )
 
 
+  // Auth Components Section
+  const renderAuthSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">Authentication Components</h2>
+        <p className="text-gray-600 text-lg">Complete authentication system components</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Sign In Form</CardTitle>
+            <CardDescription>Complete sign-in form with email/password and Google OAuth</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <SignInForm />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Sign Up Form</CardTitle>
+            <CardDescription>User registration form with role selection</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <SignUpForm />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-xl">Role Guard</CardTitle>
+            <CardDescription>Component for protecting routes based on user roles</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono">
+                <pre>{`<RoleGuard allowedRoles={['student', 'teacher']}>
+  <ProtectedContent />
+</RoleGuard>`}</pre>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  )
+
+  // Course Components Section
+  const renderCourseSpecificSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">Course-Specific Components</h2>
+        <p className="text-gray-600 text-lg">Components designed for course management and enrollment</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Course Enrollment</CardTitle>
+            <CardDescription>Component for handling course enrollment with access control</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono">
+                <pre>{`<CourseEnrollment 
+  course={course} 
+  onEnrollmentSuccess={() => console.log('Enrolled!')} 
+/>`}</pre>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Course Access Badge</CardTitle>
+            <CardDescription>Visual indicator for course access status</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <div className="flex gap-2">
+                <Badge className="bg-green-100 text-green-800">Enrolled</Badge>
+                <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+                <Badge className="bg-red-100 text-red-800">Locked</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  )
+
+  // Content Components Section
+  const renderContentSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">Content Management Components</h2>
+        <p className="text-gray-600 text-lg">Components for creating and editing educational content</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Section Editor</CardTitle>
+            <CardDescription>Rich text editor for creating course content sections</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono">
+                <pre>{`<SectionEditor 
+  content={sectionContent}
+  onChange={(content) => setSectionContent(content)}
+  placeholder="Enter your content here..."
+/>`}</pre>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Course Content Section</CardTitle>
+            <CardDescription>Component for displaying structured course content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 border rounded-sm">
+              <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono">
+                <pre>{`<CourseContentSection 
+  title="Introduction to Algebra"
+  content={content}
+  type="lesson"
+  duration="45 minutes"
+/>`}</pre>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  )
+
   const renderContent = () => {
     switch (activeTab) {
       case "buttons":
@@ -2757,19 +2852,18 @@ await page.render({
         return renderColorsSection()
       case "interactive":
         return renderInteractiveSection()
-      case "responsive":
-        return renderResponsiveSection()
       case "navigation":
         return renderNavigationSection()
       case "utilities":
         return renderUtilitiesSection()
       case "pagination":
         return renderPaginationSection()
-      case "courses":
-        return renderCoursesSection()
-      case "teaching":
-        return renderTeachingSection()
-
+      case "auth":
+        return renderAuthSection()
+      case "course-specific":
+        return renderCourseSpecificSection()
+      case "content":
+        return renderContentSection()
 
       default:
         return renderButtonsSection()

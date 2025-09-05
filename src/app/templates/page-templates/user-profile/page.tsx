@@ -1,11 +1,11 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import {
   User,
   Mail,
@@ -45,7 +45,7 @@ import {
   Zap
 } from 'lucide-react'
 
-export default function UserProfileTemplate() {
+const UserProfileTemplate = memo(function UserProfileTemplate() {
   const [isEditing, setIsEditing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
@@ -540,7 +540,7 @@ export default function UserProfileTemplate() {
                       <CheckCircle className="w-5 h-5 text-green-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">Completed "Advanced Calculus"</p>
+                      <p className="font-medium">Completed &quot;Advanced Calculus&quot;</p>
                       <p className="text-sm text-gray-600">2 days ago</p>
                     </div>
                   </div>
@@ -549,7 +549,7 @@ export default function UserProfileTemplate() {
                       <BookOpen className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">Started "Statistics & Probability"</p>
+                      <p className="font-medium">Started &quot;Statistics &amp; Probability&quot;</p>
                       <p className="text-sm text-gray-600">1 week ago</p>
                     </div>
                   </div>
@@ -558,7 +558,7 @@ export default function UserProfileTemplate() {
                       <Award className="w-5 h-5 text-purple-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">Earned "Mathematics Master" achievement</p>
+                      <p className="font-medium">Earned &quot;Mathematics Master&quot; achievement</p>
                       <p className="text-sm text-gray-600">2 weeks ago</p>
                     </div>
                   </div>
@@ -687,4 +687,6 @@ export default function UserProfileTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default UserProfileTemplate

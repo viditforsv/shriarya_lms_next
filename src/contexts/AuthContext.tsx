@@ -73,9 +73,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return cachedProfile
       }
       
-      // Add timeout to prevent hanging (increased to 10s)
+      // Add timeout to prevent hanging (increased to 15s)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 15000) // 15 second timeout
       })
       
       const fetchPromise = supabase
@@ -117,10 +117,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error fetching profile:', error)
       
-      // Retry logic for timeout errors
+      // Retry logic for timeout errors with exponential backoff
       if (retries > 0 && error instanceof Error && error.message.includes('timeout')) {
-        console.log(`Retrying profile fetch (${retries} attempts left)...`)
-        await new Promise(resolve => setTimeout(resolve, 1000)) // Wait 1s before retry
+        const delay = Math.pow(2, 3 - retries) * 1000 // Exponential backoff: 1s, 2s, 4s
+        console.log(`Retrying profile fetch (${retries} attempts left) after ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
         return fetchProfile(userId, retries - 1)
       }
       

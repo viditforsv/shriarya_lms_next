@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Textarea } from '@/components/ui/textarea'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { Progress } from '@/app/components-demo/ui/progress'
+import { Textarea } from '@/app/components-demo/ui/textarea'
 import { 
   ArrowLeft,
   Upload,
@@ -22,10 +22,11 @@ import {
   BookOpen,
   Users,
   Award
-} from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
+} from '@/app/components-demo/ui/icons'
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
+import { TemplateLayout } from '@/app/components-demo/ui/template-layout'
 
-export default function AssignmentsTemplate() {
+const AssignmentsTemplate = memo(function AssignmentsTemplate() {
   const [selectedAssignment, setSelectedAssignment] = useState(0)
   const [submissionText, setSubmissionText] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
@@ -114,7 +115,7 @@ export default function AssignmentsTemplate() {
     }
   }
 
-  const getStatusIcon = (assignment: any) => {
+  const getStatusIcon = (assignment: { graded: boolean; submitted: boolean; status: string }) => {
     if (assignment.graded) return <Award className="w-4 h-4" />
     if (assignment.submitted) return <CheckCircle className="w-4 h-4" />
     if (assignment.status === 'upcoming') return <Clock className="w-4 h-4" />
@@ -122,24 +123,12 @@ export default function AssignmentsTemplate() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
-        <CompletionDot isCompleted={true} />
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <Link 
-              href="/templates/course-templates" 
-              className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Course Templates
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8">
+    <TemplateLayout
+      title="Assignments Template"
+      description="A comprehensive assignments management template featuring assignment creation, submission tracking, grading interface, and student progress monitoring."
+      phase="Phase 1-3"
+      ready={true}
+    >
         {/* Course Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#1e293b] mb-2">Assignments</h1>
@@ -401,7 +390,7 @@ export default function AssignmentsTemplate() {
                       <h3 className="text-lg font-semibold text-yellow-800">Assignment Submitted</h3>
                     </div>
                     <p className="text-yellow-700">
-                      Your assignment has been submitted successfully. You'll receive your grade and feedback once it's been reviewed.
+                      Your assignment has been submitted successfully. You&apos;ll receive your grade and feedback once it&apos;s been reviewed.
                     </p>
                     <p className="text-sm text-yellow-600 mt-2">
                       Submitted on {currentAssignment.submittedDate}
@@ -412,7 +401,9 @@ export default function AssignmentsTemplate() {
             </Card>
           </div>
         </div>
-      </div>
-    </div>
+    </TemplateLayout>
   )
-}
+})
+
+export default AssignmentsTemplate
+

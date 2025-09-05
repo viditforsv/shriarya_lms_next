@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, Edit, Eye, FileText, Video, HelpCircle, Download, ChevronUp, ChevronDown } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { FileUpload } from '@/components/ui/file-upload'
+import { Trash2, Edit, FileText, Video, HelpCircle, Download, ChevronUp, ChevronDown } from '@/app/components-demo/ui/icons'
+import { Button } from '@/app/components-demo/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { FileUpload } from '@/app/components-demo/ui/file-upload'
 import { createClient } from '@/lib/supabase/client'
 
 interface Section {

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, Github, Chrome } from 'lucide-react'
 
-export default function LoginPageTemplate() {
+const LoginPageTemplate = memo(function LoginPageTemplate() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -200,4 +200,7 @@ export default function LoginPageTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default LoginPageTemplate
+

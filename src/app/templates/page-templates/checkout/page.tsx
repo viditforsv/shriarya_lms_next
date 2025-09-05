@@ -1,11 +1,11 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import {
   CreditCard,
   Lock,
@@ -36,7 +36,7 @@ import {
   ArrowRight
 } from 'lucide-react'
 
-export default function CheckoutTemplate() {
+const CheckoutTemplate = memo(function CheckoutTemplate() {
   const [currentStep, setCurrentStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState('card')
   const [billingAddress, setBillingAddress] = useState('same')
@@ -305,7 +305,7 @@ export default function CheckoutTemplate() {
                       </div>
                       <div className="p-4 bg-blue-50 border border-blue-200 rounded-sm">
                         <p className="text-sm text-blue-800">
-                          You'll be redirected to your UPI app to complete the payment
+                          You&apos;ll be redirected to your UPI app to complete the payment
                         </p>
                       </div>
                     </div>
@@ -437,7 +437,7 @@ export default function CheckoutTemplate() {
                       Payment Successful!
                     </h3>
                     <p className="text-gray-600 mb-6">
-                      Your order has been confirmed and you'll receive an email confirmation shortly.
+                      Your order has been confirmed and you&apos;ll receive an email confirmation shortly.
                     </p>
                     <div className="bg-gray-50 rounded-sm p-4 mb-6">
                       <p className="text-sm text-gray-600 mb-2">Order ID: #ORD-2024-001234</p>
@@ -582,4 +582,5 @@ export default function CheckoutTemplate() {
       </div>
     </div>
   )
-}
+})
+

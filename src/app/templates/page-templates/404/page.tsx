@@ -1,11 +1,11 @@
 "use client"
-
+import { memo } from "react"
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { Home, ArrowLeft, Search, BookOpen, FileText, Users, HelpCircle } from "lucide-react"
-import { CompletionDot } from "@/components/ui/template-status"
-
-export default function NotFoundTemplate() {
+import { Card, CardContent } from "@/app/components-demo/ui/card"
+import { Home, ArrowLeft, Search, BookOpen, FileText, Users, HelpCircle } from "@/app/components-demo/ui/icons"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
+const NotFoundTemplate = memo(function NotFoundTemplate() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Section */}
@@ -165,4 +165,7 @@ export default function NotFoundTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default NotFoundTemplate
+

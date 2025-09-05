@@ -1,7 +1,7 @@
 'use client'
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { memo } from "react"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
 import { 
   FileText, 
   BookOpen, 

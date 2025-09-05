@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
 import { Award, ArrowLeft, Calculator, Brain, BarChart3, TrendingUp, BookOpen } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/app/components-demo/ui/badge"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'

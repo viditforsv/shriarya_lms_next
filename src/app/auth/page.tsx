@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardHeader } from "@/components/ui/card"
-import { SignInForm } from "@/components/auth/SignInForm"
-import { SignUpForm } from "@/components/auth/SignUpForm"
-import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { Card, CardHeader } from "@/app/components-demo/ui/card"
+import { SignInForm } from "@/app/components-demo/auth/SignInForm"
+import { SignUpForm } from "@/app/components-demo/auth/SignUpForm"
+import { Breadcrumb } from '@/app/components-demo/ui/breadcrumb'
 import { unstable_noStore as noStore } from 'next/cache'
 import Image from 'next/image'
 

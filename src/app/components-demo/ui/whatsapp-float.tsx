@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/app/components-demo/ui/button"
 import { useState, useEffect } from "react"
 
 export function WhatsAppFloat() {

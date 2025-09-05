@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Input } from '@/app/components-demo/ui/input'
 import { 
   ArrowLeft,
   Search,
@@ -19,9 +19,9 @@ import {
   Users,
   HelpCircle
 } from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
-
-export default function FAQTemplate() {
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
+const FAQTemplate = memo(function FAQTemplate() {
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedItems, setExpandedItems] = useState<number[]>([])
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -168,7 +168,7 @@ export default function FAQTemplate() {
           <h1 className="text-4xl font-bold text-[#1e293b] mb-4">Frequently Asked Questions</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Find answers to common questions about our platform, courses, and services. 
-            Can't find what you're looking for? Contact our support team.
+            Can&apos;t find what you&apos;re looking for? Contact our support team.
           </p>
         </div>
 
@@ -248,7 +248,7 @@ export default function FAQTemplate() {
                 <HelpCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-[#1e293b] mb-2">No FAQs Found</h3>
                 <p className="text-muted-foreground mb-4">
-                  We couldn't find any FAQs matching your search criteria.
+                  We couldn&apos;t find any FAQs matching your search criteria.
                 </p>
                 <Button 
                   variant="outline" 
@@ -297,7 +297,7 @@ export default function FAQTemplate() {
                   </div>
                   <h3 className="font-semibold text-[#1e293b] mb-2">Email Support</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Send us an email and we'll respond within 24 hours
+                    Send us an email and we&apos;ll respond within 24 hours
                   </p>
                   <Button variant="outline" className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white rounded-sm">
                     Send Email
@@ -323,4 +323,5 @@ export default function FAQTemplate() {
       </div>
     </div>
   )
-}
+})
+

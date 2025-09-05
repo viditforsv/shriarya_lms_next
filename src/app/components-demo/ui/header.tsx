@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/app/components-demo/ui/button"
 import { ChevronDown, Search, User, LogOut, Settings, BookOpen } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"

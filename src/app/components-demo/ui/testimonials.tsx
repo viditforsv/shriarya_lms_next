@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/app/components-demo/ui/card"
+import { Badge } from "@/app/components-demo/ui/badge"
 // import { Testimonial, testimonialsDatabase, getFeaturedTestimonials, getTestimonialsByService } from "@/data/testimonials"
 
 interface Testimonial {

@@ -1,37 +1,23 @@
 'use client'
-
+import { memo } from "react"
 import Link from "next/link"
-import { ArrowLeft, Play, Clock, FileText, Download, Smartphone, Infinity, Award, Share2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { SocialIconsRow, CourseStats, CourseContentSection } from "@/components/ui"
+import { ArrowLeft, Play, Clock, FileText, Download, Smartphone, Infinity, Award, Share2 } from "@/app/components-demo/ui/icons"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { SocialIconsRow, CourseStats, CourseContentSection } from "@/app/components-demo/ui"
+import { TemplateLayout, TemplateSection, TemplateCard } from "@/app/components-demo/ui/template-layout"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
-export default function CoursePageTemplate() {
+const CoursePageTemplate = memo(function CoursePageTemplate() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12">
-        {/* Breadcrumbs */}
-        <div className="mb-12">
-          <Link 
-            href="/templates" 
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Templates
-          </Link>
-        </div>
-
-        {/* Template Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#1e293b] mb-4">Course Page Template</h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            A comprehensive course page template featuring course overview, content sections, instructor details, and enrollment sidebar.
-            Based on our CBSE Mathematics Class 10 course design.
-          </p>
-        </div>
+    <TemplateLayout
+      title="Course Page Template"
+      description="A comprehensive course page template featuring course overview, content sections, instructor details, and enrollment sidebar. Based on our CBSE Mathematics Class 10 course design."
+      phase="Phase 1-3"
+      ready={true}
+    >
 
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -497,7 +483,7 @@ export default function CoursePageTemplate() {
             <p><strong>6. Components:</strong> This template uses our UI components - ensure they are properly imported.</p>
           </div>
         </div>
-      </div>
-    </div>
+    </TemplateLayout>
   )
-}
+})
+

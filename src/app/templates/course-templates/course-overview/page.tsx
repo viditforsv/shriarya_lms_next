@@ -1,16 +1,16 @@
 'use client'
-
-import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { memo } from "react"
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Progress } from "@/app/components-demo/ui/progress"
 import { BookOpen, Users, Clock, Star, CheckCircle, Play, Lock, Award } from "lucide-react"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
-export default function CourseOverviewTemplate() {
+const CourseOverviewTemplate = memo(function CourseOverviewTemplate() {
   const courseInfo = {
     title: "Advanced Mathematics for IBDP",
     subtitle: "Master complex mathematical concepts and problem-solving techniques",
@@ -352,4 +352,5 @@ export default function CourseOverviewTemplate() {
       </section>
     </div>
   )
-}
+})
+

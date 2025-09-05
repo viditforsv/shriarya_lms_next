@@ -1,11 +1,11 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import {
   BarChart3,
   TrendingUp,
@@ -37,7 +37,7 @@ import {
   ThumbsUp
 } from 'lucide-react'
 
-export default function AnalyticsTemplate() {
+const AnalyticsTemplate = memo(function AnalyticsTemplate() {
   const [selectedPeriod, setSelectedPeriod] = useState('30d')
   const [selectedMetric, setSelectedMetric] = useState('overview')
 
@@ -760,4 +760,5 @@ export default function AnalyticsTemplate() {
       </div>
     </div>
   )
-}
+})
+

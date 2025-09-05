@@ -43,12 +43,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, showArrow = false, showChevron = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
+    // Wrap children and icons in a single fragment to avoid multiple children issue with Slot
+    const content = (
+      <>
         {children}
         {showArrow && (
           <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -56,6 +53,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {showChevron && (
           <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
         )}
+      </>
+    )
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      >
+        {content}
       </Comp>
     )
   }

@@ -1,15 +1,15 @@
 'use client'
-
-import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Star, ArrowRight, Users, Clock, Award, BookOpen, Play } from "lucide-react"
+import { memo } from "react"
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { CheckCircle, Star, ArrowRight, Users, Clock, Award, BookOpen, Play } from "@/app/components-demo/ui/icons"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
-export default function LandingPageTemplate() {
+const LandingPageTemplate = memo(function LandingPageTemplate() {
   const features = [
     {
       icon: <BookOpen className="w-6 h-6 text-accent" />,
@@ -241,4 +241,5 @@ export default function LandingPageTemplate() {
       </section>
     </div>
   )
-}
+})
+

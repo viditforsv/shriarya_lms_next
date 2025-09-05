@@ -1,11 +1,11 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import {
   ArrowLeft,
   Clock,
@@ -34,7 +34,7 @@ import {
   ThumbsDown
 } from 'lucide-react'
 
-export default function RefundTemplate() {
+const RefundTemplate = memo(function RefundTemplate() {
   const [refundReason, setRefundReason] = useState('')
   const [refundAmount, setRefundAmount] = useState('')
 
@@ -553,4 +553,6 @@ export default function RefundTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default RefundTemplate

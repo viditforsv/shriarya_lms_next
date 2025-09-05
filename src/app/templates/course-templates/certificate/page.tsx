@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
 import { 
   ArrowLeft,
   Download,
@@ -20,9 +20,9 @@ import {
   Linkedin,
   Twitter
 } from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
-
-export default function CertificateTemplate() {
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
+const CertificateTemplate = memo(function CertificateTemplate() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isShared, setIsShared] = useState(false)
 
@@ -359,7 +359,7 @@ export default function CertificateTemplate() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BookOpen className="w-5 h-5 text-[#e27447]" />
-                <span>What's Next?</span>
+                <span>What&apos;s Next?</span>
               </CardTitle>
               <CardDescription>
                 Continue your learning journey with these recommendations
@@ -382,4 +382,7 @@ export default function CertificateTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default CertificateTemplate
+

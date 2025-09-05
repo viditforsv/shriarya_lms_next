@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { useState, memo } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
 import {
   Building2,
   Users,
@@ -39,7 +40,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 
-export default function InstitutionDashboardTemplate() {
+const InstitutionDashboardTemplate = memo(function InstitutionDashboardTemplate() {
   const [selectedInstitution, setSelectedInstitution] = useState('all')
 
   const institutions = [
@@ -617,4 +618,5 @@ export default function InstitutionDashboardTemplate() {
       </div>
     </div>
   )
-}
+})
+

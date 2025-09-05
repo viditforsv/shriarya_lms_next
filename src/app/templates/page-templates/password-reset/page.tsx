@@ -1,10 +1,10 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Input } from '@/app/components-demo/ui/input'
+import { Label } from '@/app/components-demo/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { safeApostropheText } from '@/lib/utils'

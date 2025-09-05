@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { Progress } from '@/app/components-demo/ui/progress'
 import { 
   ArrowLeft,
   ArrowRight,
@@ -18,11 +18,11 @@ import {
   BookOpen,
   FileText
 } from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
-
-export default function QuizTemplate() {
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
+const QuizTemplate = memo(function QuizTemplate() {
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<{ [key: number]: any }>({})
+  const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({})
   const [showResults, setShowResults] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(1800) // 30 minutes
   const [quizStarted, setQuizStarted] = useState(false)
@@ -97,7 +97,7 @@ export default function QuizTemplate() {
   const correctAnswers = questions.filter((q, index) => answers[index] === q.correct).length
   const score = Math.round((correctAnswers / questions.length) * 100)
 
-  const handleAnswerSelect = (answer: any) => {
+  const handleAnswerSelect = (answer: string | string[]) => {
     setAnswers(prev => ({ ...prev, [currentQuestion]: answer }))
   }
 
@@ -469,4 +469,5 @@ export default function QuizTemplate() {
       </div>
     </div>
   )
-}
+})
+

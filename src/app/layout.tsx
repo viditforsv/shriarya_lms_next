@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Cardo, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { Header } from "@/components/ui/header";
-import { Footer } from "@/components/ui/footer";
+import { Header } from "@/app/components-demo/ui/header";
+import { Footer } from "@/app/components-demo/ui/footer";
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'

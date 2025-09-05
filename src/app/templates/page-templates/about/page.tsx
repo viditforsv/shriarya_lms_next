@@ -1,12 +1,13 @@
 'use client'
 
-import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Users, Award, BookOpen, Globe } from "lucide-react"
+import { memo } from 'react'
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { ArrowLeft, Users, Award, BookOpen, Globe } from "@/app/components-demo/ui/icons"
 import Link from "next/link"
 
-export default function AboutPageTemplate() {
+const AboutPageTemplate = memo(function AboutPageTemplate() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
@@ -196,4 +197,5 @@ export default function AboutPageTemplate() {
       </div>
     </div>
   )
-}
+})
+

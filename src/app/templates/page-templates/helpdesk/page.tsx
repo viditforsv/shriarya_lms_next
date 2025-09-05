@@ -1,13 +1,13 @@
 "use client"
-
+import { memo } from "react"
 import { useState } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { Input } from '@/app/components-demo/ui/input'
+import { Textarea } from '@/app/components-demo/ui/textarea'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
   ArrowLeft,
   Plus,
@@ -24,9 +24,9 @@ import {
   Archive,
   Tag
 } from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
 
-export default function HelpdeskTemplate() {
+const HelpdeskTemplate = memo(function HelpdeskTemplate() {
   const [activeTab, setActiveTab] = useState('tickets')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTicket, setSelectedTicket] = useState(0)
@@ -330,8 +330,8 @@ export default function HelpdeskTemplate() {
                           <div className="flex-1">
                             <div className="bg-blue-50 p-3 rounded-sm">
                               <p className="text-[#1e293b]">
-                                Thank you for contacting us. We've received your ticket and our support team is looking into this issue. 
-                                We'll get back to you within 24 hours with a solution.
+                                Thank you for contacting us. We&apos;ve received your ticket and our support team is looking into this issue. 
+                                We&apos;ll get back to you within 24 hours with a solution.
                               </p>
                             </div>
                             <p className="text-xs text-muted-foreground mt-1">Support Team • {currentTicket.updated}</p>
@@ -347,7 +347,7 @@ export default function HelpdeskTemplate() {
                             <div className="flex-1">
                               <div className="bg-green-50 p-3 rounded-sm">
                                 <p className="text-[#1e293b]">
-                                  We've identified the issue and implemented a fix. Please try refreshing your browser and clearing your cache. 
+                                  We&apos;ve identified the issue and implemented a fix. Please try refreshing your browser and clearing your cache. 
                                   The videos should now load properly on mobile devices.
                                 </p>
                               </div>
@@ -389,7 +389,7 @@ export default function HelpdeskTemplate() {
               <CardHeader>
                 <CardTitle className="text-2xl text-[#1e293b]">Create New Ticket</CardTitle>
                 <CardDescription>
-                  Describe your issue or question and we'll get back to you as soon as possible.
+                  Describe your issue or question and we&apos;ll get back to you as soon as possible.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -475,4 +475,5 @@ export default function HelpdeskTemplate() {
       </div>
     </div>
   )
-}
+})
+

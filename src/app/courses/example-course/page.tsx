@@ -1,11 +1,11 @@
 'use client'
 
 import { useCourseAccess } from '@/hooks/useCourseAccess'
-import { CourseAccessBadge } from '@/components/ui/course-access-badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { CourseAccessBadge } from '@/app/components-demo/ui/course-access-badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
 import { Lock, Unlock, BookOpen } from 'lucide-react'
-import { RoleGuard } from '@/components/auth/RoleGuard'
+import { RoleGuard } from '@/app/components-demo/auth/RoleGuard'
 
 export default function ExampleCoursePage() {
   // Example course ID - replace with actual course ID

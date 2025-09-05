@@ -1,9 +1,9 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Input } from "@/app/components-demo/ui/input"
 import { Search, Filter, Clock, Users, BookOpen } from "lucide-react"
 import { useState, useEffect } from "react"
 import { getFreeCourses, Course } from "@/lib/courses"

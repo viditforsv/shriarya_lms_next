@@ -1,14 +1,14 @@
 'use client'
 
-import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Check, Star } from "lucide-react"
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
+import { Button } from "@/app/components-demo/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { ArrowLeft, Check, Star } from "@/app/components-demo/ui/icons"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, memo } from "react"
 
-export default function PricingPageTemplate() {
+const PricingPageTemplate = memo(function PricingPageTemplate() {
   const [isYearly, setIsYearly] = useState(false)
 
   const toggleBilling = () => {
@@ -343,4 +343,7 @@ export default function PricingPageTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default PricingPageTemplate
+

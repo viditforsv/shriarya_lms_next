@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
+import { Progress } from '@/app/components-demo/ui/progress'
 import { 
   BookOpen, 
   Play, 
@@ -22,9 +22,9 @@ import {
   Bookmark,
   MessageCircle
 } from 'lucide-react'
-import { CompletionDot } from '@/components/ui/template-status'
-
-export default function LessonTemplate() {
+import { CompletionDot } from '@/app/components-demo/ui/template-status'
+import { TemplateLayout } from "@/app/components-demo/ui/template-layout"
+const LessonTemplate = memo(function LessonTemplate() {
   const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'practice'>('video')
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [completedLessons, setCompletedLessons] = useState([1, 2, 3])
@@ -497,4 +497,5 @@ export default function LessonTemplate() {
       </div>
     </div>
   )
-}
+})
+

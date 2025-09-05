@@ -1,10 +1,10 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { AdminOnly } from '@/components/auth/RoleGuard'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { AdminOnly } from '@/app/components-demo/auth/RoleGuard'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
 import { 
   Users, 
   BookOpen, 
@@ -15,18 +15,12 @@ import {
   Layout, 
   Palette,
   Database,
-  Globe,
   Mail,
-  Bell,
   Lock,
   Zap,
   HelpCircle,
   Download,
-  Upload,
-  Trash2,
-  Plus,
-  Eye,
-  Edit
+  Plus
 } from 'lucide-react'
 import Link from 'next/link'
 

@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/app/components-demo/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Input } from '@/app/components-demo/ui/input'
+import { Label } from '@/app/components-demo/ui/label'
+import { Badge } from '@/app/components-demo/ui/badge'
 import { User, Mail, Shield, Calendar, Edit, Save, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 

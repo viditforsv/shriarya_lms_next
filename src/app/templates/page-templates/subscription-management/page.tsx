@@ -1,11 +1,11 @@
 'use client'
-
+import { memo } from "react"
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CompletionDot } from "@/components/ui/template-status"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/button"
+import { Badge } from "@/app/components-demo/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
+import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import {
   CreditCard,
   Calendar,
@@ -36,7 +36,7 @@ import {
   Clock
 } from 'lucide-react'
 
-export default function SubscriptionManagementTemplate() {
+const SubscriptionManagementTemplate = memo(function SubscriptionManagementTemplate() {
   const [selectedPlan, setSelectedPlan] = useState('pro')
   const [billingCycle, setBillingCycle] = useState('monthly')
 
@@ -503,4 +503,6 @@ export default function SubscriptionManagementTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default SubscriptionManagementTemplate

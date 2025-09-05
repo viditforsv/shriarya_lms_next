@@ -1,8 +1,8 @@
 'use client'
-
+import { memo } from "react"
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 export default function ScaleUpTemplatesIndex() {

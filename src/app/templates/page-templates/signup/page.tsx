@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Github, Chrome, Check } from 'lucide-react'
 
-export default function SignupPageTemplate() {
+const SignupPageTemplate = memo(function SignupPageTemplate() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -308,4 +308,7 @@ export default function SignupPageTemplate() {
       </div>
     </div>
   )
-}
+})
+
+export default SignupPageTemplate
+

@@ -199,3 +199,5 @@ const AboutPageTemplate = memo(function AboutPageTemplate() {
   )
 })
 
+export default AboutPageTemplate
+

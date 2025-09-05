@@ -762,3 +762,5 @@ const AnalyticsTemplate = memo(function AnalyticsTemplate() {
   )
 })
 
+export default AnalyticsTemplate
+

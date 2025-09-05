@@ -193,7 +193,7 @@ const FAQTemplate = memo(function FAQTemplate() {
             return (
               <Button
                 key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
+                variant={selectedCategory === category.id ? "primary" : "outline"}
                 onClick={() => setSelectedCategory(category.id)}
                 className={`rounded-sm ${
                   selectedCategory === category.id 
@@ -223,7 +223,7 @@ const FAQTemplate = memo(function FAQTemplate() {
                       <CardTitle className="text-lg text-[#1e293b] pr-4">
                         {faq.question}
                       </CardTitle>
-                      <Button variant="ghost" size="sm" className="rounded-sm">
+                      <Button variant="outline" size="sm" className="rounded-sm">
                         {isExpanded ? (
                           <ChevronUp className="w-5 h-5 text-[#e27447]" />
                         ) : (
@@ -324,4 +324,6 @@ const FAQTemplate = memo(function FAQTemplate() {
     </div>
   )
 })
+
+export default FAQTemplate
 

@@ -609,4 +609,4 @@ const TeamTemplate = memo(function TeamTemplate() {
   )
 })
 
-export default TeamPageTemplate
+export default TeamTemplate

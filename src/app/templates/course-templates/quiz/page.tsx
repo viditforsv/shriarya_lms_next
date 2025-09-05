@@ -94,7 +94,14 @@ const QuizTemplate = memo(function QuizTemplate() {
   const currentQ = questions[currentQuestion]
   const progress = ((currentQuestion + 1) / questions.length) * 100
   const answeredQuestions = Object.keys(answers).length
-  const correctAnswers = questions.filter((q, index) => answers[index] === q.correct).length
+  const correctAnswers = questions.filter((q, index) => {
+    const userAnswer = answers[index]
+    if (Array.isArray(userAnswer)) {
+      // For multiple choice questions, check if the answer array contains the correct answer
+      return userAnswer.includes(q.correct.toString())
+    }
+    return userAnswer === q.correct.toString()
+  }).length
   const score = Math.round((correctAnswers / questions.length) * 100)
 
   const handleAnswerSelect = (answer: string | string[]) => {
@@ -301,7 +308,10 @@ const QuizTemplate = memo(function QuizTemplate() {
                 <h3 className="text-lg font-semibold text-[#1e293b] mb-4">Question Review</h3>
                 <div className="space-y-4">
                   {questions.map((question, index) => {
-                    const isCorrect = answers[index] === question.correct
+                    const userAnswer = answers[index]
+                    const isCorrect = Array.isArray(userAnswer) 
+                      ? userAnswer.includes(question.correct.toString())
+                      : userAnswer === question.correct.toString()
                     return (
                       <div key={question.id} className={`p-4 rounded-sm border ${
                         isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
@@ -321,7 +331,9 @@ const QuizTemplate = memo(function QuizTemplate() {
                                 <div key={optionIndex} className={`text-sm p-2 rounded-sm ${
                                   optionIndex === question.correct 
                                     ? 'bg-green-100 text-green-800' 
-                                    : optionIndex === answers[index] && !isCorrect
+                                    : (Array.isArray(answers[index]) 
+                                        ? answers[index].includes(optionIndex.toString())
+                                        : answers[index] === optionIndex.toString()) && !isCorrect
                                       ? 'bg-red-100 text-red-800'
                                       : 'bg-gray-100 text-gray-600'
                                 }`}>
@@ -419,7 +431,9 @@ const QuizTemplate = memo(function QuizTemplate() {
                   <label 
                     key={index} 
                     className={`flex items-center space-x-3 p-4 rounded-sm border cursor-pointer transition-colors ${
-                      answers[currentQuestion] === index 
+                      (Array.isArray(answers[currentQuestion]) 
+                        ? answers[currentQuestion].includes(index.toString())
+                        : answers[currentQuestion] === index.toString()) 
                         ? 'border-[#e27447] bg-[#feefea]' 
                         : 'border-[#feefea] hover:border-[#e27447] hover:bg-[#feefea]/50'
                     }`}
@@ -428,8 +442,10 @@ const QuizTemplate = memo(function QuizTemplate() {
                       type="radio" 
                       name={`question-${currentQ.id}`}
                       value={index}
-                      checked={answers[currentQuestion] === index}
-                      onChange={() => handleAnswerSelect(index)}
+                      checked={Array.isArray(answers[currentQuestion]) 
+                        ? answers[currentQuestion].includes(index.toString())
+                        : answers[currentQuestion] === index.toString()}
+                      onChange={() => handleAnswerSelect(index.toString())}
                       className="text-[#e27447] focus:ring-[#e27447]"
                     />
                     <span className="text-[#1e293b]">{option}</span>
@@ -470,4 +486,6 @@ const QuizTemplate = memo(function QuizTemplate() {
     </div>
   )
 })
+
+export default QuizTemplate
 

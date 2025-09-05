@@ -260,3 +260,5 @@ const ContactPageTemplate = memo(function ContactPageTemplate() {
   )
 })
 
+export default ContactPageTemplate
+

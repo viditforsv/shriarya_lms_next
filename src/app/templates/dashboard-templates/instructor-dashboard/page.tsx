@@ -332,3 +332,5 @@ const InstructorDashboardTemplate = memo(function InstructorDashboardTemplate() 
   )
 })
 
+export default InstructorDashboardTemplate
+

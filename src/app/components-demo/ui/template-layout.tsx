@@ -47,7 +47,7 @@ export function TemplateLayout({
               <Badge variant="outline" className="text-xs">
                 {phase}
               </Badge>
-              <CompletionDot ready={ready} />
+              <CompletionDot isCompleted={ready} />
             </div>
           </div>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">

@@ -487,3 +487,5 @@ const CoursePageTemplate = memo(function CoursePageTemplate() {
   )
 })
 
+export default CoursePageTemplate
+

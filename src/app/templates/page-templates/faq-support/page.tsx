@@ -694,3 +694,5 @@ const FAQSupportTemplate = memo(function FAQSupportTemplate() {
   )
 })
 
+export default FAQSupportTemplate
+

@@ -354,3 +354,5 @@ const CourseOverviewTemplate = memo(function CourseOverviewTemplate() {
   )
 })
 
+export default CourseOverviewTemplate
+

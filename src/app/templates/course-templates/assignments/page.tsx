@@ -353,7 +353,7 @@ const AssignmentsTemplate = memo(function AssignmentsTemplate() {
                                 </span>
                               </div>
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
                                 onClick={() => removeFile(index)}
                                 className="text-red-600 hover:text-red-700"

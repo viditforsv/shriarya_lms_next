@@ -585,3 +585,5 @@ const PerformanceAnalyticsTemplate = memo(function PerformanceAnalyticsTemplate(
   )
 })
 
+export default PerformanceAnalyticsTemplate
+

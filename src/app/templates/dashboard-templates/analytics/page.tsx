@@ -336,3 +336,5 @@ const AnalyticsDashboardTemplate = memo(function AnalyticsDashboardTemplate() {
   )
 })
 
+export default AnalyticsDashboardTemplate
+

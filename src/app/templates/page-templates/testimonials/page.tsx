@@ -564,5 +564,5 @@ const TestimonialsTemplate = memo(function TestimonialsTemplate() {
   )
 })
 
-export default TestimonialsPageTemplate
+export default TestimonialsTemplate
 

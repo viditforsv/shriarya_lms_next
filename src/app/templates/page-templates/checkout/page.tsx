@@ -584,3 +584,5 @@ const CheckoutTemplate = memo(function CheckoutTemplate() {
   )
 })
 
+export default CheckoutTemplate
+

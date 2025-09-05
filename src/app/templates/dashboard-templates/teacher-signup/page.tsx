@@ -713,3 +713,5 @@ const TeacherSignupTemplate = memo(function TeacherSignupTemplate() {
   )
 })
 
+export default TeacherSignupTemplate
+

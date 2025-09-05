@@ -338,3 +338,5 @@ const AdminPanelTemplate = memo(function AdminPanelTemplate() {
   )
 })
 
+export default AdminPanelTemplate
+

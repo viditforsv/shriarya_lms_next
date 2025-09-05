@@ -499,3 +499,5 @@ const LessonTemplate = memo(function LessonTemplate() {
   )
 })
 
+export default LessonTemplate
+

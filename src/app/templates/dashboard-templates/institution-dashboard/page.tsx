@@ -620,3 +620,5 @@ const InstitutionDashboardTemplate = memo(function InstitutionDashboardTemplate(
   )
 })
 
+export default InstitutionDashboardTemplate
+

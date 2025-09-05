@@ -243,3 +243,5 @@ const LandingPageTemplate = memo(function LandingPageTemplate() {
   )
 })
 
+export default LandingPageTemplate
+

@@ -477,3 +477,5 @@ const HelpdeskTemplate = memo(function HelpdeskTemplate() {
   )
 })
 
+export default HelpdeskTemplate
+

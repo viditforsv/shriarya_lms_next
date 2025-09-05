@@ -5,10 +5,10 @@
 export * from './ui'
 
 // Export context providers
-export { AuthProvider, useAuth } from '../contexts/AuthContext'
+export { AuthProvider, useAuth } from '../../contexts/AuthContext'
 
 // Export utility functions
-export * from '../lib/utils'
+export * from '../../lib/utils'
 
 // Re-export commonly used types
 export type { User, Session } from '@supabase/supabase-js'

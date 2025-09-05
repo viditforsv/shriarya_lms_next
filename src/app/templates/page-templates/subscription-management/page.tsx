@@ -294,7 +294,7 @@ const SubscriptionManagementTemplate = memo(function SubscriptionManagementTempl
               <h2 className="text-2xl font-bold font-cardo">Choose Your Plan</h2>
               <div className="flex items-center gap-2">
                 <Button
-                  variant={billingCycle === 'monthly' ? 'default' : 'outline'}
+                  variant={billingCycle === 'monthly' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setBillingCycle('monthly')}
                   className="rounded-sm"
@@ -302,7 +302,7 @@ const SubscriptionManagementTemplate = memo(function SubscriptionManagementTempl
                   Monthly
                 </Button>
                 <Button
-                  variant={billingCycle === 'yearly' ? 'default' : 'outline'}
+                  variant={billingCycle === 'yearly' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setBillingCycle('yearly')}
                   className="rounded-sm"

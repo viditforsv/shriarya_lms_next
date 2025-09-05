@@ -310,3 +310,5 @@ const StudentDashboardTemplate = memo(function StudentDashboardTemplate() {
   )
 })
 
+export default StudentDashboardTemplate
+

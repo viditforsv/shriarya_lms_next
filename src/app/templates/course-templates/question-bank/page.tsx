@@ -519,3 +519,5 @@ const QuestionBankTemplate = memo(function QuestionBankTemplate() {
   )
 })
 
+export default QuestionBankTemplate
+

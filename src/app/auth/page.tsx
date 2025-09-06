@@ -94,16 +94,16 @@ export default function AuthPage() {
         <Card className="w-full">
           <CardHeader className="pb-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-muted p-1 rounded-sm">
+              <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1">
                 <TabsTrigger 
                   value="signin" 
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
                 >
                   Sign In
                 </TabsTrigger>
                 <TabsTrigger 
-                  value="signup"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all duration-200"
+                  value="signup" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
                 >
                   Sign Up
                 </TabsTrigger>

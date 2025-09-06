@@ -1,0 +1,534 @@
+'use client'
+
+import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/badge'
+import { Input } from '@/app/components-demo/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components-demo/ui/select'
+import { 
+  Search, 
+  Filter, 
+  BookOpen, 
+  Clock, 
+  Users, 
+  Star, 
+  DollarSign,
+  ChevronDown,
+  Grid3X3,
+  List,
+  SortAsc,
+  SortDesc,
+  X,
+  CheckCircle,
+  PlayCircle,
+  Award,
+  TrendingUp
+} from 'lucide-react'
+import { getAllCourses, getCoursesByCurriculum } from '@/lib/course-config'
+import { CourseConfig } from '@/lib/course-config'
+
+interface FilterState {
+  search: string
+  curriculum: string
+  subject: string
+  grade: string
+  level: string
+  priceType: string
+  sortBy: string
+  sortOrder: 'asc' | 'desc'
+  viewMode: 'grid' | 'list'
+}
+
+export default function CourseDiscoveryPage() {
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    curriculum: 'all',
+    subject: 'all',
+    grade: 'all',
+    level: 'all',
+    priceType: 'all',
+    sortBy: 'popularity',
+    sortOrder: 'desc',
+    viewMode: 'grid'
+  })
+
+  const [showFilters, setShowFilters] = useState(false)
+  const [courses, setCourses] = useState<CourseConfig[]>([])
+
+  // Get all courses
+  useEffect(() => {
+    const allCourses = getAllCourses()
+    setCourses(allCourses)
+  }, [])
+
+  // Get unique values for filter options
+  const filterOptions = useMemo(() => {
+    const curricula = [...new Set(courses.map(c => c.curriculum))]
+    const subjects = [...new Set(courses.map(c => c.subject))]
+    const grades = [...new Set(courses.map(c => c.grade).filter(Boolean))]
+    const levels = [...new Set(courses.map(c => c.level).filter(Boolean))]
+    
+    return { curricula, subjects, grades, levels }
+  }, [courses])
+
+  // Filter and sort courses
+  const filteredCourses = useMemo(() => {
+    const filtered = courses.filter(course => {
+      // Search filter
+      if (filters.search) {
+        const searchTerm = filters.search.toLowerCase()
+        const matchesSearch = 
+          course.title.toLowerCase().includes(searchTerm) ||
+          course.description.toLowerCase().includes(searchTerm) ||
+          course.subject.toLowerCase().includes(searchTerm) ||
+          course.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+        if (!matchesSearch) return false
+      }
+
+      // Curriculum filter
+      if (filters.curriculum !== 'all' && course.curriculum !== filters.curriculum) {
+        return false
+      }
+
+      // Subject filter
+      if (filters.subject !== 'all' && course.subject !== filters.subject) {
+        return false
+      }
+
+      // Grade filter
+      if (filters.grade !== 'all' && course.grade !== filters.grade) {
+        return false
+      }
+
+      // Level filter
+      if (filters.level !== 'all' && course.level !== filters.level) {
+        return false
+      }
+
+      // Price filter
+      if (filters.priceType === 'free' && (course.price || 0) > 0) {
+        return false
+      }
+      if (filters.priceType === 'paid' && (course.price || 0) === 0) {
+        return false
+      }
+
+      return true
+    })
+
+    // Sort courses
+    filtered.sort((a, b) => {
+      let comparison = 0
+      
+      switch (filters.sortBy) {
+        case 'title':
+          comparison = a.title.localeCompare(b.title)
+          break
+        case 'price':
+          comparison = (a.price || 0) - (b.price || 0)
+          break
+        case 'duration':
+          comparison = a.duration.localeCompare(b.duration)
+          break
+        case 'popularity':
+          comparison = ((b as any).enrollmentCount || 0) - ((a as any).enrollmentCount || 0)
+          break
+        case 'rating':
+          comparison = ((b as any).rating || 0) - ((a as any).rating || 0)
+          break
+        case 'newest':
+          comparison = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          break
+        default:
+          comparison = 0
+      }
+
+      return filters.sortOrder === 'asc' ? comparison : -comparison
+    })
+
+    return filtered
+  }, [courses, filters])
+
+  const updateFilter = (key: keyof FilterState, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      curriculum: 'all',
+      subject: 'all',
+      grade: 'all',
+      level: 'all',
+      priceType: 'all',
+      sortBy: 'popularity',
+      sortOrder: 'desc',
+      viewMode: 'grid'
+    })
+  }
+
+  const activeFiltersCount = Object.values(filters).filter(value => 
+    value !== 'all' && value !== 'desc' && value !== 'grid' && value !== ''
+  ).length
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#feefea] to-[#fffefd] border-b border-[#feefea]">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+                Discover Courses
+              </h1>
+              <p className="text-muted-foreground">
+                Find the perfect course for your learning journey
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2"
+              >
+                <Filter className="w-4 h-4" />
+                Filters
+                {activeFiltersCount > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {activeFiltersCount}
+                  </Badge>
+                )}
+              </Button>
+              <div className="flex items-center border rounded-md">
+                <Button
+                  variant={filters.viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => updateFilter('viewMode', 'grid')}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={filters.viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => updateFilter('viewMode', 'list')}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative max-w-2xl">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search courses by title, subject, or keywords..."
+              value={filters.search}
+              onChange={(e) => updateFilter('search', e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          <div className={`w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <Card className="sticky top-8">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Filters</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    Clear All
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Curriculum Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Curriculum</label>
+                  <Select value={filters.curriculum} onValueChange={(value) => updateFilter('curriculum', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Curricula</SelectItem>
+                      {filterOptions.curricula.map(curriculum => (
+                        <SelectItem key={curriculum} value={curriculum}>
+                          {curriculum}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Subject Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Subject</label>
+                  <Select value={filters.subject} onValueChange={(value) => updateFilter('subject', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Subjects</SelectItem>
+                      {filterOptions.subjects.map(subject => (
+                        <SelectItem key={subject} value={subject}>
+                          {subject}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Grade Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Grade</label>
+                  <Select value={filters.grade} onValueChange={(value) => updateFilter('grade', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Grades</SelectItem>
+                      {filterOptions.grades.map(grade => (
+                        <SelectItem key={grade} value={grade}>
+                          {grade}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Level Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Level</label>
+                  <Select value={filters.level} onValueChange={(value) => updateFilter('level', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Levels</SelectItem>
+                      {filterOptions.levels.map(level => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Price Filter */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Price</label>
+                  <Select value={filters.priceType} onValueChange={(value) => updateFilter('priceType', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Courses</SelectItem>
+                      <SelectItem value="free">Free Courses</SelectItem>
+                      <SelectItem value="paid">Paid Courses</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sort Options */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Sort By</label>
+                  <Select value={filters.sortBy} onValueChange={(value) => updateFilter('sortBy', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="popularity">Popularity</SelectItem>
+                      <SelectItem value="rating">Rating</SelectItem>
+                      <SelectItem value="newest">Newest</SelectItem>
+                      <SelectItem value="title">Title</SelectItem>
+                      <SelectItem value="price">Price</SelectItem>
+                      <SelectItem value="duration">Duration</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateFilter('sortOrder', filters.sortOrder === 'asc' ? 'desc' : 'asc')}
+                  className="w-full"
+                >
+                  {filters.sortOrder === 'asc' ? <SortAsc className="w-4 h-4 mr-2" /> : <SortDesc className="w-4 h-4 mr-2" />}
+                  {filters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Course Results */}
+          <div className="flex-1">
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold">
+                  {filteredCourses.length} Course{filteredCourses.length !== 1 ? 's' : ''} Found
+                </h2>
+                {activeFiltersCount > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    Filtered by {activeFiltersCount} criteria
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Course Grid/List */}
+            {filteredCourses.length === 0 ? (
+              <Card className="p-12 text-center">
+                <div className="max-w-md mx-auto">
+                  <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No courses found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Try adjusting your filters or search terms
+                  </p>
+                  <Button onClick={clearFilters}>Clear Filters</Button>
+                </div>
+              </Card>
+            ) : (
+              <div className={filters.viewMode === 'grid' 
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
+                : 'space-y-4'
+              }>
+                {filteredCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} viewMode={filters.viewMode} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface CourseCardProps {
+  course: CourseConfig
+  viewMode: 'grid' | 'list'
+}
+
+function CourseCard({ course, viewMode }: CourseCardProps) {
+  if (viewMode === 'list') {
+    return (
+      <Card className="hover:shadow-md transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex gap-6">
+            <div className="w-32 h-24 bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">{course.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                </div>
+                <div className="flex items-center gap-2 ml-4">
+                  <Badge variant="outline">{course.curriculum}</Badge>
+                  <Badge variant={course.price === 0 ? 'secondary' : 'default'}>
+                    {course.price === 0 ? 'Free' : `$${course.price}`}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  <span>{course.duration}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span>{(course as any).enrollmentCount || 0} students</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4" />
+                  <span>{(course as any).rating || 0}/5</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  {course.tags.slice(0, 3).map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+                <Link href={`/courses/${course.slug}`}>
+                  <Button size="sm">View Course</Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="hover:shadow-md transition-shadow group">
+      <CardHeader className="pb-4">
+        <div className="w-full h-32 bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center mb-4">
+          <BookOpen className="w-12 h-12 text-white" />
+        </div>
+        <div className="flex items-start justify-between mb-2">
+          <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
+            {course.title}
+          </CardTitle>
+          <Badge variant={course.price === 0 ? 'secondary' : 'default'}>
+            {course.price === 0 ? 'Free' : `$${course.price}`}
+          </Badge>
+        </div>
+        <CardDescription className="line-clamp-3">
+          {course.description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="space-y-4">
+          {/* Course Info */}
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{course.duration}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Users className="w-4 h-4" />
+              <span>{(course as any).enrollmentCount || 0}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4" />
+              <span>{(course as any).rating || 0}</span>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="text-xs">
+              {course.curriculum}
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              {course.subject}
+            </Badge>
+            {course.grade && (
+              <Badge variant="outline" className="text-xs">
+                {course.grade}
+              </Badge>
+            )}
+          </div>
+
+          {/* Action Button */}
+          <Link href={`/courses/${course.slug}`} className="block">
+            <Button className="w-full group-hover:bg-[#e27447] group-hover:text-white transition-colors">
+              View Course
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

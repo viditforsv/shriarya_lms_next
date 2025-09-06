@@ -5,8 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app
 import { Badge } from "@/app/components-demo/ui/badge"
 import { Check } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
 export default function PricingPage() {
+  const [isYearly, setIsYearly] = useState(false)
+
+  const toggleBilling = () => {
+    setIsYearly(!isYearly)
+  }
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
@@ -20,14 +26,22 @@ export default function PricingPage() {
               Choose the plan that&apos;s right for your learning journey. All plans include our core features with no hidden fees.
             </p>
             <div className="flex items-center justify-center space-x-4">
-              <span className="text-muted-foreground">Monthly</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only" id="billing-toggle" />
-                <label htmlFor="billing-toggle" className="block w-16 h-8 bg-[#e27447] rounded-full cursor-pointer">
-                  <div className="block w-6 h-6 bg-white rounded-full transform transition-transform duration-200 ease-in-out translate-x-1"></div>
-                </label>
-              </div>
-              <span className="text-foreground font-medium">Yearly</span>
+              <span className={`${!isYearly ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                Monthly
+              </span>
+              <button
+                onClick={toggleBilling}
+                className="relative w-16 h-8 bg-[#e27447] rounded-full cursor-pointer transition-colors duration-200"
+              >
+                <div 
+                  className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform duration-200 ease-in-out ${
+                    isYearly ? 'translate-x-8' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className={`${isYearly ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                Yearly
+              </span>
               <Badge className="bg-[#feefea] text-[#e27447] border-[#e27447]">
                 Save 20%
               </Badge>
@@ -47,7 +61,7 @@ export default function PricingPage() {
                 </CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold text-[#1e293b]">₹0</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-muted-foreground">/{isYearly ? 'year' : 'month'}</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -90,8 +104,10 @@ export default function PricingPage() {
                   Ideal for individual students
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold text-[#1e293b]">₹999</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-4xl font-bold text-[#1e293b]">
+                    ₹{isYearly ? Math.round(999 * 12 * 0.8) : 999}
+                  </span>
+                  <span className="text-muted-foreground">/{isYearly ? 'year' : 'month'}</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -137,8 +153,10 @@ export default function PricingPage() {
                   For serious learners and families
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold text-[#1e293b]">₹1,999</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-4xl font-bold text-[#1e293b]">
+                    ₹{isYearly ? Math.round(1999 * 12 * 0.8) : 1999}
+                  </span>
+                  <span className="text-muted-foreground">/{isYearly ? 'year' : 'month'}</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

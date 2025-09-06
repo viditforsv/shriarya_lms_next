@@ -94,6 +94,11 @@ export default function CoursesPage() {
                 <Clock className="w-4 h-4" />
                 <span>24/7 Access</span>
               </div>
+              <Link href="/courses/discover">
+                <Button variant="outline" className="ml-4">
+                  Browse All Courses
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

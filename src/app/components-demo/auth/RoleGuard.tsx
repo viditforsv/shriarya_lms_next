@@ -53,11 +53,34 @@ export function RoleGuard({
 
 // Convenience components for common use cases
 export function AdminOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  return (
-    <RoleGuard allowedRoles={['admin']} fallback={fallback}>
-      {children}
-    </RoleGuard>
-  )
+  const { loading, user, profile } = useAuth()
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading admin panel...</p>
+        </div>
+      </div>
+    )
+  }
+  
+  // Show fallback if not admin
+  if (!user || !profile || profile.role !== 'admin') {
+    return fallback || (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
+          <p className="text-muted-foreground mb-4">You don&apos;t have admin privileges to access this page.</p>
+          <a href="/dashboard" className="text-[#e27447] hover:underline">Return to Dashboard</a>
+        </div>
+      </div>
+    )
+  }
+  
+  return <>{children}</>
 }
 
 export function StudentOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {

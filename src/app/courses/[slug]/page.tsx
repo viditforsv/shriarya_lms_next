@@ -197,10 +197,25 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="content">Content</TabsTrigger>
-                <TabsTrigger value="instructor">Instructor</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
+                <TabsTrigger 
+                  value="overview" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="content" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Content
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="instructor" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Instructor
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="mt-6">
@@ -244,37 +259,202 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      {lessons.map((lesson, index) => (
-                        <div
-                          key={lesson.id}
-                          className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
-                          onClick={() => handleLessonClick(lesson)}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                              {index + 1}
+                    <div className="space-y-6">
+                      {/* Chapter 1: Real Numbers */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-[#1e293b]">Chapter 1: Real Numbers</h3>
+                        <div className="space-y-2">
+                          {lessons.filter(lesson => 
+                            lesson.id.includes('real-numbers') || 
+                            lesson.id.includes('euclid') || 
+                            lesson.id.includes('fundamental-theorem')
+                          ).map((lesson, index) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleLessonClick(lesson)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">{lesson.title}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {lesson.duration} • {lesson.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Preview
+                                  </Badge>
+                                )}
+                                {!lesson.isPreview && !isEnrolled && !course.isFree && (
+                                  <Lock className="w-4 h-4 text-muted-foreground" />
+                                )}
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-medium">{lesson.title}</h4>
-                              <p className="text-sm text-muted-foreground">
-                                {lesson.duration} • {lesson.type}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            {lesson.isPreview && (
-                              <Badge variant="secondary" className="text-xs">
-                                Preview
-                              </Badge>
-                            )}
-                            {!lesson.isPreview && !isEnrolled && !course.isFree && (
-                              <Lock className="w-4 h-4 text-muted-foreground" />
-                            )}
-                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Chapter 2: Polynomials */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-[#1e293b]">Chapter 2: Polynomials</h3>
+                        <div className="space-y-2">
+                          {lessons.filter(lesson => lesson.id.includes('polynomial')).map((lesson, index) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleLessonClick(lesson)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">{lesson.title}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {lesson.duration} • {lesson.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Preview
+                                  </Badge>
+                                )}
+                                {!lesson.isPreview && !isEnrolled && !course.isFree && (
+                                  <Lock className="w-4 h-4 text-muted-foreground" />
+                                )}
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Chapter 3: Pair of Linear Equations */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-[#1e293b]">Chapter 3: Pair of Linear Equations in Two Variables</h3>
+                        <div className="space-y-2">
+                          {lessons.filter(lesson => lesson.id.includes('linear')).map((lesson, index) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleLessonClick(lesson)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">{lesson.title}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {lesson.duration} • {lesson.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Preview
+                                  </Badge>
+                                )}
+                                {!lesson.isPreview && !isEnrolled && !course.isFree && (
+                                  <Lock className="w-4 h-4 text-muted-foreground" />
+                                )}
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Chapter 4: Quadratic Equations */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-[#1e293b]">Chapter 4: Quadratic Equations</h3>
+                        <div className="space-y-2">
+                          {lessons.filter(lesson => lesson.id.includes('quadratic')).map((lesson, index) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleLessonClick(lesson)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">{lesson.title}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {lesson.duration} • {lesson.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Preview
+                                  </Badge>
+                                )}
+                                {!lesson.isPreview && !isEnrolled && !course.isFree && (
+                                  <Lock className="w-4 h-4 text-muted-foreground" />
+                                )}
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Chapter 5: Arithmetic Progressions */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-[#1e293b]">Chapter 5: Arithmetic Progressions</h3>
+                        <div className="space-y-2">
+                          {lessons.filter(lesson => lesson.id.includes('ap-')).map((lesson, index) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center justify-between p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                              onClick={() => handleLessonClick(lesson)}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">{lesson.title}</h4>
+                                  <p className="text-sm text-muted-foreground">
+                                    {lesson.duration} • {lesson.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Preview
+                                  </Badge>
+                                )}
+                                {!lesson.isPreview && !isEnrolled && !course.isFree && (
+                                  <Lock className="w-4 h-4 text-muted-foreground" />
+                                )}
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Show more chapters button */}
+                      <div className="text-center pt-4">
+                        <Button variant="outline" className="text-[#e27447] border-[#e27447] hover:bg-[#e27447] hover:text-white">
+                          View All Chapters ({Math.ceil(lessons.length / 5)} chapters)
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

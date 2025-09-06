@@ -69,6 +69,7 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
         { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
       ]
@@ -87,6 +88,7 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
         { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
         { name: "Free Courses", href: "/courses/free", hasDropdown: false },
       ]
@@ -105,6 +107,7 @@ export function Header() {
             { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
           ]
         },
+        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
         { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "About", href: "/about", hasDropdown: false },
         { name: "Contact", href: "/contact", hasDropdown: false },
@@ -136,14 +139,15 @@ export function Header() {
 
           {/* Search Bar */}
           <div className="hidden lg:flex flex-1 max-w-lg mx-4">
-            <div className="relative w-full">
+            <Link href="/courses/discover" className="relative w-full">
               <input
                 type="text"
-                placeholder="Search for anything"
-                className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground"
+                placeholder="Search courses..."
+                className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground cursor-pointer"
+                readOnly
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            </div>
+            </Link>
           </div>
 
           {/* Main Navigation */}
@@ -322,14 +326,15 @@ export function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-card border-t border-border">
               {/* Mobile Search */}
               <div className="px-3 pb-3">
-                <div className="relative">
+                <Link href="/courses/discover" className="relative block">
                   <input
                     type="text"
-                    placeholder="Search for anything"
-                    className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground"
+                    placeholder="Search courses..."
+                    className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground cursor-pointer"
+                    readOnly
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                </div>
+                </Link>
               </div>
 
               {/* Mobile Categories */}

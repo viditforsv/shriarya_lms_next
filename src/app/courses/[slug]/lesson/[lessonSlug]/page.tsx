@@ -188,10 +188,25 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
           {/* Main Content */}
           <div className="lg:col-span-3">
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "video" | "practice" | "notes")} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="video">Video</TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
-                <TabsTrigger value="practice">Practice</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
+                <TabsTrigger 
+                  value="video" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Video
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="notes" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Notes
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="practice" 
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                >
+                  Practice
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="video" className="mt-6">

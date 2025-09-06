@@ -102,13 +102,21 @@ export default function CoursesDashboard() {
                 Manage and edit your courses
               </p>
             </div>
-            <Button 
-              onClick={() => router.push('/dashboard/courses/new')}
-              className="bg-[#e27447] hover:bg-[#d1653a]"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Course
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => router.push('/dashboard/courses/manage')}
+                variant="outline"
+              >
+                Manage Courses
+              </Button>
+              <Button 
+                onClick={() => router.push('/dashboard/courses/builder')}
+                className="bg-[#e27447] hover:bg-[#d1653a]"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Course Builder
+              </Button>
+            </div>
           </div>
 
           {/* Courses Grid */}
@@ -130,7 +138,7 @@ export default function CoursesDashboard() {
                 Create your first course to get started
               </p>
               <Button 
-                onClick={() => router.push('/dashboard/courses/new')}
+                onClick={() => router.push('/dashboard/courses/builder')}
                 className="bg-[#e27447] hover:bg-[#d1653a]"
               >
                 <Plus className="w-4 h-4 mr-2" />

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { Button } from '@/app/components-demo/ui/button'
 import { Badge } from '@/app/components-demo/ui/badge'
@@ -20,42 +19,27 @@ import {
   ChevronDown,
   ChevronRight,
   Lock,
-  Unlock
+  Unlock,
+  CheckCircle,
+  Award
 } from 'lucide-react'
 import Link from 'next/link'
-
-interface Course {
-  id: string
-  title: string
-  description: string | null
-  slug: string | null
-  is_free: boolean
-  price: number
-  status: string
-  instructor_id: string
-  created_at: string
-}
-
-interface Lesson {
-  id: string
-  title: string
-  content: string | null
-  lesson_order: number
-  slug: string | null
-  is_preview: boolean
-  course_id: string
-}
+import { 
+  getCourseBySlug, 
+  getLessonsByCourseSlug, 
+  CourseConfig, 
+  LessonConfig 
+} from '@/lib/course-config'
 
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { user } = useAuth()
-  const [course, setCourse] = useState<Course | null>(null)
-  const [lessons, setLessons] = useState<Lesson[]>([])
+  const [course, setCourse] = useState<CourseConfig | null>(null)
+  const [lessons, setLessons] = useState<LessonConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
   const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
-  const supabase = createClient()
 
   // Resolve params
   useEffect(() => {
@@ -70,44 +54,21 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         setIsLoading(true)
         setError(null)
 
-        // Fetch course by slug
-        const { data: courseData, error: courseError } = await supabase
-          .from('courses')
-          .select('*')
-          .eq('slug', resolvedParams.slug)
-          .single()
-
-        if (courseError) {
-          throw courseError
+        // Fetch course from configuration
+        const courseData = getCourseBySlug(resolvedParams.slug)
+        if (!courseData) {
+          throw new Error('Course not found')
         }
 
         setCourse(courseData)
 
         // Fetch lessons for this course
-        const { data: lessonsData, error: lessonsError } = await supabase
-          .from('lessons')
-          .select('*')
-          .eq('course_id', courseData.id)
-          .order('lesson_order')
+        const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
+        setLessons(lessonsData)
 
-        if (lessonsError) {
-          throw lessonsError
-        }
-
-        setLessons(lessonsData || [])
-
-        // Check if user is enrolled
-        if (user) {
-          const { data: enrollmentData } = await supabase
-            .from('enrollments')
-            .select('*')
-            .eq('student_id', user.id)
-            .eq('course_id', courseData.id)
-            .eq('is_active', true)
-            .single()
-
-          setIsEnrolled(!!enrollmentData)
-        }
+        // For now, simulate enrollment status
+        // In a real app, this would check the database
+        setIsEnrolled(false) // This would be determined by actual enrollment status
 
       } catch (err) {
         console.error('Error loading course:', err)
@@ -118,10 +79,10 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     }
 
     loadCourse()
-  }, [resolvedParams, user, supabase])
+  }, [resolvedParams])
 
-  const handleLessonClick = (lesson: Lesson) => {
-    if (lesson.is_preview || isEnrolled || course?.is_free) {
+  const handleLessonClick = (lesson: LessonConfig) => {
+    if (lesson.isPreview || isEnrolled || course?.isFree) {
       if (lesson.slug) {
         window.location.href = `/courses/${resolvedParams?.slug}/lesson/${lesson.slug}`
       } else {
@@ -151,17 +112,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     }
 
     try {
-      const { error } = await supabase
-        .from('enrollments')
-        .insert({
-          student_id: user.id,
-          course_id: course!.id,
-          is_active: true,
-          enrolled_at: new Date().toISOString()
-        })
-
-      if (error) throw error
-
+      // For now, simulate enrollment
+      // In a real app, this would call the enrollment API
       setIsEnrolled(true)
       alert('Successfully enrolled! You can now access all lessons.')
     } catch (err) {
@@ -207,11 +159,14 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                 {course.description || 'No description available'}
               </p>
               <div className="flex items-center space-x-4">
-                <Badge variant={course.is_free ? "secondary" : "default"}>
-                  {course.is_free ? 'Free' : `$${course.price}`}
+                <Badge variant={course.isFree ? "secondary" : "default"}>
+                  {course.isFree ? 'Free' : `$${course.price || 0}`}
                 </Badge>
                 <Badge variant="outline">
-                  {course.status}
+                  {course.curriculum}
+                </Badge>
+                <Badge variant="outline">
+                  {course.grade || course.level}
                 </Badge>
                 {isEnrolled && (
                   <Badge variant="default" className="bg-green-100 text-green-800">
@@ -221,7 +176,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
               </div>
             </div>
             <div className="ml-6">
-              {!isEnrolled && !course.is_free ? (
+              {!isEnrolled && !course.isFree ? (
                 <Button onClick={handleEnroll} className="bg-[#e27447] hover:bg-[#d1653a]">
                   Enroll Now
                 </Button>
@@ -261,18 +216,17 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                       <div>
                         <h4 className="font-semibold mb-2">What you&apos;ll learn</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>• Comprehensive course materials</li>
-                          <li>• Practical exercises and assignments</li>
-                          <li>• Progress tracking and assessments</li>
-                          <li>• Expert guidance and support</li>
+                          {course.learningOutcomes.map((outcome, index) => (
+                            <li key={index}>• {outcome}</li>
+                          ))}
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold mb-2">Course includes</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>• {lessons.length} lessons</li>
-                          <li>• Video content and resources</li>
-                          <li>• Practice problems</li>
+                          <li>• {course.lessons} lessons</li>
+                          <li>• {course.duration} of content</li>
+                          <li>• Practice problems and assessments</li>
                           <li>• Certificate of completion</li>
                         </ul>
                       </div>
@@ -286,7 +240,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                   <CardHeader>
                     <CardTitle>Course Content</CardTitle>
                     <CardDescription>
-                      {lessons.length} lessons • {course.is_free ? 'Free' : `$${course.price}`}
+                      {course.lessons} lessons • {course.isFree ? 'Free' : `$${course.price || 0}`}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -304,17 +258,17 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             <div>
                               <h4 className="font-medium">{lesson.title}</h4>
                               <p className="text-sm text-muted-foreground">
-                                {lesson.is_preview ? 'Preview available' : 'Full lesson'}
+                                {lesson.duration} • {lesson.type}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            {lesson.is_preview && (
+                            {lesson.isPreview && (
                               <Badge variant="secondary" className="text-xs">
                                 Preview
                               </Badge>
                             )}
-                            {!lesson.is_preview && !isEnrolled && !course.is_free && (
+                            {!lesson.isPreview && !isEnrolled && !course.isFree && (
                               <Lock className="w-4 h-4 text-muted-foreground" />
                             )}
                             <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -337,8 +291,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                         <Users className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-semibold">Course Instructor</h4>
-                        <p className="text-muted-foreground">Expert educator with years of experience</p>
+                        <h4 className="font-semibold">{course.instructor}</h4>
+                        <p className="text-muted-foreground">Expert educator with years of experience in {course.curriculum} curriculum</p>
                       </div>
                     </div>
                   </CardContent>
@@ -357,19 +311,19 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Lessons</span>
-                  <span className="font-medium">{lessons.length}</span>
+                  <span className="font-medium">{course.lessons}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Duration</span>
-                  <span className="font-medium">~{lessons.length * 30} minutes</span>
+                  <span className="font-medium">{course.duration}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Level</span>
-                  <span className="font-medium">Beginner</span>
+                  <span className="font-medium">{course.grade || course.level}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Language</span>
-                  <span className="font-medium">English</span>
+                  <span className="text-muted-foreground">Curriculum</span>
+                  <span className="font-medium">{course.curriculum}</span>
                 </div>
               </CardContent>
             </Card>
@@ -390,7 +344,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                       <Progress value={25} className="h-2" />
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {Math.ceil(lessons.length * 0.25)} of {lessons.length} lessons completed
+                      {Math.ceil(course.lessons * 0.25)} of {course.lessons} lessons completed
                     </div>
                   </div>
                 </CardContent>

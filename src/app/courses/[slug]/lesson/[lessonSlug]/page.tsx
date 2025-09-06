@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { Button } from '@/app/components-demo/ui/button'
 import { Badge } from '@/app/components-demo/ui/badge'
@@ -16,37 +15,28 @@ import {
   ArrowRight,
   Clock,
   Lock,
-  Unlock
+  Unlock,
+  Download
 } from 'lucide-react'
 import Link from 'next/link'
-
-interface Lesson {
-  id: string
-  title: string
-  content: string | null
-  lesson_order: number
-  slug: string | null
-  is_preview: boolean
-  course_id: string
-}
-
-interface Course {
-  id: string
-  title: string
-  slug: string | null
-  is_free: boolean
-}
+import { 
+  getCourseBySlug, 
+  getLessonBySlug, 
+  getLessonsByCourseSlug,
+  CourseConfig, 
+  LessonConfig 
+} from '@/lib/course-config'
 
 export default function LessonPage({ params }: { params: Promise<{ slug: string; lessonSlug: string }> }) {
   const { user } = useAuth()
-  const [lesson, setLesson] = useState<Lesson | null>(null)
-  const [course, setCourse] = useState<Course | null>(null)
+  const [lesson, setLesson] = useState<LessonConfig | null>(null)
+  const [course, setCourse] = useState<CourseConfig | null>(null)
+  const [allLessons, setAllLessons] = useState<LessonConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'practice'>('video')
   const [resolvedParams, setResolvedParams] = useState<{ slug: string; lessonSlug: string } | null>(null)
-  const supabase = createClient()
 
   // Resolve params
   useEffect(() => {
@@ -61,45 +51,28 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
         setIsLoading(true)
         setError(null)
 
-        // First, get the course by slug
-        const { data: courseData, error: courseError } = await supabase
-          .from('courses')
-          .select('id, title, slug, is_free')
-          .eq('slug', resolvedParams.slug)
-          .single()
-
-        if (courseError) {
-          throw courseError
+        // Get course from configuration
+        const courseData = getCourseBySlug(resolvedParams.slug)
+        if (!courseData) {
+          throw new Error('Course not found')
         }
 
         setCourse(courseData)
 
-        // Then get the lesson by slug
-        const { data: lessonData, error: lessonError } = await supabase
-          .from('lessons')
-          .select('*')
-          .eq('slug', resolvedParams.lessonSlug)
-          .eq('course_id', courseData.id)
-          .single()
-
-        if (lessonError) {
-          throw lessonError
+        // Get lesson from configuration
+        const lessonData = getLessonBySlug(resolvedParams.slug, resolvedParams.lessonSlug)
+        if (!lessonData) {
+          throw new Error('Lesson not found')
         }
 
         setLesson(lessonData)
 
-        // Check if user is enrolled
-        if (user) {
-          const { data: enrollmentData } = await supabase
-            .from('enrollments')
-            .select('*')
-            .eq('student_id', user.id)
-            .eq('course_id', courseData.id)
-            .eq('is_active', true)
-            .single()
+        // Get all lessons for navigation
+        const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
+        setAllLessons(lessonsData)
 
-          setIsEnrolled(!!enrollmentData)
-        }
+        // For now, simulate enrollment status
+        setIsEnrolled(false)
 
       } catch (err) {
         console.error('Error loading lesson:', err)
@@ -110,40 +83,28 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
     }
 
     loadLesson()
-  }, [resolvedParams, user, supabase])
+  }, [resolvedParams])
 
   const hasAccess = () => {
-    return lesson?.is_preview || isEnrolled || course?.is_free
+    return lesson?.isPreview || isEnrolled || course?.isFree
   }
 
-  const getNextLesson = async () => {
-    if (!lesson || !course) return
+  const getNextLesson = () => {
+    if (!lesson || !allLessons.length) return
 
-    const { data: nextLesson } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('course_id', course.id)
-      .gt('lesson_order', lesson.lesson_order)
-      .order('lesson_order')
-      .limit(1)
-      .single()
+    const currentIndex = allLessons.findIndex(l => l.slug === lesson.slug)
+    const nextLesson = allLessons[currentIndex + 1]
 
     if (nextLesson) {
       window.location.href = `/courses/${resolvedParams?.slug}/lesson/${nextLesson.slug}`
     }
   }
 
-  const getPreviousLesson = async () => {
-    if (!lesson || !course) return
+  const getPreviousLesson = () => {
+    if (!lesson || !allLessons.length) return
 
-    const { data: prevLesson } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('course_id', course.id)
-      .lt('lesson_order', lesson.lesson_order)
-      .order('lesson_order', { ascending: false })
-      .limit(1)
-      .single()
+    const currentIndex = allLessons.findIndex(l => l.slug === lesson.slug)
+    const prevLesson = allLessons[currentIndex - 1]
 
     if (prevLesson) {
       window.location.href = `/courses/${resolvedParams?.slug}/lesson/${prevLesson.slug}`
@@ -210,11 +171,14 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            {lesson.is_preview && (
+            {lesson.isPreview && (
               <Badge variant="secondary">Preview</Badge>
             )}
             <Badge variant="outline">
-              Lesson {lesson.lesson_order}
+              Lesson {lesson.order}
+            </Badge>
+            <Badge variant="outline">
+              {lesson.duration}
             </Badge>
           </div>
         </div>
@@ -234,17 +198,37 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
                 <Card>
                   <CardHeader>
                     <CardTitle>Video Lesson</CardTitle>
+                    <CardDescription>{lesson.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
+                    <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center mb-4">
                       <div className="text-center">
                         <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                         <p className="text-muted-foreground">Video content will be displayed here</p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          {lesson.title} - Lesson {lesson.lesson_order}
+                          {lesson.title} - {lesson.duration}
                         </p>
                       </div>
                     </div>
+                    
+                    {/* Resources */}
+                    {lesson.resources && lesson.resources.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="font-semibold">Resources:</h4>
+                        {lesson.resources.map((resource) => (
+                          <div key={resource.id} className="flex items-center justify-between p-2 border rounded-sm">
+                            <div className="flex items-center space-x-2">
+                              <FileText className="w-4 h-4" />
+                              <span className="text-sm">{resource.title}</span>
+                            </div>
+                            <Button size="sm" variant="outline">
+                              <Download className="w-4 h-4 mr-1" />
+                              Download
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -256,29 +240,31 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
                   </CardHeader>
                   <CardContent>
                     <div className="prose max-w-none">
-                      {lesson.content ? (
-                        <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
-                      ) : (
-                        <div className="space-y-4">
-                          <h3>Lesson Content</h3>
-                          <p>
-                            This is the lesson content for <strong>{lesson.title}</strong>. 
-                            Here you&apos;ll find comprehensive notes and explanations.
-                          </p>
-                          <h4>Key Points:</h4>
-                          <ul>
-                            <li>Important concept 1</li>
-                            <li>Important concept 2</li>
-                            <li>Important concept 3</li>
-                          </ul>
-                          <h4>Summary:</h4>
-                          <p>
-                            This lesson covers the fundamental concepts that will help you 
-                            understand the topic better. Make sure to review these notes 
-                            before moving to the next lesson.
+                      <div className="space-y-4">
+                        <h3>{lesson.title}</h3>
+                        <p className="text-muted-foreground">{lesson.description}</p>
+                        
+                        <h4>Key Concepts:</h4>
+                        <ul className="space-y-2">
+                          <li>• Important concept 1</li>
+                          <li>• Important concept 2</li>
+                          <li>• Important concept 3</li>
+                        </ul>
+                        
+                        <h4>Summary:</h4>
+                        <p>
+                          This lesson covers the fundamental concepts that will help you 
+                          understand the topic better. Make sure to review these notes 
+                          before moving to the next lesson.
+                        </p>
+                        
+                        <div className="bg-blue-50 p-4 rounded-sm">
+                          <h4 className="font-semibold text-blue-900 mb-2">💡 Pro Tip</h4>
+                          <p className="text-blue-800 text-sm">
+                            Take notes as you watch the video and practice the problems to reinforce your learning.
                           </p>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -375,11 +361,15 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Current Lesson</span>
-                    <span className="font-medium">{lesson.lesson_order}</span>
+                    <span className="font-medium">{lesson.order}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Time Spent</span>
-                    <span className="font-medium">~15 min</span>
+                    <span className="text-muted-foreground">Duration</span>
+                    <span className="font-medium">{lesson.duration}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Type</span>
+                    <span className="font-medium capitalize">{lesson.type}</span>
                   </div>
                   <Button className="w-full">
                     <CheckCircle className="w-4 h-4 mr-2" />

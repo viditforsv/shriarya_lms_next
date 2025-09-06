@@ -5,7 +5,8 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
 import { Button } from "@/app/components-demo/ui/button"
 import { Badge } from "@/app/components-demo/ui/badge"
-import { ArrowRight, Clock, Users2 } from "lucide-react"
+import { ArrowRight, Clock, Users2, BookOpen, Star } from "lucide-react"
+import { getAllCourses, getCoursesByCurriculum } from "@/lib/course-config"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
@@ -20,10 +21,11 @@ export default function CoursesPage() {
       color: "bg-[#1e293b]",
       logo: "/images/cbse_logo.svg",
       subjects: ["Mathematics", "Science", "English", "Social Studies", "Computer Science"],
-      href: "/courses/cbse",
+      href: "/courses/cbse-mathematics-class-10", // Direct link to actual course
       features: ["Board Exam Focus", "Practical Applications", "Comprehensive Coverage"],
       students: "50K+",
-      duration: "4 Years"
+      duration: "4 Years",
+      courseCount: getCoursesByCurriculum('CBSE').length
     },
     {
       id: "icse-isc",
@@ -33,10 +35,11 @@ export default function CoursesPage() {
       color: "bg-[#1e293b]",
       logo: "/images/icse_logo.svg",
       subjects: ["Mathematics", "Science", "English Literature", "History", "Geography", "Physics", "Chemistry", "Biology"],
-      href: "/courses/icse",
+      href: "/courses", // Will show all courses for now
       features: ["Analytical Thinking", "Problem Solving", "Concept Clarity", "Advanced Concepts", "Specialized Focus"],
       students: "60K+",
-      duration: "4 Years"
+      duration: "4 Years",
+      courseCount: getCoursesByCurriculum('ICSE').length
     },
     {
       id: "ibdp",
@@ -46,10 +49,11 @@ export default function CoursesPage() {
       color: "bg-[#e27447]",
       logo: "/images/ibdp_logo.svg",
       subjects: ["Group 1: Language & Literature", "Group 2: Language Acquisition", "Group 3: Individuals & Societies", "Group 4: Sciences", "Group 5: Mathematics", "Group 6: Arts"],
-      href: "/courses/ibdp",
+      href: "/courses/ibdp-mathematics-analysis-approaches-hl", // Direct link to actual course
       features: ["Global Recognition", "Six Subject Groups", "International Standards", "University Preparation"],
       students: "20K+",
-      duration: "2 Years"
+      duration: "2 Years",
+      courseCount: getCoursesByCurriculum('IBDP').length
     },
     {
       id: "igcse",
@@ -59,10 +63,11 @@ export default function CoursesPage() {
       color: "bg-[#1e293b]",
       logo: "/images/igcse_logo.svg",
       subjects: ["Mathematics", "English", "Sciences", "Languages", "Humanities", "Creative Arts"],
-      href: "/courses/igcse",
+      href: "/courses", // Will show all courses for now
       features: ["Cambridge Standards", "International Focus", "University Preparation"],
       students: "30K+",
-      duration: "4 Years"
+      duration: "4 Years",
+      courseCount: getCoursesByCurriculum('IGCSE').length
     }
   ]
 
@@ -164,6 +169,10 @@ export default function CoursesPage() {
                   {/* Stats */}
                   <div className="flex items-center justify-between pt-4 border-t border-[#feefea]">
                     <div className="flex items-center gap-4 text-sm text-[#1e293b]">
+                      <div className="flex items-center gap-1">
+                        <BookOpen className="w-4 h-4" />
+                        <span>{curriculum.courseCount} courses</span>
+                      </div>
                       <div className="flex items-center gap-1">
                         <Users2 className="w-4 h-4" />
                         <span>{curriculum.students}</span>

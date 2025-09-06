@@ -18,6 +18,7 @@ import {
   Unlock,
   Download
 } from 'lucide-react'
+import { VideoResource } from '@/app/components-demo/ui/youtube-video'
 import Link from 'next/link'
 import { 
   getCourseBySlug, 
@@ -216,32 +217,39 @@ export default function LessonPage({ params }: { params: Promise<{ slug: string;
                     <CardDescription>{lesson.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center mb-4">
-                      <div className="text-center">
-                        <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground">Video content will be displayed here</p>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {lesson.title} - {lesson.duration}
-                        </p>
+                    {/* Main Video */}
+                    {lesson.resources && lesson.resources.length > 0 && (
+                      <div className="mb-6">
+                        {lesson.resources
+                          .filter(resource => resource.type === 'video')
+                          .map((resource) => (
+                            <VideoResource 
+                              key={resource.id} 
+                              resource={resource} 
+                              className="mb-4"
+                            />
+                          ))}
                       </div>
-                    </div>
+                    )}
                     
-                    {/* Resources */}
+                    {/* Other Resources */}
                     {lesson.resources && lesson.resources.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="font-semibold">Resources:</h4>
-                        {lesson.resources.map((resource) => (
-                          <div key={resource.id} className="flex items-center justify-between p-2 border rounded-sm">
-                            <div className="flex items-center space-x-2">
-                              <FileText className="w-4 h-4" />
-                              <span className="text-sm">{resource.title}</span>
+                        <h4 className="font-semibold">Additional Resources:</h4>
+                        {lesson.resources
+                          .filter(resource => resource.type !== 'video')
+                          .map((resource) => (
+                            <div key={resource.id} className="flex items-center justify-between p-2 border rounded-sm">
+                              <div className="flex items-center space-x-2">
+                                <FileText className="w-4 h-4" />
+                                <span className="text-sm">{resource.title}</span>
+                              </div>
+                              <Button size="sm" variant="outline">
+                                <Download className="w-4 h-4 mr-1" />
+                                Download
+                              </Button>
                             </div>
-                            <Button size="sm" variant="outline">
-                              <Download className="w-4 h-4 mr-1" />
-                              Download
-                            </Button>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     )}
                   </CardContent>

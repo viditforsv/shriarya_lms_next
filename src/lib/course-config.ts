@@ -50,6 +50,8 @@ export interface ResourceConfig {
   title: string
   description?: string
   duration?: number
+  isYouTube?: boolean
+  youtubeId?: string
 }
 
 // Centralized course database
@@ -179,9 +181,11 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         {
           id: 'real-numbers-video',
           type: 'video',
-          url: '/videos/real-numbers-intro.mp4',
+          url: 'https://www.youtube.com/watch?v=h2R3Boke8FY',
           title: 'Real Numbers Introduction Video',
-          duration: 1800
+          duration: 1800,
+          isYouTube: true,
+          youtubeId: 'h2R3Boke8FY'
         },
         {
           id: 'real-numbers-pdf',
@@ -204,7 +208,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         {
           id: 'euclid-video',
           type: 'video',
-          url: '/videos/euclid-division-lemma.mp4',
+          url: 'https://shrividhyaclasses.b-cdn.net/AI%20Enabled%20QPG.mp4',
           title: 'Euclid\'s Division Lemma Video',
           duration: 2000
         }

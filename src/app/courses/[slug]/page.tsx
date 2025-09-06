@@ -8,20 +8,10 @@ import { Badge } from '@/app/components-demo/ui/badge'
 import { Progress } from '@/app/components-demo/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
-  BookOpen, 
-  Clock, 
-  Calendar, 
-  ArrowRight, 
   Play, 
-  FileText, 
   Users, 
-  Star,
-  ChevronDown,
-  ChevronRight,
-  Lock,
-  Unlock,
-  CheckCircle,
-  Award
+  ChevronRight, 
+  Lock
 } from 'lucide-react'
 import Link from 'next/link'
 import { 
@@ -38,7 +28,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
   const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
 
   // Resolve params
@@ -93,17 +82,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     }
   }
 
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId)
-      } else {
-        newSet.add(sectionId)
-      }
-      return newSet
-    })
-  }
 
   const handleEnroll = async () => {
     if (!user) {

@@ -1,21 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { Button } from '@/app/components-demo/ui/button'
 import { Badge } from '@/app/components-demo/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
-  BookOpen, 
-  Play, 
   FileText, 
   CheckCircle,
   ArrowLeft,
   ArrowRight,
-  Clock,
   Lock,
-  Unlock,
   Download
 } from 'lucide-react'
 import { VideoResource } from '@/app/components-demo/ui/youtube-video'
@@ -29,7 +24,6 @@ import {
 } from '@/lib/course-config'
 
 export default function LessonPage({ params }: { params: Promise<{ slug: string; lessonSlug: string }> }) {
-  const { user } = useAuth()
   const [lesson, setLesson] = useState<LessonConfig | null>(null)
   const [course, setCourse] = useState<CourseConfig | null>(null)
   const [allLessons, setAllLessons] = useState<LessonConfig[]>([])

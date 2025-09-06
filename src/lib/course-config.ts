@@ -976,7 +976,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       title: 'Mock Test 1 - Chapters 1-5',
       description: 'Comprehensive mock test covering first 5 chapters.',
       duration: '180 minutes',
-      type: 'assessment',
+      type: 'quiz',
       isPreview: false,
       order: 42,
       resources: [
@@ -994,7 +994,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       title: 'Mock Test 2 - Chapters 6-10',
       description: 'Comprehensive mock test covering chapters 6-10.',
       duration: '180 minutes',
-      type: 'assessment',
+      type: 'quiz',
       isPreview: false,
       order: 43,
       resources: [
@@ -1012,7 +1012,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       title: 'Mock Test 3 - Chapters 11-15',
       description: 'Comprehensive mock test covering chapters 11-15.',
       duration: '180 minutes',
-      type: 'assessment',
+      type: 'quiz',
       isPreview: false,
       order: 44,
       resources: [
@@ -1030,7 +1030,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       title: 'Final Mock Test - Complete Syllabus',
       description: 'Complete syllabus mock test for board exam preparation.',
       duration: '180 minutes',
-      type: 'assessment',
+      type: 'quiz',
       isPreview: false,
       order: 45,
       resources: [

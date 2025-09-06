@@ -73,10 +73,9 @@ export default function CourseTemplateConverter() {
       description: template.description,
       customizations: {
         ...prev.customizations,
-        price: template.price || 0,
-        isFree: template.price === 0,
-        tags: template.tags || [],
-        features: template.features || []
+        isFree: true,
+        tags: [],
+        features: []
       }
     }))
     setStep(2)
@@ -200,8 +199,8 @@ export default function CourseTemplateConverter() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between text-sm">
                           <Badge variant="outline">{template.curriculum}</Badge>
-                          <Badge variant={template.price === 0 ? 'secondary' : 'default'}>
-                            {template.price === 0 ? 'Free' : `$${template.price}`}
+                          <Badge variant="secondary">
+                            Free
                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -215,11 +214,12 @@ export default function CourseTemplateConverter() {
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {template.tags.slice(0, 3).map((tag, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
+                          <Badge variant="outline" className="text-xs">
+                            {template.subject}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {template.grade}
+                          </Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -322,12 +322,18 @@ export default function CourseTemplateConverter() {
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Features:</h4>
                       <div className="space-y-1">
-                        {selectedTemplate.features.map((feature, index) => (
-                          <div key={index} className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="w-3 h-3 text-green-600" />
-                            <span>{feature}</span>
-                          </div>
-                        ))}
+                        <div className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-3 h-3 text-green-600" />
+                          <span>Interactive Lessons</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-3 h-3 text-green-600" />
+                          <span>Practice Exercises</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-3 h-3 text-green-600" />
+                          <span>Progress Tracking</span>
+                        </div>
                       </div>
                     </div>
 

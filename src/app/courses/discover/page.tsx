@@ -14,19 +14,12 @@ import {
   Clock, 
   Users, 
   Star, 
-  DollarSign,
-  ChevronDown,
   Grid3X3,
   List,
   SortAsc,
-  SortDesc,
-  X,
-  CheckCircle,
-  PlayCircle,
-  Award,
-  TrendingUp
+  SortDesc
 } from 'lucide-react'
-import { getAllCourses, getCoursesByCurriculum } from '@/lib/course-config'
+import { getAllCourses } from '@/lib/course-config'
 import { CourseConfig } from '@/lib/course-config'
 
 interface FilterState {
@@ -133,10 +126,10 @@ export default function CourseDiscoveryPage() {
           comparison = a.duration.localeCompare(b.duration)
           break
         case 'popularity':
-          comparison = ((b as any).enrollmentCount || 0) - ((a as any).enrollmentCount || 0)
+          comparison = ((b as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0) - ((a as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0)
           break
         case 'rating':
-          comparison = ((b as any).rating || 0) - ((a as any).rating || 0)
+          comparison = ((b as CourseConfig & { rating?: number }).rating || 0) - ((a as CourseConfig & { rating?: number }).rating || 0)
           break
         case 'newest':
           comparison = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -203,14 +196,14 @@ export default function CourseDiscoveryPage() {
               </Button>
               <div className="flex items-center border rounded-md">
                 <Button
-                  variant={filters.viewMode === 'grid' ? 'default' : 'ghost'}
+                  variant={filters.viewMode === 'grid' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => updateFilter('viewMode', 'grid')}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={filters.viewMode === 'list' ? 'default' : 'ghost'}
+                  variant={filters.viewMode === 'list' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => updateFilter('viewMode', 'list')}
                 >
@@ -241,7 +234,7 @@ export default function CourseDiscoveryPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Filters</CardTitle>
-                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <Button variant="outline" size="sm" onClick={clearFilters}>
                     Clear All
                   </Button>
                 </div>
@@ -293,7 +286,7 @@ export default function CourseDiscoveryPage() {
                     <SelectContent>
                       <SelectItem value="all">All Grades</SelectItem>
                       {filterOptions.grades.map(grade => (
-                        <SelectItem key={grade} value={grade}>
+                        <SelectItem key={grade} value={grade || ''}>
                           {grade}
                         </SelectItem>
                       ))}
@@ -311,7 +304,7 @@ export default function CourseDiscoveryPage() {
                     <SelectContent>
                       <SelectItem value="all">All Levels</SelectItem>
                       {filterOptions.levels.map(level => (
-                        <SelectItem key={level} value={level}>
+                        <SelectItem key={level} value={level || ''}>
                           {level}
                         </SelectItem>
                       ))}
@@ -442,14 +435,14 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   <Clock className="w-4 h-4" />
                   <span>{course.duration}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  <span>{(course as any).enrollmentCount || 0} students</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4" />
-                  <span>{(course as any).rating || 0}/5</span>
-                </div>
+            <div className="flex items-center gap-1">
+              <Users className="w-4 h-4" />
+              <span>{(course as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0} students</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4" />
+              <span>{(course as CourseConfig & { rating?: number }).rating || 0}/5</span>
+            </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
@@ -498,11 +491,11 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <Users className="w-4 h-4" />
-              <span>{(course as any).enrollmentCount || 0}</span>
+              <span>{(course as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0}</span>
             </div>
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4" />
-              <span>{(course as any).rating || 0}</span>
+              <span>{(course as CourseConfig & { rating?: number }).rating || 0}</span>
             </div>
           </div>
 

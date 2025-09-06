@@ -5,8 +5,8 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
 import { Button } from "@/app/components-demo/ui/button"
 import { Badge } from "@/app/components-demo/ui/badge"
-import { ArrowRight, Clock, Users2, BookOpen, Star } from "lucide-react"
-import { getAllCourses, getCoursesByCurriculum } from "@/lib/course-config"
+import { ArrowRight, Clock, Users2, BookOpen } from "lucide-react"
+import { getCoursesByCurriculum } from "@/lib/course-config"
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'

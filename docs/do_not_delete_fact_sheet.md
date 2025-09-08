@@ -6,3 +6,4 @@ Phone number: +91 - 8130711689
 Emails: contact@shrividhya.in
 Admin email public facing: contact@shrividhya.in
 Address: 2919P, Ground Floor, Sushant Lok 2, Sector 57, Gurugram - 122003
+admin: vidit@shrividhya.in

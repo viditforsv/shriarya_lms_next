@@ -44,9 +44,9 @@ export default function Home() {
               <Button 
                 size="lg" 
                 className="bg-accent hover:bg-accent/90"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/courses/enrolled')}
               >
-                Go to Dashboard
+                My Courses
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 

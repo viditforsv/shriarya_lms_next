@@ -219,7 +219,7 @@ export function getRedirectPath(pathname: string, userRole?: UserRole, isAuthent
       return isAuthenticated ? null : '/auth'
     case 'admin':
       if (!isAuthenticated) return '/auth'
-      if (userRole !== 'admin') return '/dashboard'
+      if (userRole !== 'admin') return '/courses/enrolled'
       return null
     default:
       return null
@@ -238,7 +238,6 @@ export const NAVIGATION_MENU = {
     { label: 'Blog', href: '/blog' },
   ],
   student: [
-    { label: 'Dashboard', href: '/dashboard' },
     { label: 'My Courses', href: '/courses/enrolled' },
     { label: 'Progress', href: '/progress' },
     { label: 'Assignments', href: '/assignments' },
@@ -246,7 +245,7 @@ export const NAVIGATION_MENU = {
     { label: 'Subscription', href: '/subscription-management' },
   ],
   admin: [
-    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'My Courses', href: '/courses/enrolled' },
     { label: 'Site Administration', href: '/admin/site-administration' },
     { label: 'Users', href: '/admin/users' },
     { label: 'Courses', href: '/admin/courses' },

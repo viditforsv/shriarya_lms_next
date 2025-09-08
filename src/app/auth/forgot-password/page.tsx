@@ -4,7 +4,6 @@ import { Button } from '@/app/components-demo/ui/button'
 import { Input } from '@/app/components-demo/ui/input'
 import { Label } from '@/app/components-demo/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Alert, AlertDescription } from '@/app/components-demo/ui/alert'
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -52,21 +51,17 @@ export default function ForgotPasswordPage() {
         </CardHeader>
         <CardContent>
           {message && (
-            <Alert className="mb-4 border-green-200 bg-green-50">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
-                {message}
-              </AlertDescription>
-            </Alert>
+            <div className="mb-4 p-3 border border-green-200 bg-green-50 rounded-md flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+              <span className="text-green-800 text-sm">{message}</span>
+            </div>
           )}
           
           {error && (
-            <Alert className="mb-4 border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                {error}
-              </AlertDescription>
-            </Alert>
+            <div className="mb-4 p-3 border border-red-200 bg-red-50 rounded-md flex items-center">
+              <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
+              <span className="text-red-800 text-sm">{error}</span>
+            </div>
           )}
 
           <form onSubmit={handlePasswordReset} className="space-y-4">

@@ -56,7 +56,7 @@ export async function GET(request: Request) {
 // POST - Create a new course
 export async function POST(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     const {
@@ -138,7 +138,7 @@ export async function POST(request: Request) {
 // PUT - Update a course
 export async function PUT(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, ...updateData } = body
 
@@ -200,7 +200,7 @@ export async function PUT(request: Request) {
 // DELETE - Delete a course
 export async function DELETE(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 

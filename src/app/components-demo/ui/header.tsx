@@ -71,6 +71,7 @@ export function Header() {
         },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
         { name: "Free Courses", href: "/courses/free", hasDropdown: false },
+        { name: "Course Builder", href: "/course-builder", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
       ]
     } else if (user) {
@@ -274,9 +275,9 @@ export function Header() {
                             e.stopPropagation()
                             console.log('Sign out button clicked')
                             try {
+                              setIsUserDropdownOpen(false)
                               await signOut?.()
                               console.log('Sign out completed successfully')
-                              setIsUserDropdownOpen(false)
                             } catch (error) {
                               console.error('Sign out error:', error)
                             }
@@ -399,6 +400,7 @@ export function Header() {
                         e.stopPropagation()
                         console.log('Mobile sign out button clicked')
                         try {
+                          setIsMobileMenuOpen(false)
                           await signOut?.()
                           console.log('Mobile sign out completed successfully')
                         } catch (error) {

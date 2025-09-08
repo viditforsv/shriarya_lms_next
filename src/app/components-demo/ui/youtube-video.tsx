@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Play, ExternalLink, Download } from 'lucide-react'
 import { Button } from '@/app/components-demo/ui/button'
 import { Card, CardContent } from '@/app/components-demo/ui/card'
@@ -120,6 +120,47 @@ interface VideoResourceProps {
 }
 
 export function VideoResource({ resource, className = "" }: VideoResourceProps) {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Generate signed URL for Bunny CDN videos
+  useEffect(() => {
+    const generateSignedUrl = async () => {
+      if (!resource.url || resource.isYouTube) return
+
+      // Check if it's a Bunny CDN URL that needs token authentication
+      if (resource.url.includes('b-cdn.net')) {
+        setIsLoading(true)
+        setError(null)
+        
+        try {
+          // Extract filename from URL for signed URL generation
+          const fileName = resource.url.split('/').pop() || ''
+          
+          // Get signed URL for the video
+          const response = await fetch(`/api/signed-url?file=/${fileName}`)
+          const data = await response.json()
+
+          if (response.ok) {
+            setSignedUrl(data.url)
+          } else {
+            setError(`Error: ${data.error || 'Failed to get video access'}`)
+          }
+        } catch (err) {
+          setError(`Error: ${err instanceof Error ? err.message : 'Failed to access video'}`)
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        // For non-Bunny CDN videos, use the URL directly
+        setSignedUrl(resource.url)
+      }
+    }
+
+    generateSignedUrl()
+  }, [resource.url, resource.isYouTube])
+
   if (resource.isYouTube && resource.youtubeId) {
     return (
       <YouTubeVideo
@@ -131,7 +172,7 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
     )
   }
 
-  // Check if it's a Bunny CDN or direct video URL
+  // Check if it's a direct video URL
   const isDirectVideo = resource.url && (
     resource.url.includes('.mp4') || 
     resource.url.includes('.webm') || 
@@ -142,6 +183,56 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
   )
 
   if (isDirectVideo && !resource.isYouTube) {
+    if (isLoading) {
+      return (
+        <Card className={className}>
+          <CardContent className="p-0">
+            <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading video...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    }
+
+    if (error) {
+      return (
+        <Card className={className}>
+          <CardContent className="p-0">
+            <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
+              <div className="text-center">
+                <Play className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">{resource.title}</h3>
+                <p className="text-red-500 mb-4">{error}</p>
+                <Button variant="outline" onClick={() => window.location.reload()}>
+                  Retry
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    }
+
+    if (!signedUrl) {
+      return (
+        <Card className={className}>
+          <CardContent className="p-0">
+            <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
+              <div className="text-center">
+                <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">{resource.title}</h3>
+                <p className="text-muted-foreground mb-4">Preparing video...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    }
+
     return (
       <Card className={className}>
         <CardContent className="p-0">
@@ -149,11 +240,12 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
             <video
               controls
               className="w-full h-full"
-              poster={`https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg`}
+              controlsList="nodownload"
+              disablePictureInPicture
             >
-              <source src={resource.url} type="video/mp4" />
-              <source src={resource.url} type="video/webm" />
-              <source src={resource.url} type="video/ogg" />
+              <source src={signedUrl} type="video/mp4" />
+              <source src={signedUrl} type="video/webm" />
+              <source src={signedUrl} type="video/ogg" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -175,10 +267,9 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
                   <span>HD Quality</span>
                 </span>
               </div>
-              <Button variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </Button>
+              <div className="text-xs text-green-600 font-medium">
+                🔒 Secure Access
+              </div>
             </div>
           </div>
         </CardContent>

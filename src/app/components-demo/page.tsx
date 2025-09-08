@@ -481,6 +481,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         <div className="flex space-x-4">
           <a href="#" className="text-[#1b4a56] hover:text-[#1b4a56]/80 font-medium">Home</a>
           <a href="#" className="text-gray-600 hover:text-[#1b4a56] font-medium">Courses</a>
+          <a href="/student-access" className="text-gray-600 hover:text-[#1b4a56] font-medium">📚 Student File Access</a>
           <a href="#" className="text-gray-600 hover:text-[#1b4a56] font-medium">About</a>
           <a href="#" className="text-gray-600 hover:text-[#1b4a56] font-medium">Contact</a>
             </div>

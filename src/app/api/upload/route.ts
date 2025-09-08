@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { signBunnyUploadUrl } from '@/lib/bunnySigner'
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,26 +54,37 @@ export async function POST(request: NextRequest) {
     const fileExtension = file.name.split('.').pop()
     const fileName = `${timestamp}-${randomId}.${fileExtension}`
 
-    // 5. Upload to Bunny CDN
-    const storageZone = process.env.BUNNY_CDN_STORAGE_ZONE
-    const apiKey = process.env.BUNNY_CDN_API_KEY
-    
-    if (!storageZone || !apiKey) {
-      return NextResponse.json({ error: 'CDN configuration missing' }, { status: 500 })
-    }
+// 5. Upload to Bunny CDN using token authentication
+const tokenKey = process.env.BUNNY_TOKEN_KEY
+const storageZone = process.env.BUNNY_CDN_STORAGE_ZONE
 
-    const uploadUrl = `https://storage.bunnycdn.com/${storageZone}/${fileName}`
-    
-    console.log('Uploading to Bunny CDN:', uploadUrl)
-    
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'AccessKey': apiKey,
-        'Content-Type': file.type,
-      },
-      body: file
-    })
+if (!tokenKey || !storageZone) {
+  return NextResponse.json({ error: 'CDN configuration missing' }, { status: 500 })
+}
+
+// Generate signed URL for upload (1 hour expiry)
+const signedUpload = signBunnyUploadUrl(fileName, tokenKey, 3600)
+const uploadUrl = `https://storage.bunnycdn.com/${storageZone}/${fileName}`
+
+console.log('Uploading to Bunny CDN with token:', uploadUrl)
+console.log('Token expires at:', new Date(signedUpload.expires * 1000).toISOString())
+
+// Use Storage API Key for uploads (not affected by token authentication)
+const storageApiKey = process.env.BUNNY_CDN_API_KEY
+if (!storageApiKey) {
+  return NextResponse.json({ error: 'Storage API Key missing for uploads' }, { status: 500 })
+}
+
+console.log('Using Storage API Key for upload (bypasses token authentication)')
+
+const uploadResponse = await fetch(uploadUrl, {
+  method: 'PUT',
+  headers: {
+    'AccessKey': storageApiKey,
+    'Content-Type': file.type,
+  },
+  body: file
+})
 
     if (!uploadResponse.ok) {
       console.error('Bunny CDN upload failed:', uploadResponse.status, uploadResponse.statusText)
@@ -107,10 +119,15 @@ export async function POST(request: NextRequest) {
       throw dbError
     }
 
+    // Generate signed URL for accessing the file
+    const signedAccessUrl = signBunnyUploadUrl(fileName, tokenKey, 3600)
+
     return NextResponse.json({ 
       success: true, 
       resource,
       url: cdnUrl,
+      signedUrl: signedAccessUrl.url,
+      expires: signedAccessUrl.expires,
       message: 'File uploaded successfully'
     })
 
@@ -172,46 +189,48 @@ export async function GET(request: NextRequest) {
 async function handleTestConnection() {
   try {
     const storageZone = process.env.BUNNY_CDN_STORAGE_ZONE
-    const apiKey = process.env.BUNNY_CDN_API_KEY
-    
-    if (!storageZone || !apiKey) {
-      return NextResponse.json({ 
+    const storageApiKey = process.env.BUNNY_CDN_API_KEY
+
+    if (!storageZone || !storageApiKey) {
+      return NextResponse.json({
         error: 'CDN configuration missing',
         storageZone: !!storageZone,
-        apiKey: !!apiKey
+        storageApiKey: !!storageApiKey
       }, { status: 500 })
     }
 
-    // Test Bunny CDN connection by listing files
+    // Test Bunny CDN connection by listing files using Storage API Key
     const listUrl = `https://storage.bunnycdn.com/${storageZone}/`
-    
+
     const response = await fetch(listUrl, {
       method: 'GET',
       headers: {
-        'AccessKey': apiKey,
+        'AccessKey': storageApiKey,
       }
     })
 
     if (!response.ok) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: `Bunny CDN connection failed: ${response.status}`,
         status: response.status,
-        statusText: response.statusText
+        statusText: response.statusText,
+        note: 'Using Storage API Key - should work even with Token Authentication enabled'
       }, { status: 500 })
     }
 
     const data = await response.json()
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       success: true,
-      message: 'Bunny CDN connection successful',
+      message: 'Bunny CDN connection successful with Storage API Key',
       storageZone,
-      fileCount: Array.isArray(data) ? data.length : 'Unknown'
+      fileCount: Array.isArray(data) ? data.length : 'Unknown',
+      note: 'Storage API Key bypasses Token Authentication for uploads'
     })
 
   } catch (error) {
     console.error('Test connection error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: error instanceof Error ? error.message : 'Test connection failed'
     }, { status: 500 })
   }

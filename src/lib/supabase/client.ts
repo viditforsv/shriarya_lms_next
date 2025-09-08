@@ -10,6 +10,7 @@ export function createClient() {
         storageKey: 'shriarya-auth',
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        flowType: 'pkce',
       }
     }
   )

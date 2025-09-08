@@ -345,6 +345,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     })
     if (error) throw error
+    
+    // Redirect to enrolled courses after successful sign in
+    if (typeof window !== 'undefined') {
+      window.location.href = '/courses/enrolled'
+    }
   }
 
   const signUp = async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
@@ -379,7 +384,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('SignOut error:', error)
         throw error
       }
+      
+      // Clear local state immediately
+      setUser(null)
+      setSession(null)
+      setProfile(null)
+      
       console.log('SignOut successful')
+      
+      // Redirect to login page after sign out
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth'
+      }
     } catch (error) {
       console.error('SignOut failed:', error)
       throw error
@@ -397,7 +413,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/auth/callback`,
+        redirectTo: `${siteUrl}/auth/callback?next=/courses/enrolled`,
+        scopes: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
       },
     })
     if (error) throw error

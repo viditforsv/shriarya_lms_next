@@ -99,7 +99,7 @@ export default function CourseBuilder() {
     level: '',
     is_free: true,
     price: 0,
-    status: 'draft' as const,
+    status: 'draft' as 'draft' | 'published' | 'archived',
     duration: '',
     thumbnail: '',
     features: [] as string[],
@@ -116,7 +116,7 @@ export default function CourseBuilder() {
     slug: '',
     is_preview: false,
     duration: '',
-    type: 'video' as const,
+    type: 'video' as 'video' | 'text' | 'quiz' | 'assignment',
     course_id: ''
   })
 

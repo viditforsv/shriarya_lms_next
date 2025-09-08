@@ -270,13 +270,21 @@ export async function DELETE(request: Request) {
     
     // Update course lessons count
     if (lesson) {
-      await supabase
+      const { data: courseData } = await supabase
         .from('courses')
-        .update({ 
-          lessons: supabase.raw('lessons - 1'),
-          updated_at: new Date().toISOString()
-        })
+        .select('lessons')
         .eq('id', lesson.course_id)
+        .single()
+      
+      if (courseData) {
+        await supabase
+          .from('courses')
+          .update({ 
+            lessons: Math.max(0, (courseData.lessons || 0) - 1),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', lesson.course_id)
+      }
     }
     
     return NextResponse.json({ message: 'Lesson deleted successfully' })

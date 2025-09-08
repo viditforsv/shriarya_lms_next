@@ -100,7 +100,7 @@ export default function StudentFileAccess() {
         setSignedUrl(data.url)
         setUrlExpires(data.expires)
       } else {
-        alert(`Error: ${data.error || 'Failed to get file access'}`)
+        alert(`Error: ${'Failed to get file access'}`)
       }
     } catch (error) {
       alert(`Error: ${error instanceof Error ? error.message : 'Failed to access file'}`)

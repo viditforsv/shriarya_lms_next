@@ -43,6 +43,8 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: '/login', accessLevel: 'public' },
   { path: '/signup', accessLevel: 'public' },
   { path: '/password-reset', accessLevel: 'public' },
+  { path: '/auth/forgot-password', accessLevel: 'public' },
+  { path: '/auth/reset-password', accessLevel: 'public' },
   { path: '/terms', accessLevel: 'public' },
   { path: '/privacy', accessLevel: 'public' },
   { path: '/faq', accessLevel: 'public' },

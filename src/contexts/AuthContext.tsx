@@ -14,6 +14,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, role?: UserRole) => Promise<void>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
+  updatePassword: (newPassword: string) => Promise<void>
   updateUserRole: (userId: string, newRole: UserRole) => Promise<boolean>
   refreshProfile: () => Promise<void>
   hasPermission: (permission: keyof RolePermissions) => boolean
@@ -539,6 +541,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('OAuth data:', data)
   }
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    if (error) throw error
+  }
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+    if (error) throw error
+  }
+
   const value = {
     user,
     session,
@@ -548,6 +564,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     signInWithGoogle,
+    resetPassword,
+    updatePassword,
     updateUserRole,
     refreshProfile,
     hasPermission,

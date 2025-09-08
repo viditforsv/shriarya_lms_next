@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { Label } from '@/app/components-demo/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
 import { Mail, Lock } from 'lucide-react'
+import Link from 'next/link'
 
 export function SignInForm() {
   const [email, setEmail] = useState('')
@@ -96,6 +97,15 @@ export function SignInForm() {
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
+
+        <div className="text-center mt-4">
+          <Link 
+            href="/auth/forgot-password"
+            className="text-sm text-[#e27447] hover:text-[#d65a2b] hover:underline"
+          >
+            Forgot your password?
+          </Link>
+        </div>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">

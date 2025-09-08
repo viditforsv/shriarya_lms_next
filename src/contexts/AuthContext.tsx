@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return fallbackProfile
     }
-  }, [supabase, profileCache])
+  }, [supabase, profileCache, createFallbackProfile, createProfile])
 
   // Create user profile if it doesn't exist
   const createProfile = async (userId: string) => {

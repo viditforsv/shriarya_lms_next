@@ -6,9 +6,9 @@ export async function GET(request: Request) {
   try {
     const supabase = await createClient()
     const { searchParams } = new URL(request.url)
-    const published = searchParams.get('published') === 'true'
-    const category = searchParams.get('category')
-    const difficulty = searchParams.get('difficulty')
+    // const published = searchParams.get('published') === 'true'
+    // const category = searchParams.get('category')
+    // const difficulty = searchParams.get('difficulty')
 
     const query = supabase
       .from('courses')

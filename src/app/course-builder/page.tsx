@@ -13,13 +13,9 @@ import {
   Edit, 
   Trash2, 
   BookOpen, 
-  Users, 
   Clock, 
   DollarSign,
-  Eye,
-  EyeOff,
-  Save,
-  Upload
+  Save
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 

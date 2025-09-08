@@ -147,13 +147,21 @@ export async function POST(request: Request) {
     }
     
     // Update course lessons count
-    await supabase
+    const { data: courseData } = await supabase
       .from('courses')
-      .update({ 
-        lessons: supabase.raw('lessons + 1'),
-        updated_at: new Date().toISOString()
-      })
+      .select('lessons')
       .eq('id', validatedData.course_id)
+      .single()
+    
+    if (courseData) {
+      await supabase
+        .from('courses')
+        .update({ 
+          lessons: (courseData.lessons || 0) + 1,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', validatedData.course_id)
+    }
     
     return NextResponse.json({ lesson }, { status: 201 })
   } catch (error) {

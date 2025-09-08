@@ -6,32 +6,26 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/courses/enrolled'
 
-  console.log('OAuth Callback - Code:', code ? 'Present' : 'Missing')
-  console.log('OAuth Callback - Next:', next)
-  console.log('OAuth Callback - Origin:', origin)
-  console.log('OAuth Callback - All params:', Object.fromEntries(searchParams))
+  console.log('Auth callback - Origin:', origin)
+  console.log('Auth callback - Code:', code ? 'present' : 'missing')
+  console.log('Auth callback - Next:', next)
 
   if (code) {
     const supabase = await createClient()
-    
-    // Use the full URL for PKCE support
-    const { error } = await supabase.auth.exchangeCodeForSession({
-      code,
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || origin}/auth/callback`
-    })
-    
-    console.log('OAuth Exchange - Error:', error)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
       // Use environment variable for production, fallback to origin for development
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-      console.log('OAuth Success - Redirecting to:', `${baseUrl}${next}`)
+      console.log('Auth callback - Redirecting to:', `${baseUrl}${next}`)
       return NextResponse.redirect(`${baseUrl}${next}`)
+    } else {
+      console.error('Auth callback - Exchange error:', error)
     }
   }
 
   // Return the user to an error page with instructions
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-  console.log('OAuth Error - Redirecting to:', `${baseUrl}/auth?error=Could not authenticate user`)
+  console.log('Auth callback - Error redirect to:', `${baseUrl}/auth?error=Could not authenticate user`)
   return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
 }

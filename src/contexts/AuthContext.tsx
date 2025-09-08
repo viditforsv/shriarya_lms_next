@@ -73,9 +73,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return cachedProfile
       }
       
-      // Add timeout to prevent hanging (increased to 15s)
+      // Check localStorage as fallback
+      if (typeof window !== 'undefined') {
+        const savedProfile = localStorage.getItem('shriarya-profile')
+        if (savedProfile) {
+          try {
+            const parsedProfile = JSON.parse(savedProfile)
+            if (parsedProfile.id === userId) {
+              console.log('Using localStorage profile for user:', userId)
+              setProfileCache(prev => new Map(prev).set(userId, parsedProfile))
+              return parsedProfile
+            }
+          } catch (error) {
+            console.error('Error parsing localStorage profile:', error)
+            localStorage.removeItem('shriarya-profile')
+          }
+        }
+      }
+      
+      // Add timeout to prevent hanging (reduced to 5s for faster failure)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 15000) // 15 second timeout
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000) // 5 second timeout
       })
       
       const fetchPromise = supabase
@@ -102,6 +120,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return newProfile
         }
         
+        // If it's a timeout or network error, create a fallback profile
+        if (error.message?.includes('timeout') || error.message?.includes('network') || error.message?.includes('fetch')) {
+          console.log('Network/timeout error, creating fallback profile for user:', userId)
+          const fallbackProfile = await createFallbackProfile(userId)
+          if (fallbackProfile) {
+            setProfileCache(prev => new Map(prev).set(userId, fallbackProfile))
+          }
+          return fallbackProfile
+        }
+        
         return null
       }
 
@@ -109,9 +137,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Cache the profile
       setProfileCache(prev => new Map(prev).set(userId, data as UserProfile))
-
-      // Remove client-side role update to prevent admin demotion
-      // Role should only be managed server-side for security
 
       return data as UserProfile
     } catch (error) {
@@ -125,7 +150,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return fetchProfile(userId, retries - 1)
       }
       
-      return null
+      // If all retries failed, create a fallback profile
+      console.log('All retries failed, creating fallback profile for user:', userId)
+      const fallbackProfile = await createFallbackProfile(userId)
+      if (fallbackProfile) {
+        setProfileCache(prev => new Map(prev).set(userId, fallbackProfile))
+      }
+      return fallbackProfile
     }
   }, [supabase, profileCache])
 
@@ -184,6 +215,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return data as UserProfile
     } catch (error) {
       console.error('Error creating profile:', error)
+      return null
+    }
+  }
+
+  // Create fallback profile when database is unavailable
+  const createFallbackProfile = async (userId: string) => {
+    try {
+      console.log('Creating fallback profile for user:', userId)
+      
+      // Get user data from auth.users
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !userData.user) {
+        console.error('Error getting user data for fallback profile:', userError)
+        return null
+      }
+
+      const user = userData.user
+      const email = user.email || ''
+      
+      // All fallback users get student role by default
+      const role: UserRole = 'student'
+      
+      // Extract name from user metadata
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
+      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
+      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
+
+      // Create fallback profile object (not saved to database)
+      const fallbackProfile: UserProfile = {
+        id: userId,
+        full_name: fullName || null,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        role: role,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
+      console.log('Successfully created fallback profile with role:', role, 'for email:', email)
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('shriarya-profile', JSON.stringify(fallbackProfile))
+      }
+
+      return fallbackProfile
+    } catch (error) {
+      console.error('Error creating fallback profile:', error)
       return null
     }
   }
@@ -313,6 +394,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(session)
             setUser(session?.user ?? null)
             
+            // Handle signout event - redirect to login page
+            if (event === 'SIGNED_OUT') {
+              console.log('User signed out, redirecting to login page')
+              if (typeof window !== 'undefined') {
+                window.location.href = '/auth'
+              }
+              return
+            }
+            
+            // Handle signin event - redirect to enrolled courses (only for email/password login)
+            if (event === 'SIGNED_IN' && session?.user) {
+              console.log('User signed in, checking if redirect is needed')
+              if (typeof window !== 'undefined') {
+                // Only redirect if we're not already on the enrolled courses page
+                // and not coming from OAuth callback (which handles its own redirect)
+                const currentPath = window.location.pathname
+                const isFromCallback = document.referrer.includes('/auth/callback')
+                
+                if (currentPath !== '/courses/enrolled' && !isFromCallback) {
+                  console.log('Redirecting to enrolled courses after login')
+                  setTimeout(() => {
+                    window.location.href = '/courses/enrolled'
+                  }, 100)
+                } else {
+                  console.log('Skipping redirect - already on target page or from OAuth callback')
+                }
+              }
+              return
+            }
+            
             // Fetch profile if user exists
             if (session?.user) {
               try {
@@ -345,11 +456,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     })
     if (error) throw error
-    
-    // Redirect to enrolled courses after successful sign in
-    if (typeof window !== 'undefined') {
-      window.location.href = '/courses/enrolled'
-    }
   }
 
   const signUp = async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
@@ -384,15 +490,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('SignOut error:', error)
         throw error
       }
-      
-      // Clear local state immediately
-      setUser(null)
-      setSession(null)
-      setProfile(null)
-      
       console.log('SignOut successful')
       
-      // Redirect to login page after sign out
+      // Redirect to login page after successful signout
       if (typeof window !== 'undefined') {
         window.location.href = '/auth'
       }
@@ -403,21 +503,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    // Use environment variable for production, fallback to localhost only for development
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    // Automatically detect environment and use appropriate URL
+    let siteUrl: string
     
-    // Debug logging (remove in production)
+    if (typeof window !== 'undefined') {
+      // Client-side: use current origin
+      siteUrl = window.location.origin
+    } else {
+      // Server-side: use environment variable or fallback
+      siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    }
+    
+    // Debug logging
     console.log('AuthContext - Site URL:', siteUrl)
     console.log('AuthContext - Environment variable:', process.env.NEXT_PUBLIC_SITE_URL)
+    console.log('AuthContext - Current location:', typeof window !== 'undefined' ? window.location.origin : 'server')
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/auth/callback?next=/courses/enrolled`,
-        scopes: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+        redirectTo: `${siteUrl}/auth/callback`,
+        // Force Supabase to use the specific redirect URL
+        queryParams: {
+          redirect_to: `${siteUrl}/auth/callback`
+        }
       },
     })
-    if (error) throw error
+    if (error) {
+      console.error('Google OAuth error:', error)
+      throw error
+    }
   }
 
   const value = {

@@ -1,3 +1,0 @@
-- Google auth should work
-- free user section flow fix
-- student section flow fix

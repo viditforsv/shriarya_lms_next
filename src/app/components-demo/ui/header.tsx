@@ -231,12 +231,12 @@ export function Header() {
                       </div>
                       
                       <Link
-                        href="/dashboard"
+                        href="/courses/enrolled"
                         className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
                         <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
-                        Dashboard
+                        My Courses
                       </Link>
                       
                       {profile?.role === 'admin' && (
@@ -388,8 +388,8 @@ export function Header() {
                 {user ? (
                   <div className="space-y-2 px-3">
                     <div className="text-sm text-foreground">{user.email}</div>
-                    <Link href="/dashboard">
-                      <Button size="sm" className="w-full">Dashboard</Button>
+                    <Link href="/courses/enrolled">
+                      <Button size="sm" className="w-full">My Courses</Button>
                     </Link>
                     <Button 
                       size="sm" 

@@ -185,7 +185,7 @@ export async function PUT(request: Request) {
       .eq('id', user.id)
       .single()
 
-    if (!profile || (profile.role !== 'admin' && lesson.courses.instructor_id !== user.id)) {
+    if (!profile || (profile.role !== 'admin' && lesson.courses[0]?.instructor_id !== user.id)) {
       return NextResponse.json({ error: 'Unauthorized to update this lesson' }, { status: 403 })
     }
 
@@ -252,7 +252,7 @@ export async function DELETE(request: Request) {
       .eq('id', user.id)
       .single()
 
-    if (!profile || (profile.role !== 'admin' && lesson.courses.instructor_id !== user.id)) {
+    if (!profile || (profile.role !== 'admin' && lesson.courses[0]?.instructor_id !== user.id)) {
       return NextResponse.json({ error: 'Unauthorized to delete this lesson' }, { status: 403 })
     }
 

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 // GET - Get user progress for lessons/courses
 export async function GET(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const courseId = searchParams.get('courseId')
     const lessonId = searchParams.get('lessonId')
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
 // POST - Create or update user progress
 export async function POST(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     const {
@@ -184,7 +184,7 @@ export async function POST(request: Request) {
 // PUT - Update user progress
 export async function PUT(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, ...updateData } = body
 

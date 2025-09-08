@@ -61,6 +61,116 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [profile]) // Add profile dependency
 
+  // Create user profile if it doesn't exist
+  const createProfile = async (userId: string) => {
+    try {
+      // Get user data from auth.users
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !userData.user) {
+        console.error('Error getting user data:', userError)
+        return null
+      }
+
+      const user = userData.user
+      const email = user.email || ''
+      
+      // All new users get student role by default
+      const role: UserRole = 'student'
+      console.log('Setting default role student for email:', email)
+
+      // Extract name from user metadata
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
+      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
+      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
+
+      // Insert new profile
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          role: role
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error creating profile:', error)
+        console.error('Profile data attempted:', {
+          id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          role: role
+        })
+        return null
+      }
+
+      console.log('Successfully created profile with role:', role, 'for email:', email)
+
+      // Remove client-side role update to prevent admin demotion
+      // Role should only be managed server-side for security
+
+      return data as UserProfile
+    } catch (error) {
+      console.error('Error creating profile:', error)
+      return null
+    }
+  }
+
+  // Create fallback profile when database is unavailable
+  const createFallbackProfile = async (userId: string) => {
+    try {
+      console.log('Creating fallback profile for user:', userId)
+      
+      // Get user data from auth.users
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !userData.user) {
+        console.error('Error getting user data for fallback profile:', userError)
+        return null
+      }
+
+      const user = userData.user
+      const email = user.email || ''
+      
+      // All new users get student role by default
+      const role: UserRole = 'student'
+      console.log('Setting default role student for fallback profile, email:', email)
+
+      // Extract name from user metadata
+      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
+      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
+      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
+
+      // Create fallback profile object
+      const fallbackProfile: UserProfile = {
+        id: userId,
+        full_name: fullName || null,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        role: role,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
+      console.log('Successfully created fallback profile with role:', role, 'for email:', email)
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('shriarya-profile', JSON.stringify(fallbackProfile))
+      }
+
+      return fallbackProfile
+    } catch (error) {
+      console.error('Error creating fallback profile:', error)
+      return null
+    }
+  }
+
     // Fetch user profile from database with retry logic
   const fetchProfile = useCallback(async (userId: string, retries = 2) => {
     try {
@@ -160,114 +270,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supabase, profileCache, createFallbackProfile, createProfile])
 
-  // Create user profile if it doesn't exist
-  const createProfile = async (userId: string) => {
-    try {
-      // Get user data from auth.users
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      
-      if (userError || !userData.user) {
-        console.error('Error getting user data:', userError)
-        return null
-      }
-
-      const user = userData.user
-      const email = user.email || ''
-      
-      // All new users get student role by default
-      const role: UserRole = 'student'
-      console.log('Setting default role student for email:', email)
-
-      // Extract name from user metadata
-      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
-      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
-      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
-
-      // Insert new profile
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-          role: role
-        })
-        .select()
-        .single()
-
-      if (error) {
-        console.error('Error creating profile:', error)
-        console.error('Profile data attempted:', {
-          id: userId,
-          first_name: firstName,
-          last_name: lastName,
-          role: role
-        })
-        return null
-      }
-
-      console.log('Successfully created profile with role:', role, 'for email:', email)
-
-      // Remove client-side role update to prevent admin demotion
-      // Role should only be managed server-side for security
-
-      return data as UserProfile
-    } catch (error) {
-      console.error('Error creating profile:', error)
-      return null
-    }
-  }
-
-  // Create fallback profile when database is unavailable
-  const createFallbackProfile = async (userId: string) => {
-    try {
-      console.log('Creating fallback profile for user:', userId)
-      
-      // Get user data from auth.users
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      
-      if (userError || !userData.user) {
-        console.error('Error getting user data for fallback profile:', userError)
-        return null
-      }
-
-      const user = userData.user
-      const email = user.email || ''
-      
-      // All fallback users get student role by default
-      const role: UserRole = 'student'
-      
-      // Extract name from user metadata
-      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
-      const firstName = user.user_metadata?.first_name || fullName.split(' ')[0] || ''
-      const lastName = user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
-
-      // Create fallback profile object (not saved to database)
-      const fallbackProfile: UserProfile = {
-        id: userId,
-        full_name: fullName || null,
-        first_name: firstName || null,
-        last_name: lastName || null,
-        email: email || null,
-        role: role,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-
-      console.log('Successfully created fallback profile with role:', role, 'for email:', email)
-      
-      // Save to localStorage for persistence
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('shriarya-profile', JSON.stringify(fallbackProfile))
-      }
-
-      return fallbackProfile
-    } catch (error) {
-      console.error('Error creating fallback profile:', error)
-      return null
-    }
-  }
 
   // Check if user has specific permission
   const hasPermission = (permission: keyof RolePermissions): boolean => {

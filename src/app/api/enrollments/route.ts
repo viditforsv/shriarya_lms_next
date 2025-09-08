@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 // GET - Get user enrollments
 export async function GET(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const courseId = searchParams.get('courseId')
     const userId = searchParams.get('userId')
@@ -71,7 +71,7 @@ export async function GET(request: Request) {
 // POST - Enroll user in course
 export async function POST(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     const { course_id } = body
@@ -143,7 +143,7 @@ export async function POST(request: Request) {
 // DELETE - Unenroll user from course
 export async function DELETE(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const courseId = searchParams.get('courseId')
 

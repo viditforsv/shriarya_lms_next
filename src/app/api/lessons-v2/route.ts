@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 // GET - Get lessons for a course
 export async function GET(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const courseId = searchParams.get('courseId')
     const courseSlug = searchParams.get('courseSlug')
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
 // POST - Create a new lesson
 export async function POST(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     const {
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
 // PUT - Update a lesson
 export async function PUT(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, ...updateData } = body
 
@@ -215,7 +215,7 @@ export async function PUT(request: Request) {
 // DELETE - Delete a lesson
 export async function DELETE(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 

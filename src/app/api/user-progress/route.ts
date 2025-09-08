@@ -124,7 +124,7 @@ export async function POST(request: Request) {
 
     if (existingProgress) {
       // Update existing progress
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         completion_percentage,
         time_spent_minutes,
         last_accessed_at: new Date().toISOString(),

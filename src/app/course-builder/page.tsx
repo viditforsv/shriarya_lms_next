@@ -628,7 +628,7 @@ export default function CourseBuilder() {
                     <select
                       id="status"
                       value={courseForm.status}
-                      onChange={(e) => setCourseForm(prev => ({ ...prev, status: e.target.value as any }))}
+                      onChange={(e) => setCourseForm(prev => ({ ...prev, status: e.target.value as 'draft' | 'published' | 'archived' }))}
                       className="w-full p-2 border border-gray-300 rounded-sm"
                     >
                       <option value="draft">Draft</option>
@@ -760,7 +760,7 @@ export default function CourseBuilder() {
                     <select
                       id="lesson-type"
                       value={lessonForm.type}
-                      onChange={(e) => setLessonForm(prev => ({ ...prev, type: e.target.value as any }))}
+                      onChange={(e) => setLessonForm(prev => ({ ...prev, type: e.target.value as 'video' | 'text' | 'quiz' | 'assignment' }))}
                       className="w-full p-2 border border-gray-300 rounded-sm"
                     >
                       <option value="video">Video</option>

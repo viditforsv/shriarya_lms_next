@@ -4,13 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 // GET - Get all courses with basic info
 export async function GET(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const published = searchParams.get('published') === 'true'
     const category = searchParams.get('category')
     const difficulty = searchParams.get('difficulty')
 
-    let query = supabase
+    const query = supabase
       .from('courses')
       .select(`
         id,

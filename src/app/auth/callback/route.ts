@@ -6,6 +6,10 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/courses/enrolled'
 
+  console.log('Auth callback - Origin:', origin)
+  console.log('Auth callback - Code:', code ? 'present' : 'missing')
+  console.log('Auth callback - Next:', next)
+
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
@@ -13,11 +17,15 @@ export async function GET(request: Request) {
     if (!error) {
       // Use environment variable for production, fallback to origin for development
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+      console.log('Auth callback - Redirecting to:', `${baseUrl}${next}`)
       return NextResponse.redirect(`${baseUrl}${next}`)
+    } else {
+      console.error('Auth callback - Exchange error:', error)
     }
   }
 
   // Return the user to an error page with instructions
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+  console.log('Auth callback - Error redirect to:', `${baseUrl}/auth?error=Could not authenticate user`)
   return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
 }

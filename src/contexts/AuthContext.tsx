@@ -503,20 +503,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    // Use environment variable for production, fallback to localhost only for development
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    // Automatically detect environment and use appropriate URL
+    let siteUrl: string
     
-    // Debug logging (remove in production)
+    if (typeof window !== 'undefined') {
+      // Client-side: use current origin
+      siteUrl = window.location.origin
+    } else {
+      // Server-side: use environment variable or fallback
+      siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    }
+    
+    // Debug logging
     console.log('AuthContext - Site URL:', siteUrl)
     console.log('AuthContext - Environment variable:', process.env.NEXT_PUBLIC_SITE_URL)
+    console.log('AuthContext - Current location:', typeof window !== 'undefined' ? window.location.origin : 'server')
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${siteUrl}/auth/callback`,
+        // Force Supabase to use the specific redirect URL
+        queryParams: {
+          redirect_to: `${siteUrl}/auth/callback`
+        }
       },
     })
-    if (error) throw error
+    if (error) {
+      console.error('Google OAuth error:', error)
+      throw error
+    }
   }
 
   const value = {

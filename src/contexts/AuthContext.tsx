@@ -521,16 +521,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('AuthContext - Environment variable:', process.env.NEXT_PUBLIC_SITE_URL)
     console.log('AuthContext - Current location:', typeof window !== 'undefined' ? window.location.origin : 'server')
     
-    const { error } = await supabase.auth.signInWithOAuth({
+    // Use the newer auth method that handles PKCE automatically
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/auth/callback`
+        redirectTo: `${siteUrl}/auth/callback`,
+        // Let Supabase handle PKCE flow completely
+        flowType: 'pkce'
       },
     })
+    
     if (error) {
       console.error('Google OAuth error:', error)
       throw error
     }
+    
+    console.log('OAuth data:', data)
   }
 
   const value = {

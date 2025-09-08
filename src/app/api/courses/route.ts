@@ -159,7 +159,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ course }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 })
+      return NextResponse.json({ error: 'Validation error', details: error.issues }, { status: 400 })
     }
     
     return NextResponse.json(
@@ -210,7 +210,7 @@ export async function PUT(request: Request) {
     return NextResponse.json({ course })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 })
+      return NextResponse.json({ error: 'Validation error', details: error.issues }, { status: 400 })
     }
     
     return NextResponse.json(

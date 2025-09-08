@@ -9,7 +9,8 @@ const ResourceSchema = z.object({
   url: z.string().min(1, 'URL is required'),
   mime: z.string().optional(),
   duration_sec: z.number().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
+  lesson_id: z.string().min(1, 'Lesson ID is required')
 })
 
 // Helper function to get authenticated user

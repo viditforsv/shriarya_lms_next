@@ -115,7 +115,7 @@ export async function POST(request: Request) {
     // Check if progress already exists
     const { data: existingProgress } = await supabase
       .from('user_progress')
-      .select('id')
+      .select('id, completed_at')
       .eq('user_id', user.id)
       .eq('lesson_id', lesson_id)
       .single()

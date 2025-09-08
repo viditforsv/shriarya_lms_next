@@ -11,7 +11,8 @@ const LessonSchema = z.object({
   slug: z.string().min(1, 'Slug is required'),
   is_preview: z.boolean().default(false),
   duration: z.string().optional(),
-  type: z.enum(['video', 'document', 'quiz', 'assignment', 'practice']).default('video')
+  type: z.enum(['video', 'document', 'quiz', 'assignment', 'practice']).default('video'),
+  course_id: z.string().min(1, 'Course ID is required')
 })
 
 // Helper function to get authenticated user

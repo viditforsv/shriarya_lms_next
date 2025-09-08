@@ -403,6 +403,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               return
             }
             
+            // Handle signin event - redirect to enrolled courses (only for email/password login)
+            if (event === 'SIGNED_IN' && session?.user) {
+              console.log('User signed in, checking if redirect is needed')
+              if (typeof window !== 'undefined') {
+                // Only redirect if we're not already on the enrolled courses page
+                // and not coming from OAuth callback (which handles its own redirect)
+                const currentPath = window.location.pathname
+                const isFromCallback = document.referrer.includes('/auth/callback')
+                
+                if (currentPath !== '/courses/enrolled' && !isFromCallback) {
+                  console.log('Redirecting to enrolled courses after login')
+                  setTimeout(() => {
+                    window.location.href = '/courses/enrolled'
+                  }, 100)
+                } else {
+                  console.log('Skipping redirect - already on target page or from OAuth callback')
+                }
+              }
+              return
+            }
+            
             // Fetch profile if user exists
             if (session?.user) {
               try {

@@ -832,7 +832,55 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'ap-intro',
       slug: 'ap-intro',
       title: 'Introduction to Arithmetic Progressions',
-      description: 'Understanding arithmetic progressions and their properties.',
+      description: `
+        <h3>Introduction to Arithmetic Progressions (AP)</h3>
+        <p>An Arithmetic Progression is a sequence of numbers where the difference between consecutive terms is constant.</p>
+        
+        <h4>Definition:</h4>
+        <p>A sequence a₁, a₂, a₃, ..., aₙ is called an Arithmetic Progression if:</p>
+        <p><strong>aₙ₊₁ - aₙ = d (constant) for all n ≥ 1</strong></p>
+        <p>where 'd' is called the common difference.</p>
+        
+        <h4>Key Terms:</h4>
+        <ul>
+          <li><strong>First Term (a₁):</strong> The first number in the sequence</li>
+          <li><strong>Common Difference (d):</strong> The constant difference between consecutive terms</li>
+          <li><strong>nth Term (aₙ):</strong> The term at position n</li>
+          <li><strong>General Term:</strong> aₙ = a₁ + (n-1)d</li>
+        </ul>
+        
+        <h4>Examples:</h4>
+        <div class="example-set">
+          <h5>Example 1:</h5>
+          <p>2, 5, 8, 11, 14, ...</p>
+          <p>First term (a₁) = 2, Common difference (d) = 3</p>
+          <p>General term: aₙ = 2 + (n-1) × 3 = 3n - 1</p>
+          
+          <h5>Example 2:</h5>
+          <p>10, 7, 4, 1, -2, ...</p>
+          <p>First term (a₁) = 10, Common difference (d) = -3</p>
+          <p>General term: aₙ = 10 + (n-1) × (-3) = 13 - 3n</p>
+          
+          <h5>Example 3:</h5>
+          <p>Find the 10th term of AP: 3, 7, 11, 15, ...</p>
+          <p>Here, a₁ = 3, d = 4</p>
+          <p>a₁₀ = 3 + (10-1) × 4 = 3 + 36 = 39</p>
+        </div>
+        
+        <h4>Properties:</h4>
+        <ul>
+          <li><strong>Three consecutive terms:</strong> If a, b, c are in AP, then 2b = a + c</li>
+          <li><strong>Arithmetic Mean:</strong> The middle term of three consecutive terms</li>
+          <li><strong>Sum Property:</strong> Sum of terms equidistant from ends is constant</li>
+        </ul>
+        
+        <h4>Applications:</h4>
+        <ul>
+          <li><strong>Time and Distance:</strong> Uniform motion problems</li>
+          <li><strong>Financial Planning:</strong> Regular savings, loan payments</li>
+          <li><strong>Pattern Recognition:</strong> Finding missing terms in sequences</li>
+        </ul>
+      `,
       duration: '45 minutes',
       type: 'video',
       isPreview: true,
@@ -844,6 +892,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/ap-intro.mp4',
           title: 'Arithmetic Progressions Introduction Video',
           duration: 1800
+        },
+        {
+          id: 'ap-notes',
+          type: 'pdf',
+          url: '/pdfs/ap-intro-notes.pdf',
+          title: 'AP Introduction Study Notes'
         }
       ]
     },
@@ -851,7 +905,67 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'ap-formulas',
       slug: 'ap-formulas',
       title: 'AP Formulas and Sum',
-      description: 'Learning formulas for nth term and sum of AP.',
+      description: `
+        <h3>AP Formulas: nth Term and Sum of n Terms</h3>
+        <p>Master the essential formulas for Arithmetic Progressions to solve problems efficiently.</p>
+        
+        <h4>1. Formula for nth Term:</h4>
+        <p><strong>aₙ = a₁ + (n-1)d</strong></p>
+        <p>where:</p>
+        <ul>
+          <li>aₙ = nth term</li>
+          <li>a₁ = first term</li>
+          <li>d = common difference</li>
+          <li>n = position of the term</li>
+        </ul>
+        
+        <h4>2. Formula for Sum of n Terms:</h4>
+        <p><strong>Sₙ = n/2 [2a₁ + (n-1)d]</strong></p>
+        <p>or</p>
+        <p><strong>Sₙ = n/2 [a₁ + aₙ]</strong></p>
+        
+        <h4>Derivation of Sum Formula:</h4>
+        <p>Let Sₙ = a₁ + a₂ + a₃ + ... + aₙ</p>
+        <p>Writing in reverse: Sₙ = aₙ + aₙ₋₁ + aₙ₋₂ + ... + a₁</p>
+        <p>Adding both equations:</p>
+        <p>2Sₙ = (a₁ + aₙ) + (a₂ + aₙ₋₁) + ... + (aₙ + a₁)</p>
+        <p>Since each pair equals (a₁ + aₙ):</p>
+        <p>2Sₙ = n(a₁ + aₙ)</p>
+        <p>Therefore: Sₙ = n/2(a₁ + aₙ)</p>
+        
+        <h4>Examples:</h4>
+        <div class="example-set">
+          <h5>Example 1: Finding nth Term</h5>
+          <p>Find the 15th term of AP: 3, 7, 11, 15, ...</p>
+          <p><strong>Solution:</strong></p>
+          <p>a₁ = 3, d = 4, n = 15</p>
+          <p>a₁₅ = 3 + (15-1) × 4 = 3 + 56 = 59</p>
+          
+          <h5>Example 2: Finding Sum</h5>
+          <p>Find the sum of first 20 terms of AP: 2, 5, 8, 11, ...</p>
+          <p><strong>Solution:</strong></p>
+          <p>a₁ = 2, d = 3, n = 20</p>
+          <p>S₂₀ = 20/2 [2×2 + (20-1)×3]</p>
+          <p>S₂₀ = 10 [4 + 57] = 10 × 61 = 610</p>
+          
+          <h5>Example 3: Finding Number of Terms</h5>
+          <p>How many terms of AP: 5, 8, 11, ... must be taken to get a sum of 155?</p>
+          <p><strong>Solution:</strong></p>
+          <p>a₁ = 5, d = 3, Sₙ = 155</p>
+          <p>155 = n/2 [2×5 + (n-1)×3]</p>
+          <p>155 = n/2 [10 + 3n - 3] = n/2 [7 + 3n]</p>
+          <p>310 = n(7 + 3n) = 7n + 3n²</p>
+          <p>3n² + 7n - 310 = 0</p>
+          <p>Solving: n = 10 (taking positive value)</p>
+        </div>
+        
+        <h4>Special Cases:</h4>
+        <ul>
+          <li><strong>Sum of first n natural numbers:</strong> Sₙ = n(n+1)/2</li>
+          <li><strong>Sum of first n odd numbers:</strong> Sₙ = n²</li>
+          <li><strong>Sum of first n even numbers:</strong> Sₙ = n(n+1)</li>
+        </ul>
+      `,
       duration: '50 minutes',
       type: 'video',
       isPreview: false,
@@ -863,6 +977,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/ap-formulas.mp4',
           title: 'AP Formulas Video',
           duration: 2000
+        },
+        {
+          id: 'ap-formulas-worksheet',
+          type: 'pdf',
+          url: '/pdfs/ap-formulas-worksheet.pdf',
+          title: 'AP Formulas Worksheet'
         }
       ]
     },
@@ -870,7 +990,53 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'ap-practice',
       slug: 'ap-practice',
       title: 'Arithmetic Progressions Practice Problems',
-      description: 'Practice problems on arithmetic progressions.',
+      description: `
+        <h3>Arithmetic Progressions Practice Problems</h3>
+        <p>Comprehensive practice problems covering all aspects of Arithmetic Progressions including finding terms, sums, and solving word problems.</p>
+        
+        <h4>Problem Categories:</h4>
+        <ul>
+          <li><strong>Finding Terms:</strong> nth term, specific terms, missing terms</li>
+          <li><strong>Sum Calculations:</strong> Sum of n terms, sum of specific ranges</li>
+          <li><strong>Word Problems:</strong> Real-life applications and scenarios</li>
+          <li><strong>Properties:</strong> Three consecutive terms, arithmetic mean</li>
+          <li><strong>Advanced Problems:</strong> Finding number of terms, solving equations</li>
+        </ul>
+        
+        <h4>Sample Problems:</h4>
+        <div class="problem-set">
+          <h5>Problem 1:</h5>
+          <p>Find the 25th term of the AP: 7, 13, 19, 25, ...</p>
+          
+          <h5>Problem 2:</h5>
+          <p>The sum of first 15 terms of an AP is 300. If the first term is 5, find the common difference.</p>
+          
+          <h5>Problem 3:</h5>
+          <p>In an AP, the 8th term is 17 and the 14th term is 29. Find the AP.</p>
+          
+          <h5>Problem 4:</h5>
+          <p>A man saves ₹100 in the first month, ₹150 in the second month, ₹200 in the third month, and so on. How much will he save in 2 years?</p>
+          
+          <h5>Problem 5:</h5>
+          <p>Find the sum of all three-digit numbers divisible by 7.</p>
+        </div>
+        
+        <h4>Solution Strategies:</h4>
+        <ul>
+          <li><strong>Identify AP:</strong> Check if difference between consecutive terms is constant</li>
+          <li><strong>Use Formulas:</strong> Apply nth term and sum formulas appropriately</li>
+          <li><strong>Set up Equations:</strong> Use given information to form equations</li>
+          <li><strong>Word Problems:</strong> Translate real-world scenarios into mathematical terms</li>
+        </ul>
+        
+        <h4>Common Mistakes to Avoid:</h4>
+        <ul>
+          <li>Confusing position number with term value</li>
+          <li>Using wrong formula for sum calculation</li>
+          <li>Not checking if sequence is actually an AP</li>
+          <li>Calculation errors in arithmetic operations</li>
+        </ul>
+      `,
       duration: '55 minutes',
       type: 'practice',
       isPreview: false,
@@ -881,6 +1047,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           type: 'pdf',
           url: '/pdfs/ap-practice.pdf',
           title: 'AP Practice Worksheet'
+        },
+        {
+          id: 'ap-solutions',
+          type: 'pdf',
+          url: '/pdfs/ap-solutions.pdf',
+          title: 'Detailed Solutions'
         }
       ]
     },
@@ -890,7 +1062,64 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'triangles-intro',
       slug: 'triangles-intro',
       title: 'Introduction to Triangles',
-      description: 'Understanding triangles and their properties.',
+      description: `
+        <h3>Introduction to Triangles and Similarity</h3>
+        <p>Triangles are fundamental geometric shapes with important properties and relationships that form the basis of many geometric proofs and applications.</p>
+        
+        <h4>Basic Properties of Triangles:</h4>
+        <ul>
+          <li><strong>Sum of Angles:</strong> The sum of all three interior angles is always 180°</li>
+          <li><strong>Triangle Inequality:</strong> Sum of any two sides is greater than the third side</li>
+          <li><strong>Exterior Angle:</strong> An exterior angle equals the sum of opposite interior angles</li>
+          <li><strong>Centroid:</strong> Point where all three medians meet</li>
+        </ul>
+        
+        <h4>Types of Triangles:</h4>
+        <ul>
+          <li><strong>By Sides:</strong> Equilateral, Isosceles, Scalene</li>
+          <li><strong>By Angles:</strong> Acute, Right, Obtuse</li>
+          <li><strong>Special Triangles:</strong> Right-angled, Isosceles right-angled</li>
+        </ul>
+        
+        <h4>Similarity of Triangles:</h4>
+        <p>Two triangles are similar if their corresponding angles are equal and corresponding sides are proportional.</p>
+        
+        <h4>Criteria for Similarity:</h4>
+        <ul>
+          <li><strong>AAA (Angle-Angle-Angle):</strong> All corresponding angles are equal</li>
+          <li><strong>SSS (Side-Side-Side):</strong> All corresponding sides are proportional</li>
+          <li><strong>SAS (Side-Angle-Side):</strong> Two sides proportional and included angle equal</li>
+        </ul>
+        
+        <h4>Basic Proportionality Theorem (BPT):</h4>
+        <p>If a line is drawn parallel to one side of a triangle, it divides the other two sides proportionally.</p>
+        
+        <h4>Examples:</h4>
+        <div class="example-set">
+          <h5>Example 1:</h5>
+          <p>In triangle ABC, if DE || BC, and AD = 3 cm, DB = 2 cm, AE = 4.5 cm, find EC.</p>
+          <p><strong>Solution:</strong></p>
+          <p>By BPT: AD/DB = AE/EC</p>
+          <p>3/2 = 4.5/EC</p>
+          <p>EC = (4.5 × 2)/3 = 3 cm</p>
+          
+          <h5>Example 2:</h5>
+          <p>Prove that triangles ABC and DEF are similar if:</p>
+          <p>∠A = ∠D = 60°, ∠B = ∠E = 80°, AB/DE = BC/EF = AC/DF = 2/3</p>
+          <p><strong>Solution:</strong></p>
+          <p>All corresponding angles are equal (AAA criterion)</p>
+          <p>All corresponding sides are proportional (SSS criterion)</p>
+          <p>Therefore, ΔABC ~ ΔDEF</p>
+        </div>
+        
+        <h4>Applications:</h4>
+        <ul>
+          <li><strong>Height Measurement:</strong> Finding heights using shadow lengths</li>
+          <li><strong>Map Scaling:</strong> Converting between different scales</li>
+          <li><strong>Architecture:</strong> Proportional designs and structures</li>
+          <li><strong>Photography:</strong> Maintaining aspect ratios</li>
+        </ul>
+      `,
       duration: '40 minutes',
       type: 'video',
       isPreview: true,
@@ -902,6 +1131,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/triangles-intro.mp4',
           title: 'Triangles Introduction Video',
           duration: 1600
+        },
+        {
+          id: 'triangles-notes',
+          type: 'pdf',
+          url: '/pdfs/triangles-intro-notes.pdf',
+          title: 'Triangles Study Notes'
         }
       ]
     },

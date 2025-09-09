@@ -92,7 +92,7 @@ export function Sidebar({
           </div>
           
           <nav className="space-y-2">
-            {items.map((item, index) => (
+            {items.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
@@ -140,7 +140,7 @@ export function Sidebar({
         </div>
         
         <nav className="space-y-2">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <button
               key={item.id}
               onClick={() => handleItemClick(item)}

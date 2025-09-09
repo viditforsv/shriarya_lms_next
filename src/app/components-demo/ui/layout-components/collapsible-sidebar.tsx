@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { Button } from '@/app/components-demo/ui/ui-components/button'
 import { Progress } from '@/app/components-demo/ui/ui-components/progress'
 import { Badge } from '@/app/components-demo/ui/ui-components/badge'
@@ -13,7 +12,6 @@ import {
   ChevronUp,
   BookOpen, 
   FileText, 
-  MessageCircle,
   CheckCircle,
   Clock,
   Eye,
@@ -21,8 +19,6 @@ import {
   Play
 } from 'lucide-react'
 import { 
-  Section, 
-  Chapter, 
   Subsection, 
   CBSE_CLASS_10_MATHEMATICS_SYLLABUS,
   getSyllabusProgress 
@@ -34,7 +30,7 @@ interface CollapsibleSidebarProps {
 }
 
 export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: CollapsibleSidebarProps) {
-  const [syllabus, setSyllabus] = useState(CBSE_CLASS_10_MATHEMATICS_SYLLABUS)
+  const [syllabus] = useState(CBSE_CLASS_10_MATHEMATICS_SYLLABUS)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['number-systems', 'algebra']))
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(['real-numbers', 'quadratic-equations']))

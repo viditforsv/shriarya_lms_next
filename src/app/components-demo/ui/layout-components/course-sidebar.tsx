@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { Button } from '@/app/components-demo/ui/ui-components/button'
 import { Progress } from '@/app/components-demo/ui/ui-components/progress'
 import { Badge } from '@/app/components-demo/ui/ui-components/badge'
@@ -16,9 +15,7 @@ import {
   Clock,
   Play,
   Lock,
-  Eye,
-  Menu,
-  X
+  Eye
 } from 'lucide-react'
 
 interface Lesson {

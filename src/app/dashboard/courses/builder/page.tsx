@@ -23,22 +23,16 @@ import {
 } from 'lucide-react'
 import { 
   CourseTemplate, 
-  CourseStructure, 
   CourseSection, 
   LessonTemplate,
   getCourseTemplate,
   getAllCourseTemplates,
-  getTemplatesByCurriculum,
-  createCourseFromTemplate,
-  generateCourseSlug,
   validateCourseStructure
 } from '@/lib/course-templates'
 
 export default function CourseBuilder() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [course, setCourse] = useState<CourseTemplate | null>(null)
   const [activeTab, setActiveTab] = useState('basic')
-  const [isEditing, setIsEditing] = useState(false)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   // Initialize course from template

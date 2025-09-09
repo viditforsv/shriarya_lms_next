@@ -17,7 +17,6 @@ import {
   Users, 
   DollarSign,
   FileText,
-  PlayCircle,
   Award,
   Zap
 } from 'lucide-react'

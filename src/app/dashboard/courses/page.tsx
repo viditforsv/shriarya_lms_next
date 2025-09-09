@@ -28,10 +28,6 @@ export default function CoursesDashboard() {
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
-
   const fetchCourses = useCallback(async () => {
     try {
       setLoading(true)
@@ -61,6 +57,10 @@ export default function CoursesDashboard() {
       setLoading(false)
     }
   }, [supabase])
+
+  useEffect(() => {
+    fetchCourses()
+  }, [fetchCourses])
 
   const getStatusColor = (status: string) => {
     switch (status) {

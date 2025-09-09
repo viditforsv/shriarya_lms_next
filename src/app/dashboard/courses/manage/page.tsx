@@ -53,10 +53,6 @@ export default function CourseManagement() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [curriculumFilter, setCurriculumFilter] = useState<string>('all')
 
-  useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
-
   const fetchCourses = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -85,6 +81,10 @@ export default function CourseManagement() {
       setIsLoading(false)
     }
   }, [user])
+
+  useEffect(() => {
+    fetchCourses()
+  }, [fetchCourses])
 
   const handleCreateFromTemplate = async (templateId: string) => {
     try {

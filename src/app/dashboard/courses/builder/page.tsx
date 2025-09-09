@@ -44,8 +44,6 @@ export default function CourseBuilder() {
     const template = getCourseTemplate(templateId)
     if (template) {
       setCourse(template)
-      setSelectedTemplate(templateId)
-      setIsEditing(true)
     }
   }
 

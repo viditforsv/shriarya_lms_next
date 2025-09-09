@@ -269,40 +269,14 @@ export function Header() {
 
               {/* Mobile Navigation */}
               {navigation.map((item) => (
-                <div key={item.name}>
-                  {item.hasDropdown ? (
-                    <div className="px-3 py-2">
-                      <div className="font-medium text-foreground mb-2">{item.name}</div>
-                      <div className="ml-4 space-y-2">
-                        {item.dropdownItems?.map((dropdownItem) => (
-                          <Link
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            className="block text-sm text-foreground hover:text-accent transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {dropdownItem.name}
-                          </Link>
-                        ))}
-                        <Link
-                          href={item.href}
-                          className="block text-sm text-accent hover:text-accent/80 transition-colors font-medium"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {item.name === "Courses" ? "View All Boards" : "View All Templates"}
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="flex items-center justify-between px-3 py-2 text-base font-medium transition-colors text-foreground hover:text-accent"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <span>{item.name}</span>
-                    </Link>
-                  )}
-                </div>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="flex items-center justify-between px-3 py-2 text-base font-medium transition-colors text-foreground hover:text-accent"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span>{item.name}</span>
+                </Link>
               ))}
 
               <div className="pt-4 pb-3 border-t border-[#feefea]">

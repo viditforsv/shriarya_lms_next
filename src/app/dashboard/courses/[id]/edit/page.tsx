@@ -37,11 +37,6 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
     params.then(setResolvedParams)
   }, [params])
 
-  useEffect(() => {
-    if (!resolvedParams) return
-    loadCourse()
-  }, [resolvedParams, loadCourse])
-
   const loadCourse = useCallback(async () => {
     if (!resolvedParams) return
 
@@ -76,6 +71,11 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
       setIsLoading(false)
     }
   }, [resolvedParams, supabase])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+    loadCourse()
+  }, [resolvedParams, loadCourse])
 
   const createNewCourse = async () => {
     try {

@@ -17,13 +17,17 @@ export function Header() {
   const profile = authContext?.profile
   const signOut = authContext?.signOut
 
-  // Debug logging
-  console.log('Header - Auth state:', { 
-    user: user?.email, 
-    profile: profile?.role,
-    loading: authContext?.loading,
-    userExists: !!user
-  })
+  // Debug logging - only log when values actually change
+  useEffect(() => {
+    if (isMounted && process.env.NODE_ENV === 'development') {
+      console.log('Header - Auth state:', { 
+        user: user?.email, 
+        profile: profile?.role,
+        loading: authContext?.loading,
+        userExists: !!user
+      })
+    }
+  }, [isMounted, user?.email, profile?.role, authContext?.loading])
 
   useEffect(() => {
     setIsMounted(true)
@@ -48,14 +52,7 @@ export function Header() {
   const getNavigation = () => {
     if (!isMounted) return []
     
-    console.log('Header - Navigation check:', {
-      profile: profile?.role,
-      user: user?.email,
-      isMounted
-    })
-    
     if (profile?.role === 'admin') {
-      console.log('Header - Admin navigation being returned')
       return [
         { name: "Home", href: "/", hasDropdown: false },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },

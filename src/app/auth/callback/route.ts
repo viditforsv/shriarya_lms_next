@@ -12,20 +12,32 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
     
-    if (!error) {
+    try {
+      // Use the proper PKCE flow for code exchange
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      
+      if (error) {
+        console.error('Auth callback - Exchange error:', error)
+        // Return the user to an error page with instructions
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+        return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
+      }
+      
+      console.log('Auth callback - Success, redirecting to:', next)
       // Use environment variable for production, fallback to origin for development
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-      console.log('Auth callback - Redirecting to:', `${baseUrl}${next}`)
       return NextResponse.redirect(`${baseUrl}${next}`)
-    } else {
-      console.error('Auth callback - Exchange error:', error)
+      
+    } catch (error) {
+      console.error('Auth callback - Unexpected error:', error)
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
+      return NextResponse.redirect(`${baseUrl}/auth?error=Authentication failed`)
     }
   }
 
   // Return the user to an error page with instructions
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-  console.log('Auth callback - Error redirect to:', `${baseUrl}/auth?error=Could not authenticate user`)
-  return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
+  console.log('Auth callback - No code, redirecting to:', `${baseUrl}/auth?error=No authentication code received`)
+  return NextResponse.redirect(`${baseUrl}/auth?error=No authentication code received`)
 }

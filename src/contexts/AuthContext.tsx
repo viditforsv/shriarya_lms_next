@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { UserProfile, UserRole } from '@/types/auth'
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
-  }, [profile]) // Add profile dependency
+  }, []) // Remove profile dependency to prevent loop
 
   // Create user profile if it doesn't exist
   const createProfile = async (userId: string) => {
@@ -361,11 +361,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Try to get current user first
           const { data: { user: currentUser } } = await supabase.auth.getUser()
-          console.log('Current user result:', { user: !!currentUser, email: currentUser?.email })
           
           // Then get session
           const { data: { session } } = await supabase.auth.getSession()
-          console.log('Session result:', { session: !!session, user: session?.user?.email })
           
           // Use current user if session is not available
           const user = session?.user || currentUser
@@ -555,7 +553,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     session,
     profile,
@@ -569,7 +567,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     updateUserRole,
     refreshProfile,
     hasPermission,
-  }
+  }), [
+    user,
+    session,
+    profile,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    signInWithGoogle,
+    resetPassword,
+    updatePassword,
+    updateUserRole,
+    refreshProfile,
+    hasPermission,
+  ])
 
   return (
     <AuthContext.Provider value={value}>

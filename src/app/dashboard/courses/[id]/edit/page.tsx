@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle, Layers } from "lucide-react"
+import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle } from "lucide-react"
 import { Button } from "@/app/components-demo/ui/button"
 import { Input } from "@/app/components-demo/ui/input"
 import { Textarea } from "@/app/components-demo/ui/textarea"
@@ -40,9 +40,9 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
   useEffect(() => {
     if (!resolvedParams) return
     loadCourse()
-  }, [resolvedParams])
+  }, [resolvedParams, loadCourse])
 
-  const loadCourse = async () => {
+  const loadCourse = useCallback(async () => {
     if (!resolvedParams) return
 
     try {
@@ -75,7 +75,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [resolvedParams, supabase])
 
   const createNewCourse = async () => {
     try {

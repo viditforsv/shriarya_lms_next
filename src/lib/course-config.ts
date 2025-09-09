@@ -338,6 +338,82 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       ]
     },
     {
+      id: 'real-numbers-quiz',
+      slug: 'real-numbers-quiz',
+      title: 'Real Numbers Interactive Quiz',
+      description: `
+        <h3>Real Numbers Interactive Quiz</h3>
+        <p>Test your understanding of real numbers concepts with these interactive multiple choice questions.</p>
+        
+        <div class="mcq-container">
+          <h4>Question 1:</h4>
+          <p>Which of the following is an irrational number?</p>
+          <div class="mcq-options">
+            <div class="mcq-option">A) √16</div>
+            <div class="mcq-option">B) √17</div>
+            <div class="mcq-option">C) 0.333...</div>
+            <div class="mcq-option">D) 22/7</div>
+          </div>
+          <div class="mcq-explanation">
+            <strong>Answer: B) √17</strong><br>
+            √17 cannot be expressed as a fraction and has a non-terminating, non-repeating decimal expansion.
+          </div>
+          
+          <h4>Question 2:</h4>
+          <p>What is the HCF of 12 and 18?</p>
+          <div class="mcq-options">
+            <div class="mcq-option">A) 2</div>
+            <div class="mcq-option">B) 3</div>
+            <div class="mcq-option">C) 6</div>
+            <div class="mcq-option">D) 36</div>
+          </div>
+          <div class="mcq-explanation">
+            <strong>Answer: C) 6</strong><br>
+            12 = 2² × 3, 18 = 2 × 3². HCF = 2 × 3 = 6
+          </div>
+          
+          <h4>Question 3:</h4>
+          <p>Which property is illustrated by: 3 × (4 + 5) = 3 × 4 + 3 × 5?</p>
+          <div class="mcq-options">
+            <div class="mcq-option">A) Commutative</div>
+            <div class="mcq-option">B) Associative</div>
+            <div class="mcq-option">C) Distributive</div>
+            <div class="mcq-option">D) Identity</div>
+          </div>
+          <div class="mcq-explanation">
+            <strong>Answer: C) Distributive</strong><br>
+            The distributive property states that a × (b + c) = a × b + a × c
+          </div>
+        </div>
+        
+        <h4>Learning Objectives:</h4>
+        <ul>
+          <li>Identify rational and irrational numbers</li>
+          <li>Apply properties of real numbers</li>
+          <li>Calculate HCF and LCM using prime factorization</li>
+          <li>Understand decimal expansions</li>
+        </ul>
+      `,
+      duration: '30 minutes',
+      type: 'quiz',
+      isPreview: false,
+      order: 5,
+      resources: [
+        {
+          id: 'real-numbers-quiz-interactive',
+          type: 'interactive',
+          url: '/interactive/real-numbers-quiz',
+          title: 'Interactive Real Numbers Quiz'
+        },
+        {
+          id: 'real-numbers-quiz-pdf',
+          type: 'pdf',
+          url: '/pdfs/real-numbers-quiz.pdf',
+          title: 'Real Numbers Quiz PDF'
+        }
+      ]
+    },
+    {
       id: 'real-numbers-practice',
       slug: 'real-numbers-practice',
       title: 'Real Numbers Practice Problems',
@@ -386,7 +462,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       duration: '60 minutes',
       type: 'practice',
       isPreview: false,
-      order: 4,
+      order: 6,
       resources: [
         {
           id: 'practice-worksheet',

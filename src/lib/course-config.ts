@@ -797,16 +797,6 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         }
       ]
     },
-      resources: [
-        {
-          id: 'graphical-video',
-          type: 'video',
-          url: '/videos/graphical-method.mp4',
-          title: 'Graphical Method Video',
-          duration: 2000
-        }
-      ]
-    },
     {
       id: 'algebraic-methods',
       slug: 'algebraic-methods',

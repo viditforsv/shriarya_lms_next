@@ -8,7 +8,6 @@ import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   // Use auth context directly
@@ -27,7 +26,7 @@ export function Header() {
         userExists: !!user
       })
     }
-  }, [isMounted, user?.email, profile?.role, authContext?.loading])
+  }, [isMounted, user?.email, profile?.role, authContext?.loading, user])
 
   useEffect(() => {
     setIsMounted(true)
@@ -224,102 +223,11 @@ export function Header() {
               </div>
             )}
 
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-[#1e293b] hover:text-[#e27447] p-2"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  {isMobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
+            {/* Removed mobile menu - web-only app */}
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMounted && isMobileMenuOpen && (
-          <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-card border-t border-border">
-              {/* Mobile Search */}
-              <div className="px-3 pb-3">
-                <Link href="/courses/discover" className="relative block">
-                  <input
-                    type="text"
-                    placeholder="Search courses..."
-                    className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground cursor-pointer"
-                    readOnly
-                  />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                </Link>
-              </div>
-
-              {/* Mobile Categories */}
-              <div className="px-3 pb-3">
-                <button className="flex items-center space-x-1 text-foreground hover:text-accent px-3 py-2 text-sm font-medium transition-colors">
-                  <span>Categories</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Mobile Navigation */}
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center justify-between px-3 py-2 text-base font-medium transition-colors text-foreground hover:text-accent"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span>{item.name}</span>
-                </Link>
-              ))}
-
-              <div className="pt-4 pb-3 border-t border-[#feefea]">
-                {user ? (
-                  <div className="space-y-2 px-3">
-                    <div className="text-sm text-foreground">{user.email}</div>
-                    <Link href="/courses/enrolled">
-                      <Button size="sm" className="w-full">My Courses</Button>
-                    </Link>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={async (e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        console.log('Mobile sign out button clicked')
-                        try {
-                          setIsMobileMenuOpen(false)
-                          await signOut?.()
-                          console.log('Mobile sign out completed successfully')
-                        } catch (error) {
-                          console.error('Sign out error:', error)
-                        }
-                      }}
-                    >
-                      Sign Out
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-2 px-3">
-                    <Link href="/auth">
-                      <Button size="sm" variant="outline" className="w-full">Log In</Button>
-                    </Link>
-                    <Link href="/auth">
-                      <Button size="sm" className="w-full">Sign Up</Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Removed mobile navigation - web-only app */}
       </div>
     </header>
   )

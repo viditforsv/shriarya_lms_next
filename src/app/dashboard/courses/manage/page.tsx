@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@supabase/supabase-js'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
@@ -11,16 +11,11 @@ import {
   Plus, 
   Edit, 
   Eye, 
-  Trash2, 
   BookOpen, 
-  Users, 
   Clock, 
   DollarSign,
   Search,
-  Filter,
-  MoreHorizontal,
-  Play,
-  Settings
+  MoreHorizontal
 } from 'lucide-react'
 
 const supabase = createClient(
@@ -60,9 +55,9 @@ export default function CourseManagement() {
 
   useEffect(() => {
     fetchCourses()
-  }, [])
+  }, [fetchCourses])
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setIsLoading(true)
       
@@ -89,7 +84,7 @@ export default function CourseManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
 
   const handleCreateFromTemplate = async (templateId: string) => {
     try {

@@ -86,7 +86,6 @@ export default function CourseBuilder() {
   const [showCourseForm, setShowCourseForm] = useState(false)
   const [showLessonForm, setShowLessonForm] = useState(false)
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
-  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null)
 
   // Form states
   const [courseForm, setCourseForm] = useState({
@@ -137,7 +136,7 @@ export default function CourseBuilder() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
+        } catch (_) {
       setError('Failed to fetch courses')
     } finally {
       setLoading(false)
@@ -154,7 +153,7 @@ export default function CourseBuilder() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
+        } catch (_) {
       setError('Failed to fetch lessons')
     }
   }
@@ -183,7 +182,7 @@ export default function CourseBuilder() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
+        } catch (_) {
       setError('Failed to create course')
     }
   }
@@ -208,7 +207,7 @@ export default function CourseBuilder() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
+        } catch (_) {
       setError('Failed to update course')
     }
   }
@@ -230,7 +229,7 @@ export default function CourseBuilder() {
       } else {
         setError(data.error)
       }
-    } catch (err) {
+        } catch (_) {
       setError('Failed to create lesson')
     }
   }

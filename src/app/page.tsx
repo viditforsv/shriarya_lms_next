@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+// Removed unused imports
 import { Button } from "@/app/components-demo/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";

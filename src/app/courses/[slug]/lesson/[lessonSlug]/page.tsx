@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { Button } from '@/app/components-demo/ui/button'
 import { Badge } from '@/app/components-demo/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
-import { Progress } from '@/app/components-demo/ui/progress'
 import { 
   BookOpen, 
   Play, 
@@ -21,9 +20,7 @@ import {
   Share2,
   Bookmark,
   MessageCircle,
-  Star,
-  Eye,
-  EyeOff
+  Eye
 } from 'lucide-react'
 import { VideoResource } from '@/app/components-demo/ui/youtube-video'
 import { CompletionDot } from '@/app/components-demo/ui/template-status'
@@ -73,7 +70,7 @@ interface UserProgress {
 }
 
 export default function DynamicLessonPage({ params }: { params: Promise<{ slug: string; lessonSlug: string }> }) {
-  const { user, profile } = useAuth()
+  const { user } = useAuth()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [course, setCourse] = useState<Course | null>(null)
   const [allLessons, setAllLessons] = useState<Lesson[]>([])
@@ -230,11 +227,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
     alert(`📝 Submitted ${answeredQuestions} practice answers!`)
   }
 
-  const calculateProgress = () => {
-    if (!allLessons.length) return 0
-    const completedLessons = allLessons.filter(l => l.is_preview) // For now, use preview as completed
-    return Math.round((completedLessons.length / allLessons.length) * 100)
-  }
+  // Removed unused calculateProgress function
 
   // Mock practice questions
   const practiceQuestions = [

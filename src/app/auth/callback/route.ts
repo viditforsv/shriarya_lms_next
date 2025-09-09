@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -12,8 +11,6 @@ export async function GET(request: Request) {
 
   if (code) {
     try {
-      const supabase = await createClient()
-      
       // For PKCE, we need to let the client handle the session
       // The server-side exchange doesn't work with PKCE flow
       // Instead, we'll redirect to the client with the code

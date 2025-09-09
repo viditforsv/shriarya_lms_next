@@ -30,7 +30,7 @@ export default function AuthPage() {
           console.log('Auth page - Handling OAuth callback with code:', code)
           const supabase = createClient()
           
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          const { error } = await supabase.auth.exchangeCodeForSession(code)
           
           if (error) {
             console.error('Auth page - OAuth callback error:', error)

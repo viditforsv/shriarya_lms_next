@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/app/components-demo/ui/button"
-import { ChevronDown, Search, User, LogOut, Settings, BookOpen } from "lucide-react"
+import { Search, User, LogOut, Settings, BookOpen } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -115,53 +115,13 @@ export function Header() {
           {/* Main Navigation */}
           <nav className="hidden lg:flex items-center space-x-6">
             {navigation.map((item) => (
-              <div key={item.name} className="relative">
-                {item.hasDropdown ? (
-                  <div className="relative group">
-                    <button className="flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent cursor-pointer">
-                      <span>{item.name}</span>
-                      <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                    </button>
-                    
-                    {/* Dropdown Menu */}
-                    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-sm shadow-lg border border-[#feefea] z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="p-4">
-                        <div className="grid grid-cols-1 gap-3">
-                          {item.dropdownItems?.map((dropdownItem) => (
-                            <Link
-                              key={dropdownItem.name}
-                              href={dropdownItem.href}
-                              className="flex flex-col p-3 rounded-sm hover:bg-[#feefea] transition-colors group"
-                            >
-                              <div className="font-medium text-[#1e293b] group-hover:text-[#e27447] transition-colors">
-                                {dropdownItem.name}
-                              </div>
-                              <div className="text-sm text-[#1e293b] opacity-80">
-                                {dropdownItem.description}
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-[#feefea]">
-                          <Link
-                            href={item.href}
-                            className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#e27447] hover:bg-[#e27447]/10 rounded-sm transition-colors"
-                          >
-                            {item.name === "Courses" ? "View All Boards" : "View All Templates"}
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <Link 
-                    href={item.href} 
-                    className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent"
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
+              <Link 
+                key={item.name}
+                href={item.href} 
+                className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent"
+              >
+                {item.name}
+              </Link>
             ))}
           </nav>
 

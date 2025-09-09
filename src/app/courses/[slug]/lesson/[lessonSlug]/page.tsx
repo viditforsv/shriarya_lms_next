@@ -26,6 +26,12 @@ import { VideoResource } from '@/app/components-demo/ui/youtube-video'
 import { CompletionDot } from '@/app/components-demo/ui/template-status'
 import { CollapsibleSidebar } from '@/app/components-demo/ui/collapsible-sidebar'
 import { useAuth } from '@/contexts/AuthContext'
+import { 
+  getCourseBySlug, 
+  getLessonsByCourseSlug, 
+  CourseConfig, 
+  LessonConfig 
+} from '@/lib/course-config'
 
 interface Course {
   id: string
@@ -96,10 +102,8 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
         setIsLoading(true)
         setError(null)
 
-        // Get course by slug
-        const courseResponse = await fetch(`/api/courses-v2?published=true`)
-        const courseData = await courseResponse.json()
-        const courseInfo = courseData.courses.find((c: Course) => c.slug === resolvedParams.slug)
+        // Get course from configuration (same as course page)
+        const courseInfo = getCourseBySlug(resolvedParams.slug)
         
         if (!courseInfo) {
           throw new Error('Course not found')
@@ -107,28 +111,20 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
 
         setCourse(courseInfo)
 
-        // Get lessons for the course
-        const lessonsResponse = await fetch(`/api/lessons-v2?courseSlug=${resolvedParams.slug}&published=true`)
-        const lessonsData = await lessonsResponse.json()
-        
-        if (!lessonsData.lessons) {
-          throw new Error('Lessons not found')
-        }
-
-        setAllLessons(lessonsData.lessons)
+        // Get lessons from configuration
+        const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
+        setAllLessons(lessonsData)
 
         // Find the specific lesson
-        const lessonInfo = lessonsData.lessons.find((l: Lesson) => l.slug === resolvedParams.lessonSlug)
+        const lessonInfo = lessonsData.find((l: LessonConfig) => l.slug === resolvedParams.lessonSlug)
         if (!lessonInfo) {
           throw new Error('Lesson not found')
         }
 
         setLesson(lessonInfo)
 
-        // Check enrollment
-        const enrollmentResponse = await fetch(`/api/enrollments?courseId=${courseInfo.id}`)
-        const enrollmentData = await enrollmentResponse.json()
-        setIsEnrolled(enrollmentData.enrolled || false)
+        // Check enrollment - for free courses, user is automatically enrolled
+        setIsEnrolled(courseInfo.isFree || false)
 
         // Get user progress for this lesson
         const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)

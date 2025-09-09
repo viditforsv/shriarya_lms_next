@@ -55,9 +55,9 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
         setLessons(lessonsData)
 
-        // For now, simulate enrollment status
-        // In a real app, this would check the database
-        setIsEnrolled(false) // This would be determined by actual enrollment status
+        // For free courses, user is automatically "enrolled"
+        // For paid courses, this would check actual enrollment status
+        setIsEnrolled(courseData.isFree || false)
 
       } catch (err) {
         console.error('Error loading course:', err)

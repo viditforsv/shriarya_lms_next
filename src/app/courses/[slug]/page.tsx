@@ -82,35 +82,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     }
   }
 
-  const handleChapterClick = (chapterSlug: string) => {
-    // Map chapter slugs to their first lesson
-    const chapterToLessonMap: Record<string, string> = {
-      'number-systems': 'real-numbers-intro',
-      'algebra': 'polynomials-intro', 
-      'coordinate-geometry': 'coordinate-intro',
-      'geometry': 'triangles-intro',
-      'trigonometry': 'trigonometry-intro',
-      'mensuration': 'circle-areas-intro',
-      'statistics-probability': 'statistics-intro'
-    }
-    
-    const firstLessonSlug = chapterToLessonMap[chapterSlug]
-    
-    if (firstLessonSlug) {
-      // Find the lesson by slug
-      const firstLesson = lessons.find(lesson => lesson.slug === firstLessonSlug)
-      
-      if (firstLesson && firstLesson.slug) {
-        window.location.href = `/courses/${resolvedParams?.slug}/lesson/${firstLesson.slug}`
-        return
-      }
-    }
-    
-    // Fallback: redirect to first available lesson
-    if (lessons.length > 0 && lessons[0].slug) {
-      window.location.href = `/courses/${resolvedParams?.slug}/lesson/${lessons[0].slug}`
-    }
-  }
 
 
   const handleEnroll = async () => {
@@ -302,250 +273,35 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {/* Unit I: Number Systems */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
+                      {/* Display actual lessons from configuration */}
+                      {lessons.map((lesson, index) => (
+                        <div 
+                          key={lesson.id}
+                          className="flex items-center space-x-3 p-3 rounded-sm border hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleLessonClick(lesson)}
+                        >
                           <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            I
+                            {lesson.order || index + 1}
                           </div>
-                          <div>
-                            <h4 className="font-medium">Unit I: Number Systems</h4>
-                            <p className="text-sm text-muted-foreground">Real Numbers, Fundamental Theorem, Irrationality proofs</p>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <h4 className="font-medium">{lesson.title}</h4>
+                              {lesson.isPreview && (
+                                <Badge variant="secondary" className="text-xs">Preview</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">{lesson.duration}</p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {lesson.isPreview || isEnrolled || course?.isFree ? (
+                              <Play className="w-4 h-4 text-[#e27447]" />
+                            ) : (
+                              <Lock className="w-4 h-4 text-gray-400" />
+                            )}
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
                           </div>
                         </div>
-                        
-                        {/* Chapters under Unit I */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('number-systems')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              1
-                            </div>
-                            <span className="text-sm font-medium">Chapter 1: Real Numbers</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit II: Algebra */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            II
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit II: Algebra</h4>
-                            <p className="text-sm text-muted-foreground">Polynomials, Pair of Linear Equations, Quadratic Equations, Arithmetic Progressions</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit II */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('algebra')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              2
-                            </div>
-                            <span className="text-sm font-medium">Chapter 2: Polynomials</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('algebra')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              3
-                            </div>
-                            <span className="text-sm font-medium">Chapter 3: Pair of Linear Equations</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('algebra')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              4
-                            </div>
-                            <span className="text-sm font-medium">Chapter 4: Quadratic Equations</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('algebra')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              5
-                            </div>
-                            <span className="text-sm font-medium">Chapter 5: Arithmetic Progressions</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit III: Coordinate Geometry */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            III
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit III: Coordinate Geometry</h4>
-                            <p className="text-sm text-muted-foreground">Distance Formula, Section Formula</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit III */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('coordinate-geometry')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              6
-                            </div>
-                            <span className="text-sm font-medium">Chapter 6: Coordinate Geometry</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit IV: Geometry */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            IV
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit IV: Geometry</h4>
-                            <p className="text-sm text-muted-foreground">Triangles (Similarity criteria), Circles (Tangents, Theorems)</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit IV */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('geometry')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              7
-                            </div>
-                            <span className="text-sm font-medium">Chapter 7: Triangles</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('geometry')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              8
-                            </div>
-                            <span className="text-sm font-medium">Chapter 8: Circles</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit V: Trigonometry */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            V
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit V: Trigonometry</h4>
-                            <p className="text-sm text-muted-foreground">Trig Ratios, Identities, Heights & Distances</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit V */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('trigonometry')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              9
-                            </div>
-                            <span className="text-sm font-medium">Chapter 9: Introduction to Trigonometry</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('trigonometry')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              10
-                            </div>
-                            <span className="text-sm font-medium">Chapter 10: Heights and Distances</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit VI: Mensuration */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            VI
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit VI: Mensuration</h4>
-                            <p className="text-sm text-muted-foreground">Areas (Sectors, Segments), Surface Areas & Volumes</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit VI */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('mensuration')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              11
-                            </div>
-                            <span className="text-sm font-medium">Chapter 11: Areas Related to Circles</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('mensuration')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              12
-                            </div>
-                            <span className="text-sm font-medium">Chapter 12: Surface Areas and Volumes</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Unit VII: Statistics and Probability */}
-                      <div className="p-4 rounded-sm border hover:bg-gray-50 cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                            VII
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Unit VII: Statistics and Probability</h4>
-                            <p className="text-sm text-muted-foreground">Mean, Median, Mode (Grouped Data), Probability</p>
-                          </div>
-                        </div>
-                        
-                        {/* Chapters under Unit VII */}
-                        <div className="ml-11 space-y-2">
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('statistics-probability')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              13
-                            </div>
-                            <span className="text-sm font-medium">Chapter 13: Statistics</span>
-                          </div>
-                          <div 
-                            className="flex items-center space-x-2 p-2 rounded-sm bg-gray-50 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => handleChapterClick('statistics-probability')}
-                          >
-                            <div className="w-6 h-6 bg-gray-400 text-white rounded-sm flex items-center justify-center text-xs font-medium">
-                              14
-                            </div>
-                            <span className="text-sm font-medium">Chapter 14: Probability</span>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>

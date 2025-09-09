@@ -28,7 +28,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { 
   getCourseBySlug, 
   getLessonsByCourseSlug, 
-  CourseConfig, 
+  getLessonBySlug,
   LessonConfig,
   ResourceConfig
 } from '@/lib/course-config'
@@ -147,10 +147,18 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
         }))
         setAllLessons(mappedLessons)
 
-        // Find the specific lesson and map it to Lesson interface
-        const lessonInfo = lessonsData.find((l: LessonConfig) => l.slug === resolvedParams.lessonSlug)
+        // Find the specific lesson using enhanced lookup (supports syllabus mapping)
+        const lessonInfo = getLessonBySlug(resolvedParams.slug, resolvedParams.lessonSlug)
         if (!lessonInfo) {
-          throw new Error('Lesson not found')
+          // Debug information
+          console.error('Lesson not found:', {
+            requestedLessonSlug: resolvedParams.lessonSlug,
+            courseSlug: resolvedParams.slug,
+            availableLessonSlugs: lessonsData.map(l => l.slug),
+            totalLessons: lessonsData.length,
+            note: 'Enhanced lookup with syllabus mapping was attempted'
+          })
+          throw new Error(`Lesson not found: ${resolvedParams.lessonSlug}. Available lessons: ${lessonsData.map(l => l.slug).join(', ')}`)
         }
 
         // Map LessonConfig to Lesson interface
@@ -178,15 +186,22 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
         setIsEnrolled(courseInfo.isFree || false)
 
         // Get user progress for this lesson
-        const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)
-        const progressData = await progressResponse.json()
-        if (progressData.progress && progressData.progress.length > 0) {
-          setUserProgress(progressData.progress[0])
+        try {
+          const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)
+          if (progressResponse.ok) {
+            const progressData = await progressResponse.json()
+            if (progressData.progress && progressData.progress.length > 0) {
+              setUserProgress(progressData.progress[0])
+            }
+          }
+        } catch (progressError) {
+          console.warn('Could not fetch user progress:', progressError)
+          // Don't throw error for progress fetch failure
         }
 
       } catch (err) {
         console.error('Error loading lesson:', err)
-        setError('Lesson not found')
+        setError(err instanceof Error ? err.message : 'Lesson not found')
       } finally {
         setIsLoading(false)
       }
@@ -301,12 +316,24 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
   if (error || !lesson || !course) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || 'The lesson you are looking for does not exist.'}</p>
-          <Link href={`/courses/${resolvedParams?.slug}`}>
-            <Button>Back to Course</Button>
-          </Link>
+          <p className="text-muted-foreground mb-6">
+            {error || 'The lesson you are looking for does not exist.'}
+          </p>
+          <div className="space-y-3">
+            <Link href={`/courses/${resolvedParams?.slug}`}>
+              <Button className="rounded-sm">Back to Course</Button>
+            </Link>
+            <div className="text-sm text-muted-foreground">
+              <p>If you believe this is an error, please check:</p>
+              <ul className="text-left mt-2 space-y-1">
+                <li>• The lesson URL is correct</li>
+                <li>• The course exists and is published</li>
+                <li>• You have access to this course</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     )

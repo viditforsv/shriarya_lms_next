@@ -238,6 +238,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       order: 2,
       resources: [
         {
+          id: 'properties-worksheet',
           url: 'https://example.com/real-numbers-properties.pdf',
           type: 'pdf',
           title: 'Properties Worksheet'
@@ -401,7 +402,7 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       resources: [
         {
           id: 'real-numbers-quiz-interactive',
-          type: 'interactive',
+          type: 'link',
           url: '/interactive/real-numbers-quiz',
           title: 'Interactive Real Numbers Quiz'
         },
@@ -1809,6 +1810,94 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
   ]
 }
 
+// Syllabus to Lesson Mapping
+export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
+  // Real Numbers subsections
+  'fundamental-theorem-arithmetic': 'fundamental-theorem-arithmetic',
+  'proofs-irrationality': 'real-numbers-properties', // Map to properties lesson
+  'properties-real-numbers': 'real-numbers-properties',
+  
+  // Polynomials subsections
+  'zeros-polynomial': 'polynomial-zeroes',
+  'relationship-zeros-coefficients': 'polynomial-zeroes', // Map to same lesson
+  
+  // Linear Equations subsections
+  'graphical-method': 'graphical-method',
+  'algebraic-solution': 'algebraic-methods',
+  
+  // Quadratic Equations subsections
+  'euclid-division-lemma': 'euclid-division-lemma',
+  'standard-form': 'quadratic-intro',
+  'factorization-quadratic-formula': 'quadratic-formula',
+  'nature-roots-discriminant': 'quadratic-practice',
+  
+  // Arithmetic Progressions subsections
+  'nth-term': 'ap-intro',
+  'sum-n-terms': 'ap-formulas',
+  'word-problems': 'ap-practice',
+  'applications-problems': 'ap-practice',
+  
+  // Triangles subsections
+  'similarity-criteria': 'triangles-intro',
+  'basic-proportionality': 'similarity-triangles',
+  'basic-proportionality-theorem': 'similarity-triangles',
+  'applications': 'triangles-practice',
+  
+  // Coordinate Geometry subsections
+  'concepts-coordinate-geometry': 'coordinate-intro',
+  'distance-formula': 'distance-formula',
+  'section-formula': 'coordinate-practice',
+  'area-triangle': 'coordinate-practice',
+  
+  // Trigonometry subsections
+  'introduction-trigonometry': 'trigonometry-intro',
+  'trigonometric-ratios': 'trigonometric-ratios',
+  'values-30-45-60': 'trigonometric-ratios',
+  'relationships-ratios': 'trigonometry-practice',
+  'complementary-angles': 'trigonometry-practice',
+  'proof-application-sin2-cos2': 'trigonometry-practice',
+  'angles-elevation-depression': 'trig-applications',
+  'trig-applications': 'trig-applications',
+  
+  // Circles subsections
+  'tangent-circle': 'circles-intro',
+  'tangents': 'circles-intro',
+  'properties-tangents': 'circle-theorems',
+  'chords': 'circle-theorems',
+  'angles': 'circles-practice',
+  
+  // Constructions subsections
+  'basic-constructions': 'constructions-intro',
+  'advanced-constructions': 'constructions-practice',
+  
+  // Areas Related to Circles subsections
+  'areas-related-circles': 'circle-areas-intro',
+  'areas-sectors-segments': 'circle-areas-intro',
+  'sector-area': 'circle-areas-intro',
+  'perimeter-circumference': 'circle-areas-practice',
+  'segment-area': 'circle-areas-practice',
+  
+  // Surface Areas and Volumes subsections
+  'cubes-cuboids': 'surface-volumes-intro',
+  'spheres-hemispheres': 'surface-volumes-intro',
+  'cylinders-cones': 'surface-volumes-intro',
+  'combinations-solids': 'surface-volumes-practice',
+  'surface-area': 'surface-volumes-intro',
+  'volume': 'surface-volumes-practice',
+  
+  // Statistics subsections
+  'statistics': 'statistics-intro',
+  'mean-median-mode': 'statistics-intro',
+  'stats-applications': 'statistics-practice',
+  
+  // Probability subsections
+  'probability': 'probability-intro',
+  'classical-definition': 'probability-intro',
+  'basic-probability': 'probability-intro',
+  'simple-problems': 'probability-practice',
+  'prob-applications': 'probability-practice'
+}
+
 // Helper functions
 export function getAllCourses(): CourseConfig[] {
   return Object.values(COURSE_DATABASE).filter(course => course.status === 'published')
@@ -1830,7 +1919,40 @@ export function getLessonsByCourseSlug(courseSlug: string): LessonConfig[] {
 
 export function getLessonBySlug(courseSlug: string, lessonSlug: string): LessonConfig | null {
   const lessons = LESSON_DATABASE[courseSlug] || []
-  return lessons.find(lesson => lesson.slug === lessonSlug) || null
+  
+  // First try direct match
+  let lesson = lessons.find(lesson => lesson.slug === lessonSlug)
+  
+  // If not found, try syllabus mapping
+  if (!lesson) {
+    const mappedSlug = SYLLABUS_LESSON_MAPPING[lessonSlug]
+    if (mappedSlug) {
+      lesson = lessons.find(lesson => lesson.slug === mappedSlug)
+    }
+  }
+  
+  return lesson || null
+}
+
+// New function to get lesson by syllabus subsection slug
+export function getLessonBySyllabusSlug(courseSlug: string, syllabusSlug: string): LessonConfig | null {
+  const mappedSlug = SYLLABUS_LESSON_MAPPING[syllabusSlug]
+  if (!mappedSlug) {
+    console.warn(`No mapping found for syllabus slug: ${syllabusSlug}`)
+    return null
+  }
+  
+  const lessons = LESSON_DATABASE[courseSlug] || []
+  return lessons.find(lesson => lesson.slug === mappedSlug) || null
+}
+
+// Function to get all syllabus subsections mapped to lessons
+export function getSyllabusLessons(courseSlug: string): Array<{syllabusSlug: string, lesson: LessonConfig | null}> {
+  const syllabusSubsections = Object.keys(SYLLABUS_LESSON_MAPPING)
+  return syllabusSubsections.map(syllabusSlug => ({
+    syllabusSlug,
+    lesson: getLessonBySyllabusSlug(courseSlug, syllabusSlug)
+  }))
 }
 
 export function getFreeCourses(): CourseConfig[] {

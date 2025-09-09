@@ -32,8 +32,74 @@ interface CollapsibleSidebarProps {
 export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: CollapsibleSidebarProps) {
   const [syllabus] = useState(CBSE_CLASS_10_MATHEMATICS_SYLLABUS)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['number-systems', 'algebra']))
-  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(['real-numbers', 'quadratic-equations']))
+  
+  // Initialize expanded sections from localStorage or default
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`sidebar-expanded-sections-${courseSlug}`)
+      if (saved) {
+        try {
+          return new Set(JSON.parse(saved))
+        } catch {
+          // Fallback to default if parsing fails
+        }
+      }
+    }
+    return new Set(['number-systems', 'algebra'])
+  })
+  
+  // Initialize expanded chapters from localStorage or default
+  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`sidebar-expanded-chapters-${courseSlug}`)
+      if (saved) {
+        try {
+          return new Set(JSON.parse(saved))
+        } catch {
+          // Fallback to default if parsing fails
+        }
+      }
+    }
+    return new Set(['real-numbers', 'quadratic-equations'])
+  })
+
+  // Save expanded sections to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`sidebar-expanded-sections-${courseSlug}`, JSON.stringify([...expandedSections]))
+    }
+  }, [expandedSections, courseSlug])
+
+  // Save expanded chapters to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`sidebar-expanded-chapters-${courseSlug}`, JSON.stringify([...expandedChapters]))
+    }
+  }, [expandedChapters, courseSlug])
+
+  // Auto-expand sections and chapters containing the current lesson
+  useEffect(() => {
+    if (currentLessonSlug) {
+      // Find which section and chapter contains the current lesson
+      for (const section of syllabus) {
+        for (const chapter of section.chapters) {
+          const hasCurrentLesson = chapter.subsections.some(subsection => subsection.slug === currentLessonSlug)
+          if (hasCurrentLesson) {
+            // Only update if not already expanded to prevent unnecessary re-renders
+            setExpandedSections(prev => {
+              if (prev.has(section.id)) return prev
+              return new Set([...prev, section.id])
+            })
+            setExpandedChapters(prev => {
+              if (prev.has(chapter.id)) return prev
+              return new Set([...prev, chapter.id])
+            })
+            break
+          }
+        }
+      }
+    }
+  }, [currentLessonSlug, syllabus])
 
   // Keyboard shortcut support
   useEffect(() => {

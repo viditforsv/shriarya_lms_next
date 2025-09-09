@@ -9,7 +9,6 @@ import { Progress } from '@/app/components-demo/ui/ui-components/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
   Play, 
-  Users, 
   ChevronRight, 
   Lock
 } from 'lucide-react'

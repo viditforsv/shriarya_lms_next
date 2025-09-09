@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 
 export default function BunnyCDNTest() {

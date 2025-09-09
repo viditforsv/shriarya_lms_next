@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Edit, Eye, BookOpen } from "lucide-react"
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabase/client"
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
 import { Shield, Eye, Lock, Users, Calendar } from "lucide-react"
 
 export default function PrivacyPage() {

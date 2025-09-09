@@ -1,6 +1,6 @@
 "use client"
 
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { CheckCircle } from "lucide-react"
 
 interface TemplateStatusProps {

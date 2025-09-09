@@ -1,8 +1,8 @@
 'use client'
 import { memo } from "react"
 import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
 import { ArrowLeft, Mail, Phone, MapPin, Clock, Send } from "@/app/components-demo/ui/icons"
 import Link from "next/link"
 

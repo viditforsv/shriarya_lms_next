@@ -1,9 +1,9 @@
 'use client'
 
 import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { ArrowLeft, Check, Star } from "@/app/components-demo/ui/icons"
 import Link from "next/link"
 import { useState, memo } from "react"

@@ -2,9 +2,9 @@
 
 import { useState, useRef } from 'react'
 import { Upload, X, CheckCircle, AlertCircle, File, Video, Image, FileText } from 'lucide-react'
-import { Button } from '@/app/components-demo/ui/button'
-import { Progress } from '@/app/components-demo/ui/progress'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Progress } from '@/app/components-demo/ui/ui-components/progress'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { createClient } from '@/lib/supabase/client'
 
 interface FileUploadProps {

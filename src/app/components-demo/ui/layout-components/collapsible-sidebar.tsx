@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Progress } from '@/app/components-demo/ui/progress'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Progress } from '@/app/components-demo/ui/ui-components/progress'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -38,6 +38,20 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['number-systems', 'algebra']))
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(['real-numbers', 'quadratic-equations']))
+
+  // Keyboard shortcut support
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Cmd/Ctrl + \ to toggle left sidebar
+      if ((event.metaKey || event.ctrlKey) && event.key === '\\' && !event.shiftKey) {
+        event.preventDefault()
+        setIsSidebarCollapsed(!isSidebarCollapsed)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isSidebarCollapsed])
 
   const progress = getSyllabusProgress(syllabus)
 
@@ -108,89 +122,103 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
 
   if (isSidebarCollapsed) {
     return (
-      <div className="lg:col-span-1 order-2 lg:order-1">
-        <div className="sticky top-8">
-          <Card className="rounded-sm">
-            <CardContent className="p-4">
-              <div className="flex flex-col items-center space-y-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsSidebarCollapsed(false)}
-                  className="rounded-sm"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
+      <div className="w-16 bg-white border-r border-gray-200 min-h-screen transition-all duration-300">
+        <div className="p-4">
+          <div className="mb-8">
+            <div className="flex justify-center mb-4">
+              <Badge variant="secondary" className="text-xs">📚</Badge>
+            </div>
+            <div className="flex justify-center mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsSidebarCollapsed(false)}
+                className="rounded-sm p-2"
+                title="Expand sidebar (⌘\)"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-sm p-2"
+                title="Course Progress"
+              >
                 <div className="text-center">
                   <div className="text-sm font-medium text-[#1e293b]">{progress.completed}</div>
-                  <div className="text-xs text-muted-foreground">of {progress.total}</div>
+                  <div className="text-sm text-muted-foreground">of {progress.total}</div>
                 </div>
-                <Progress value={progress.percentage} className="h-2 w-16" />
-              </div>
-            </CardContent>
-          </Card>
+              </Button>
+            </div>
+            <div className="flex justify-center">
+              <Progress value={progress.percentage} className="h-2 w-12" />
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="lg:col-span-1 order-2 lg:order-1">
-      <div className="sticky top-8 space-y-6">
-        {/* Combined Sidebar Header & Course Content */}
-        <Card className="rounded-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">CBSE Class 10 Mathematics</CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsSidebarCollapsed(true)}
-                className="rounded-sm"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Overall Progress</span>
-                  <span className="text-[#1e293b] font-medium">{progress.percentage}%</span>
-                </div>
-                <Progress value={progress.percentage} className="h-2" />
-              </div>
-              <div className="text-sm text-muted-foreground">
-                <span className="text-[#1e293b] font-medium">{progress.completed}</span> of {progress.total} lessons completed
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleAllSections}
-                className="w-full rounded-sm"
-              >
-                {expandedSections.size === syllabus.length ? (
-                  <>
-                    <ChevronUp className="w-4 h-4 mr-2" />
-                    Collapse All
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4 mr-2" />
-                    Expand All
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
+    <div className="w-80 bg-white border-r border-gray-200 min-h-screen transition-all duration-300 flex flex-col">
+      <div className="p-4 flex flex-col h-full">
+        {/* Header */}
+        <div className="mb-6 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-semibold text-[#1e293b]">CBSE Class 10 Mathematics</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSidebarCollapsed(true)}
+              className="rounded-sm"
+              title="Close sidebar (⌘\)"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+          </div>
           
-          {/* Course Content Section */}
-          <div className="border-t border-[#feefea]">
-            <div className="p-4 pb-0">
-              <h3 className="text-lg font-semibold text-[#1e293b] mb-3">Course Content</h3>
+          {/* Progress Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-base">
+              <span className="text-gray-600">Overall Progress</span>
+              <span className="font-medium text-[#1e293b]">{progress.percentage}%</span>
             </div>
-            <div className="max-h-96 overflow-y-auto">
+            <Progress value={progress.percentage} className="h-2" />
+            <div className="text-sm text-gray-500">
+              {progress.completed} of {progress.total} lessons completed
+            </div>
+          </div>
+        </div>
+
+        {/* Expand/Collapse All Button */}
+        <div className="mb-4 flex-shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleAllSections}
+            className="w-full rounded-sm"
+          >
+            {expandedSections.size === syllabus.length ? (
+              <>
+                <ChevronUp className="w-4 h-4 mr-2" />
+                Collapse All
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-4 h-4 mr-2" />
+                Expand All
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Course Content Section */}
+        <div className="space-y-4 flex-1 overflow-y-auto">
               {syllabus.map((section) => (
                 <div key={section.id} className="border-b border-[#feefea] last:border-b-0">
                   {/* Section Header */}
@@ -205,7 +233,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
                         <ChevronRight className="w-4 h-4 text-[#e27447]" />
                       )}
                       <BookOpen className="w-4 h-4 text-[#e27447]" />
-                      <span className="font-medium text-[#1e293b]">{section.title}</span>
+                      <span className="font-semibold text-[#1e293b] text-base">{section.title}</span>
                     </div>
                     <Badge variant="outline" className="text-xs">
                       {section.chapters.length}
@@ -229,7 +257,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
                                 <ChevronRight className="w-3 h-3 text-muted-foreground" />
                               )}
                               <FileText className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-sm font-medium text-[#1e293b]">{chapter.title}</span>
+                              <span className="text-base font-medium text-[#1e293b]">{chapter.title}</span>
                             </div>
                             <Badge variant="outline" className="text-xs">
                               {chapter.subsections.length}
@@ -256,13 +284,13 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
                                         {getStatusIcon(status)}
                                       </div>
                                       <div>
-                                        <h4 className={`text-xs font-medium ${
+                                        <h4 className={`text-sm font-medium ${
                                           isCurrent ? 'text-[#1e293b]' : 'text-muted-foreground'
                                         }`}>
                                           {subsection.title}
                                         </h4>
                                         {subsection.duration && (
-                                          <p className="text-xs text-muted-foreground flex items-center space-x-1">
+                                          <p className="text-sm text-muted-foreground flex items-center space-x-1">
                                             <Clock className="w-3 h-3" />
                                             <span>{subsection.duration}</span>
                                           </p>
@@ -285,32 +313,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
                   )}
                 </div>
               ))}
-            </div>
-          </div>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card className="rounded-sm">
-          <CardHeader>
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link href={`/courses/${courseSlug}`}>
-              <Button variant="outline" className="w-full justify-start rounded-sm">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Course Overview
-              </Button>
-            </Link>
-            <Button variant="outline" className="w-full justify-start rounded-sm">
-              <FileText className="w-4 h-4 mr-2" />
-              All Notes
-            </Button>
-            <Button variant="outline" className="w-full justify-start rounded-sm">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Discussion Forum
-            </Button>
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   )

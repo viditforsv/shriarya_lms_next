@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { Play, ExternalLink, Download } from 'lucide-react'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent } from '@/app/components-demo/ui/ui-components/card'
 
 interface YouTubeVideoProps {
   videoId: string

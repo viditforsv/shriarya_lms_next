@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { Check } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"

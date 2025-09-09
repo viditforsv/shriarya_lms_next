@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
-import { Input } from '@/app/components-demo/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components-demo/ui/select'
 import { 
   Search, 

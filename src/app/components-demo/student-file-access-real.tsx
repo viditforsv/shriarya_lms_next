@@ -2,9 +2,9 @@
 
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 

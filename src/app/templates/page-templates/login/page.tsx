@@ -2,8 +2,8 @@
 
 import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, Github, Chrome } from 'lucide-react'
 
 const LoginPageTemplate = memo(function LoginPageTemplate() {

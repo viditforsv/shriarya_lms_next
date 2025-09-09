@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@supabase/supabase-js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
-import { Input } from '@/app/components-demo/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { 
   Plus, 
   Edit, 

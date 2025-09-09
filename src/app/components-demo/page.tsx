@@ -1,13 +1,14 @@
 "use client"
 
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
 import { Pagination } from "@/app/components-demo/ui/pagination"
-import { Sidebar, SidebarItem } from "@/app/components-demo/ui/sidebar"
-import { SignInForm } from "@/app/components-demo/auth/SignInForm"
-import { SignUpForm } from "@/app/components-demo/auth/SignUpForm"
+import { Sidebar, SidebarItem } from "@/app/components-demo/ui/layout-components/sidebar"
+import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm"
+import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm"
+import { MCQQuestionExample } from "@/app/components-demo/ui/course-components/mcq-question"
 
 import { useState, useEffect, useCallback, memo } from 'react'
 
@@ -112,6 +113,11 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
     { id: "interactive", label: "Interactive", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ) },
+    { id: "mcq", label: "MCQ Questions", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ) },
     { id: "navigation", label: "Navigation", icon: (
@@ -600,6 +606,19 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
     </section>
   )
 
+  const renderMCQSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">MCQ Questions</h2>
+        <p className="text-gray-600 text-lg">Interactive multiple choice questions with feedback</p>
+      </div>
+      
+      <div className="space-y-8">
+        <MCQQuestionExample />
+      </div>
+    </section>
+  )
+
   const renderContentSection = () => (
     <section className="mb-20">
       <div className="mb-8">
@@ -668,6 +687,8 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         return renderTypographySection()
       case "interactive":
         return renderInteractiveSection()
+      case "mcq":
+        return renderMCQSection()
       case "navigation":
         return renderNavigationSection()
       case "utilities":
@@ -701,6 +722,8 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           activeItem={activeTab}
           onItemClick={(item) => setActiveTab(item.id)}
           showNumbers={true}
+          collapsible={true}
+          defaultCollapsed={false}
         />
 
         <div className="flex-1 overflow-auto">

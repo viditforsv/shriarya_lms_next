@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Progress } from '@/app/components-demo/ui/progress'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Progress } from '@/app/components-demo/ui/ui-components/progress'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { 
   ChevronDown, 
   ChevronRight,
@@ -69,6 +69,20 @@ export function CourseSidebar({
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set(['unit-1']))
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set())
+
+  // Keyboard shortcut support
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Cmd/Ctrl + \ to toggle sidebar
+      if ((event.metaKey || event.ctrlKey) && event.key === '\\') {
+        event.preventDefault()
+        setIsCollapsed(!isCollapsed)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isCollapsed])
 
   const toggleUnit = (unitId: string) => {
     const newExpanded = new Set(expandedUnits)
@@ -182,7 +196,8 @@ export function CourseSidebar({
               variant="ghost"
               size="sm"
               onClick={() => setIsCollapsed(true)}
-              className="rounded-sm lg:hidden"
+              className="rounded-sm"
+              title="Close sidebar (⌘\)"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>

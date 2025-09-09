@@ -1,7 +1,7 @@
 'use client'
 
-import { Badge } from '@/app/components-demo/ui/badge'
-import { Button } from '@/app/components-demo/ui/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
 import { Lock, Unlock, Crown, BookOpen } from 'lucide-react'
 import { useCourseAccess } from '@/hooks/useCourseAccess'
 import Link from 'next/link'

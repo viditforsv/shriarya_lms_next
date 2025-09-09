@@ -1,10 +1,10 @@
 'use client'
 import { memo } from "react"
 import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
-import { Progress } from "@/app/components-demo/ui/progress"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
+import { Progress } from "@/app/components-demo/ui/ui-components/progress"
 import { BookOpen, Users, Clock, Star, CheckCircle, Play, Lock, Award } from "lucide-react"
 
 // Force dynamic rendering to prevent static generation issues

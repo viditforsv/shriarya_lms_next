@@ -2,9 +2,9 @@
 
 import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Input } from '@/app/components-demo/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { 
   ArrowLeft,
   Search,

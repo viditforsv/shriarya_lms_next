@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Trash2, Edit, FileText, Video, HelpCircle, Download, ChevronUp, ChevronDown } from '@/app/components-demo/ui/icons'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { FileUpload } from '@/app/components-demo/ui/file-upload'
 import { createClient } from '@/lib/supabase/client'
 

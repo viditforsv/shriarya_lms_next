@@ -1,8 +1,8 @@
 'use client'
 import { memo } from "react"
 import Link from 'next/link'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 export default function CourseTemplatesIndex() {

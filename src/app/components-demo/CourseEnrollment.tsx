@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from "@/app/components-demo/ui/button"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { useCourseEnrollment, useCourseAccess } from "@/hooks/useCourseEnrollment"
 import { useAuth } from "@/contexts/AuthContext"
 import { Course } from "@/lib/courses"

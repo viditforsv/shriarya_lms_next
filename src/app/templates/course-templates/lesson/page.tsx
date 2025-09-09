@@ -2,11 +2,11 @@
 
 import { useState, memo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
-import { Progress } from '@/app/components-demo/ui/progress'
+import { Progress } from '@/app/components-demo/ui/ui-components/progress'
 import { 
   BookOpen, 
   Play, 

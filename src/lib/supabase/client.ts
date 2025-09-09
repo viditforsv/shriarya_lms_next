@@ -7,7 +7,7 @@ export function createClient() {
     {
       auth: {
         persistSession: true,
-        storageKey: 'shriarya-auth',
+        storageKey: 'shriarya-lms-session',
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: 'pkce',
@@ -16,8 +16,6 @@ export function createClient() {
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         // Longer session duration (30 days)
         sessionRefreshMargin: 60, // Refresh 60 seconds before expiry
-        // Custom storage for better persistence
-        storageKey: 'shriarya-lms-session',
         // Enable secure cookie storage
         cookieOptions: {
           name: 'shriarya-auth-token',

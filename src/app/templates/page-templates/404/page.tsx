@@ -1,7 +1,7 @@
 "use client"
 import { memo } from "react"
 import Link from "next/link"
-import { Card, CardContent } from "@/app/components-demo/ui/card"
+import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card"
 import { Home, ArrowLeft, Search, BookOpen, FileText, Users, HelpCircle } from "@/app/components-demo/ui/icons"
 import { CompletionDot } from "@/app/components-demo/ui/template-status"
 import { TemplateLayout } from "@/app/components-demo/ui/template-layout"

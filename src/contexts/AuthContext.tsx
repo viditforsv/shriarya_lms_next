@@ -38,7 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [profileCache, setProfileCache] = useState<Map<string, UserProfile>>(new Map())
-  const supabase = createClient()
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  // Create a single Supabase client instance using useMemo to prevent recreation
+  const supabase = useMemo(() => createClient(), [])
 
   // Persist profile in localStorage for faster loading
   useEffect(() => {
@@ -62,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
-  }, []) // Remove profile dependency to prevent loop
+  }, [profile]) // Include profile dependency
 
   // Create user profile if it doesn't exist
   const createProfile = async (userId: string) => {
@@ -353,8 +356,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    // Only run auth logic in browser
-    if (typeof window !== 'undefined') {
+    // Only run auth logic in browser and prevent multiple initializations
+    if (typeof window !== 'undefined' && !isInitialized) {
+      setIsInitialized(true)
+      
       // Get initial session
       const getSession = async () => {
         try {
@@ -447,6 +452,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (event === 'SIGNED_OUT') {
               console.log('User signed out, redirecting to login page')
               SessionStorage.clearSession()
+              setProfile(null)
               if (typeof window !== 'undefined') {
                 window.location.href = '/auth'
               }
@@ -458,39 +464,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               console.log('Token refreshed, updating persistent storage')
               SessionStorage.saveSession(session)
               SessionStorage.saveUser(session.user)
-              return
-            }
-            
-            // Handle signin event - redirect to appropriate page
-            if (event === 'SIGNED_IN' && session?.user) {
-              console.log('User signed in, checking if redirect is needed')
-              if (typeof window !== 'undefined') {
-                const currentPath = window.location.pathname
-                const isFromCallback = document.referrer.includes('/auth/callback')
-                
-                // Don't redirect if already on a valid page or coming from OAuth callback
-                if (currentPath === '/courses/enrolled' || isFromCallback) {
-                  console.log('Skipping redirect - already on target page or from OAuth callback')
-                  return
-                }
-                
-                // Smart redirect based on current context
-                let redirectPath = '/dashboard' // Default to dashboard instead of enrolled courses
-                
-                // If user was trying to access a specific course, redirect there
-                if (currentPath.startsWith('/courses/') && !currentPath.includes('/enrolled')) {
-                  redirectPath = currentPath
-                }
-                // If user was on auth page, redirect to dashboard
-                else if (currentPath.startsWith('/auth')) {
-                  redirectPath = '/dashboard'
-                }
-                
-                console.log(`Redirecting to ${redirectPath} after login`)
-                setTimeout(() => {
-                  window.location.href = redirectPath
-                }, 100)
-              }
               return
             }
             
@@ -518,7 +491,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setLoading(false)
     }
-  }, [supabase.auth, fetchProfile])
+  }, [supabase.auth, fetchProfile, isInitialized, user])
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({

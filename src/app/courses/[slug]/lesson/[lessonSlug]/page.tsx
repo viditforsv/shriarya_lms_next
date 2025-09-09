@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
   BookOpen, 
@@ -22,7 +22,8 @@ import {
 } from 'lucide-react'
 import { VideoResource } from '@/app/components-demo/ui/youtube-video'
 import { CompletionDot } from '@/app/components-demo/ui/template-status'
-import { CollapsibleSidebar } from '@/app/components-demo/ui/collapsible-sidebar'
+import { CollapsibleSidebar } from '@/app/components-demo/ui/layout-components/collapsible-sidebar'
+import { LessonRightSidebar } from '@/app/components-demo/ui/layout-components/lesson-right-sidebar'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
   getCourseBySlug, 
@@ -358,9 +359,9 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full px-0 py-8">
         {/* Course Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-6 px-4">
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Link href="/courses" className="hover:text-foreground">Courses</Link>
             <span>/</span>
@@ -370,15 +371,15 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Enhanced Collapsible Sidebar */}
+        <div className="flex">
+          {/* Left Sidebar - Course Navigation */}
           <CollapsibleSidebar 
             currentLessonSlug={lesson.slug}
             courseSlug={resolvedParams?.slug || ''}
           />
 
           {/* Main Content */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
+          <div className="flex-1 px-4">
             {/* Lesson Header */}
             <div className="bg-white rounded-sm border border-[#feefea] p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
@@ -386,28 +387,28 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                   <Badge className="bg-[#e27447] text-white mb-2 rounded-sm">
                     Lesson {lesson.lesson_order}
                   </Badge>
-                  <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+                  <h1 className="text-4xl font-bold text-[#1e293b] mb-2">
                     {lesson.title}
                   </h1>
-                  <p className="text-muted-foreground text-lg">
+                  <p className="text-muted-foreground text-xl">
                     Learn important concepts and practice problems
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">30 min</span>
+                    <span className="text-base text-muted-foreground">30 min</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {lesson.is_preview ? (
                       <>
                         <Eye className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-blue-600">Preview</span>
+                        <span className="text-base text-blue-600">Preview</span>
                       </>
                     ) : (
                       <>
                         <Unlock className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-green-600">Unlocked</span>
+                        <span className="text-base text-green-600">Unlocked</span>
                       </>
                     )}
                   </div>
@@ -420,21 +421,21 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
               <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
                 <TabsTrigger 
                   value="video" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   Video
                 </TabsTrigger>
                 <TabsTrigger 
                   value="notes" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <FileText className="w-4 h-4 mr-2" />
                   Notes
                 </TabsTrigger>
                 <TabsTrigger 
                   value="practice" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Practice
@@ -484,7 +485,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                           <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
                             {lesson.title}
                           </h3>
-                          <p className="text-muted-foreground mb-4">
+                          <p className="text-muted-foreground mb-4 leading-relaxed">
                             Video content will be available soon
                           </p>
                           <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
@@ -531,7 +532,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                   <CardContent className="space-y-6">
                     {/* Lesson Content */}
                     {lesson.content && (
-                      <div className="prose prose-sm max-w-none">
+                      <div className="prose prose-sm max-w-none leading-relaxed">
                         <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
                       </div>
                     )}
@@ -645,6 +646,32 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
               </Button>
             </div>
           </div>
+
+          {/* Right Sidebar - Lesson Tools */}
+          <LessonRightSidebar 
+            courseSlug={resolvedParams?.slug || ''}
+            notes={[
+              {
+                id: '1',
+                title: 'Key Concept',
+                content: lesson.content?.substring(0, 100) + '...' || 'No content available',
+                timestamp: '12:30',
+                isImportant: true
+              }
+            ]}
+            resources={lesson.resources?.map(r => ({
+              id: r.id,
+              title: `${r.kind} Resource`,
+              type: r.kind as 'pdf' | 'video' | 'link' | 'quiz',
+              url: r.url,
+              size: r.duration_sec ? `${Math.round(r.duration_sec / 60)} min` : undefined
+            })) || []}
+            keyPoints={[
+              'Master the core concepts',
+              'Practice with examples',
+              'Apply to real problems'
+            ]}
+          />
         </div>
       </div>
     </div>

@@ -285,7 +285,38 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'fundamental-theorem-arithmetic',
       slug: 'fundamental-theorem-arithmetic',
       title: 'Fundamental Theorem of Arithmetic',
-      description: 'Understanding prime factorization and its applications.',
+      description: `
+        <h3>Fundamental Theorem of Arithmetic</h3>
+        <p>The Fundamental Theorem of Arithmetic states that every integer greater than 1 can be expressed as a unique product of prime numbers.</p>
+        
+        <h4>Statement:</h4>
+        <blockquote>
+          <p><strong>Every composite number can be expressed as a product of primes, and this factorization is unique, apart from the order in which the prime factors occur.</strong></p>
+        </blockquote>
+        
+        <h4>Key Concepts:</h4>
+        <ul>
+          <li><strong>Prime Factorization:</strong> Breaking down a number into its prime factors</li>
+          <li><strong>Uniqueness:</strong> Each number has only one prime factorization (order doesn't matter)</li>
+          <li><strong>Applications:</strong> Used in finding HCF, LCM, and solving various problems</li>
+        </ul>
+        
+        <h4>Examples:</h4>
+        <ul>
+          <li><strong>12 = 2² × 3¹</strong> (Prime factors: 2, 2, 3)</li>
+          <li><strong>18 = 2¹ × 3²</strong> (Prime factors: 2, 3, 3)</li>
+          <li><strong>30 = 2¹ × 3¹ × 5¹</strong> (Prime factors: 2, 3, 5)</li>
+        </ul>
+        
+        <h4>Finding HCF and LCM:</h4>
+        <p><strong>HCF:</strong> Take the lowest power of each common prime factor</p>
+        <p><strong>LCM:</strong> Take the highest power of each prime factor</p>
+        
+        <h4>Example:</h4>
+        <p>For 12 = 2² × 3¹ and 18 = 2¹ × 3²:</p>
+        <p>HCF = 2¹ × 3¹ = 6</p>
+        <p>LCM = 2² × 3² = 36</p>
+      `,
       duration: '55 minutes',
       type: 'video',
       isPreview: false,
@@ -297,6 +328,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/fundamental-theorem-arithmetic.mp4',
           title: 'Fundamental Theorem of Arithmetic Video',
           duration: 2200
+        },
+        {
+          id: 'fta-worksheet',
+          type: 'pdf',
+          url: '/pdfs/fundamental-theorem-worksheet.pdf',
+          title: 'Prime Factorization Worksheet'
         }
       ]
     },
@@ -304,7 +341,48 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'real-numbers-practice',
       slug: 'real-numbers-practice',
       title: 'Real Numbers Practice Problems',
-      description: 'Practice problems and exercises on real numbers concepts.',
+      description: `
+        <h3>Real Numbers Practice Problems</h3>
+        <p>Comprehensive practice problems covering all concepts of real numbers including rational and irrational numbers, properties, and applications.</p>
+        
+        <h4>Problem Categories:</h4>
+        <ul>
+          <li><strong>Basic Operations:</strong> Addition, subtraction, multiplication, division</li>
+          <li><strong>Properties Application:</strong> Commutative, associative, distributive</li>
+          <li><strong>Rational vs Irrational:</strong> Classification and identification</li>
+          <li><strong>Decimal Expansions:</strong> Terminating and non-terminating decimals</li>
+          <li><strong>Number Line:</strong> Representation and ordering</li>
+        </ul>
+        
+        <h4>Sample Problems:</h4>
+        <div class="problem-set">
+          <h5>Problem 1:</h5>
+          <p>Classify the following numbers as rational or irrational:</p>
+          <ul>
+            <li>√16</li>
+            <li>√17</li>
+            <li>0.333...</li>
+            <li>π</li>
+          </ul>
+          
+          <h5>Problem 2:</h5>
+          <p>Find the HCF and LCM of 12 and 18 using prime factorization.</p>
+          
+          <h5>Problem 3:</h5>
+          <p>Prove that √3 is irrational.</p>
+          
+          <h5>Problem 4:</h5>
+          <p>Express 0.6̄ (repeating decimal) as a fraction.</p>
+        </div>
+        
+        <h4>Solution Strategies:</h4>
+        <ul>
+          <li><strong>Prime Factorization:</strong> Break down numbers into prime factors</li>
+          <li><strong>Proof by Contradiction:</strong> Assume opposite and derive contradiction</li>
+          <li><strong>Decimal to Fraction:</strong> Use algebraic manipulation</li>
+          <li><strong>Properties:</strong> Apply commutative, associative, distributive laws</li>
+        </ul>
+      `,
       duration: '60 minutes',
       type: 'practice',
       isPreview: false,
@@ -315,6 +393,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           type: 'pdf',
           url: '/pdfs/real-numbers-practice.pdf',
           title: 'Practice Worksheet'
+        },
+        {
+          id: 'practice-solutions',
+          type: 'pdf',
+          url: '/pdfs/real-numbers-solutions.pdf',
+          title: 'Detailed Solutions'
         }
       ]
     },
@@ -361,7 +445,49 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'polynomial-zeroes',
       slug: 'polynomial-zeroes',
       title: 'Zeroes of Polynomials',
-      description: 'Finding zeroes of polynomials and their relationship with coefficients.',
+      description: `
+        <h3>Zeroes of Polynomials</h3>
+        <p>The zeroes (or roots) of a polynomial are the values of the variable that make the polynomial equal to zero.</p>
+        
+        <h4>Definition:</h4>
+        <p>If P(x) is a polynomial and P(a) = 0, then 'a' is called a zero of the polynomial P(x).</p>
+        
+        <h4>Key Concepts:</h4>
+        <ul>
+          <li><strong>Zero:</strong> Value that makes polynomial equal to zero</li>
+          <li><strong>Root:</strong> Another term for zero</li>
+          <li><strong>Factor Theorem:</strong> If 'a' is a zero, then (x - a) is a factor</li>
+          <li><strong>Remainder Theorem:</strong> P(a) gives remainder when P(x) is divided by (x - a)</li>
+        </ul>
+        
+        <h4>Finding Zeroes:</h4>
+        <ul>
+          <li><strong>Linear Polynomial:</strong> ax + b = 0 → x = -b/a</li>
+          <li><strong>Quadratic Polynomial:</strong> Use factorization or quadratic formula</li>
+          <li><strong>Higher Degree:</strong> Use factor theorem and synthetic division</li>
+        </ul>
+        
+        <h4>Examples:</h4>
+        <div class="example-set">
+          <h5>Example 1:</h5>
+          <p>Find zeroes of P(x) = x² - 5x + 6</p>
+          <p><strong>Solution:</strong> x² - 5x + 6 = (x - 2)(x - 3) = 0</p>
+          <p>Therefore, x = 2 and x = 3 are the zeroes.</p>
+          
+          <h5>Example 2:</h5>
+          <p>Find zeroes of P(x) = x³ - 6x² + 11x - 6</p>
+          <p><strong>Solution:</strong> By trial, P(1) = 0, so (x - 1) is a factor.</p>
+          <p>x³ - 6x² + 11x - 6 = (x - 1)(x² - 5x + 6) = (x - 1)(x - 2)(x - 3)</p>
+          <p>Zeroes are x = 1, x = 2, and x = 3.</p>
+        </div>
+        
+        <h4>Relationship with Coefficients:</h4>
+        <p>For a quadratic polynomial ax² + bx + c with zeroes α and β:</p>
+        <ul>
+          <li><strong>Sum of zeroes:</strong> α + β = -b/a</li>
+          <li><strong>Product of zeroes:</strong> α × β = c/a</li>
+        </ul>
+      `,
       duration: '50 minutes',
       type: 'video',
       isPreview: false,
@@ -373,6 +499,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/polynomial-zeroes.mp4',
           title: 'Zeroes of Polynomials Video',
           duration: 2000
+        },
+        {
+          id: 'zeroes-worksheet',
+          type: 'pdf',
+          url: '/pdfs/polynomial-zeroes-worksheet.pdf',
+          title: 'Zeroes Practice Worksheet'
         }
       ]
     },
@@ -380,7 +512,47 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'polynomials-practice',
       slug: 'polynomials-practice',
       title: 'Polynomials Practice Problems',
-      description: 'Practice problems on polynomials and their properties.',
+      description: `
+        <h3>Polynomials Practice Problems</h3>
+        <p>Comprehensive practice problems covering polynomial concepts including degree, coefficients, zeroes, and factorization.</p>
+        
+        <h4>Problem Types:</h4>
+        <ul>
+          <li><strong>Polynomial Identification:</strong> Degree, coefficients, constant terms</li>
+          <li><strong>Zero Finding:</strong> Using factorization and factor theorem</li>
+          <li><strong>Polynomial Operations:</strong> Addition, subtraction, multiplication</li>
+          <li><strong>Factorization:</strong> Common factors, grouping, special identities</li>
+          <li><strong>Relationship Problems:</strong> Sum and product of zeroes</li>
+        </ul>
+        
+        <h4>Sample Problems:</h4>
+        <div class="problem-set">
+          <h5>Problem 1:</h5>
+          <p>Find the degree and leading coefficient of the polynomial: 3x⁴ - 2x³ + 5x² - x + 7</p>
+          
+          <h5>Problem 2:</h5>
+          <p>If α and β are zeroes of the polynomial x² - 5x + 6, find:</p>
+          <ul>
+            <li>α + β</li>
+            <li>α × β</li>
+            <li>α² + β²</li>
+          </ul>
+          
+          <h5>Problem 3:</h5>
+          <p>Factorize: x³ - 8x² + 19x - 12</p>
+          
+          <h5>Problem 4:</h5>
+          <p>Find a quadratic polynomial whose zeroes are 2 + √3 and 2 - √3.</p>
+        </div>
+        
+        <h4>Solution Techniques:</h4>
+        <ul>
+          <li><strong>Factor Theorem:</strong> Test values to find factors</li>
+          <li><strong>Synthetic Division:</strong> Divide polynomials efficiently</li>
+          <li><strong>Vieta's Formulas:</strong> Use sum and product relationships</li>
+          <li><strong>Special Identities:</strong> Apply a² - b², (a + b)², etc.</li>
+        </ul>
+      `,
       duration: '55 minutes',
       type: 'practice',
       isPreview: false,
@@ -391,6 +563,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           type: 'pdf',
           url: '/pdfs/polynomials-practice.pdf',
           title: 'Polynomials Practice Worksheet'
+        },
+        {
+          id: 'polynomials-solutions',
+          type: 'pdf',
+          url: '/pdfs/polynomials-solutions.pdf',
+          title: 'Detailed Solutions'
         }
       ]
     },
@@ -400,7 +578,56 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'linear-equations-intro',
       slug: 'linear-equations-intro',
       title: 'Introduction to Linear Equations',
-      description: 'Understanding linear equations in two variables and their graphical representation.',
+      description: `
+        <h3>Introduction to Linear Equations in Two Variables</h3>
+        <p>Linear equations in two variables are fundamental in algebra and have wide applications in real-world problems.</p>
+        
+        <h4>Definition:</h4>
+        <p>A linear equation in two variables x and y is an equation of the form:</p>
+        <p><strong>ax + by + c = 0</strong></p>
+        <p>where a, b, and c are real numbers, and a and b are not both zero.</p>
+        
+        <h4>Key Concepts:</h4>
+        <ul>
+          <li><strong>Variables:</strong> x and y are the two variables</li>
+          <li><strong>Coefficients:</strong> a and b are coefficients of x and y respectively</li>
+          <li><strong>Constant Term:</strong> c is the constant term</li>
+          <li><strong>Solution:</strong> A pair (x, y) that satisfies the equation</li>
+        </ul>
+        
+        <h4>Standard Forms:</h4>
+        <ul>
+          <li><strong>General Form:</strong> ax + by + c = 0</li>
+          <li><strong>Slope-Intercept Form:</strong> y = mx + c</li>
+          <li><strong>Point-Slope Form:</strong> y - y₁ = m(x - x₁)</li>
+        </ul>
+        
+        <h4>Graphical Representation:</h4>
+        <p>Every linear equation in two variables represents a straight line on the coordinate plane.</p>
+        
+        <h4>Examples:</h4>
+        <div class="example-set">
+          <h5>Example 1:</h5>
+          <p>2x + 3y - 6 = 0</p>
+          <p>This is a linear equation where a = 2, b = 3, c = -6</p>
+          
+          <h5>Example 2:</h5>
+          <p>y = 2x + 1</p>
+          <p>In standard form: 2x - y + 1 = 0</p>
+          
+          <h5>Example 3:</h5>
+          <p>Find solutions for 2x + 3y = 6</p>
+          <p>Some solutions: (0, 2), (3, 0), (1, 4/3)</p>
+        </div>
+        
+        <h4>Applications:</h4>
+        <ul>
+          <li><strong>Cost Problems:</strong> Finding cost relationships</li>
+          <li><strong>Age Problems:</strong> Comparing ages over time</li>
+          <li><strong>Distance Problems:</strong> Speed, time, and distance relationships</li>
+          <li><strong>Mixture Problems:</strong> Combining different quantities</li>
+        </ul>
+      `,
       duration: '45 minutes',
       type: 'video',
       isPreview: true,
@@ -412,6 +639,12 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           url: '/videos/linear-equations-intro.mp4',
           title: 'Linear Equations Introduction Video',
           duration: 1800
+        },
+        {
+          id: 'linear-notes',
+          type: 'pdf',
+          url: '/pdfs/linear-equations-notes.pdf',
+          title: 'Linear Equations Study Notes'
         }
       ]
     },
@@ -419,11 +652,75 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'graphical-method',
       slug: 'graphical-method',
       title: 'Graphical Method of Solution',
-      description: 'Solving linear equations using graphical method.',
+      description: `
+        <h3>Graphical Method of Solving Linear Equations</h3>
+        <p>The graphical method involves plotting both equations on the same coordinate plane and finding their point of intersection.</p>
+        
+        <h4>Steps to Solve Graphically:</h4>
+        <ol>
+          <li><strong>Convert to Slope-Intercept Form:</strong> Express both equations as y = mx + c</li>
+          <li><strong>Find Points:</strong> Calculate at least two points for each line</li>
+          <li><strong>Plot Lines:</strong> Draw both lines on the coordinate plane</li>
+          <li><strong>Find Intersection:</strong> The point where lines meet is the solution</li>
+        </ol>
+        
+        <h4>Types of Solutions:</h4>
+        <ul>
+          <li><strong>Unique Solution:</strong> Lines intersect at one point (consistent system)</li>
+          <li><strong>No Solution:</strong> Lines are parallel (inconsistent system)</li>
+          <li><strong>Infinite Solutions:</strong> Lines coincide (dependent system)</li>
+        </ul>
+        
+        <h4>Example:</h4>
+        <div class="example-set">
+          <h5>Solve the system:</h5>
+          <p>2x + 3y = 6 ... (1)</p>
+          <p>x - y = 1 ... (2)</p>
+          
+          <h5>Step 1: Convert to slope-intercept form</h5>
+          <p>From (1): y = -2x/3 + 2</p>
+          <p>From (2): y = x - 1</p>
+          
+          <h5>Step 2: Find points</h5>
+          <p><strong>For y = -2x/3 + 2:</strong></p>
+          <p>When x = 0: y = 2 → (0, 2)</p>
+          <p>When x = 3: y = 0 → (3, 0)</p>
+          
+          <p><strong>For y = x - 1:</strong></p>
+          <p>When x = 0: y = -1 → (0, -1)</p>
+          <p>When x = 1: y = 0 → (1, 0)</p>
+          
+          <h5>Step 3: Plot and find intersection</h5>
+          <p>The lines intersect at approximately (1.8, 0.8)</p>
+          <p>Therefore, x ≈ 1.8, y ≈ 0.8</p>
+        </div>
+        
+        <h4>Advantages and Limitations:</h4>
+        <ul>
+          <li><strong>Advantages:</strong> Visual representation, easy to understand</li>
+          <li><strong>Limitations:</strong> Not precise for exact solutions, time-consuming</li>
+        </ul>
+      `,
       duration: '50 minutes',
       type: 'video',
       isPreview: false,
       order: 9,
+      resources: [
+        {
+          id: 'graphical-video',
+          type: 'video',
+          url: '/videos/graphical-method.mp4',
+          title: 'Graphical Method Video',
+          duration: 2000
+        },
+        {
+          id: 'graphical-worksheet',
+          type: 'pdf',
+          url: '/pdfs/graphical-method-worksheet.pdf',
+          title: 'Graphical Method Worksheet'
+        }
+      ]
+    },
       resources: [
         {
           id: 'graphical-video',

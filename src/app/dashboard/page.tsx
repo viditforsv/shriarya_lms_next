@@ -194,9 +194,6 @@ export default function DashboardPage() {
                   <Link href="/dashboard/courses/manage">
                     <Button className="w-full">Manage Courses</Button>
                   </Link>
-                  <Link href="/dashboard/courses/builder">
-                    <Button variant="outline" className="w-full">Course Builder</Button>
-                  </Link>
                 </div>
               </CardContent>
             </Card>

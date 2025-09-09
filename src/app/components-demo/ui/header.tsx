@@ -55,7 +55,6 @@ export function Header() {
       return [
         { name: "Home", href: "/", hasDropdown: false },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
-        { name: "Course Builder", href: "/course-builder", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
       ]
     } else if (user) {

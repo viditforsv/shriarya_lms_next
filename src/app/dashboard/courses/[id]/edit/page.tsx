@@ -249,7 +249,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
-              Course Builder
+              Edit Course
             </h1>
             <p className="text-muted-foreground">
               {course?.status === 'draft' ? 'Draft' : 'Published'} • {lessons.length} lessons

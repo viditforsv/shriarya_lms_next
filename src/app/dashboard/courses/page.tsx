@@ -105,16 +105,10 @@ export default function CoursesDashboard() {
             <div className="flex gap-2">
               <Button 
                 onClick={() => router.push('/dashboard/courses/manage')}
-                variant="outline"
-              >
-                Manage Courses
-              </Button>
-              <Button 
-                onClick={() => router.push('/dashboard/courses/builder')}
                 className="bg-[#e27447] hover:bg-[#d1653a]"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Course Builder
+                Manage Courses
               </Button>
             </div>
           </div>

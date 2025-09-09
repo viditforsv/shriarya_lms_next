@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useMemo } 
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { UserProfile, UserRole } from '@/types/auth'
+import { SessionStorage } from '@/hooks/useSessionPersistence'
 
 interface AuthContextType {
   user: User | null
@@ -359,16 +360,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           console.log('Getting initial session...')
           
-          // Try to get current user first
-          const { data: { user: currentUser } } = await supabase.auth.getUser()
+          // Try to restore from persistent storage first
+          const storedSession = SessionStorage.getSession()
+          const storedUser = SessionStorage.getUser()
           
-          // Then get session
-          const { data: { session } } = await supabase.auth.getSession()
-          
-          // Use current user if session is not available
-          const user = session?.user || currentUser
-          setSession(session)
-          setUser(user)
+          if (storedSession && !SessionStorage.isSessionExpired()) {
+            console.log('Restoring session from persistent storage')
+            setSession(storedSession)
+            setUser(storedUser)
+            
+            // Verify with Supabase
+            const { data: { session: verifiedSession }, error } = await supabase.auth.getSession()
+            
+            if (error || !verifiedSession) {
+              console.log('Stored session invalid, clearing storage')
+              SessionStorage.clearSession()
+              setSession(null)
+              setUser(null)
+            } else {
+              console.log('Stored session verified, updating state')
+              setSession(verifiedSession)
+              setUser(verifiedSession.user)
+              SessionStorage.saveSession(verifiedSession)
+              SessionStorage.saveUser(verifiedSession.user)
+            }
+          } else {
+            console.log('No valid stored session, checking Supabase')
+            
+            // Try to get current user first
+            const { data: { user: currentUser } } = await supabase.auth.getUser()
+            
+            // Then get session
+            const { data: { session } } = await supabase.auth.getSession()
+            
+            // Use current user if session is not available
+            const user = session?.user || currentUser
+            setSession(session)
+            setUser(user)
+            
+            // Save to persistent storage if valid
+            if (session) {
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
+            }
+          }
           
           // Fetch profile if user exists
           if (user) {
@@ -393,35 +428,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           try {
+            console.log('Auth state change:', event, session ? 'session exists' : 'no session')
+            
             setSession(session)
             setUser(session?.user ?? null)
+            
+            // Enhanced session persistence
+            if (session) {
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
+              console.log('Session saved to persistent storage')
+            } else {
+              SessionStorage.clearSession()
+              console.log('Session cleared from persistent storage')
+            }
             
             // Handle signout event - redirect to login page
             if (event === 'SIGNED_OUT') {
               console.log('User signed out, redirecting to login page')
+              SessionStorage.clearSession()
               if (typeof window !== 'undefined') {
                 window.location.href = '/auth'
               }
               return
             }
             
-            // Handle signin event - redirect to enrolled courses (only for email/password login)
+            // Handle token refresh
+            if (event === 'TOKEN_REFRESHED' && session) {
+              console.log('Token refreshed, updating persistent storage')
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
+              return
+            }
+            
+            // Handle signin event - redirect to appropriate page
             if (event === 'SIGNED_IN' && session?.user) {
               console.log('User signed in, checking if redirect is needed')
               if (typeof window !== 'undefined') {
-                // Only redirect if we're not already on the enrolled courses page
-                // and not coming from OAuth callback (which handles its own redirect)
                 const currentPath = window.location.pathname
                 const isFromCallback = document.referrer.includes('/auth/callback')
                 
-                if (currentPath !== '/courses/enrolled' && !isFromCallback) {
-                  console.log('Redirecting to enrolled courses after login')
-                  setTimeout(() => {
-                    window.location.href = '/courses/enrolled'
-                  }, 100)
-                } else {
+                // Don't redirect if already on a valid page or coming from OAuth callback
+                if (currentPath === '/courses/enrolled' || isFromCallback) {
                   console.log('Skipping redirect - already on target page or from OAuth callback')
+                  return
                 }
+                
+                // Smart redirect based on current context
+                let redirectPath = '/dashboard' // Default to dashboard instead of enrolled courses
+                
+                // If user was trying to access a specific course, redirect there
+                if (currentPath.startsWith('/courses/') && !currentPath.includes('/enrolled')) {
+                  redirectPath = currentPath
+                }
+                // If user was on auth page, redirect to dashboard
+                else if (currentPath.startsWith('/auth')) {
+                  redirectPath = '/dashboard'
+                }
+                
+                console.log(`Redirecting to ${redirectPath} after login`)
+                setTimeout(() => {
+                  window.location.href = redirectPath
+                }, 100)
               }
               return
             }

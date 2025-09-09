@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   },
   
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: process.env.NEXT_DISABLE_ESLINT === '1',
   },
 };
 

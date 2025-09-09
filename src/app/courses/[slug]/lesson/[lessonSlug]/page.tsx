@@ -16,8 +16,6 @@ import {
   Clock,
   Lock,
   Unlock,
-  Download,
-  Share2,
   Bookmark,
   MessageCircle,
   Eye
@@ -30,7 +28,8 @@ import {
   getCourseBySlug, 
   getLessonsByCourseSlug, 
   CourseConfig, 
-  LessonConfig 
+  LessonConfig,
+  ResourceConfig
 } from '@/lib/course-config'
 
 interface Course {
@@ -95,7 +94,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
   }, [params])
 
   useEffect(() => {
-    if (!resolvedParams || !user) return
+    if (!resolvedParams) return
 
     const loadLesson = async () => {
       try {
@@ -109,19 +108,69 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
           throw new Error('Course not found')
         }
 
-        setCourse(courseInfo)
+        // Convert CourseConfig to Course interface
+        const courseData: Course = {
+          id: courseInfo.slug, // Use slug as ID for static courses
+          title: courseInfo.title,
+          description: courseInfo.description,
+          slug: courseInfo.slug,
+          is_free: courseInfo.isFree,
+          created_at: new Date().toISOString(), // Use current date for static courses
+          profiles: {
+            first_name: 'System',
+            last_name: 'Admin'
+          }
+        }
 
-        // Get lessons from configuration
+        setCourse(courseData)
+
+        // Get lessons from configuration and convert to Lesson interface
         const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
-        setAllLessons(lessonsData)
+        const mappedLessons: Lesson[] = lessonsData.map((lesson: LessonConfig, index: number) => ({
+          id: lesson.slug, // Use slug as ID for static lessons
+          title: lesson.title,
+          slug: lesson.slug,
+          content: lesson.description || '', // Use description as content
+          lesson_order: lesson.order || index + 1, // Use order from config or index
+          is_preview: lesson.isPreview || false,
+          created_at: new Date().toISOString(), // Use current date for static lessons
+          course_id: courseData.id,
+          resources: (lesson.resources || []).map((resource: ResourceConfig) => ({
+            id: resource.url, // Use URL as ID for static resources
+            url: resource.url,
+            kind: resource.type || 'file', // Default to 'file' type
+            mime: 'application/octet-stream', // Default MIME type
+            duration_sec: 0 // Default duration for static resources
+          }))
+        }))
+        setAllLessons(mappedLessons)
 
-        // Find the specific lesson
+        // Find the specific lesson and map it to Lesson interface
         const lessonInfo = lessonsData.find((l: LessonConfig) => l.slug === resolvedParams.lessonSlug)
         if (!lessonInfo) {
           throw new Error('Lesson not found')
         }
 
-        setLesson(lessonInfo)
+        // Map LessonConfig to Lesson interface
+        const mappedLesson: Lesson = {
+          id: lessonInfo.slug,
+          title: lessonInfo.title,
+          slug: lessonInfo.slug,
+          content: lessonInfo.description || '',
+          lesson_order: lessonInfo.order || 1,
+          is_preview: lessonInfo.isPreview || false,
+          created_at: new Date().toISOString(),
+          course_id: courseData.id,
+          resources: (lessonInfo.resources || []).map((resource: ResourceConfig) => ({
+            id: resource.url,
+            url: resource.url,
+            kind: resource.type || 'file',
+            mime: 'application/octet-stream',
+            duration_sec: 0
+          }))
+        }
+
+        setLesson(mappedLesson)
 
         // Check enrollment - for free courses, user is automatically enrolled
         setIsEnrolled(courseInfo.isFree || false)
@@ -142,7 +191,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
     }
 
     loadLesson()
-  }, [resolvedParams, user])
+  }, [resolvedParams])
 
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free
@@ -200,18 +249,6 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
   const handleBookmarkToggle = () => {
     setIsBookmarked(!isBookmarked)
     alert(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks')
-  }
-
-  const handleShareLesson = () => {
-    const url = window.location.href
-    const title = lesson?.title || 'Lesson'
-    
-    if (navigator.share) {
-      navigator.share({ title, url })
-    } else {
-      navigator.clipboard.writeText(url)
-      alert('Link copied to clipboard!')
-    }
   }
 
   const handlePracticeAnswerChange = (questionId: string, answer: string) => {
@@ -315,15 +352,6 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
               >
                 <Bookmark className={`w-4 h-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
                 {isBookmarked ? 'Bookmarked' : 'Bookmark'}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-sm"
-                onClick={handleShareLesson}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
               </Button>
             </div>
           </div>
@@ -474,32 +502,15 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                     )}
                     
                     {/* Video Controls */}
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Button variant="outline" size="sm" className="rounded-sm">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="rounded-sm"
-                          onClick={handleShareLesson}
-                        >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          Share Video
-                        </Button>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
-                          onClick={handleMarkComplete}
-                          disabled={userProgress?.is_completed}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          {userProgress?.is_completed ? 'Completed' : 'Mark as Complete'}
-                        </Button>
-                      </div>
+                    <div className="mt-4 flex items-center justify-end">
+                      <Button 
+                        className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                        onClick={handleMarkComplete}
+                        disabled={userProgress?.is_completed}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        {userProgress?.is_completed ? 'Completed' : 'Mark as Complete'}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

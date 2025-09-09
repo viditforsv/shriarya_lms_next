@@ -172,7 +172,20 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'real-numbers-intro',
       slug: 'real-numbers-intro',
       title: 'Introduction to Real Numbers',
-      description: 'Understanding the concept of real numbers, rational and irrational numbers, and their properties.',
+      description: `
+        <h3>Understanding Real Numbers</h3>
+        <p>Real numbers form the foundation of mathematics. In this lesson, we'll explore:</p>
+        <ul>
+          <li><strong>Rational Numbers:</strong> Numbers that can be expressed as fractions (p/q where q ≠ 0)</li>
+          <li><strong>Irrational Numbers:</strong> Numbers that cannot be expressed as fractions (like √2, √3, π)</li>
+          <li><strong>Properties:</strong> Commutative, associative, and distributive properties</li>
+        </ul>
+        <h4>Key Concepts:</h4>
+        <p>Every real number can be represented on the number line. Rational numbers have terminating or repeating decimal expansions, while irrational numbers have non-terminating, non-repeating decimal expansions.</p>
+        <h4>Example:</h4>
+        <p>√2 ≈ 1.414213562... (non-terminating, non-repeating)</p>
+        <p>1/3 = 0.333... (repeating decimal)</p>
+      `,
       duration: '45 minutes',
       type: 'video',
       isPreview: true,
@@ -196,10 +209,64 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       ]
     },
     {
+      id: 'real-numbers-properties',
+      slug: 'real-numbers-properties',
+      title: 'Properties of Real Numbers',
+      description: `
+        <h3>Properties of Real Numbers</h3>
+        <p>Real numbers follow several important properties:</p>
+        <h4>1. Commutative Property</h4>
+        <ul>
+          <li><strong>Addition:</strong> a + b = b + a</li>
+          <li><strong>Multiplication:</strong> a × b = b × a</li>
+        </ul>
+        <h4>2. Associative Property</h4>
+        <ul>
+          <li><strong>Addition:</strong> (a + b) + c = a + (b + c)</li>
+          <li><strong>Multiplication:</strong> (a × b) × c = a × (b × c)</li>
+        </ul>
+        <h4>3. Distributive Property</h4>
+        <p><strong>a × (b + c) = a × b + a × c</strong></p>
+        <h4>Examples:</h4>
+        <p>• 3 + 5 = 5 + 3 = 8 (Commutative)</p>
+        <p>• (2 + 3) + 4 = 2 + (3 + 4) = 9 (Associative)</p>
+        <p>• 2 × (3 + 4) = 2 × 3 + 2 × 4 = 14 (Distributive)</p>
+      `,
+      duration: '40 minutes',
+      type: 'video',
+      isPreview: false,
+      order: 2,
+      resources: [
+        {
+          url: 'https://example.com/real-numbers-properties.pdf',
+          type: 'pdf',
+          title: 'Properties Worksheet'
+        }
+      ]
+    },
+    {
       id: 'euclid-division-lemma',
       slug: 'euclid-division-lemma',
       title: 'Euclid\'s Division Lemma',
-      description: 'Learn about Euclid\'s Division Lemma and its applications in number theory.',
+      description: `
+        <h3>Euclid's Division Lemma</h3>
+        <p>Euclid's Division Lemma is a fundamental theorem in number theory that states:</p>
+        <blockquote>
+          <p><strong>For any two positive integers a and b, there exist unique integers q and r such that:</strong></p>
+          <p><strong>a = bq + r, where 0 ≤ r < b</strong></p>
+        </blockquote>
+        <h4>Understanding the Components:</h4>
+        <ul>
+          <li><strong>a:</strong> Dividend (the number being divided)</li>
+          <li><strong>b:</strong> Divisor (the number dividing)</li>
+          <li><strong>q:</strong> Quotient (the result of division)</li>
+          <li><strong>r:</strong> Remainder (must be less than divisor)</li>
+        </ul>
+        <h4>Example:</h4>
+        <p>For a = 17 and b = 5:</p>
+        <p>17 = 5 × 3 + 2</p>
+        <p>Here, q = 3 and r = 2 (since 0 ≤ 2 < 5)</p>
+      `,
       duration: '50 minutes',
       type: 'video',
       isPreview: false,
@@ -257,7 +324,25 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'polynomials-intro',
       slug: 'polynomials-intro',
       title: 'Introduction to Polynomials',
-      description: 'Understanding polynomials, degrees, and types of polynomials.',
+      description: `
+        <h3>Introduction to Polynomials</h3>
+        <p>A polynomial is an algebraic expression consisting of variables and coefficients, involving only addition, subtraction, multiplication, and non-negative integer exponents.</p>
+        <h4>General Form:</h4>
+        <p><strong>P(x) = aₙxⁿ + aₙ₋₁xⁿ⁻¹ + ... + a₁x + a₀</strong></p>
+        <h4>Key Terms:</h4>
+        <ul>
+          <li><strong>Degree:</strong> Highest power of the variable</li>
+          <li><strong>Coefficient:</strong> Numerical factor of each term</li>
+          <li><strong>Constant Term:</strong> Term with no variable (a₀)</li>
+          <li><strong>Leading Coefficient:</strong> Coefficient of the highest degree term</li>
+        </ul>
+        <h4>Examples:</h4>
+        <ul>
+          <li>3x² + 2x + 1 (Degree: 2, Leading coefficient: 3)</li>
+          <li>5x³ - 2x + 7 (Degree: 3, Leading coefficient: 5)</li>
+          <li>x⁴ + 3x² - 1 (Degree: 4, Leading coefficient: 1)</li>
+        </ul>
+      `,
       duration: '40 minutes',
       type: 'video',
       isPreview: true,
@@ -624,7 +709,46 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
       id: 'trigonometry-intro',
       slug: 'trigonometry-intro',
       title: 'Introduction to Trigonometry',
-      description: 'Understanding trigonometric ratios and their applications.',
+      description: `
+        <h3>Introduction to Trigonometry</h3>
+        <p>Trigonometry is the branch of mathematics that deals with the relationships between the sides and angles of triangles.</p>
+        <h4>Basic Trigonometric Ratios:</h4>
+        <p>For a right-angled triangle with angle θ:</p>
+        <ul>
+          <li><strong>sin θ = Opposite/Hypotenuse</strong></li>
+          <li><strong>cos θ = Adjacent/Hypotenuse</strong></li>
+          <li><strong>tan θ = Opposite/Adjacent</strong></li>
+        </ul>
+        <h4>Standard Angles:</h4>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <th>Angle</th>
+            <th>sin</th>
+            <th>cos</th>
+            <th>tan</th>
+          </tr>
+          <tr>
+            <td>30°</td>
+            <td>1/2</td>
+            <td>√3/2</td>
+            <td>1/√3</td>
+          </tr>
+          <tr>
+            <td>45°</td>
+            <td>1/√2</td>
+            <td>1/√2</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>60°</td>
+            <td>√3/2</td>
+            <td>1/2</td>
+            <td>√3</td>
+          </tr>
+        </table>
+        <h4>Fundamental Identity:</h4>
+        <p><strong>sin²θ + cos²θ = 1</strong></p>
+      `,
       duration: '45 minutes',
       type: 'video',
       isPreview: true,

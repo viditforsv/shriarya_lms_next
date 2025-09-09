@@ -1,81 +1,51 @@
-The **CBSE Class 10 Mathematics syllabus for 2025-26** is organized into seven main chapters (“units”) with detailed subtopics and competencies.[1]
+### Units & Chapter Titles in Class X Mathematics
 
-## Chapter Names and Subtopics
+**Unit I: Number Systems**
 
-### Number Systems
+- Real Numbers (covering the Fundamental Theorem of Arithmetic, proofs of irrationality for √2, √3, √5, etc.)&#x20;
 
-- Real Numbers
-  - Fundamental Theorem of Arithmetic
-  - Proofs of irrationality of $$ \sqrt{2} $$, $$ \sqrt{3} $$, $$ \sqrt{5} $$
-  - Properties and applications of real numbers[1]
+**Unit II: Algebra**
 
-### Algebra
+- Polynomials (zeros and the relationship between zeros and coefficients of a quadratic polynomial)
+- Pair of Linear Equations in Two Variables (graphical and algebraic methods including consistency/inconsistency)
+- Quadratic Equations (standard form, real roots, discriminant, and real-life applications)
+- Arithmetic Progressions (nth term, sum of n terms, and applications)&#x20;
 
-- Polynomials
-  - Zeros of a polynomial
-  - Relationship between zeros and coefficients (for quadratic polynomials)
-- Pair of Linear Equations in Two Variables
-  - Graphical method of solution, consistency/inconsistency
-  - Algebraic solution: substitution and elimination
-- Quadratic Equations
-  - Standard form
-  - Solution by factorization & quadratic formula
-  - Nature of roots (discriminant)
-- Arithmetic Progressions
-  - nth term, sum of n terms, applications in problems[1]
+**Unit III: Coordinate Geometry**
 
-### Coordinate Geometry
+- Distance Formula and Section (Internal Division) Formula&#x20;
 
-- Concepts of coordinate geometry
-- Distance formula
-- Section formula (internal division)[1]
+**Unit IV: Geometry**
 
-### Geometry
+- Triangles (similarity—Basic Proportionality Theorem, criteria for similarity)
+- Circles (tangent properties: perpendicular to radius, equal tangents from an external point)&#x20;
 
-- Triangles
-  - Similarity criteria and properties
-  - Basic Proportionality Theorem (Thales’ theorem) and converse
-- Circles
-  - Tangent to a circle (definition, theorems)
-  - Properties of tangents[1]
+**Unit V: Trigonometry**
 
-### Trigonometry
+- Introduction to Trigonometry (trigonometric ratios of standard angles, their existence, relationships)
+- Trigonometric Identities (e.g., sin²A + cos²A = 1)
+- Heights and Distances (problems involving angles of elevation and depression of 30°, 45°, 60°)&#x20;
 
-- Introduction to Trigonometry
-  - Trigonometric ratios, values for $$ 30^\circ, 45^\circ, 60^\circ $$
-  - Relationships between ratios
-- Trigonometric Identities
-  - Proof and application of $$ \sin^2A + \cos^2A = 1 $$
-- Heights and Distances
-  - Simple problems involving angles of elevation and depression ($$ 30^\circ, 45^\circ, 60^\circ $$), maximum two right triangles[1]
+**Unit VI: Mensuration**
 
-### Mensuration
+- Areas Related to Circles (sectors and segments with central angles 60°, 90°, 120°)
+- Surface Areas and Volumes (combinations of cubes, cuboids, spheres, hemispheres, cylinders, cones)&#x20;
 
-- Areas Related to Circles
-  - Areas of sectors and segments, perimeter/circumference problems
-- Surface Areas and Volumes
-  - Cubes, cuboids, spheres, hemispheres, right circular cylinders/cones, and combinations of two solids[1]
+**Unit VII: Statistics & Probability**
 
-### Statistics and Probability
+- Statistics (mean, median, and mode of grouped data)
+- Probability (classical definition and simple probability problems)&#x20;
 
-- Statistics
-  - Mean, median, mode of grouped data (avoid bimodal situations)
-- Probability
-  - Classical definition
-  - Simple problems related to everyday events[1]
+---
 
-## Chapter Table
+### Quick Summary (because who doesn’t love bullet points?)
 
-| Chapter Name               | Main Subtopics [1]                                                                  |
-| -------------------------- | ----------------------------------------------------------------------------------- |
-| Number Systems             | Real Numbers, Fundamental Theorem, Irrationality proofs                             |
-| Algebra                    | Polynomials, Pair of Linear Equations, Quadratic Equations, Arithmetic Progressions |
-| Coordinate Geometry        | Distance Formula, Section Formula                                                   |
-| Geometry                   | Triangles (Similarity criteria), Circles (Tangents, Theorems)                       |
-| Trigonometry               | Trig Ratios, Identities, Heights & Distances                                        |
-| Mensuration                | Areas (Sectors, Segments), Surface Areas & Volumes                                  |
-| Statistics and Probability | Mean, Median, Mode (Grouped Data), Probability                                      |
-
-Every subtopic is designed to align with the prescribed NCERT textbooks and focus on both conceptual understanding and applications.[1]
-
-[1](https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/Maths_Sec_2025-26.pdf)
+| Unit | Title                    |
+| ---- | ------------------------ |
+| I    | Number Systems           |
+| II   | Algebra                  |
+| III  | Coordinate Geometry      |
+| IV   | Geometry                 |
+| V    | Trigonometry             |
+| VI   | Mensuration              |
+| VII  | Statistics & Probability |

@@ -38,8 +38,8 @@ export default function AuthPage() {
             return
           }
 
-          console.log('Auth page - OAuth success, redirecting to:', next || '/courses/enrolled')
-          router.push(next || '/courses/enrolled')
+          console.log('Auth page - OAuth success, redirecting to:', next || '/dashboard')
+          router.push(next || '/dashboard')
           
         } catch (err) {
           console.error('Auth page - OAuth callback exception:', err)

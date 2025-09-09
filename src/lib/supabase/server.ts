@@ -10,6 +10,10 @@ export async function createClient() {
     {
       auth: {
         flowType: 'pkce',
+        // Enhanced server-side session persistence
+        persistSession: true,
+        autoRefreshToken: true,
+        sessionRefreshMargin: 60,
       },
       cookies: {
         getAll() {
@@ -17,9 +21,23 @@ export async function createClient() {
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+            cookiesToSet.forEach(({ name, value, options }) => {
+              // Enhanced cookie options for better persistence
+              const enhancedOptions = {
+                ...options,
+                // Longer cookie lifetime
+                maxAge: options?.maxAge || 30 * 24 * 60 * 60, // 30 days
+                // Secure cookies in production
+                secure: process.env.NODE_ENV === 'production',
+                // SameSite for better security
+                sameSite: 'lax' as const,
+                // HttpOnly for security
+                httpOnly: true,
+                // Domain for production
+                domain: process.env.NODE_ENV === 'production' ? '.shrividhya.in' : undefined,
+              }
+              cookieStore.set(name, value, enhancedOptions)
+            })
           } catch {
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

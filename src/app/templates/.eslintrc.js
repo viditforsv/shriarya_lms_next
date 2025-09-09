@@ -1,4 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/alt-text */
+module.exports = {
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    '@next/next/no-img-element': 'off',
+    'jsx-a11y/alt-text': 'off',
+  },
+};

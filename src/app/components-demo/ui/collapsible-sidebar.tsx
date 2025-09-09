@@ -137,7 +137,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
   return (
     <div className="lg:col-span-1 order-2 lg:order-1">
       <div className="sticky top-8 space-y-6">
-        {/* Sidebar Header */}
+        {/* Combined Sidebar Header & Course Content */}
         <Card className="rounded-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -184,14 +184,12 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
               </Button>
             </div>
           </CardContent>
-        </Card>
-
-        {/* Syllabus Navigation */}
-        <Card className="rounded-sm">
-          <CardHeader>
-            <CardTitle className="text-lg">Course Content</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+          
+          {/* Course Content Section */}
+          <div className="border-t border-[#feefea]">
+            <div className="p-4 pb-0">
+              <h3 className="text-lg font-semibold text-[#1e293b] mb-3">Course Content</h3>
+            </div>
             <div className="max-h-96 overflow-y-auto">
               {syllabus.map((section) => (
                 <div key={section.id} className="border-b border-[#feefea] last:border-b-0">
@@ -288,7 +286,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
                 </div>
               ))}
             </div>
-          </CardContent>
+          </div>
         </Card>
 
         {/* Quick Actions */}

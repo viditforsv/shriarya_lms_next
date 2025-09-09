@@ -12,6 +12,12 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      auth: {
+        flowType: 'pkce',
+        persistSession: true,
+        autoRefreshToken: true,
+        sessionRefreshMargin: 60,
+      },
       cookies: {
         getAll() {
           return req.cookies.getAll()
@@ -19,7 +25,16 @@ export async function middleware(req: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set(name, value)
-            res.cookies.set(name, value, options)
+            // Enhanced cookie options for persistence
+            const enhancedOptions = {
+              ...options,
+              maxAge: options?.maxAge || 30 * 24 * 60 * 60, // 30 days
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax' as const,
+              httpOnly: true,
+              domain: process.env.NODE_ENV === 'production' ? '.shrividhya.in' : undefined,
+            }
+            res.cookies.set(name, value, enhancedOptions)
           })
         },
       },

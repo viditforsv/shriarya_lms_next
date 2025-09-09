@@ -1,5 +1,5 @@
 // Layout and navigation components
-export { Sidebar, SidebarItem } from './sidebar'
+export { Sidebar } from './sidebar'
 export { CollapsibleSidebar } from './collapsible-sidebar'
 export { LessonRightSidebar } from './lesson-right-sidebar'
 export { CourseSidebar } from './course-sidebar'

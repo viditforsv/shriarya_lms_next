@@ -11,23 +11,18 @@ export async function GET(request: Request) {
   console.log('Auth callback - Next:', next)
 
   if (code) {
-    const supabase = await createClient()
-    
     try {
-      // Use the proper PKCE flow for code exchange
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      const supabase = await createClient()
       
-      if (error) {
-        console.error('Auth callback - Exchange error:', error)
-        // Return the user to an error page with instructions
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-        return NextResponse.redirect(`${baseUrl}/auth?error=Could not authenticate user`)
-      }
+      // For PKCE, we need to let the client handle the session
+      // The server-side exchange doesn't work with PKCE flow
+      // Instead, we'll redirect to the client with the code
       
-      console.log('Auth callback - Success, redirecting to:', next)
-      // Use environment variable for production, fallback to origin for development
+      console.log('Auth callback - Redirecting to client-side handling')
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin
-      return NextResponse.redirect(`${baseUrl}${next}`)
+      
+      // Redirect to the main auth page with the code
+      return NextResponse.redirect(`${baseUrl}/auth?code=${code}&next=${next}`)
       
     } catch (error) {
       console.error('Auth callback - Unexpected error:', error)

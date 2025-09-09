@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
 import { Card, CardHeader } from "@/app/components-demo/ui/card"
 import { SignInForm } from "@/app/components-demo/auth/SignInForm"
@@ -8,12 +9,47 @@ import { SignUpForm } from "@/app/components-demo/auth/SignUpForm"
 import { Breadcrumb } from '@/app/components-demo/ui/breadcrumb'
 import { unstable_noStore as noStore } from 'next/cache'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 
 // Prevent static generation
 noStore()
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>('signin')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const code = searchParams.get('code')
+  const next = searchParams.get('next')
+  const error = searchParams.get('error')
+
+  // Handle OAuth callback
+  useEffect(() => {
+    if (code) {
+      const handleOAuthCallback = async () => {
+        try {
+          console.log('Auth page - Handling OAuth callback with code:', code)
+          const supabase = createClient()
+          
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          
+          if (error) {
+            console.error('Auth page - OAuth callback error:', error)
+            router.push('/auth?error=Could not authenticate user')
+            return
+          }
+
+          console.log('Auth page - OAuth success, redirecting to:', next || '/courses/enrolled')
+          router.push(next || '/courses/enrolled')
+          
+        } catch (err) {
+          console.error('Auth page - OAuth callback exception:', err)
+          router.push('/auth?error=Authentication failed')
+        }
+      }
+
+      handleOAuthCallback()
+    }
+  }, [code, next, router])
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
@@ -45,6 +81,21 @@ export default function AuthPage() {
             Your gateway to knowledge and growth
           </p>
         </div>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-sm">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        {code && (
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-sm">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto mb-2"></div>
+              <p className="text-blue-600 text-sm">Completing authentication...</p>
+            </div>
+          </div>
+        )}
 
         <Card className="w-full">
           <CardHeader className="pb-4">

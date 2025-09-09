@@ -16,34 +16,23 @@ import {
   Edit, 
   Save, 
   Eye, 
-  Upload, 
   BookOpen, 
-  Video, 
-  FileText,
-  CheckCircle,
   AlertCircle,
   ArrowRight,
-  ArrowLeft,
   Clock
 } from 'lucide-react'
 import { 
   CourseTemplate, 
-  CourseStructure, 
   CourseSection, 
   LessonTemplate,
   getCourseTemplate,
   getAllCourseTemplates,
-  getTemplatesByCurriculum,
-  createCourseFromTemplate,
-  generateCourseSlug,
   validateCourseStructure
 } from '@/lib/course-templates'
 
 export default function CourseBuilder() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [course, setCourse] = useState<CourseTemplate | null>(null)
   const [activeTab, setActiveTab] = useState('basic')
-  const [isEditing, setIsEditing] = useState(false)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   // Initialize course from template
@@ -55,8 +44,6 @@ export default function CourseBuilder() {
     const template = getCourseTemplate(templateId)
     if (template) {
       setCourse(template)
-      setSelectedTemplate(templateId)
-      setIsEditing(true)
     }
   }
 

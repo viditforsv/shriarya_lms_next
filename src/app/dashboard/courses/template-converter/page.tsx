@@ -15,11 +15,8 @@ import {
   CheckCircle, 
   Clock, 
   Users, 
-  Star,
   DollarSign,
-  Settings,
   FileText,
-  PlayCircle,
   Award,
   Zap
 } from 'lucide-react'

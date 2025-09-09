@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle, Layers } from "lucide-react"
 import { Button } from "@/app/components-demo/ui/button"
@@ -37,12 +37,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
     params.then(setResolvedParams)
   }, [params])
 
-  useEffect(() => {
-    if (!resolvedParams) return
-    loadCourse()
-  }, [resolvedParams])
-
-  const loadCourse = async () => {
+  const loadCourse = useCallback(async () => {
     if (!resolvedParams) return
 
     try {
@@ -75,7 +70,12 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [resolvedParams, supabase])
+
+  useEffect(() => {
+    if (!resolvedParams) return
+    loadCourse()
+  }, [resolvedParams, loadCourse])
 
   const createNewCourse = async () => {
     try {

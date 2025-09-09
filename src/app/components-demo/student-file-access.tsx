@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/app/components-demo/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
 import { Badge } from '@/app/components-demo/ui/badge'
@@ -31,7 +32,7 @@ export default function StudentFileAccess() {
   const [urlExpires, setUrlExpires] = useState<number | null>(null)
 
   // Mock course files (in real app, this would come from your database)
-  const mockFiles: CourseFile[] = [
+  const mockFiles: CourseFile[] = useMemo(() => [
     {
       id: '1',
       title: 'Real Numbers - Chapter 1',
@@ -59,7 +60,7 @@ export default function StudentFileAccess() {
       uploadedAt: '2024-01-17',
       fileName: 'quadratic-equations-practice.pdf'
     }
-  ]
+  ], [])
 
   useEffect(() => {
     // Simulate loading course files
@@ -67,7 +68,7 @@ export default function StudentFileAccess() {
       setFiles(mockFiles)
       setLoading(false)
     }, 1000)
-  }, [])
+  }, [mockFiles])
 
   const getFileIcon = (fileType: string) => {
     switch (fileType) {
@@ -247,9 +248,11 @@ export default function StudentFileAccess() {
                     disablePictureInPicture
                   />
                 ) : viewingFile.fileType === 'image' ? (
-                  <img
+                  <Image
                     src={signedUrl}
                     alt={viewingFile.title}
+                    width={800}
+                    height={600}
                     className="w-full h-full object-contain"
                   />
                 ) : (

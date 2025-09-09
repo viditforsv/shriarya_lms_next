@@ -2,7 +2,6 @@
 
 import { Button } from "@/app/components-demo/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
 import { FileText, Scale, Users, Calendar, AlertTriangle } from "lucide-react"
 
 export default function TermsOfServicePage() {

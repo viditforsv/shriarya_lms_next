@@ -252,7 +252,7 @@ export default function Home() {
             <Button 
               size="lg" 
               variant="outline"
-              className="border-accent-foreground text-accent-foreground hover:bg-accent-foreground hover:text-accent"
+              className="border-accent-foreground text-accent-foreground hover:bg-accent-foreground hover:text-white"
               onClick={() => router.push('/auth')}
             >
               Learn More

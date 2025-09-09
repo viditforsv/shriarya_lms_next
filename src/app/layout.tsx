@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cardo, DM_Sans } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Header } from "@/app/components-demo/ui/header";
@@ -8,15 +8,12 @@ import { Footer } from "@/app/components-demo/ui/footer";
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
-const cardo = Cardo({ 
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-cardo"
-});
 const dmSans = DM_Sans({ 
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-dm-sans"
+  variable: "--font-dm-sans",
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
 });
 
 export const metadata: Metadata = {
@@ -35,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body 
-        className={`${dmSans.className} ${cardo.variable} ${dmSans.variable}`}
+        className={`${dmSans.className} ${dmSans.variable}`}
         suppressHydrationWarning={true}
       >
         <AuthProvider>

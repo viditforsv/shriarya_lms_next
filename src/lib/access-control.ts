@@ -232,7 +232,6 @@ export function getRedirectPath(pathname: string, userRole?: UserRole, isAuthent
 export const NAVIGATION_MENU = {
   public: [
     { label: 'Home', href: '/' },
-    { label: 'Courses', href: '/courses' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
     { label: 'Pricing', href: '/pricing' },

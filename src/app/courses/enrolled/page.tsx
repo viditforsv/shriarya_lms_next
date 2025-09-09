@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
@@ -29,11 +29,16 @@ export default function EnrolledCoursesPage() {
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  
+  // Memoize the supabase client to prevent recreation on every render
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const fetchEnrolledCourses = async () => {
-      if (!user) return
+      if (!user?.id) {
+        setIsLoading(false)
+        return
+      }
 
       try {
         setIsLoading(true)
@@ -73,7 +78,7 @@ export default function EnrolledCoursesPage() {
     }
 
     fetchEnrolledCourses()
-  }, [user, supabase])
+  }, [user?.id, supabase])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

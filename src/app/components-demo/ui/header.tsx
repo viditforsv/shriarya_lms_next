@@ -58,19 +58,7 @@ export function Header() {
       console.log('Header - Admin navigation being returned')
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { 
-          name: "Courses", 
-          href: "/courses", 
-          hasDropdown: true,
-          dropdownItems: [
-            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
-            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
-            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
-            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
-          ]
-        },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
-        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "Course Builder", href: "/course-builder", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
       ]
@@ -78,38 +66,14 @@ export function Header() {
       // Authenticated users (students)
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { 
-          name: "Courses", 
-          href: "/courses", 
-          hasDropdown: true,
-          dropdownItems: [
-            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
-            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
-            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
-            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
-          ]
-        },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
         { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
-        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
       ]
     } else {
       // Public users (not logged in)
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { 
-          name: "Courses", 
-          href: "/courses", 
-          hasDropdown: true,
-          dropdownItems: [
-            { name: "CBSE", href: "/courses/cbse", description: "Central Board of Secondary Education" },
-            { name: "ICSE/ISC", href: "/courses/icse", description: "Indian Certificate of Secondary Education" },
-            { name: "IBDP", href: "/courses/ibdp", description: "International Baccalaureate Diploma Programme" },
-            { name: "IGCSE", href: "/courses/igcse", description: "International General Certificate of Secondary Education" }
-          ]
-        },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
-        { name: "Free Courses", href: "/courses/free", hasDropdown: false },
         { name: "About", href: "/about", hasDropdown: false },
         { name: "Contact", href: "/contact", hasDropdown: false },
         { name: "Pricing", href: "/pricing", hasDropdown: false },

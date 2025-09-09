@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { Button } from '@/app/components-demo/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
@@ -67,7 +68,7 @@ export default function StudentFileAccess() {
       setFiles(mockFiles)
       setLoading(false)
     }, 1000)
-  }, [])
+  }, [mockFiles])
 
   const getFileIcon = (fileType: string) => {
     switch (fileType) {
@@ -247,9 +248,11 @@ export default function StudentFileAccess() {
                     disablePictureInPicture
                   />
                 ) : viewingFile.fileType === 'image' ? (
-                  <img
+                  <Image
                     src={signedUrl}
                     alt={viewingFile.title}
+                    width={800}
+                    height={600}
                     className="w-full h-full object-contain"
                   />
                 ) : (

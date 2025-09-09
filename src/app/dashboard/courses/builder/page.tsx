@@ -16,14 +16,9 @@ import {
   Edit, 
   Save, 
   Eye, 
-  Upload, 
   BookOpen, 
-  Video, 
-  FileText,
-  CheckCircle,
   AlertCircle,
   ArrowRight,
-  ArrowLeft,
   Clock
 } from 'lucide-react'
 import { 

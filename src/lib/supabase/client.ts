@@ -7,11 +7,13 @@ export function createClient() {
     {
       auth: {
         persistSession: true,
-        storageKey: 'shriarya-auth',
+        storageKey: 'shriarya-lms-session',
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: 'pkce',
-        debug: process.env.NODE_ENV === 'development'
+        debug: process.env.NODE_ENV === 'development',
+        // Enhanced session persistence settings
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined
       }
     }
   )

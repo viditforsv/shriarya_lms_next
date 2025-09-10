@@ -2,22 +2,20 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle, Layers } from "lucide-react"
-import { Button } from "@/app/components-demo/ui/button"
-import { Input } from "@/app/components-demo/ui/input"
+import { Plus, Save, Eye, Settings, FileText, Layers } from "lucide-react"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Input } from "@/app/components-demo/ui/ui-components/input"
 import { Textarea } from "@/app/components-demo/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { Switch } from "@/app/components-demo/ui/switch"
-import { Label } from "@/app/components-demo/ui/label"
+import { Label } from "@/app/components-demo/ui/ui-components/label"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabase/client"
 import { Course, Lesson } from "@/lib/courses"
 import { SectionEditor } from "@/app/components-demo/content/section-editor"
 
-interface CourseBuilderProps {
-  courseId?: string
-}
+// Unused interface removed
 
 export default function CourseBuilder({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
@@ -249,7 +247,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
-              Course Builder
+              Edit Course
             </h1>
             <p className="text-muted-foreground">
               {course?.status === 'draft' ? 'Draft' : 'Published'} • {lessons.length} lessons
@@ -404,7 +402,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
 
             {activeTab === 'lessons' && (
               <div className="space-y-4">
-                {lessons.map((lesson, index) => (
+                {lessons.map((lesson) => (
                   <Card key={lesson.id} className="border-[#feefea]">
                     <CardContent className="p-4">
                       <div className="flex items-start space-x-4">

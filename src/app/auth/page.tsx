@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components-demo/ui/tabs"
-import { Card, CardHeader } from "@/app/components-demo/ui/card"
-import { SignInForm } from "@/app/components-demo/auth/SignInForm"
-import { SignUpForm } from "@/app/components-demo/auth/SignUpForm"
+import { Card, CardHeader } from "@/app/components-demo/ui/ui-components/card"
+import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm"
+import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm"
 import { Breadcrumb } from '@/app/components-demo/ui/breadcrumb'
 import { unstable_noStore as noStore } from 'next/cache'
 import Image from 'next/image'
@@ -38,8 +38,8 @@ export default function AuthPage() {
             return
           }
 
-          console.log('Auth page - OAuth success, redirecting to:', next || '/courses/enrolled')
-          router.push(next || '/courses/enrolled')
+          console.log('Auth page - OAuth success, redirecting to:', next || '/dashboard')
+          router.push(next || '/dashboard')
           
         } catch (err) {
           console.error('Auth page - OAuth callback exception:', err)

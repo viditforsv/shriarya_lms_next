@@ -1,8 +1,8 @@
 'use client'
 
 // Removed unused imports
-import { Button } from "@/app/components-demo/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";

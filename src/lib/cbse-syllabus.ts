@@ -42,20 +42,20 @@ export const CBSE_CLASS_10_MATHEMATICS_SYLLABUS: Section[] = [
             title: 'Fundamental Theorem of Arithmetic',
             slug: 'fundamental-theorem-arithmetic',
             duration: '45 min',
-            isCompleted: true
+            isCompleted: false
           },
           {
             id: 'proofs-irrationality',
             title: 'Proofs of Irrationality',
             slug: 'proofs-irrationality',
             duration: '50 min',
-            isCompleted: true
+            isCompleted: false
           },
           {
             id: 'properties-real-numbers',
             title: 'Properties and Applications of Real Numbers',
             slug: 'properties-real-numbers',
-            duration: '40 min',
+            duration: '39 min',
             isCompleted: false
           }
         ],
@@ -124,7 +124,7 @@ export const CBSE_CLASS_10_MATHEMATICS_SYLLABUS: Section[] = [
             slug: 'euclid-division-lemma',
             duration: '50 min',
             isCompleted: false,
-            isPreview: true
+            isPreview: false
           },
           {
             id: 'standard-form',

@@ -223,7 +223,7 @@ export function PDFViewer({ url, title = "PDF Document", className = "", height 
         pdfDoc.destroy()
       }
     }
-  }, [url, renderPage])
+  }, [url, renderPage, pdfDoc, useIframe])
 
   const changePage = async (delta: number) => {
     if (!pdfDoc) return

@@ -1,13 +1,14 @@
 "use client"
 
-import { Button } from "@/app/components-demo/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/card"
-import { Badge } from "@/app/components-demo/ui/badge"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
+import { Badge } from "@/app/components-demo/ui/ui-components/badge"
 import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb"
 import { Pagination } from "@/app/components-demo/ui/pagination"
-import { Sidebar, SidebarItem } from "@/app/components-demo/ui/sidebar"
-import { SignInForm } from "@/app/components-demo/auth/SignInForm"
-import { SignUpForm } from "@/app/components-demo/auth/SignUpForm"
+import { Sidebar, SidebarItem } from "@/app/components-demo/ui/layout-components/sidebar"
+import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm"
+import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm"
+import { MCQQuestionExample } from "@/app/components-demo/ui/course-components/mcq-question"
 
 import { useState, useEffect, useCallback, memo } from 'react'
 
@@ -63,6 +64,8 @@ const PaginationSection = memo(function PaginationSection() {
 const ComponentsDemoPage = memo(function ComponentsDemoPage() {
   const [activeTab, setActiveTab] = useState("colors")
   const [isMounted, setIsMounted] = useState(false)
+  const [cdnUrl, setCdnUrl] = useState("")
+  const [isValidUrl, setIsValidUrl] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -114,6 +117,11 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ) },
+    { id: "mcq", label: "MCQ Questions", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ) },
     { id: "navigation", label: "Navigation", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -142,6 +150,11 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
     { id: "content", label: "Content Components", icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ) },
+    { id: "cdn-test", label: "CDN Link Tester", icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
       </svg>
     ) },
   ]
@@ -540,7 +553,6 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Sign Up Form</CardTitle>
@@ -600,6 +612,19 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
     </section>
   )
 
+  const renderMCQSection = () => (
+    <section className="mb-20">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">MCQ Questions</h2>
+        <p className="text-gray-600 text-lg">Interactive multiple choice questions with feedback</p>
+      </div>
+      
+      <div className="space-y-8">
+        <MCQQuestionExample />
+      </div>
+    </section>
+  )
+
   const renderContentSection = () => (
     <section className="mb-20">
       <div className="mb-8">
@@ -648,6 +673,149 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
     </section>
   )
 
+  const handleUrlChange = (url: string) => {
+    setCdnUrl(url)
+    // Basic URL validation
+    const urlPattern = /^https?:\/\/.+/
+    setIsValidUrl(urlPattern.test(url))
+  }
+
+  const handleLoadContent = () => {
+    if (isValidUrl && cdnUrl) {
+      // Content will be displayed inline in the component
+      return
+    }
+  }
+
+  const clearCdnUrl = () => {
+    setCdnUrl("")
+    setIsValidUrl(false)
+  }
+
+  const renderCDNTestSection = () => {
+
+    return (
+      <section className="mb-20">
+        <div className="mb-8 pb-6 border-b border-slate-200">
+          <h2 className="text-3xl font-bold text-[#1b4a56] mb-4 font-dm-sans">CDN Link Tester</h2>
+          <p className="text-slate-600 text-lg">Test CDN links by embedding content directly on the page</p>
+        </div>
+        
+        <div className="max-w-2xl mx-auto">
+          <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="bg-slate-50/50">
+              <CardTitle className="text-xl text-slate-800">CDN Link Input</CardTitle>
+              <CardDescription className="text-slate-600">Enter a CDN URL to embed content on the page</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 p-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">CDN URL</label>
+                <input 
+                  type="url" 
+                  placeholder="Link"
+                  value={cdnUrl}
+                  onChange={(e) => handleUrlChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1b4a56] focus:border-[#1b4a56] transition-colors"
+                />
+                {cdnUrl && !isValidUrl && (
+                  <p className="text-sm text-red-600">Please enter a valid URL starting with http:// or https://</p>
+                )}
+              </div>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handleLoadContent}
+                  disabled={!isValidUrl || !cdnUrl}
+                  variant="primary"
+                  className="flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  Load Content
+                </Button>
+                
+                <Button 
+                  onClick={clearCdnUrl}
+                  variant="outline"
+                >
+                  Clear
+                </Button>
+              </div>
+
+              {cdnUrl && isValidUrl && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-sm">
+                  <p className="text-sm text-green-800">
+                    <strong>Ready to load:</strong> {cdnUrl}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Embedded Content Display */}
+          {cdnUrl && isValidUrl && (
+            <Card className="mt-8 border-slate-200 shadow-sm">
+              <CardHeader className="bg-slate-50/50">
+                <CardTitle className="text-xl text-slate-800">Embedded Content</CardTitle>
+                <CardDescription className="text-slate-600">Content loaded from CDN URL</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="w-full h-96 border border-slate-200 rounded-sm overflow-hidden">
+                  <iframe
+                    src={cdnUrl}
+                    className="w-full h-full"
+                    title="CDN Content"
+                    sandbox="allow-scripts allow-same-origin"
+                  />
+                </div>
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-sm">
+                  <p className="text-sm text-blue-800">
+                    <strong>Source:</strong> {cdnUrl}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Quick Test Links</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border border-slate-200 rounded-sm">
+                <h4 className="font-medium text-slate-700 mb-2">Sample PDF</h4>
+                <p className="text-sm text-slate-600 mb-3">Test with a sample PDF link</p>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleUrlChange("https://shrividhyaclasses.b-cdn.net/cbse10_maths/applications_of_trigonometry/sv_cbse10_cha_09.some_applications_of_trigonometry_l1_1.pdf")}
+                >
+                  Use Sample Link
+                </Button>
+              </div>
+              
+              <div className="p-4 border border-slate-200 rounded-sm">
+                <h4 className="font-medium text-slate-700 mb-2">Custom URL</h4>
+                <p className="text-sm text-slate-600 mb-3">Enter your own CDN link</p>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => {
+                    const customUrl = prompt("Enter your CDN URL:")
+                    if (customUrl) {
+                      handleUrlChange(customUrl)
+                    }
+                  }}
+                >
+                  Enter Custom Link
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   const renderContent = () => {
     switch (activeTab) {
       case "colors":
@@ -668,6 +836,8 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         return renderTypographySection()
       case "interactive":
         return renderInteractiveSection()
+      case "mcq":
+        return renderMCQSection()
       case "navigation":
         return renderNavigationSection()
       case "utilities":
@@ -680,6 +850,8 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         return renderCourseSpecificSection()
       case "content":
         return renderContentSection()
+      case "cdn-test":
+        return renderCDNTestSection()
       default:
         return renderColorsSection()
     }
@@ -701,6 +873,8 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           activeItem={activeTab}
           onItemClick={(item) => setActiveTab(item.id)}
           showNumbers={true}
+          collapsible={true}
+          defaultCollapsed={false}
         />
 
         <div className="flex-1 overflow-auto">

@@ -10,10 +10,13 @@ export async function GET(request: Request) {
     const lessonId = searchParams.get('lessonId')
     const userId = searchParams.get('userId')
 
-    // Get current user
+    // Get current user (optional for free courses)
     const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    // For free courses, allow access without authentication
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      // Return empty progress for unauthenticated users (free course access)
+      return NextResponse.json({ progress: [] })
     }
 
     // Users can only view their own progress unless they're admin

@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
-import { Input } from '@/app/components-demo/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components-demo/ui/select'
 import { 
   Search, 
@@ -19,8 +19,23 @@ import {
   SortAsc,
   SortDesc
 } from 'lucide-react'
-import { getAllCourses } from '@/lib/course-config'
-import { CourseConfig } from '@/lib/course-config'
+// import { getAllCourses } from '@/lib/course-config'
+// import { CourseConfig } from '@/lib/course-config'
+
+// API-based course interface
+interface CourseConfig {
+  id: string
+  slug: string
+  title: string
+  description: string
+  instructor_id?: string
+  created_at: string
+  updated_at: string
+  is_free: boolean
+  status: string
+  price: number
+  profiles?: unknown
+}
 
 interface FilterState {
   search: string
@@ -50,18 +65,56 @@ export default function CourseDiscoveryPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [courses, setCourses] = useState<CourseConfig[]>([])
 
-  // Get all courses
+  // Get all courses from API
   useEffect(() => {
-    const allCourses = getAllCourses()
-    setCourses(allCourses)
+    const fetchCourses = async () => {
+      try {
+        console.log('Fetching courses from API...')
+        const response = await fetch('/api/courses')
+        console.log('Response status:', response.status)
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Courses data:', data)
+          setCourses(data.courses || [])
+        } else {
+          console.error('Failed to fetch courses:', response.statusText)
+          setCourses([])
+        }
+      } catch (error) {
+        console.error('Error fetching courses:', error)
+        setCourses([])
+      }
+    }
+
+    fetchCourses()
   }, [])
 
   // Get unique values for filter options
   const filterOptions = useMemo(() => {
-    const curricula = [...new Set(courses.map(c => c.curriculum))]
-    const subjects = [...new Set(courses.map(c => c.subject))]
-    const grades = [...new Set(courses.map(c => c.grade).filter(Boolean))]
-    const levels = [...new Set(courses.map(c => c.level).filter(Boolean))]
+    // Extract curriculum and subject from title/slug for now
+    const curricula = [...new Set(courses.map(c => {
+      if (c.slug.includes('cbse')) return 'CBSE'
+      if (c.slug.includes('ibdp')) return 'IBDP'
+      return 'Other'
+    }))]
+    const subjects = [...new Set(courses.map(c => {
+      if (c.title.toLowerCase().includes('mathematics')) return 'Mathematics'
+      if (c.title.toLowerCase().includes('physics')) return 'Physics'
+      if (c.title.toLowerCase().includes('chemistry')) return 'Chemistry'
+      return 'Other'
+    }))]
+    const grades = [...new Set(courses.map(c => {
+      if (c.slug.includes('class-10')) return 'Class 10'
+      if (c.slug.includes('class-11')) return 'Class 11'
+      if (c.slug.includes('class-12')) return 'Class 12'
+      if (c.slug.includes('hl')) return 'Higher Level'
+      return 'Other'
+    }))]
+    const levels = [...new Set(courses.map(c => {
+      if (c.slug.includes('hl')) return 'Higher Level'
+      if (c.slug.includes('sl')) return 'Standard Level'
+      return 'Standard'
+    }))]
     
     return { curricula, subjects, grades, levels }
   }, [courses])
@@ -69,42 +122,65 @@ export default function CourseDiscoveryPage() {
   // Filter and sort courses
   const filteredCourses = useMemo(() => {
     const filtered = courses.filter(course => {
+      // Only show published courses
+      if (course.status !== 'published') {
+        return false
+      }
+
       // Search filter
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase()
         const matchesSearch = 
           course.title.toLowerCase().includes(searchTerm) ||
           course.description.toLowerCase().includes(searchTerm) ||
-          course.subject.toLowerCase().includes(searchTerm) ||
-          course.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+          course.slug.toLowerCase().includes(searchTerm)
         if (!matchesSearch) return false
       }
 
       // Curriculum filter
-      if (filters.curriculum !== 'all' && course.curriculum !== filters.curriculum) {
-        return false
+      if (filters.curriculum !== 'all') {
+        const courseCurriculum = course.slug.includes('cbse') ? 'CBSE' : 
+                                course.slug.includes('ibdp') ? 'IBDP' : 'Other'
+        if (courseCurriculum !== filters.curriculum) {
+          return false
+        }
       }
 
       // Subject filter
-      if (filters.subject !== 'all' && course.subject !== filters.subject) {
-        return false
+      if (filters.subject !== 'all') {
+        const courseSubject = course.title.toLowerCase().includes('mathematics') ? 'Mathematics' :
+                             course.title.toLowerCase().includes('physics') ? 'Physics' :
+                             course.title.toLowerCase().includes('chemistry') ? 'Chemistry' : 'Other'
+        if (courseSubject !== filters.subject) {
+          return false
+        }
       }
 
       // Grade filter
-      if (filters.grade !== 'all' && course.grade !== filters.grade) {
-        return false
+      if (filters.grade !== 'all') {
+        const courseGrade = course.slug.includes('class-10') ? 'Class 10' :
+                           course.slug.includes('class-11') ? 'Class 11' :
+                           course.slug.includes('class-12') ? 'Class 12' :
+                           course.slug.includes('hl') ? 'Higher Level' : 'Other'
+        if (courseGrade !== filters.grade) {
+          return false
+        }
       }
 
       // Level filter
-      if (filters.level !== 'all' && course.level !== filters.level) {
-        return false
+      if (filters.level !== 'all') {
+        const courseLevel = course.slug.includes('hl') ? 'Higher Level' :
+                           course.slug.includes('sl') ? 'Standard Level' : 'Standard'
+        if (courseLevel !== filters.level) {
+          return false
+        }
       }
 
       // Price filter
-      if (filters.priceType === 'free' && (course.price || 0) > 0) {
+      if (filters.priceType === 'free' && !course.is_free) {
         return false
       }
-      if (filters.priceType === 'paid' && (course.price || 0) === 0) {
+      if (filters.priceType === 'paid' && course.is_free) {
         return false
       }
 
@@ -120,19 +196,22 @@ export default function CourseDiscoveryPage() {
           comparison = a.title.localeCompare(b.title)
           break
         case 'price':
-          comparison = (a.price || 0) - (b.price || 0)
+          comparison = a.price - b.price
           break
         case 'duration':
-          comparison = a.duration.localeCompare(b.duration)
+          // API doesn't have duration, use created_at as fallback
+          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           break
         case 'popularity':
-          comparison = ((b as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0) - ((a as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0)
+          // API doesn't have enrollment count, use created_at as fallback
+          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           break
         case 'rating':
-          comparison = ((b as CourseConfig & { rating?: number }).rating || 0) - ((a as CourseConfig & { rating?: number }).rating || 0)
+          // API doesn't have rating, use created_at as fallback
+          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           break
         case 'newest':
-          comparison = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           break
         default:
           comparison = 0
@@ -424,33 +503,37 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
-                  <Badge variant="outline">{course.curriculum}</Badge>
-                  <Badge variant={course.price === 0 ? 'secondary' : 'default'}>
-                    {course.price === 0 ? 'Free' : `$${course.price}`}
+                  <Badge variant="outline">{course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}</Badge>
+                  <Badge variant={course.is_free ? 'secondary' : 'default'}>
+                    {course.is_free ? 'Free' : `$${course.price}`}
                   </Badge>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  <span>{course.duration}</span>
+                  <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
                 </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              <span>{(course as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0} students</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4" />
-              <span>{(course as CourseConfig & { rating?: number }).rating || 0}/5</span>
-            </div>
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span>Status: {course.status}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4" />
+                  <span>{course.is_free ? 'Free' : 'Paid'}</span>
+                </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
-                  {course.tags.slice(0, 3).map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
+                  <Badge variant="outline" className="text-xs">
+                    {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {course.is_free ? 'Free' : 'Paid'}
+                  </Badge>
                 </div>
                 <Link href={`/courses/${course.slug}`}>
                   <Button size="sm">View Course</Button>
@@ -473,8 +556,8 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
             {course.title}
           </CardTitle>
-          <Badge variant={course.price === 0 ? 'secondary' : 'default'}>
-            {course.price === 0 ? 'Free' : `$${course.price}`}
+          <Badge variant={course.is_free ? 'secondary' : 'default'}>
+            {course.is_free ? 'Free' : `$${course.price}`}
           </Badge>
         </div>
         <CardDescription className="line-clamp-3">
@@ -487,29 +570,39 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              <span>{course.duration}</span>
+              <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="w-4 h-4" />
-              <span>{(course as CourseConfig & { enrollmentCount?: number }).enrollmentCount || 0}</span>
+              <span>Status: {course.status}</span>
             </div>
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4" />
-              <span>{(course as CourseConfig & { rating?: number }).rating || 0}</span>
+              <span>{course.is_free ? 'Free' : 'Paid'}</span>
             </div>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="text-xs">
-              {course.curriculum}
+              {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
             </Badge>
             <Badge variant="outline" className="text-xs">
-              {course.subject}
+              {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
             </Badge>
-            {course.grade && (
+            {course.slug.includes('class-10') && (
               <Badge variant="outline" className="text-xs">
-                {course.grade}
+                Class 10
+              </Badge>
+            )}
+            {course.slug.includes('class-11') && (
+              <Badge variant="outline" className="text-xs">
+                Class 11
+              </Badge>
+            )}
+            {course.slug.includes('hl') && (
+              <Badge variant="outline" className="text-xs">
+                Higher Level
               </Badge>
             )}
           </div>
@@ -525,3 +618,4 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
     </Card>
   )
 }
+

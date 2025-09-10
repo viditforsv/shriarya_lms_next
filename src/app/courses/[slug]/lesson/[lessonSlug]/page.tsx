@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components-demo/ui/tabs'
 import { 
   BookOpen, 
@@ -16,16 +16,22 @@ import {
   Clock,
   Lock,
   Unlock,
-  Download,
-  Share2,
   Bookmark,
   MessageCircle,
   Eye
 } from 'lucide-react'
 import { VideoResource } from '@/app/components-demo/ui/youtube-video'
 import { CompletionDot } from '@/app/components-demo/ui/template-status'
-import { CollapsibleSidebar } from '@/app/components-demo/ui/collapsible-sidebar'
+import { CollapsibleSidebar } from '@/app/components-demo/ui/layout-components/collapsible-sidebar'
+import { LessonRightSidebar } from '@/app/components-demo/ui/layout-components/lesson-right-sidebar'
 import { useAuth } from '@/contexts/AuthContext'
+import { 
+  getCourseBySlug, 
+  getLessonsByCourseSlugSync, 
+  getLessonBySlug,
+  LessonConfig,
+  ResourceConfig
+} from '@/lib/course-config'
 
 interface Course {
   id: string
@@ -89,64 +95,120 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
   }, [params])
 
   useEffect(() => {
-    if (!resolvedParams || !user) return
+    if (!resolvedParams) return
 
     const loadLesson = async () => {
       try {
         setIsLoading(true)
         setError(null)
 
-        // Get course by slug
-        const courseResponse = await fetch(`/api/courses-v2?published=true`)
-        const courseData = await courseResponse.json()
-        const courseInfo = courseData.courses.find((c: Course) => c.slug === resolvedParams.slug)
+        // Get course from configuration (same as course page)
+        const courseInfo = getCourseBySlug(resolvedParams.slug)
         
         if (!courseInfo) {
           throw new Error('Course not found')
         }
 
-        setCourse(courseInfo)
+        // Convert CourseConfig to Course interface
+        const courseData: Course = {
+          id: courseInfo.slug, // Use slug as ID for static courses
+          title: courseInfo.title,
+          description: courseInfo.description,
+          slug: courseInfo.slug,
+          is_free: courseInfo.isFree,
+          created_at: new Date().toISOString(), // Use current date for static courses
+          profiles: {
+            first_name: 'System',
+            last_name: 'Admin'
+          }
+        }
 
-        // Get lessons for the course
-        const lessonsResponse = await fetch(`/api/lessons-v2?courseSlug=${resolvedParams.slug}&published=true`)
-        const lessonsData = await lessonsResponse.json()
+        setCourse(courseData)
+
+        // Get lessons from configuration and convert to Lesson interface
+        const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
         
-        if (!lessonsData.lessons) {
-          throw new Error('Lessons not found')
-        }
+        const mappedLessons: Lesson[] = lessonsData.map((lesson: LessonConfig, index: number) => ({
+          id: lesson.slug, // Use slug as ID for static lessons
+          title: lesson.title,
+          slug: lesson.slug,
+          content: lesson.description || '', // Use description as content
+          lesson_order: lesson.order || index + 1, // Use order from config or index
+          is_preview: lesson.isPreview || false,
+          created_at: new Date().toISOString(), // Use current date for static lessons
+          course_id: courseData.id,
+          resources: (lesson.resources || []).map((resource: ResourceConfig) => ({
+            id: resource.url, // Use URL as ID for static resources
+            url: resource.url,
+            kind: resource.type || 'file', // Default to 'file' type
+            mime: 'application/octet-stream', // Default MIME type
+            duration_sec: 0 // Default duration for static resources
+          }))
+        }))
+        setAllLessons(mappedLessons)
 
-        setAllLessons(lessonsData.lessons)
-
-        // Find the specific lesson
-        const lessonInfo = lessonsData.lessons.find((l: Lesson) => l.slug === resolvedParams.lessonSlug)
+        // Find the specific lesson using enhanced lookup (supports syllabus mapping)
+        const lessonInfo = getLessonBySlug(resolvedParams.slug, resolvedParams.lessonSlug)
         if (!lessonInfo) {
-          throw new Error('Lesson not found')
+          // Debug information
+          console.error('Lesson not found:', {
+            requestedLessonSlug: resolvedParams.lessonSlug,
+            courseSlug: resolvedParams.slug,
+            availableLessonSlugs: lessonsData.map(l => l.slug),
+            totalLessons: lessonsData.length,
+            note: 'Enhanced lookup with syllabus mapping was attempted'
+          })
+          throw new Error(`Lesson not found: ${resolvedParams.lessonSlug}. Available lessons: ${lessonsData.map(l => l.slug).join(', ')}`)
         }
 
-        setLesson(lessonInfo)
+        // Map LessonConfig to Lesson interface
+        const mappedLesson: Lesson = {
+          id: lessonInfo.slug,
+          title: lessonInfo.title,
+          slug: lessonInfo.slug,
+          content: lessonInfo.description || '',
+          lesson_order: lessonInfo.order || 1,
+          is_preview: lessonInfo.isPreview || false,
+          created_at: new Date().toISOString(),
+          course_id: courseData.id,
+          resources: (lessonInfo.resources || []).map((resource: ResourceConfig) => ({
+            id: resource.url,
+            url: resource.url,
+            kind: resource.type || 'file',
+            mime: 'application/octet-stream',
+            duration_sec: 0
+          }))
+        }
 
-        // Check enrollment
-        const enrollmentResponse = await fetch(`/api/enrollments?courseId=${courseInfo.id}`)
-        const enrollmentData = await enrollmentResponse.json()
-        setIsEnrolled(enrollmentData.enrolled || false)
+        setLesson(mappedLesson)
+
+        // Check enrollment - for free courses, user is automatically enrolled
+        setIsEnrolled(courseInfo.isFree || false)
 
         // Get user progress for this lesson
-        const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)
-        const progressData = await progressResponse.json()
-        if (progressData.progress && progressData.progress.length > 0) {
-          setUserProgress(progressData.progress[0])
+        try {
+          const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)
+          if (progressResponse.ok) {
+            const progressData = await progressResponse.json()
+            if (progressData.progress && progressData.progress.length > 0) {
+              setUserProgress(progressData.progress[0])
+            }
+          }
+        } catch (progressError) {
+          console.warn('Could not fetch user progress:', progressError)
+          // Don't throw error for progress fetch failure
         }
 
       } catch (err) {
         console.error('Error loading lesson:', err)
-        setError('Lesson not found')
+        setError(err instanceof Error ? err.message : 'Lesson not found')
       } finally {
         setIsLoading(false)
       }
     }
 
     loadLesson()
-  }, [resolvedParams, user])
+  }, [resolvedParams])
 
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free
@@ -206,18 +268,6 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
     alert(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks')
   }
 
-  const handleShareLesson = () => {
-    const url = window.location.href
-    const title = lesson?.title || 'Lesson'
-    
-    if (navigator.share) {
-      navigator.share({ title, url })
-    } else {
-      navigator.clipboard.writeText(url)
-      alert('Link copied to clipboard!')
-    }
-  }
-
   const handlePracticeAnswerChange = (questionId: string, answer: string) => {
     setPracticeAnswers(prev => ({ ...prev, [questionId]: answer }))
   }
@@ -266,12 +316,24 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
   if (error || !lesson || !course) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || 'The lesson you are looking for does not exist.'}</p>
-          <Link href={`/courses/${resolvedParams?.slug}`}>
-            <Button>Back to Course</Button>
-          </Link>
+          <p className="text-muted-foreground mb-6">
+            {error || 'The lesson you are looking for does not exist.'}
+          </p>
+          <div className="space-y-3">
+            <Link href={`/courses/${resolvedParams?.slug}`}>
+              <Button className="rounded-sm">Back to Course</Button>
+            </Link>
+            <div className="text-sm text-muted-foreground">
+              <p>If you believe this is an error, please check:</p>
+              <ul className="text-left mt-2 space-y-1">
+                <li>• The lesson URL is correct</li>
+                <li>• The course exists and is published</li>
+                <li>• You have access to this course</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -320,23 +382,14 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                 <Bookmark className={`w-4 h-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
                 {isBookmarked ? 'Bookmarked' : 'Bookmark'}
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-sm"
-                onClick={handleShareLesson}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full px-0 py-8">
         {/* Course Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-6 px-4">
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Link href="/courses" className="hover:text-foreground">Courses</Link>
             <span>/</span>
@@ -346,15 +399,15 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Enhanced Collapsible Sidebar */}
+        <div className="flex">
+          {/* Left Sidebar - Course Navigation */}
           <CollapsibleSidebar 
             currentLessonSlug={lesson.slug}
             courseSlug={resolvedParams?.slug || ''}
           />
 
           {/* Main Content */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
+          <div className="flex-1 px-4">
             {/* Lesson Header */}
             <div className="bg-white rounded-sm border border-[#feefea] p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
@@ -362,28 +415,28 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                   <Badge className="bg-[#e27447] text-white mb-2 rounded-sm">
                     Lesson {lesson.lesson_order}
                   </Badge>
-                  <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+                  <h1 className="text-4xl font-bold text-[#1e293b] mb-2">
                     {lesson.title}
                   </h1>
-                  <p className="text-muted-foreground text-lg">
+                  <p className="text-muted-foreground text-xl">
                     Learn important concepts and practice problems
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">30 min</span>
+                    <span className="text-base text-muted-foreground">30 min</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {lesson.is_preview ? (
                       <>
                         <Eye className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-blue-600">Preview</span>
+                        <span className="text-base text-blue-600">Preview</span>
                       </>
                     ) : (
                       <>
                         <Unlock className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-green-600">Unlocked</span>
+                        <span className="text-base text-green-600">Unlocked</span>
                       </>
                     )}
                   </div>
@@ -396,21 +449,21 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
               <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
                 <TabsTrigger 
                   value="video" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   Video
                 </TabsTrigger>
                 <TabsTrigger 
                   value="notes" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <FileText className="w-4 h-4 mr-2" />
                   Notes
                 </TabsTrigger>
                 <TabsTrigger 
                   value="practice" 
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Practice
@@ -460,7 +513,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                           <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
                             {lesson.title}
                           </h3>
-                          <p className="text-muted-foreground mb-4">
+                          <p className="text-muted-foreground mb-4 leading-relaxed">
                             Video content will be available soon
                           </p>
                           <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
@@ -478,32 +531,15 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                     )}
                     
                     {/* Video Controls */}
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Button variant="outline" size="sm" className="rounded-sm">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="rounded-sm"
-                          onClick={handleShareLesson}
-                        >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          Share Video
-                        </Button>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
-                          onClick={handleMarkComplete}
-                          disabled={userProgress?.is_completed}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          {userProgress?.is_completed ? 'Completed' : 'Mark as Complete'}
-                        </Button>
-                      </div>
+                    <div className="mt-4 flex items-center justify-end">
+                      <Button 
+                        className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                        onClick={handleMarkComplete}
+                        disabled={userProgress?.is_completed}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        {userProgress?.is_completed ? 'Completed' : 'Mark as Complete'}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -524,7 +560,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
                   <CardContent className="space-y-6">
                     {/* Lesson Content */}
                     {lesson.content && (
-                      <div className="prose prose-sm max-w-none">
+                      <div className="prose prose-sm max-w-none leading-relaxed">
                         <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
                       </div>
                     )}
@@ -638,6 +674,32 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
               </Button>
             </div>
           </div>
+
+          {/* Right Sidebar - Lesson Tools */}
+          <LessonRightSidebar 
+            courseSlug={resolvedParams?.slug || ''}
+            notes={[
+              {
+                id: '1',
+                title: 'Key Concept',
+                content: lesson.content?.substring(0, 100) + '...' || 'No content available',
+                timestamp: '12:30',
+                isImportant: true
+              }
+            ]}
+            resources={lesson.resources?.map(r => ({
+              id: r.id,
+              title: `${r.kind} Resource`,
+              type: r.kind as 'pdf' | 'video' | 'link' | 'quiz',
+              url: r.url,
+              size: r.duration_sec ? `${Math.round(r.duration_sec / 60)} min` : undefined
+            })) || []}
+            keyPoints={[
+              'Master the core concepts',
+              'Practice with examples',
+              'Apply to real problems'
+            ]}
+          />
         </div>
       </div>
     </div>

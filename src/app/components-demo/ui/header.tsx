@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/app/components-demo/ui/button"
+import { Button } from "@/app/components-demo/ui/ui-components/button"
 import { ChevronDown, Search, User, LogOut, Settings, BookOpen } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
@@ -55,7 +55,6 @@ export function Header() {
       return [
         { name: "Home", href: "/", hasDropdown: false },
         { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
-        { name: "Course Builder", href: "/course-builder", hasDropdown: false },
         { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
       ]
     } else if (user) {

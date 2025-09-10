@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@supabase/supabase-js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
-import { Input } from '@/app/components-demo/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { 
   Plus, 
   Edit, 
@@ -23,7 +23,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 import Link from 'next/link'
-import { getAllCourseTemplates } from '@/lib/course-templates'
+// import { getAllCourseTemplates } from '@/lib/course-templates' // Removed with course builder
 
 interface Course {
   id: string
@@ -86,42 +86,7 @@ export default function CourseManagement() {
     fetchCourses()
   }, [fetchCourses])
 
-  const handleCreateFromTemplate = async (templateId: string) => {
-    try {
-      if (!user) return
-
-      const token = await supabase.auth.getSession()
-      if (!token.data.session) return
-      
-      const response = await fetch('/api/courses/builder', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token.data.session.access_token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          templateId,
-          customizations: {
-            // You can add customizations here
-          }
-        })
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        console.log('Course created:', data.course)
-        // Refresh courses list
-        fetchCourses()
-        // Redirect to course builder
-        window.location.href = `/dashboard/courses/builder?courseId=${data.course.id}`
-      } else {
-        const error = await response.json()
-        console.error('Failed to create course:', error)
-      }
-    } catch (error) {
-      console.error('Error creating course:', error)
-    }
-  }
+  // const handleCreateFromTemplate = async (templateId: string) => { ... } // Removed with course builder
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -134,7 +99,7 @@ export default function CourseManagement() {
     return matchesSearch && matchesStatus && matchesCurriculum
   })
 
-  const templates = getAllCourseTemplates()
+  // const templates = getAllCourseTemplates() // Removed with course builder
 
   if (isLoading) {
     return (
@@ -157,12 +122,6 @@ export default function CourseManagement() {
             <p className="text-muted-foreground">Create and manage your courses</p>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/dashboard/courses/template-converter">
-              <Button variant="outline">
-                <BookOpen className="w-4 h-4 mr-2" />
-                From Template
-              </Button>
-            </Link>
             <Link href="/dashboard/courses/builder">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
@@ -172,51 +131,8 @@ export default function CourseManagement() {
           </div>
         </div>
 
-        {/* Quick Templates */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Quick Start Templates</CardTitle>
-            <CardDescription>
-              Start with a standardized template for your curriculum
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {templates.map((template) => (
-                <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline">{template.curriculum}</Badge>
-                      <Badge variant="secondary">{template.grade || template.level}</Badge>
-                    </div>
-                    <CardTitle className="text-lg">{template.name}</CardTitle>
-                    <CardDescription className="text-sm">{template.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4" />
-                        <span>{template.lessonCount} lessons</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        <span>{template.estimatedDuration}</span>
-                      </div>
-                    </div>
-                    <Button 
-                      className="w-full" 
-                      variant="outline"
-                      onClick={() => handleCreateFromTemplate(template.id)}
-                    >
-                      Use Template
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
+        {/* Quick Templates - Removed with course builder */}
+        
         {/* Filters */}
         <div className="flex items-center gap-4 mb-6">
           <div className="relative flex-1 max-w-md">

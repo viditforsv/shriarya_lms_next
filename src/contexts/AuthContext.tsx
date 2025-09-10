@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useMemo } 
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { UserProfile, UserRole } from '@/types/auth'
+import { SessionStorage } from '@/hooks/useSessionPersistence'
 
 interface AuthContextType {
   user: User | null
@@ -37,7 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [profileCache, setProfileCache] = useState<Map<string, UserProfile>>(new Map())
-  const supabase = createClient()
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  // Create a single Supabase client instance using useMemo to prevent recreation
+  const supabase = useMemo(() => createClient(), [])
 
   // Persist profile in localStorage for faster loading
   useEffect(() => {
@@ -61,10 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
-  }, []) // Remove profile dependency to prevent loop
+  }, [profile]) // Include profile dependency
 
   // Create user profile if it doesn't exist
-  const createProfile = async (userId: string) => {
+  const createProfile = useCallback(async (userId: string) => {
     try {
       // Get user data from auth.users
       const { data: userData, error: userError } = await supabase.auth.getUser()
@@ -120,10 +124,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error creating profile:', error)
       return null
     }
-  }
+  }, [supabase])
 
   // Create fallback profile when database is unavailable
-  const createFallbackProfile = async (userId: string) => {
+  const createFallbackProfile = useCallback(async (userId: string) => {
     try {
       console.log('Creating fallback profile for user:', userId)
       
@@ -171,7 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error creating fallback profile:', error)
       return null
     }
-  }
+  }, [supabase])
 
     // Fetch user profile from database with retry logic
   const fetchProfile = useCallback(async (userId: string, retries = 2) => {
@@ -274,7 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   // Check if user has specific permission
-  const hasPermission = (permission: keyof RolePermissions): boolean => {
+  const hasPermission = useCallback((permission: keyof RolePermissions): boolean => {
     if (!profile) return false
     
     const permissions: Record<UserRole, RolePermissions> = {
@@ -295,10 +299,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return permissions[profile.role]?.[permission] || false
-  }
+  }, [profile])
 
   // Update user role (admin only)
-  const updateUserRole = async (userId: string, newRole: UserRole): Promise<boolean> => {
+  const updateUserRole = useCallback(async (userId: string, newRole: UserRole): Promise<boolean> => {
     if (!hasPermission('canManageUsers')) {
       throw new Error('Insufficient permissions')
     }
@@ -325,7 +329,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           })
           console.log('Successfully updated current user metadata with role:', newRole)
           // Refresh profile to update local state
-          await refreshProfile()
+          const userProfile = await fetchProfile(user.id)
+          if (userProfile) {
+            setProfile(userProfile)
+          }
         } catch (error) {
           console.error('Error updating current user metadata:', error)
         }
@@ -336,10 +343,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error updating user role:', error)
       return false
     }
-  }
+  }, [hasPermission, supabase, user?.id, fetchProfile, setProfile])
 
   // Refresh user profile with error handling
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user) {
       try {
         const userProfile = await fetchProfile(user.id)
@@ -349,26 +356,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Don't crash the app, just log the error
       }
     }
-  }
+  }, [user, fetchProfile])
 
   useEffect(() => {
-    // Only run auth logic in browser
-    if (typeof window !== 'undefined') {
+    // Only run auth logic in browser and prevent multiple initializations
+    if (typeof window !== 'undefined' && !isInitialized) {
+      setIsInitialized(true)
+      
       // Get initial session
       const getSession = async () => {
         try {
           console.log('Getting initial session...')
           
-          // Try to get current user first
-          const { data: { user: currentUser } } = await supabase.auth.getUser()
+          // Try to restore from persistent storage first
+          const storedSession = SessionStorage.getSession()
+          const storedUser = SessionStorage.getUser()
           
-          // Then get session
-          const { data: { session } } = await supabase.auth.getSession()
-          
-          // Use current user if session is not available
-          const user = session?.user || currentUser
-          setSession(session)
-          setUser(user)
+          if (storedSession && !SessionStorage.isSessionExpired()) {
+            console.log('Restoring session from persistent storage')
+            setSession(storedSession)
+            setUser(storedUser)
+            
+            // Verify with Supabase
+            const { data: { session: verifiedSession }, error } = await supabase.auth.getSession()
+            
+            if (error || !verifiedSession) {
+              console.log('Stored session invalid, clearing storage')
+              SessionStorage.clearSession()
+              setSession(null)
+              setUser(null)
+            } else {
+              console.log('Stored session verified, updating state')
+              setSession(verifiedSession)
+              setUser(verifiedSession.user)
+              SessionStorage.saveSession(verifiedSession)
+              SessionStorage.saveUser(verifiedSession.user)
+            }
+          } else {
+            console.log('No valid stored session, checking Supabase')
+            
+            // Try to get current user first
+            const { data: { user: currentUser } } = await supabase.auth.getUser()
+            
+            // Then get session
+            const { data: { session } } = await supabase.auth.getSession()
+            
+            // Use current user if session is not available
+            const user = session?.user || currentUser
+            setSession(session)
+            setUser(user)
+            
+            // Save to persistent storage if valid
+            if (session) {
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
+            }
+          }
           
           // Fetch profile if user exists
           if (user) {
@@ -393,36 +436,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           try {
+            console.log('Auth state change:', event, session ? 'session exists' : 'no session')
+            
             setSession(session)
             setUser(session?.user ?? null)
+            
+            // Enhanced session persistence
+            if (session) {
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
+              console.log('Session saved to persistent storage')
+            } else {
+              SessionStorage.clearSession()
+              console.log('Session cleared from persistent storage')
+            }
             
             // Handle signout event - redirect to login page
             if (event === 'SIGNED_OUT') {
               console.log('User signed out, redirecting to login page')
+              SessionStorage.clearSession()
+              setProfile(null)
               if (typeof window !== 'undefined') {
                 window.location.href = '/auth'
               }
               return
             }
             
-            // Handle signin event - redirect to enrolled courses (only for email/password login)
-            if (event === 'SIGNED_IN' && session?.user) {
-              console.log('User signed in, checking if redirect is needed')
-              if (typeof window !== 'undefined') {
-                // Only redirect if we're not already on the enrolled courses page
-                // and not coming from OAuth callback (which handles its own redirect)
-                const currentPath = window.location.pathname
-                const isFromCallback = document.referrer.includes('/auth/callback')
-                
-                if (currentPath !== '/courses/enrolled' && !isFromCallback) {
-                  console.log('Redirecting to enrolled courses after login')
-                  setTimeout(() => {
-                    window.location.href = '/courses/enrolled'
-                  }, 100)
-                } else {
-                  console.log('Skipping redirect - already on target page or from OAuth callback')
-                }
-              }
+            // Handle token refresh
+            if (event === 'TOKEN_REFRESHED' && session) {
+              console.log('Token refreshed, updating persistent storage')
+              SessionStorage.saveSession(session)
+              SessionStorage.saveUser(session.user)
               return
             }
             
@@ -450,17 +494,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setLoading(false)
     }
-  }, [supabase.auth, fetchProfile])
+  }, [supabase.auth, fetchProfile, isInitialized, user])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const signUp = async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
+  const signUp = useCallback(async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -472,9 +516,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     console.log('SignOut function called')
     try {
       // Clear localStorage
@@ -502,9 +546,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('SignOut failed:', error)
       throw error
     }
-  }
+  }, [supabase, setProfileCache])
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     // Automatically detect environment and use appropriate URL
     let siteUrl: string
     
@@ -535,21 +579,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     console.log('OAuth data:', data)
-  }
+  }, [supabase])
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const updatePassword = async (newPassword: string) => {
+  const updatePassword = useCallback(async (newPassword: string) => {
     const { error } = await supabase.auth.updateUser({
       password: newPassword
     })
     if (error) throw error
-  }
+  }, [supabase])
 
   const value = useMemo(() => ({
     user,

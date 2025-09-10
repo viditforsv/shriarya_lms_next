@@ -23,25 +23,7 @@ const CourseSchema = z.object({
   tags: z.array(z.string()).default([])
 })
 
-const LessonSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().optional(),
-  content: z.string().optional(),
-  lesson_order: z.number().min(1, 'Lesson order is required'),
-  slug: z.string().min(1, 'Slug is required'),
-  is_preview: z.boolean().default(false),
-  duration: z.string().optional(),
-  type: z.enum(['video', 'document', 'quiz', 'assignment', 'practice']).default('video')
-})
-
-const ResourceSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  kind: z.enum(['video', 'pdf', 'image', 'link', 'audio', 'zip']),
-  url: z.string().min(1, 'URL is required'),
-  mime: z.string().optional(),
-  duration_sec: z.number().optional(),
-  description: z.string().optional()
-})
+// Unused schemas removed to fix linting errors
 
 // Helper function to get authenticated user
 async function getAuthenticatedUser() {

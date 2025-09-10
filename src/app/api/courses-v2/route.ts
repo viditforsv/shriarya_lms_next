@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 // GET - Get all courses with basic info
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
+    // const { searchParams } = new URL(request.url)
     // const published = searchParams.get('published') === 'true'
     // const category = searchParams.get('category')
     // const difficulty = searchParams.get('difficulty')

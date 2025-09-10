@@ -1,10 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/app/components-demo/ui/button'
-import { Input } from '@/app/components-demo/ui/input'
-import { Label } from '@/app/components-demo/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Input } from '@/app/components-demo/ui/ui-components/input'
+import { Label } from '@/app/components-demo/ui/ui-components/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -20,7 +20,7 @@ export default function ResetPasswordPage() {
 
   const { updatePassword, user } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
+  // const searchParams = useSearchParams()
 
   useEffect(() => {
     // Check if user is authenticated (required for password reset)

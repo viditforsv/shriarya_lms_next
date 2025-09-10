@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Trash2, Edit, FileText, Video, HelpCircle, Download, ChevronUp, ChevronDown } from '@/app/components-demo/ui/icons'
-import { Button } from '@/app/components-demo/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { FileUpload } from '@/app/components-demo/ui/file-upload'
 import { createClient } from '@/lib/supabase/client'
 
@@ -38,11 +38,7 @@ export function SectionEditor({ lessonId, onSectionsChange }: SectionEditorProps
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const supabase = createClient()
 
-  useEffect(() => {
-    fetchSections()
-  }, [lessonId])
-
-  const fetchSections = async () => {
+  const fetchSections = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -72,7 +68,11 @@ export function SectionEditor({ lessonId, onSectionsChange }: SectionEditorProps
     } finally {
       setLoading(false)
     }
-  }
+  }, [lessonId, supabase, onSectionsChange])
+
+  useEffect(() => {
+    fetchSections()
+  }, [lessonId, fetchSections])
 
   const addSection = async (type: Section['section_type']) => {
     try {

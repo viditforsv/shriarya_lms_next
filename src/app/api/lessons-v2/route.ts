@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const courseId = searchParams.get('courseId')
     const courseSlug = searchParams.get('courseSlug')
-    const published = searchParams.get('published') === 'true'
+    // const published = searchParams.get('published') === 'true'
 
     if (!courseId && !courseSlug) {
       return NextResponse.json({ error: 'Course ID or slug is required' }, { status: 400 })

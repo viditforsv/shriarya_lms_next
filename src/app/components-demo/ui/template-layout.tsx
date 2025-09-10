@@ -2,8 +2,8 @@
 
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { CompletionDot } from '@/app/components-demo/ui/template-status'
 
 interface TemplateLayoutProps {

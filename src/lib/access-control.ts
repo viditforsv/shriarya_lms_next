@@ -30,6 +30,7 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: '/', accessLevel: 'public' },
   { path: '/courses', accessLevel: 'public' },
   { path: '/courses/free', accessLevel: 'public' },
+  { path: '/courses/cbse-mathematics-class-10', accessLevel: 'public' },
   { path: '/courses/cbse', accessLevel: 'public' },
   { path: '/courses/ibdp', accessLevel: 'public' },
   { path: '/courses/icse', accessLevel: 'public' },
@@ -101,8 +102,14 @@ export const COURSE_ACCESS: Record<string, CourseAccessConfig> = {
   },
   'cbse-math-10': {
     courseId: 'cbse-math-10',
-    accessType: 'paid',
-    isFree: false,
+    accessType: 'free',
+    isFree: true,
+    previewAvailable: true,
+  },
+  'cbse-mathematics-class-10': {
+    courseId: 'cbse-mathematics-class-10',
+    accessType: 'free',
+    isFree: true,
     previewAvailable: true,
   },
   'cbse-math-11': {
@@ -221,7 +228,7 @@ export function getRedirectPath(pathname: string, userRole?: UserRole, isAuthent
       return isAuthenticated ? null : '/auth'
     case 'admin':
       if (!isAuthenticated) return '/auth'
-      if (userRole !== 'admin') return '/courses/enrolled'
+      if (userRole !== 'admin') return '/dashboard' // Better default for authenticated non-admin users
       return null
     default:
       return null

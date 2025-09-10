@@ -1,10 +1,10 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { AdminOnly, StudentOnly } from '@/app/components-demo/auth/RoleGuard'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/card'
-import { Button } from '@/app/components-demo/ui/button'
-import { Badge } from '@/app/components-demo/ui/badge'
+import { AdminOnly, StudentOnly } from '@/app/components-demo/ui/form-components/RoleGuard'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { BookOpen, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
@@ -193,9 +193,6 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <Link href="/dashboard/courses/manage">
                     <Button className="w-full">Manage Courses</Button>
-                  </Link>
-                  <Link href="/dashboard/courses/builder">
-                    <Button variant="outline" className="w-full">Course Builder</Button>
                   </Link>
                 </div>
               </CardContent>

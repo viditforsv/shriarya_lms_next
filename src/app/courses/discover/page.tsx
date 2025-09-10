@@ -503,24 +503,35 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
-                  <Badge variant="outline">{course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}</Badge>
+                  {course.template_data?.curriculum && (
+                    <Badge variant="outline">{course.template_data.curriculum}</Badge>
+                  )}
+                  {course.template_data?.grade && (
+                    <Badge variant="outline">{course.template_data.grade}</Badge>
+                  )}
+                  {/* Fallback for courses without template data */}
+                  {!course.template_data?.curriculum && (
+                    <Badge variant="outline">{course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}</Badge>
+                  )}
                   <Badge variant={course.is_free ? 'secondary' : 'default'}>
                     {course.is_free ? 'Free' : `$${course.price}`}
                   </Badge>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    <span className="capitalize">{course.status}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  <span>Status: {course.status}</span>
-                </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="w-4 h-4" />
-                  <span>{course.is_free ? 'Free' : 'Paid'}</span>
+                  <span>{course.is_free ? 'Free Course' : `Paid Course - $${course.price}`}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -567,40 +578,67 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
       <CardContent className="pt-0">
         <div className="space-y-4">
           {/* Course Info */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <span className="capitalize">{course.status}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              <span>Status: {course.status}</span>
-            </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Star className="w-4 h-4" />
-              <span>{course.is_free ? 'Free' : 'Paid'}</span>
+              <span>{course.is_free ? 'Free Course' : `Paid Course - $${course.price}`}</span>
             </div>
           </div>
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs">
-              {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
-            </Badge>
-            {course.slug.includes('class-10') && (
+            {course.template_data?.curriculum && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.curriculum}
+              </Badge>
+            )}
+            {course.template_data?.subject && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.subject}
+              </Badge>
+            )}
+            {course.template_data?.grade && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.grade}
+              </Badge>
+            )}
+            {course.template_data?.level && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.level}
+              </Badge>
+            )}
+            {/* Fallback for courses without template data */}
+            {!course.template_data?.curriculum && (
+              <Badge variant="outline" className="text-xs">
+                {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
+              </Badge>
+            )}
+            {!course.template_data?.subject && (
+              <Badge variant="outline" className="text-xs">
+                {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
+              </Badge>
+            )}
+            {!course.template_data?.grade && course.slug.includes('class-10') && (
               <Badge variant="outline" className="text-xs">
                 Class 10
               </Badge>
             )}
-            {course.slug.includes('class-11') && (
+            {!course.template_data?.grade && course.slug.includes('class-11') && (
               <Badge variant="outline" className="text-xs">
                 Class 11
               </Badge>
             )}
-            {course.slug.includes('hl') && (
+            {!course.template_data?.level && course.slug.includes('hl') && (
               <Badge variant="outline" className="text-xs">
                 Higher Level
               </Badge>

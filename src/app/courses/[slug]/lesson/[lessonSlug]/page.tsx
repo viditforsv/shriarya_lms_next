@@ -40,6 +40,7 @@ interface Course {
   slug: string
   is_free: boolean
   created_at: string
+  template_data?: any
   profiles?: {
     first_name: string
     last_name: string
@@ -99,110 +100,116 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
 
     const loadLesson = async () => {
       try {
+        console.log('Starting to load lesson with params:', resolvedParams)
         setIsLoading(true)
         setError(null)
 
-        // Get course from configuration (same as course page)
-        const courseInfo = getCourseBySlug(resolvedParams.slug)
+        // Fetch lessons from database API first
+        console.log('Fetching lessons for course:', resolvedParams.slug)
+        const lessonsResponse = await fetch(`/api/lessons?course_slug=${resolvedParams.slug}`)
+        console.log('Lessons API response status:', lessonsResponse.status)
         
-        if (!courseInfo) {
-          throw new Error('Course not found')
-        }
-
-        // Convert CourseConfig to Course interface
-        const courseData: Course = {
-          id: courseInfo.slug, // Use slug as ID for static courses
-          title: courseInfo.title,
-          description: courseInfo.description,
-          slug: courseInfo.slug,
-          is_free: courseInfo.isFree,
-          created_at: new Date().toISOString(), // Use current date for static courses
-          profiles: {
-            first_name: 'System',
-            last_name: 'Admin'
+        if (lessonsResponse.ok) {
+          const lessonsData = await lessonsResponse.json()
+          console.log('Lessons data received:', lessonsData)
+          
+          // Convert database lessons to Lesson interface
+          const mappedLessons: Lesson[] = lessonsData.lessons.map((lesson: any) => ({
+            id: lesson.id,
+            title: lesson.title,
+            slug: lesson.slug,
+            content: lesson.content_html || lesson.content || '',
+            lesson_order: lesson.lesson_order,
+            is_preview: lesson.is_preview || false,
+            created_at: lesson.created_at,
+            course_id: lesson.course_id,
+            resources: lesson.resources || []
+          }))
+          console.log('Mapped lessons:', mappedLessons.map(l => ({ slug: l.slug, title: l.title })))
+          setAllLessons(mappedLessons)
+          
+          // Find the specific lesson from the loaded lessons
+          const currentLesson = mappedLessons.find(l => l.slug === resolvedParams.lessonSlug)
+          console.log('Looking for lesson slug:', resolvedParams.lessonSlug)
+          console.log('Found lesson:', currentLesson)
+          
+          if (!currentLesson) {
+            // Debug information
+            console.error('Lesson not found:', {
+              requestedLessonSlug: resolvedParams.lessonSlug,
+              courseSlug: resolvedParams.slug,
+              availableLessons: mappedLessons.map(l => l.slug)
+            })
+            throw new Error(`Lesson "${resolvedParams.lessonSlug}" not found in course "${resolvedParams.slug}"`)
           }
-        }
+          
+          setLesson(currentLesson)
 
-        setCourse(courseData)
-
-        // Get lessons from configuration and convert to Lesson interface
-        const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
-        
-        const mappedLessons: Lesson[] = lessonsData.map((lesson: LessonConfig, index: number) => ({
-          id: lesson.slug, // Use slug as ID for static lessons
-          title: lesson.title,
-          slug: lesson.slug,
-          content: lesson.description || '', // Use description as content
-          lesson_order: lesson.order || index + 1, // Use order from config or index
-          is_preview: lesson.isPreview || false,
-          created_at: new Date().toISOString(), // Use current date for static lessons
-          course_id: courseData.id,
-          resources: (lesson.resources || []).map((resource: ResourceConfig) => ({
-            id: resource.url, // Use URL as ID for static resources
-            url: resource.url,
-            kind: resource.type || 'file', // Default to 'file' type
-            mime: 'application/octet-stream', // Default MIME type
-            duration_sec: 0 // Default duration for static resources
-          }))
-        }))
-        setAllLessons(mappedLessons)
-
-        // Find the specific lesson using enhanced lookup (supports syllabus mapping)
-        const lessonInfo = getLessonBySlug(resolvedParams.slug, resolvedParams.lessonSlug)
-        if (!lessonInfo) {
-          // Debug information
-          console.error('Lesson not found:', {
-            requestedLessonSlug: resolvedParams.lessonSlug,
-            courseSlug: resolvedParams.slug,
-            availableLessonSlugs: lessonsData.map(l => l.slug),
-            totalLessons: lessonsData.length,
-            note: 'Enhanced lookup with syllabus mapping was attempted'
-          })
-          throw new Error(`Lesson not found: ${resolvedParams.lessonSlug}. Available lessons: ${lessonsData.map(l => l.slug).join(', ')}`)
-        }
-
-        // Map LessonConfig to Lesson interface
-        const mappedLesson: Lesson = {
-          id: lessonInfo.slug,
-          title: lessonInfo.title,
-          slug: lessonInfo.slug,
-          content: lessonInfo.description || '',
-          lesson_order: lessonInfo.order || 1,
-          is_preview: lessonInfo.isPreview || false,
-          created_at: new Date().toISOString(),
-          course_id: courseData.id,
-          resources: (lessonInfo.resources || []).map((resource: ResourceConfig) => ({
-            id: resource.url,
-            url: resource.url,
-            kind: resource.type || 'file',
-            mime: 'application/octet-stream',
-            duration_sec: 0
-          }))
-        }
-
-        setLesson(mappedLesson)
-
-        // Check enrollment - for free courses, user is automatically enrolled
-        setIsEnrolled(courseInfo.isFree || false)
-
-        // Get user progress for this lesson
-        try {
-          const progressResponse = await fetch(`/api/user-progress?lessonId=${lessonInfo.id}`)
-          if (progressResponse.ok) {
-            const progressData = await progressResponse.json()
-            if (progressData.progress && progressData.progress.length > 0) {
-              setUserProgress(progressData.progress[0])
+          // Try to fetch course with template
+          try {
+            const courseResponse = await fetch(`/api/courses/${resolvedParams.slug}/with-template`)
+            
+            if (courseResponse.ok) {
+              const courseData = await courseResponse.json()
+              // Convert RenderedCourse to Course interface
+              const courseDataConverted: Course = {
+                id: courseData.rendered.id,
+                title: courseData.rendered.title,
+                description: courseData.rendered.description,
+                slug: courseData.rendered.slug,
+                is_free: courseData.rendered.isFree,
+                created_at: courseData.rendered.createdAt,
+                template_data: courseData.rendered.templateData,
+                profiles: {
+                  first_name: 'System',
+                  last_name: 'Admin'
+                }
+              }
+              setCourse(courseDataConverted)
+              setIsEnrolled(courseDataConverted.is_free || false)
+            } else {
+              // Fallback to old system
+              const courseInfo = getCourseBySlug(resolvedParams.slug)
+              
+              if (courseInfo) {
+                // Convert CourseConfig to Course interface
+                const courseData: Course = {
+                  id: courseInfo.slug, // Use slug as ID for static courses
+                  title: courseInfo.title,
+                  description: courseInfo.description,
+                  slug: courseInfo.slug,
+                  is_free: courseInfo.isFree,
+                  created_at: new Date().toISOString(), // Use current date for static courses
+                  profiles: {
+                    first_name: 'System',
+                    last_name: 'Admin'
+                  }
+                }
+                setCourse(courseData)
+                setIsEnrolled(courseData.is_free || false)
+              }
             }
+          } catch (courseError) {
+            console.warn('Could not fetch course data:', courseError)
+            // Don't throw error for course fetch failure
           }
-        } catch (progressError) {
-          console.warn('Could not fetch user progress:', progressError)
-          // Don't throw error for progress fetch failure
+
+        } else {
+          const errorText = await lessonsResponse.text()
+          console.error('Failed to fetch lessons:', errorText)
+          throw new Error('Failed to fetch lessons from database')
         }
 
       } catch (err) {
         console.error('Error loading lesson:', err)
+        console.error('Error details:', {
+          message: err instanceof Error ? err.message : 'Unknown error',
+          stack: err instanceof Error ? err.stack : undefined,
+          params: resolvedParams
+        })
         setError(err instanceof Error ? err.message : 'Lesson not found')
       } finally {
+        console.log('Setting loading to false')
         setIsLoading(false)
       }
     }
@@ -397,6 +404,56 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
             <span>/</span>
             <span className="text-foreground">{lesson.title}</span>
           </nav>
+          
+          {/* Course Tags */}
+          <div className="flex flex-wrap gap-2 mt-3">
+            {course.template_data?.curriculum && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.curriculum}
+              </Badge>
+            )}
+            {course.template_data?.subject && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.subject}
+              </Badge>
+            )}
+            {course.template_data?.grade && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.grade}
+              </Badge>
+            )}
+            {course.template_data?.level && (
+              <Badge variant="outline" className="text-xs">
+                {course.template_data.level}
+              </Badge>
+            )}
+            {/* Fallback for courses without template data */}
+            {!course.template_data?.curriculum && (
+              <Badge variant="outline" className="text-xs">
+                {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
+              </Badge>
+            )}
+            {!course.template_data?.subject && (
+              <Badge variant="outline" className="text-xs">
+                {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
+              </Badge>
+            )}
+            {!course.template_data?.grade && course.slug.includes('class-10') && (
+              <Badge variant="outline" className="text-xs">
+                Class 10
+              </Badge>
+            )}
+            {!course.template_data?.grade && course.slug.includes('class-11') && (
+              <Badge variant="outline" className="text-xs">
+                Class 11
+              </Badge>
+            )}
+            {!course.template_data?.level && course.slug.includes('hl') && (
+              <Badge variant="outline" className="text-xs">
+                Higher Level
+              </Badge>
+            )}
+          </div>
         </div>
 
         <div className="flex">

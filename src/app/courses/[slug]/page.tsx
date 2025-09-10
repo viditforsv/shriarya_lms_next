@@ -20,6 +20,7 @@ import {
   LessonConfig 
 } from '@/lib/course-config'
 import { RenderedCourse, CourseTemplate } from '@/types/course-templates'
+import { DynamicCourseRenderer } from '@/components/DynamicCourseRenderer'
 
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { user } = useAuth()
@@ -54,9 +55,35 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
           setTemplate(data.template)
           setIsFallback(data.isFallback)
           
-          // Fetch lessons for this course (still using the old system for now)
-          const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
-          setLessons(lessonsData)
+          // Fetch lessons for this course from database
+          try {
+            const lessonsResponse = await fetch(`/api/lessons?course_slug=${resolvedParams.slug}`)
+            if (lessonsResponse.ok) {
+              const lessonsData = await lessonsResponse.json()
+              // Convert database lessons to LessonConfig format
+              const convertedLessons = lessonsData.lessons.map((lesson: any) => ({
+                id: lesson.id,
+                slug: lesson.slug,
+                title: lesson.title,
+                description: lesson.content_html || lesson.content || '',
+                duration: '45 minutes', // Default duration
+                type: 'video',
+                isPreview: lesson.is_preview || false,
+                order: lesson.lesson_order,
+                resources: lesson.resources || []
+              }))
+              setLessons(convertedLessons)
+            } else {
+              // Fallback to old system if API fails
+              const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+              setLessons(lessonsData)
+            }
+          } catch (error) {
+            console.error('Error fetching lessons:', error)
+            // Fallback to old system
+            const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+            setLessons(lessonsData)
+          }
           
           // For free courses, user is automatically "enrolled"
           setIsEnrolled(data.rendered.isFree || false)
@@ -71,9 +98,35 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
           setTemplate(null)
           setIsFallback(true)
 
-          // Fetch lessons for this course
-          const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
-          setLessons(lessonsData)
+          // Fetch lessons for this course from database
+          try {
+            const lessonsResponse = await fetch(`/api/lessons?course_slug=${resolvedParams.slug}`)
+            if (lessonsResponse.ok) {
+              const lessonsData = await lessonsResponse.json()
+              // Convert database lessons to LessonConfig format
+              const convertedLessons = lessonsData.lessons.map((lesson: any) => ({
+                id: lesson.id,
+                slug: lesson.slug,
+                title: lesson.title,
+                description: lesson.content_html || lesson.content || '',
+                duration: '45 minutes', // Default duration
+                type: 'video',
+                isPreview: lesson.is_preview || false,
+                order: lesson.lesson_order,
+                resources: lesson.resources || []
+              }))
+              setLessons(convertedLessons)
+            } else {
+              // Fallback to old system if API fails
+              const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+              setLessons(lessonsData)
+            }
+          } catch (error) {
+            console.error('Error fetching lessons:', error)
+            // Fallback to old system
+            const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+            setLessons(lessonsData)
+          }
 
           // For free courses, user is automatically "enrolled"
           setIsEnrolled(courseData.isFree || false)
@@ -161,12 +214,47 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                 <Badge variant={course.isFree ? "secondary" : "default"}>
                   {course.isFree ? 'Free' : `$${course.price || 0}`}
                 </Badge>
-                <Badge variant="outline">
-                  {course.curriculum}
-                </Badge>
-                <Badge variant="outline">
-                  {course.grade || course.level}
-                </Badge>
+                {course.templateData?.curriculum && (
+                  <Badge variant="outline">
+                    {course.templateData.curriculum}
+                  </Badge>
+                )}
+                {course.templateData?.subject && (
+                  <Badge variant="outline">
+                    {course.templateData.subject}
+                  </Badge>
+                )}
+                {course.templateData?.grade && (
+                  <Badge variant="outline">
+                    {course.templateData.grade}
+                  </Badge>
+                )}
+                {course.templateData?.level && (
+                  <Badge variant="outline">
+                    {course.templateData.level}
+                  </Badge>
+                )}
+                {/* Fallback for courses without template data */}
+                {!course.templateData?.curriculum && (
+                  <Badge variant="outline">
+                    {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
+                  </Badge>
+                )}
+                {!course.templateData?.grade && course.slug.includes('class-10') && (
+                  <Badge variant="outline">
+                    Class 10
+                  </Badge>
+                )}
+                {!course.templateData?.grade && course.slug.includes('class-11') && (
+                  <Badge variant="outline">
+                    Class 11
+                  </Badge>
+                )}
+                {!course.templateData?.level && course.slug.includes('hl') && (
+                  <Badge variant="outline">
+                    Higher Level
+                  </Badge>
+                )}
                 {isEnrolled && (
                   <Badge variant="default" className="bg-green-100 text-green-800">
                     Enrolled
@@ -212,75 +300,79 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
               </TabsList>
 
               <TabsContent value="overview" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Course Overview</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-6">
-                      {course.description || 'This course provides comprehensive learning materials and practical exercises.'}
-                    </p>
-                    
-                    {/* Complete CBSE Syllabus */}
-                    <div className="mb-6">
-                      <h4 className="font-semibold mb-4 text-[#1e293b]">Complete CBSE Class 10 Mathematics Syllabus</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div className="space-y-3">
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit I: Number Systems</h5>
-                            <p className="text-muted-foreground">Real Numbers (Fundamental Theorem of Arithmetic, proofs of irrationality for √2, √3, √5)</p>
+                {template && course ? (
+                  <DynamicCourseRenderer course={course} template={template} />
+                ) : (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Course Overview</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-6">
+                        {course?.description || 'This course provides comprehensive learning materials and practical exercises.'}
+                      </p>
+                      
+                      {/* Complete CBSE Syllabus */}
+                      <div className="mb-6">
+                        <h4 className="font-semibold mb-4 text-[#1e293b]">Complete CBSE Class 10 Mathematics Syllabus</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div className="space-y-3">
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit I: Number Systems</h5>
+                              <p className="text-muted-foreground">Real Numbers (Fundamental Theorem of Arithmetic, proofs of irrationality for √2, √3, √5)</p>
+                            </div>
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit II: Algebra</h5>
+                              <p className="text-muted-foreground">Polynomials, Pair of Linear Equations, Quadratic Equations, Arithmetic Progressions</p>
+                            </div>
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit III: Coordinate Geometry</h5>
+                              <p className="text-muted-foreground">Distance Formula and Section (Internal Division) Formula</p>
+                            </div>
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit IV: Geometry</h5>
+                              <p className="text-muted-foreground">Triangles (similarity), Circles (tangent properties)</p>
+                            </div>
                           </div>
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit II: Algebra</h5>
-                            <p className="text-muted-foreground">Polynomials, Pair of Linear Equations, Quadratic Equations, Arithmetic Progressions</p>
-                          </div>
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit III: Coordinate Geometry</h5>
-                            <p className="text-muted-foreground">Distance Formula and Section (Internal Division) Formula</p>
-                          </div>
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit IV: Geometry</h5>
-                            <p className="text-muted-foreground">Triangles (similarity), Circles (tangent properties)</p>
-                          </div>
-                        </div>
-                        <div className="space-y-3">
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit V: Trigonometry</h5>
-                            <p className="text-muted-foreground">Trigonometric ratios, Identities, Heights and Distances</p>
-                          </div>
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit VI: Mensuration</h5>
-                            <p className="text-muted-foreground">Areas Related to Circles, Surface Areas and Volumes</p>
-                          </div>
-                          <div className="border-l-4 border-[#e27447] pl-3">
-                            <h5 className="font-medium text-[#1e293b]">Unit VII: Statistics & Probability</h5>
-                            <p className="text-muted-foreground">Mean, Median, Mode of grouped data, Probability</p>
+                          <div className="space-y-3">
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit V: Trigonometry</h5>
+                              <p className="text-muted-foreground">Trigonometric ratios, Identities, Heights and Distances</p>
+                            </div>
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit VI: Mensuration</h5>
+                              <p className="text-muted-foreground">Areas Related to Circles, Surface Areas and Volumes</p>
+                            </div>
+                            <div className="border-l-4 border-[#e27447] pl-3">
+                              <h5 className="font-medium text-[#1e293b]">Unit VII: Statistics & Probability</h5>
+                              <p className="text-muted-foreground">Mean, Median, Mode of grouped data, Probability</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-semibold mb-2">What you&apos;ll learn</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          {course.learningOutcomes.map((outcome, index) => (
-                            <li key={index}>• {outcome}</li>
-                          ))}
-                        </ul>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <h4 className="font-semibold mb-2">What you&apos;ll learn</h4>
+                          <ul className="space-y-2 text-sm text-muted-foreground">
+                            {course?.learningOutcomes?.map((outcome, index) => (
+                              <li key={index}>• {outcome}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold mb-2">Course includes</h4>
+                          <ul className="space-y-2 text-sm text-muted-foreground">
+                            <li>• {course?.lessons} lessons</li>
+                            <li>• {course?.duration} of content</li>
+                            <li>• Practice problems and assessments</li>
+                            <li>• Certificate of completion</li>
+                          </ul>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Course includes</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>• {course.lessons} lessons</li>
-                          <li>• {course.duration} of content</li>
-                          <li>• Practice problems and assessments</li>
-                          <li>• Certificate of completion</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
               </TabsContent>
 
               <TabsContent value="content" className="mt-6">

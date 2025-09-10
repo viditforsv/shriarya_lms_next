@@ -51,7 +51,7 @@ const CourseTemplateSchema = z.object({
   structure: TemplateStructureSchema,
   fields: z.array(TemplateFieldSchema),
   settings: z.object({
-    defaultValues: z.record(z.any()).optional(),
+    defaultValues: z.record(z.string(), z.any()).optional(),
     ui: z.object({
       showProgress: z.boolean().optional(),
       showEnrollment: z.boolean().optional(),

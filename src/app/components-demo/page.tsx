@@ -553,7 +553,6 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Sign Up Form</CardTitle>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getCourseBySlug, getLessonsByCourseId, Lesson } from '@/lib/courses'
 import { useCourseAccess } from '@/hooks/useCourseAccess'
@@ -40,93 +40,6 @@ export function useCourseData(courseSlug: string) {
   const [error, setError] = useState<string | null>(null)
 
   const { isEnrolled, isFree, canPreview } = useCourseAccess(courseData?.id || '')
-
-  useEffect(() => {
-    const loadCourseData = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        // Fetch course data
-        const course = await getCourseBySlug(courseSlug)
-        if (!course) {
-          setError('Course not found')
-          return
-        }
-
-        setCourseData(course)
-
-        // Fetch lessons
-        const courseLessons = await getLessonsByCourseId(course.id)
-        setLessons(courseLessons)
-
-        // Organize lessons into sections (you can customize this logic)
-        const sections = organizeLessonsIntoSections(courseLessons, isEnrolled)
-        setCourseContent(sections)
-
-        // Simulate progress (replace with actual progress tracking)
-        if (user) {
-          setCourseProgress(35) // This should come from actual progress tracking
-        }
-
-      } catch (err) {
-        console.error('Error loading course data:', err)
-        setError('Failed to load course data')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (courseSlug) {
-      loadCourseData()
-    }
-  }, [courseSlug, user, isEnrolled])
-
-  const organizeLessonsIntoSections = (lessons: Lesson[], isEnrolled: boolean): CourseContentSection[] => {
-    // Group lessons by topic/chapter (you can customize this logic)
-    const sections: Record<string, CourseContentSection> = {}
-
-    lessons.forEach((lesson, index) => {
-      // Extract section from lesson title or use a default grouping
-      const sectionTitle = extractSectionFromTitle(lesson.title)
-      
-      if (!sections[sectionTitle]) {
-        sections[sectionTitle] = {
-          id: sectionTitle.toLowerCase().replace(/\s+/g, '-'),
-          title: sectionTitle,
-          lectures: 0,
-          duration: '0 hours',
-          lessons: []
-        }
-      }
-
-      // Determine lesson type based on content or title
-      const lessonType = determineLessonType(lesson.title, lesson.content)
-      
-      sections[sectionTitle].lessons.push({
-        id: lesson.id,
-        title: lesson.title,
-        duration: '45:00', // Default duration, you can store this in the database
-        type: lessonType,
-        hasPreview: lesson.is_preview,
-        isLocked: !isEnrolled && !lesson.is_preview,
-        isCompleted: false, // This should come from actual progress tracking
-        slug: lesson.slug
-      })
-
-      sections[sectionTitle].lectures++
-    })
-
-    // Calculate total duration for each section
-    Object.values(sections).forEach(section => {
-      const totalMinutes = section.lessons.length * 45 // Assuming 45 minutes per lesson
-      const hours = Math.floor(totalMinutes / 60)
-      const minutes = totalMinutes % 60
-      section.duration = `${hours} hours${minutes > 0 ? ` ${minutes} minutes` : ''}`
-    })
-
-    return Object.values(sections)
-  }
 
   const extractSectionFromTitle = (title: string): string => {
     // CBSE Class 10 Mathematics chapter organization
@@ -183,6 +96,93 @@ export function useCourseData(courseSlug: string) {
       return 'document'
     }
   }
+
+  const organizeLessonsIntoSections = useCallback((lessons: Lesson[], isEnrolled: boolean): CourseContentSection[] => {
+    // Group lessons by topic/chapter (you can customize this logic)
+    const sections: Record<string, CourseContentSection> = {}
+
+    lessons.forEach((lesson) => {
+      // Extract section from lesson title or use a default grouping
+      const sectionTitle = extractSectionFromTitle(lesson.title)
+      
+      if (!sections[sectionTitle]) {
+        sections[sectionTitle] = {
+          id: sectionTitle.toLowerCase().replace(/\s+/g, '-'),
+          title: sectionTitle,
+          lectures: 0,
+          duration: '0 hours',
+          lessons: []
+        }
+      }
+
+      // Determine lesson type based on content or title
+      const lessonType = determineLessonType(lesson.title, lesson.content)
+      
+      sections[sectionTitle].lessons.push({
+        id: lesson.id,
+        title: lesson.title,
+        duration: '45:00', // Default duration, you can store this in the database
+        type: lessonType,
+        hasPreview: lesson.is_preview,
+        isLocked: !isEnrolled && !lesson.is_preview,
+        isCompleted: false, // This should come from actual progress tracking
+        slug: lesson.slug
+      })
+
+      sections[sectionTitle].lectures++
+    })
+
+    // Calculate total duration for each section
+    Object.values(sections).forEach(section => {
+      const totalMinutes = section.lessons.length * 45 // Assuming 45 minutes per lesson
+      const hours = Math.floor(totalMinutes / 60)
+      const minutes = totalMinutes % 60
+      section.duration = `${hours} hours${minutes > 0 ? ` ${minutes} minutes` : ''}`
+    })
+
+    return Object.values(sections)
+  }, [])
+
+  useEffect(() => {
+    const loadCourseData = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        // Fetch course data
+        const course = await getCourseBySlug(courseSlug)
+        if (!course) {
+          setError('Course not found')
+          return
+        }
+
+        setCourseData(course)
+
+        // Fetch lessons
+        const courseLessons = await getLessonsByCourseId(course.id)
+        setLessons(courseLessons)
+
+        // Organize lessons into sections (you can customize this logic)
+        const sections = organizeLessonsIntoSections(courseLessons, isEnrolled)
+        setCourseContent(sections)
+
+        // Simulate progress (replace with actual progress tracking)
+        if (user) {
+          setCourseProgress(35) // This should come from actual progress tracking
+        }
+
+      } catch (err) {
+        console.error('Error loading course data:', err)
+        setError('Failed to load course data')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (courseSlug) {
+      loadCourseData()
+    }
+  }, [courseSlug, user, isEnrolled, organizeLessonsIntoSections])
 
   return {
     courseData,

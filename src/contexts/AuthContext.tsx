@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [profile]) // Include profile dependency
 
   // Create user profile if it doesn't exist
-  const createProfile = async (userId: string) => {
+  const createProfile = useCallback(async (userId: string) => {
     try {
       // Get user data from auth.users
       const { data: userData, error: userError } = await supabase.auth.getUser()
@@ -124,10 +124,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error creating profile:', error)
       return null
     }
-  }
+  }, [supabase])
 
   // Create fallback profile when database is unavailable
-  const createFallbackProfile = async (userId: string) => {
+  const createFallbackProfile = useCallback(async (userId: string) => {
     try {
       console.log('Creating fallback profile for user:', userId)
       
@@ -175,7 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error creating fallback profile:', error)
       return null
     }
-  }
+  }, [supabase])
 
     // Fetch user profile from database with retry logic
   const fetchProfile = useCallback(async (userId: string, retries = 2) => {
@@ -278,7 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   // Check if user has specific permission
-  const hasPermission = (permission: keyof RolePermissions): boolean => {
+  const hasPermission = useCallback((permission: keyof RolePermissions): boolean => {
     if (!profile) return false
     
     const permissions: Record<UserRole, RolePermissions> = {
@@ -299,10 +299,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return permissions[profile.role]?.[permission] || false
-  }
+  }, [profile])
 
   // Update user role (admin only)
-  const updateUserRole = async (userId: string, newRole: UserRole): Promise<boolean> => {
+  const updateUserRole = useCallback(async (userId: string, newRole: UserRole): Promise<boolean> => {
     if (!hasPermission('canManageUsers')) {
       throw new Error('Insufficient permissions')
     }
@@ -329,7 +329,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           })
           console.log('Successfully updated current user metadata with role:', newRole)
           // Refresh profile to update local state
-          await refreshProfile()
+          const userProfile = await fetchProfile(user.id)
+          if (userProfile) {
+            setProfile(userProfile)
+          }
         } catch (error) {
           console.error('Error updating current user metadata:', error)
         }
@@ -340,10 +343,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error updating user role:', error)
       return false
     }
-  }
+  }, [hasPermission, supabase, user?.id, fetchProfile, setProfile])
 
   // Refresh user profile with error handling
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user) {
       try {
         const userProfile = await fetchProfile(user.id)
@@ -353,7 +356,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Don't crash the app, just log the error
       }
     }
-  }
+  }, [user, fetchProfile])
 
   useEffect(() => {
     // Only run auth logic in browser and prevent multiple initializations
@@ -493,15 +496,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supabase.auth, fetchProfile, isInitialized, user])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const signUp = async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
+  const signUp = useCallback(async (email: string, password: string, fullName: string, role: UserRole = 'student') => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -513,9 +516,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     console.log('SignOut function called')
     try {
       // Clear localStorage
@@ -543,9 +546,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('SignOut failed:', error)
       throw error
     }
-  }
+  }, [supabase, setProfileCache])
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     // Automatically detect environment and use appropriate URL
     let siteUrl: string
     
@@ -576,21 +579,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     console.log('OAuth data:', data)
-  }
+  }, [supabase])
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     })
     if (error) throw error
-  }
+  }, [supabase])
 
-  const updatePassword = async (newPassword: string) => {
+  const updatePassword = useCallback(async (newPassword: string) => {
     const { error } = await supabase.auth.updateUser({
       password: newPassword
     })
     if (error) throw error
-  }
+  }, [supabase])
 
   const value = useMemo(() => ({
     user,

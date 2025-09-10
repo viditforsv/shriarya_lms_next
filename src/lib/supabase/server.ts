@@ -54,9 +54,9 @@ export async function createApiClient() {
   
   // Get all cookies and convert to the format Supabase expects
   const allCookies = cookieStore.getAll()
-  const cookieString = allCookies
-    .map(cookie => `${cookie.name}=${cookie.value}`)
-    .join('; ')
+  // const cookieString = allCookies
+  //   .map(cookie => `${cookie.name}=${cookie.value}`)
+  //   .join('; ')
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

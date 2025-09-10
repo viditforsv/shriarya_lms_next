@@ -12,14 +12,10 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    rules: {
-      // Relax rules for templates (auto-generated content)
-      "@typescript-eslint/no-unused-vars": "warn",
-      "react-hooks/exhaustive-deps": "warn",
-      "@next/next/no-img-element": "off",
-      "jsx-a11y/alt-text": "warn",
-    },
-    files: ["src/app/templates/**/*"],
+    ignores: [
+      "dev-templates/**/*", // Exclude dev templates from linting entirely
+      "src/app/components-demo/**/*", // Exclude component demos from linting
+    ],
   },
   {
     rules: {
@@ -28,15 +24,17 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "error",
       "jsx-a11y/alt-text": "error",
     },
-    files: ["src/app/**/*"],
-    ignores: ["src/app/templates/**/*"],
-  },
-  {
-    rules: {
-      // Disable alt-text rule for Lucide React icons (they don't need alt text)
-      "jsx-a11y/alt-text": "off",
-    },
-    files: ["src/app/components-demo/ui/file-upload.tsx"],
+    files: [
+      "src/app/**/*",
+      "src/lib/**/*",
+      "src/hooks/**/*",
+      "src/contexts/**/*",
+      "src/types/**/*",
+      "src/middleware.ts",
+    ],
+    ignores: [
+      "src/app/components-demo/**/*",
+    ],
   },
 ];
 

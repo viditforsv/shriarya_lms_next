@@ -11,7 +11,7 @@ export default function CourseSidebarDemo() {
             Course Sidebar Navigation Component
           </h1>
           <p className="text-gray-600 mb-4">
-            A comprehensive sidebar component combining Moodle's hierarchical structure with Notion's clean design.
+            A comprehensive sidebar component combining Moodle&apos;s hierarchical structure with Notion&apos;s clean design.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-sm p-4">
             <h3 className="font-semibold text-blue-900 mb-2">Features:</h3>

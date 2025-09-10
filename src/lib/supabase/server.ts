@@ -12,8 +12,7 @@ export async function createClient() {
         flowType: 'pkce',
         // Enhanced server-side session persistence
         persistSession: true,
-        autoRefreshToken: true,
-        sessionRefreshMargin: 60,
+        autoRefreshToken: true
       },
       cookies: {
         getAll() {

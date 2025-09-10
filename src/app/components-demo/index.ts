@@ -5,7 +5,7 @@
 export * from './ui'
 
 // Export specific components
-export { CourseSidebar, CourseSidebarExample } from './ui/course-sidebar'
+export { CourseSidebar, CourseSidebarExample } from './ui/layout-components/course-sidebar'
 
 // Export context providers
 export { AuthProvider, useAuth } from '../../contexts/AuthContext'

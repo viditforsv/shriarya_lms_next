@@ -31,6 +31,13 @@ const eslintConfig = [
     files: ["src/app/**/*"],
     ignores: ["src/app/templates/**/*"],
   },
+  {
+    rules: {
+      // Disable alt-text rule for Lucide React icons (they don't need alt text)
+      "jsx-a11y/alt-text": "off",
+    },
+    files: ["src/app/components-demo/ui/file-upload.tsx"],
+  },
 ];
 
 export default eslintConfig;

@@ -27,7 +27,7 @@ import { LessonRightSidebar } from '@/app/components-demo/ui/layout-components/l
 import { useAuth } from '@/contexts/AuthContext'
 import { 
   getCourseBySlug, 
-  getLessonsByCourseSlug, 
+  getLessonsByCourseSlugSync, 
   getLessonBySlug,
   LessonConfig,
   ResourceConfig
@@ -126,7 +126,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
         setCourse(courseData)
 
         // Get lessons from configuration and convert to Lesson interface
-        const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
+        const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
         
         const mappedLessons: Lesson[] = lessonsData.map((lesson: LessonConfig, index: number) => ({
           id: lesson.slug, // Use slug as ID for static lessons

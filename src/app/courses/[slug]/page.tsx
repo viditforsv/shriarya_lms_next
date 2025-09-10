@@ -15,7 +15,7 @@ import {
 import Link from 'next/link'
 import { 
   getCourseBySlug, 
-  getLessonsByCourseSlug, 
+  getLessonsByCourseSlugSync, 
   CourseConfig, 
   LessonConfig 
 } from '@/lib/course-config'
@@ -51,7 +51,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         setCourse(courseData)
 
         // Fetch lessons for this course
-        const lessonsData = getLessonsByCourseSlug(resolvedParams.slug)
+        const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
         setLessons(lessonsData)
 
         // For free courses, user is automatically "enrolled"

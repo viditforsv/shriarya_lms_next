@@ -97,7 +97,7 @@ export function LessonRightSidebar({
             </div>
             <div className="flex justify-center mb-4">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setIsCollapsed(false)}
                 className="rounded-sm p-2"
@@ -111,7 +111,7 @@ export function LessonRightSidebar({
           <div className="space-y-4">
             <div className="flex justify-center">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 className="rounded-sm p-2"
                 title="Notes"
@@ -121,7 +121,7 @@ export function LessonRightSidebar({
             </div>
             <div className="flex justify-center">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 className="rounded-sm p-2"
                 title="Resources"
@@ -131,7 +131,7 @@ export function LessonRightSidebar({
             </div>
             <div className="flex justify-center">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 className="rounded-sm p-2"
                 title="Key Points"
@@ -153,7 +153,7 @@ export function LessonRightSidebar({
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xl font-semibold text-[#1e293b]">Lesson Tools</h2>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setIsCollapsed(true)}
               className="rounded-sm"
@@ -186,7 +186,7 @@ export function LessonRightSidebar({
                 Notes ({notes.length})
               </CardTitle>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => toggleSection('notes')}
                 className="rounded-sm p-1"
@@ -243,7 +243,7 @@ export function LessonRightSidebar({
                 Resources ({resources.length})
               </CardTitle>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => toggleSection('resources')}
                 className="rounded-sm p-1"
@@ -271,7 +271,7 @@ export function LessonRightSidebar({
                           )}
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="rounded-sm p-1">
+                      <Button variant="outline" size="sm" className="rounded-sm p-1">
                         <Download className="w-3 h-3" />
                       </Button>
                     </div>
@@ -297,7 +297,7 @@ export function LessonRightSidebar({
                   Key Points ({keyPoints.length})
                 </CardTitle>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => toggleSection('keypoints')}
                   className="rounded-sm p-1"
@@ -334,7 +334,7 @@ export function LessonRightSidebar({
                 Quick Actions
               </CardTitle>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => toggleSection('quickactions')}
                 className="rounded-sm p-1"
@@ -420,6 +420,7 @@ export function LessonRightSidebarExample() {
         <p className="text-gray-600">This is the main lesson content area.</p>
       </div>
       <LessonRightSidebar 
+        courseSlug="sample-course"
         notes={sampleNotes}
         resources={sampleResources}
         keyPoints={sampleKeyPoints}

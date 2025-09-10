@@ -15,8 +15,7 @@ export async function middleware(req: NextRequest) {
       auth: {
         flowType: 'pkce',
         persistSession: true,
-        autoRefreshToken: true,
-        sessionRefreshMargin: 60,
+        autoRefreshToken: true
       },
       cookies: {
         getAll() {

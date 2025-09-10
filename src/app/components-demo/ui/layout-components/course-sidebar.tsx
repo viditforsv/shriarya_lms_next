@@ -151,7 +151,7 @@ export function CourseSidebar({
     return (
       <div className={`w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-4 ${className}`}>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => setIsCollapsed(false)}
           className="rounded-sm"
@@ -190,7 +190,7 @@ export function CourseSidebar({
           </h2>
           <div className="flex items-center space-x-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setIsCollapsed(true)}
               className="rounded-sm"
@@ -199,7 +199,7 @@ export function CourseSidebar({
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={toggleAllUnits}
               className="rounded-sm"
@@ -267,7 +267,7 @@ export function CourseSidebar({
               {/* Chapters */}
               {expandedUnits.has(unit.id) && (
                 <div className="ml-6 mt-1 space-y-1">
-                  {unit.chapters.map((chapter, chapterIndex) => (
+                  {unit.chapters.map((chapter) => (
                     <div key={chapter.id}>
                       {/* Chapter Header */}
                       <div

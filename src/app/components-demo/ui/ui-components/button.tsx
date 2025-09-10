@@ -43,8 +43,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, showArrow = false, showChevron = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    // Wrap children and icons in a single fragment to avoid multiple children issue with Slot
-    const content = (
+    // When using asChild (Slot), we need to wrap everything in a single element
+    // When not using asChild, we can render multiple children directly
+    const content = asChild ? (
+      <span className="inline-flex items-center justify-center gap-2">
+        {children}
+        {showArrow && (
+          <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        )}
+        {showChevron && (
+          <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
+        )}
+      </span>
+    ) : (
       <>
         {children}
         {showArrow && (

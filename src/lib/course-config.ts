@@ -1,6 +1,9 @@
 // Enhanced course configuration system with template integration
 // This replaces the static folder structure with dynamic course management
 
+import { getCourseData } from './course-registry'
+import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS, Section } from './cbse-syllabus'
+
 export interface CourseConfig {
   id: string
   slug: string
@@ -124,6 +127,46 @@ export const COURSE_DATABASE: Record<string, CourseConfig> = {
     tags: ['CBSE', 'Mathematics', 'Class 9', 'Foundation', 'NCERT'],
     createdAt: '2024-01-01',
     updatedAt: '2024-01-10'
+  },
+  'ibdp-mathematics-aa-hl': {
+    id: 'ibdp-mathematics-aa-hl',
+    slug: 'ibdp-mathematics-aa-hl',
+    title: 'IBDP Mathematics Analysis & Approaches HL',
+    description: 'Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches, calculus, and mathematical reasoning.',
+    curriculum: 'IBDP',
+    subject: 'Mathematics',
+    level: 'Analysis & Approaches HL',
+    isFree: false,
+    price: 399,
+    status: 'published',
+    instructor: 'Shri Arya Education',
+    duration: '250 hours',
+    lessons: 35,
+    thumbnail: '/images/courses/ibdp-math-aa-hl.jpg',
+    features: [
+      'Complete IBDP AA HL curriculum',
+      'Advanced calculus and analysis',
+      'Complex numbers and sequences',
+      'University-level preparation',
+      'International assessment standards',
+      'Comprehensive problem-solving approach'
+    ],
+    prerequisites: [
+      'Strong foundation in mathematics',
+      'Previous IBDP or equivalent experience',
+      'Advanced algebra and trigonometry knowledge',
+      'Basic calculus understanding'
+    ],
+    learningOutcomes: [
+      'Master advanced mathematical concepts',
+      'Develop analytical thinking skills',
+      'Prepare for university mathematics',
+      'Excel in IBDP assessments',
+      'Apply mathematics to real-world problems'
+    ],
+    tags: ['IBDP', 'Mathematics', 'Analysis & Approaches', 'HL', 'International', 'University Prep'],
+    createdAt: '2024-01-20',
+    updatedAt: '2024-01-20'
   },
   'ibdp-mathematics-analysis-approaches-hl': {
     id: 'ibdp-mathematics-analysis-approaches-hl',
@@ -1913,7 +1956,7 @@ export function getCoursesByCurriculum(curriculum: string): CourseConfig[] {
   )
 }
 
-export function getLessonsByCourseSlug(courseSlug: string): LessonConfig[] {
+export function getLessonsByCourseSlugSync(courseSlug: string): LessonConfig[] {
   return LESSON_DATABASE[courseSlug] || []
 }
 
@@ -1944,6 +1987,72 @@ export function getLessonBySyllabusSlug(courseSlug: string, syllabusSlug: string
   
   const lessons = LESSON_DATABASE[courseSlug] || []
   return lessons.find(lesson => lesson.slug === mappedSlug) || null
+}
+
+// Fallback function for backward compatibility
+export function getSyllabusByCourseSlugSync(courseSlug: string) {
+  switch (courseSlug) {
+    case 'cbse-mathematics-class-10':
+      return CBSE_CLASS_10_MATHEMATICS_SYLLABUS
+    default:
+      return []
+  }
+}
+
+// Dynamic course loading functions
+export async function getSyllabusByCourseSlug(courseSlug: string) {
+  try {
+    const courseData = await getCourseData(courseSlug)
+    return courseData.syllabus as Section[]
+  } catch (error) {
+    console.error(`Failed to load syllabus for course ${courseSlug}:`, error)
+    return []
+  }
+}
+
+export async function getLessonsByCourseSlug(courseSlug: string): Promise<LessonConfig[]> {
+  try {
+    const courseData = await getCourseData(courseSlug)
+    return courseData.lessons as LessonConfig[]
+  } catch (error) {
+    console.error(`Failed to load lessons for course ${courseSlug}:`, error)
+    return []
+  }
+}
+
+export async function getMappingByCourseSlug(courseSlug: string): Promise<Record<string, string>> {
+  try {
+    const courseData = await getCourseData(courseSlug)
+    return courseData.mapping as Record<string, string>
+  } catch (error) {
+    console.error(`Failed to load mapping for course ${courseSlug}:`, error)
+    return {}
+  }
+}
+
+// Updated getLessonBySlug to use dynamic loading
+export async function getLessonBySlugDynamic(courseSlug: string, lessonSlug: string): Promise<LessonConfig | null> {
+  try {
+    const courseData = await getCourseData(courseSlug)
+    const lessons = courseData.lessons as LessonConfig[]
+    const mapping = courseData.mapping as Record<string, string>
+    
+    // First try direct match
+    let lesson = lessons.find(lesson => lesson.slug === lessonSlug)
+    
+    // If not found, try syllabus mapping
+    if (!lesson) {
+      const mappedSlug = mapping[lessonSlug]
+      if (mappedSlug) {
+        lesson = lessons.find(lesson => lesson.slug === mappedSlug)
+      }
+    }
+    
+    return lesson || null
+  } catch (error) {
+    console.error(`Failed to load lesson ${lessonSlug} for course ${courseSlug}:`, error)
+    return null
+  }
 }
 
 // Function to get all syllabus subsections mapped to lessons

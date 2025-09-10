@@ -79,7 +79,7 @@ export function Sidebar({
             {collapsible && (
               <div className="flex justify-center mb-4">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={toggleCollapse}
                   className="rounded-sm p-2"
@@ -121,7 +121,7 @@ export function Sidebar({
             <Badge variant="secondary">ShriArya LMS</Badge>
             {collapsible && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={toggleCollapse}
                 className="rounded-sm p-2"
@@ -140,7 +140,7 @@ export function Sidebar({
         </div>
         
         <nav className="space-y-2">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <button
               key={item.id}
               onClick={() => handleItemClick(item)}

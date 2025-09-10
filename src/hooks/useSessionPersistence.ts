@@ -130,7 +130,7 @@ export class SessionStorage {
   private static readonly REFRESH_KEY = 'shriarya-lms-refresh'
   private static readonly USER_KEY = 'shriarya-lms-user'
 
-  static saveSession(session: any) {
+  static saveSession(session: unknown) {
     if (typeof window === 'undefined') return
     
     try {
@@ -153,7 +153,7 @@ export class SessionStorage {
     }
   }
 
-  static saveUser(user: any) {
+  static saveUser(user: unknown) {
     if (typeof window === 'undefined') return
     
     try {
@@ -210,8 +210,8 @@ export class SessionStorage {
 // Session persistence hook for components
 export function usePersistentSession() {
   const [isLoading, setIsLoading] = useState(true)
-  const [session, setSession] = useState<any>(null)
-  const [user, setUser] = useState<any>(null)
+  const [session, setSession] = useState<unknown>(null)
+  const [user, setUser] = useState<unknown>(null)
 
   useEffect(() => {
     const supabase = createClient()

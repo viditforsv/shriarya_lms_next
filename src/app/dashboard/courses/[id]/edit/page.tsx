@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Save, Eye, Settings, FileText, Play, CheckCircle, Layers } from "lucide-react"
+import { Plus, Save, Eye, Settings, FileText, Layers } from "lucide-react"
 import { Button } from "@/app/components-demo/ui/ui-components/button"
 import { Input } from "@/app/components-demo/ui/ui-components/input"
 import { Textarea } from "@/app/components-demo/ui/textarea"
@@ -15,9 +15,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Course, Lesson } from "@/lib/courses"
 import { SectionEditor } from "@/app/components-demo/content/section-editor"
 
-interface CourseBuilderProps {
-  courseId?: string
-}
+// Unused interface removed
 
 export default function CourseBuilder({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
@@ -404,7 +402,7 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
 
             {activeTab === 'lessons' && (
               <div className="space-y-4">
-                {lessons.map((lesson, index) => (
+                {lessons.map((lesson) => (
                   <Card key={lesson.id} className="border-[#feefea]">
                     <CardContent className="p-4">
                       <div className="flex items-start space-x-4">

@@ -19,11 +19,14 @@ import {
   CourseConfig, 
   LessonConfig 
 } from '@/lib/course-config'
+import { RenderedCourse, CourseTemplate } from '@/types/course-templates'
 
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { user } = useAuth()
-  const [course, setCourse] = useState<CourseConfig | null>(null)
+  const [course, setCourse] = useState<RenderedCourse | null>(null)
+  const [template, setTemplate] = useState<CourseTemplate | null>(null)
   const [lessons, setLessons] = useState<LessonConfig[]>([])
+  const [isFallback, setIsFallback] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
@@ -42,21 +45,39 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         setIsLoading(true)
         setError(null)
 
-        // Fetch course from configuration
-        const courseData = getCourseBySlug(resolvedParams.slug)
-        if (!courseData) {
-          throw new Error('Course not found')
+        // Try to fetch course with template first
+        const response = await fetch(`/api/courses/${resolvedParams.slug}/with-template`)
+        
+        if (response.ok) {
+          const data = await response.json()
+          setCourse(data.rendered)
+          setTemplate(data.template)
+          setIsFallback(data.isFallback)
+          
+          // Fetch lessons for this course (still using the old system for now)
+          const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+          setLessons(lessonsData)
+          
+          // For free courses, user is automatically "enrolled"
+          setIsEnrolled(data.rendered.isFree || false)
+        } else {
+          // Fallback to old system
+          const courseData = getCourseBySlug(resolvedParams.slug)
+          if (!courseData) {
+            throw new Error('Course not found')
+          }
+
+          setCourse(courseData as RenderedCourse)
+          setTemplate(null)
+          setIsFallback(true)
+
+          // Fetch lessons for this course
+          const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+          setLessons(lessonsData)
+
+          // For free courses, user is automatically "enrolled"
+          setIsEnrolled(courseData.isFree || false)
         }
-
-        setCourse(courseData)
-
-        // Fetch lessons for this course
-        const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
-        setLessons(lessonsData)
-
-        // For free courses, user is automatically "enrolled"
-        // For paid courses, this would check actual enrollment status
-        setIsEnrolled(courseData.isFree || false)
 
       } catch (err) {
         console.error('Error loading course:', err)

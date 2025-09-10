@@ -693,6 +693,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
   }
 
   const renderCDNTestSection = () => {
+    const proxyUrl = `/api/cdn-proxy?url=${encodeURIComponent(cdnUrl)}`
 
     return (
       <section className="mb-20">
@@ -701,18 +702,18 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           <p className="text-slate-600 text-lg">Test CDN links by embedding content directly on the page</p>
         </div>
         
-        <div className="max-w-2xl mx-auto">
-          <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 mb-6">
             <CardHeader className="bg-slate-50/50">
-              <CardTitle className="text-xl text-slate-800">CDN Link Input</CardTitle>
-              <CardDescription className="text-slate-600">Enter a CDN URL to embed content on the page</CardDescription>
+              <CardTitle className="text-xl text-slate-800">CDN URL</CardTitle>
+              <CardDescription className="text-slate-600">Enter your Bunny CDN file URL</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">CDN URL</label>
                 <input 
                   type="url" 
-                  placeholder="Link"
+                  placeholder="https://shrividhyaclasses.b-cdn.net/..."
                   value={cdnUrl}
                   onChange={(e) => handleUrlChange(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1b4a56] focus:border-[#1b4a56] transition-colors"
@@ -722,57 +723,53 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
                 )}
               </div>
               
-              <div className="flex gap-3">
-                <Button 
-                  onClick={handleLoadContent}
-                  disabled={!isValidUrl || !cdnUrl}
-                  variant="primary"
-                  className="flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                  Load Content
-                </Button>
-                
-                <Button 
-                  onClick={clearCdnUrl}
-                  variant="outline"
-                >
-                  Clear
-                </Button>
-              </div>
-
               {cdnUrl && isValidUrl && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-sm">
-                  <p className="text-sm text-green-800">
-                    <strong>Ready to load:</strong> {cdnUrl}
-                  </p>
+                <div className="p-3 bg-gray-100 rounded-sm">
+                  <p className="text-sm font-medium mb-2">Proxy URL:</p>
+                  <code className="text-sm break-all">{proxyUrl}</code>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Embedded Content Display */}
+          {/* Live Preview */}
           {cdnUrl && isValidUrl && (
-            <Card className="mt-8 border-slate-200 shadow-sm">
+            <Card className="border-slate-200 shadow-sm">
               <CardHeader className="bg-slate-50/50">
-                <CardTitle className="text-xl text-slate-800">Embedded Content</CardTitle>
-                <CardDescription className="text-slate-600">Content loaded from CDN URL</CardDescription>
+                <CardTitle className="text-xl text-slate-800">Preview</CardTitle>
+                <CardDescription className="text-slate-600">File preview using the proxy</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="w-full h-96 border border-slate-200 rounded-sm overflow-hidden">
-                  <iframe
-                    src={cdnUrl}
-                    className="w-full h-full"
-                    title="CDN Content"
-                    sandbox="allow-scripts allow-same-origin"
-                  />
-                </div>
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-sm">
-                  <p className="text-sm text-blue-800">
-                    <strong>Source:</strong> {cdnUrl}
-                  </p>
+                <div className="space-y-4">
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-sm">
+                    <p className="text-sm text-blue-800">
+                      <strong>Direct Link:</strong> <a href={proxyUrl} target="_blank" className="underline">Open in new tab</a>
+                    </p>
+                  </div>
+                  
+                  <div className="h-96 border border-slate-200 rounded-sm overflow-hidden">
+                    {cdnUrl.includes('.pdf') ? (
+                      <object
+                        data={proxyUrl}
+                        type="application/pdf"
+                        className="w-full h-full"
+                      >
+                        <iframe
+                          src={proxyUrl}
+                          className="w-full h-full"
+                          title="PDF Fallback"
+                          sandbox="allow-scripts allow-same-origin allow-forms"
+                        />
+                      </object>
+                    ) : (
+                      <iframe
+                        src={proxyUrl}
+                        className="w-full h-full"
+                        title="File Preview"
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                      />
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -794,19 +791,14 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
               </div>
               
               <div className="p-4 border border-slate-200 rounded-sm">
-                <h4 className="font-medium text-slate-700 mb-2">Custom URL</h4>
-                <p className="text-sm text-slate-600 mb-3">Enter your own CDN link</p>
+                <h4 className="font-medium text-slate-700 mb-2">Sample Video</h4>
+                <p className="text-sm text-slate-600 mb-3">Test with a sample video link</p>
                 <Button 
                   size="sm" 
                   variant="outline"
-                  onClick={() => {
-                    const customUrl = prompt("Enter your CDN URL:")
-                    if (customUrl) {
-                      handleUrlChange(customUrl)
-                    }
-                  }}
+                  onClick={() => handleUrlChange("https://shrividhyaclasses.b-cdn.net/AI%20Enabled%20QPG.mp4")}
                 >
-                  Enter Custom Link
+                  Use Video Link
                 </Button>
               </div>
             </div>

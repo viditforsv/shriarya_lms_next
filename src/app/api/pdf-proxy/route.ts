@@ -1,15 +1,18 @@
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // The actual PDF URL is hidden in the server-side code
-    const pdfUrl = 'https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf'
+    const { searchParams } = new URL(request.url);
+    const pdfUrl = searchParams.get('url') || 'https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf';
+    
+    // Get the origin from the request to set proper Referer
+    const origin = request.headers.get('origin') || request.headers.get('referer') || 'https://courses.shrividhya.in';
     
     const response = await fetch(pdfUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': 'https://courses.shrividhya.in',
-        'Origin': 'https://courses.shrividhya.in',
+        'Referer': origin,
+        'Origin': origin,
         'Host': 'shrividhyaclasses.b-cdn.net'
       }
     })

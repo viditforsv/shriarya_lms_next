@@ -2,8 +2,7 @@
 // This component renders course pages based on template structure
 
 import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { RenderedCourse, CourseTemplate, TemplateSection } from '@/types/course-templates'
 
 interface DynamicCourseRendererProps {
@@ -85,7 +84,7 @@ function renderOverviewSection(section: TemplateSection, course: RenderedCourse)
       {/* Learning Outcomes */}
       {section.fields.includes('learningOutcomes') && course.learningOutcomes && (
         <div>
-          <h4 className="font-semibold mb-4 text-[#1e293b]">What you'll learn</h4>
+          <h4 className="font-semibold mb-4 text-[#1e293b]">What you&apos;ll learn</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {course.learningOutcomes.map((outcome, index) => (
               <li key={index}>• {outcome}</li>
@@ -103,22 +102,28 @@ function renderSyllabusSection(section: TemplateSection, course: RenderedCourse)
     return <p className="text-muted-foreground">Syllabus content not available.</p>
   }
 
-  const syllabus = course.templateData.syllabusContent
+  const syllabus = course.templateData.syllabusContent as Record<string, unknown>
   
   return (
     <div>
       <h4 className="font-semibold mb-4 text-[#1e293b]">Complete Syllabus</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        {syllabus.chapters?.map((chapter: any, index: number) => (
-          <div key={index} className="space-y-3">
-            {chapter.units?.map((unit: any, unitIndex: number) => (
-              <div key={unitIndex} className="border-l-4 border-[#e27447] pl-3">
-                <h5 className="font-medium text-[#1e293b]">{unit.title}</h5>
-                <p className="text-muted-foreground">{unit.description}</p>
-              </div>
-            ))}
-          </div>
-        ))}
+        {(syllabus.chapters as unknown[])?.map((chapter: unknown, index: number) => {
+          const c = chapter as Record<string, unknown>
+          return (
+            <div key={index} className="space-y-3">
+              {(c.units as unknown[])?.map((unit: unknown, unitIndex: number) => {
+                const u = unit as Record<string, unknown>
+                return (
+                  <div key={unitIndex} className="border-l-4 border-[#e27447] pl-3">
+                    <h5 className="font-medium text-[#1e293b]">{String(u.title)}</h5>
+                    <p className="text-muted-foreground">{String(u.description)}</p>
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -181,7 +186,7 @@ function renderGenericSection(section: TemplateSection, course: RenderedCourse) 
       </p>
       {section.fields.map((field, index) => (
         <div key={index} className="mb-2">
-          <span className="font-medium">{field}:</span> {course.templateData?.[field] || 'Not available'}
+          <span className="font-medium">{field}:</span> {String(course.templateData?.[field] || 'Not available')}
         </div>
       ))}
     </div>

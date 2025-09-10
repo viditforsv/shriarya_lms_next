@@ -26,11 +26,7 @@ import { CollapsibleSidebar } from '@/app/components-demo/ui/layout-components/c
 import { LessonRightSidebar } from '@/app/components-demo/ui/layout-components/lesson-right-sidebar'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
-  getCourseBySlug, 
-  getLessonsByCourseSlugSync, 
-  getLessonBySlug,
-  LessonConfig,
-  ResourceConfig
+  getCourseBySlug
 } from '@/lib/course-config'
 
 interface Course {
@@ -40,7 +36,7 @@ interface Course {
   slug: string
   is_free: boolean
   created_at: string
-  template_data?: any
+  template_data?: Record<string, unknown>
   profiles?: {
     first_name: string
     last_name: string
@@ -114,7 +110,7 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
           console.log('Lessons data received:', lessonsData)
           
           // Convert database lessons to Lesson interface
-          const mappedLessons: Lesson[] = lessonsData.lessons.map((lesson: any) => ({
+          const mappedLessons: Lesson[] = lessonsData.lessons.map((lesson: Record<string, unknown>) => ({
             id: lesson.id,
             title: lesson.title,
             slug: lesson.slug,
@@ -404,56 +400,6 @@ export default function DynamicLessonPage({ params }: { params: Promise<{ slug: 
             <span>/</span>
             <span className="text-foreground">{lesson.title}</span>
           </nav>
-          
-          {/* Course Tags */}
-          <div className="flex flex-wrap gap-2 mt-3">
-            {course.template_data?.curriculum && (
-              <Badge variant="outline" className="text-xs">
-                {course.template_data.curriculum}
-              </Badge>
-            )}
-            {course.template_data?.subject && (
-              <Badge variant="outline" className="text-xs">
-                {course.template_data.subject}
-              </Badge>
-            )}
-            {course.template_data?.grade && (
-              <Badge variant="outline" className="text-xs">
-                {course.template_data.grade}
-              </Badge>
-            )}
-            {course.template_data?.level && (
-              <Badge variant="outline" className="text-xs">
-                {course.template_data.level}
-              </Badge>
-            )}
-            {/* Fallback for courses without template data */}
-            {!course.template_data?.curriculum && (
-              <Badge variant="outline" className="text-xs">
-                {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
-              </Badge>
-            )}
-            {!course.template_data?.subject && (
-              <Badge variant="outline" className="text-xs">
-                {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
-              </Badge>
-            )}
-            {!course.template_data?.grade && course.slug.includes('class-10') && (
-              <Badge variant="outline" className="text-xs">
-                Class 10
-              </Badge>
-            )}
-            {!course.template_data?.grade && course.slug.includes('class-11') && (
-              <Badge variant="outline" className="text-xs">
-                Class 11
-              </Badge>
-            )}
-            {!course.template_data?.level && course.slug.includes('hl') && (
-              <Badge variant="outline" className="text-xs">
-                Higher Level
-              </Badge>
-            )}
-          </div>
         </div>
 
         <div className="flex">

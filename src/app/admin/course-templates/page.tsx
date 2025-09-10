@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
 import { Button } from '@/app/components-demo/ui/ui-components/button'
 import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { Input } from '@/app/components-demo/ui/ui-components/input'
 import { 
   Plus, 
   Edit, 
@@ -34,7 +33,7 @@ export default function CourseTemplatesPage() {
       } else {
         setError('Failed to fetch templates')
       }
-    } catch (err) {
+    } catch {
       setError('Error fetching templates')
     } finally {
       setIsLoading(false)
@@ -55,7 +54,7 @@ export default function CourseTemplatesPage() {
         const error = await response.json()
         alert(error.error || 'Failed to delete template')
       }
-    } catch (err) {
+    } catch {
       alert('Error deleting template')
     }
   }

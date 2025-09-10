@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { CourseTemplate, TemplateField, TemplateSettings } from '@/types/course-templates'
+// Types imported for reference but not used directly in this file
 import { z } from 'zod'
 
 // Validation schemas

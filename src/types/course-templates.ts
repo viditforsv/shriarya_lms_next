@@ -52,11 +52,11 @@ export interface TemplateField {
   description?: string
   required?: boolean
   placeholder?: string
-  default_value?: any
+  default_value?: unknown
   validation_rules?: ValidationRules
   options?: string[] // For select fields
   itemType?: string // For array fields
-  structure?: any // For object fields
+  structure?: Record<string, unknown> // For object fields
 }
 
 export interface ValidationRules {
@@ -69,7 +69,7 @@ export interface ValidationRules {
 }
 
 export interface TemplateSettings {
-  defaultValues?: Record<string, any>
+  defaultValues?: Record<string, unknown>
   ui?: {
     showProgress?: boolean
     showEnrollment?: boolean
@@ -106,7 +106,7 @@ export interface CourseData {
   instructor_id?: string
   
   // Template-specific data (JSON)
-  template_data: Record<string, any>
+  template_data: Record<string, unknown>
   
   // Metadata
   created_at: string
@@ -136,7 +136,7 @@ export interface RenderedCourse {
   tags: string[]
   
   // Template-specific rendered data
-  templateData: Record<string, any>
+  templateData: Record<string, unknown>
   
   // Template structure for rendering
   templateStructure: TemplateStructure

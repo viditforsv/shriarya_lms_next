@@ -16,7 +16,6 @@ import Link from 'next/link'
 import { 
   getCourseBySlug, 
   getLessonsByCourseSlugSync, 
-  CourseConfig, 
   LessonConfig 
 } from '@/lib/course-config'
 import { RenderedCourse, CourseTemplate } from '@/types/course-templates'
@@ -27,7 +26,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
   const [course, setCourse] = useState<RenderedCourse | null>(null)
   const [template, setTemplate] = useState<CourseTemplate | null>(null)
   const [lessons, setLessons] = useState<LessonConfig[]>([])
-  const [isFallback, setIsFallback] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
@@ -53,7 +51,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
           const data = await response.json()
           setCourse(data.rendered)
           setTemplate(data.template)
-          setIsFallback(data.isFallback)
           
           // Fetch lessons for this course from database
           try {
@@ -61,7 +58,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
             if (lessonsResponse.ok) {
               const lessonsData = await lessonsResponse.json()
               // Convert database lessons to LessonConfig format
-              const convertedLessons = lessonsData.lessons.map((lesson: any) => ({
+              const convertedLessons = lessonsData.lessons.map((lesson: Record<string, unknown>) => ({
                 id: lesson.id,
                 slug: lesson.slug,
                 title: lesson.title,
@@ -96,7 +93,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
 
           setCourse(courseData as RenderedCourse)
           setTemplate(null)
-          setIsFallback(true)
 
           // Fetch lessons for this course from database
           try {
@@ -104,7 +100,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
             if (lessonsResponse.ok) {
               const lessonsData = await lessonsResponse.json()
               // Convert database lessons to LessonConfig format
-              const convertedLessons = lessonsData.lessons.map((lesson: any) => ({
+              const convertedLessons = lessonsData.lessons.map((lesson: Record<string, unknown>) => ({
                 id: lesson.id,
                 slug: lesson.slug,
                 title: lesson.title,
@@ -214,47 +210,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                 <Badge variant={course.isFree ? "secondary" : "default"}>
                   {course.isFree ? 'Free' : `$${course.price || 0}`}
                 </Badge>
-                {course.templateData?.curriculum && (
-                  <Badge variant="outline">
-                    {course.templateData.curriculum}
-                  </Badge>
-                )}
-                {course.templateData?.subject && (
-                  <Badge variant="outline">
-                    {course.templateData.subject}
-                  </Badge>
-                )}
-                {course.templateData?.grade && (
-                  <Badge variant="outline">
-                    {course.templateData.grade}
-                  </Badge>
-                )}
-                {course.templateData?.level && (
-                  <Badge variant="outline">
-                    {course.templateData.level}
-                  </Badge>
-                )}
-                {/* Fallback for courses without template data */}
-                {!course.templateData?.curriculum && (
-                  <Badge variant="outline">
-                    {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
-                  </Badge>
-                )}
-                {!course.templateData?.grade && course.slug.includes('class-10') && (
-                  <Badge variant="outline">
-                    Class 10
-                  </Badge>
-                )}
-                {!course.templateData?.grade && course.slug.includes('class-11') && (
-                  <Badge variant="outline">
-                    Class 11
-                  </Badge>
-                )}
-                {!course.templateData?.level && course.slug.includes('hl') && (
-                  <Badge variant="outline">
-                    Higher Level
-                  </Badge>
-                )}
                 {isEnrolled && (
                   <Badge variant="default" className="bg-green-100 text-green-800">
                     Enrolled

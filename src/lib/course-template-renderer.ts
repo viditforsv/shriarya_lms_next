@@ -30,14 +30,14 @@ export function renderCourseWithTemplate(
     isFree: courseData.is_free,
     price: courseData.price,
     status: courseData.status,
-    instructor: templateData.instructor || defaultValues.instructor || 'Shri Arya Education',
-    duration: templateData.duration || defaultValues.duration || '120 hours',
-    lessons: templateData.lessons || defaultValues.lessons || 0,
-    thumbnail: templateData.thumbnail || defaultValues.thumbnail || '/images/courses/default.jpg',
-    features: templateData.features || defaultValues.features || [],
-    prerequisites: templateData.prerequisites || defaultValues.prerequisites || [],
-    learningOutcomes: templateData.learningOutcomes || defaultValues.learningOutcomes || [],
-    tags: templateData.tags || defaultValues.tags || [],
+    instructor: String(templateData.instructor || defaultValues.instructor || 'Shri Arya Education'),
+    duration: String(templateData.duration || defaultValues.duration || '120 hours'),
+    lessons: Number(templateData.lessons || defaultValues.lessons || 0),
+    thumbnail: String(templateData.thumbnail || defaultValues.thumbnail || '/images/courses/default.jpg'),
+    features: (templateData.features as string[]) || (defaultValues.features as string[]) || [],
+    prerequisites: (templateData.prerequisites as string[]) || (defaultValues.prerequisites as string[]) || [],
+    learningOutcomes: (templateData.learningOutcomes as string[]) || (defaultValues.learningOutcomes as string[]) || [],
+    tags: (templateData.tags as string[]) || (defaultValues.tags as string[]) || [],
     
     // Template-specific data
     templateData: templateData,
@@ -57,7 +57,7 @@ export function renderCourseWithTemplate(
  * Gets course data with template information
  * Fetches course from database and applies template
  */
-export async function getCourseWithTemplate(courseSlug: string): Promise<RenderedCourse | null> {
+export async function getCourseWithTemplate(): Promise<RenderedCourse | null> {
   try {
     // This would typically fetch from your database
     // For now, we'll return null and implement the actual fetching later
@@ -73,7 +73,7 @@ export async function getCourseWithTemplate(courseSlug: string): Promise<Rendere
  * Ensures all required fields are present and valid
  */
 export function validateCourseDataAgainstTemplate(
-  courseData: Record<string, any>,
+  courseData: Record<string, unknown>,
   template: CourseTemplate
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = []
@@ -124,8 +124,8 @@ export function validateCourseDataAgainstTemplate(
  * Generates default course data based on template
  * Creates a course data object with template defaults
  */
-export function generateDefaultCourseData(template: CourseTemplate): Record<string, any> {
-  const defaultData: Record<string, any> = {}
+export function generateDefaultCourseData(template: CourseTemplate): Record<string, unknown> {
+  const defaultData: Record<string, unknown> = {}
   
   // Apply template default values
   if (template.settings?.defaultValues) {

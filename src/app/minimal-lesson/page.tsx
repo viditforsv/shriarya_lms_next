@@ -40,7 +40,7 @@ export default function MinimalLessonPage({ params }: { params: Promise<{ slug: 
       .then(lessonsData => {
         console.log('Lessons data received:', lessonsData)
         
-        const mappedLessons: Lesson[] = lessonsData.lessons.map((lesson: any) => ({
+        const mappedLessons: Lesson[] = lessonsData.lessons.map((lesson: Record<string, unknown>) => ({
           id: lesson.id,
           title: lesson.title,
           slug: lesson.slug,

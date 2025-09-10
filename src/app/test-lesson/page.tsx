@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 
 export default function TestLessonPage() {
-  const [lesson, setLesson] = useState(null)
+  const [lesson, setLesson] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -21,7 +21,7 @@ export default function TestLessonPage() {
           console.log('Lessons data:', data)
           
           // Find the ap-formulas lesson
-          const apLesson = data.lessons.find((l: any) => l.slug === 'ap-formulas')
+          const apLesson = data.lessons.find((l: Record<string, unknown>) => l.slug === 'ap-formulas')
           console.log('Found AP lesson:', apLesson)
           
           if (apLesson) {
@@ -84,32 +84,38 @@ export default function TestLessonPage() {
         <h1 className="text-3xl font-bold mb-6">Test Lesson Page</h1>
         
         <div className="bg-white rounded-sm border p-6">
-          <h2 className="text-2xl font-bold mb-4">{lesson.title}</h2>
-          <p className="text-muted-foreground mb-4">Slug: {lesson.slug}</p>
-          <p className="text-muted-foreground mb-4">Order: {lesson.lesson_order}</p>
+          <h2 className="text-2xl font-bold mb-4">{String(lesson.title)}</h2>
+          <p className="text-muted-foreground mb-4">Slug: {String(lesson.slug)}</p>
+          <p className="text-muted-foreground mb-4">Order: {String(lesson.lesson_order)}</p>
           <p className="text-muted-foreground mb-4">Preview: {lesson.is_preview ? 'Yes' : 'No'}</p>
           
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2">Content:</h3>
             <div 
               className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: lesson.content_html }}
+              dangerouslySetInnerHTML={{ __html: String(lesson.content_html || '') }}
             />
           </div>
           
-          {lesson.resources && lesson.resources.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2">Resources:</h3>
-              <ul className="space-y-2">
-                {lesson.resources.map((resource: any) => (
-                  <li key={resource.id} className="flex items-center space-x-2">
-                    <span className="text-sm font-medium">{resource.kind}:</span>
-                    <span className="text-sm text-muted-foreground">{resource.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {(() => {
+            const resources = lesson.resources as unknown[]
+            return resources && Array.isArray(resources) && resources.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2">Resources:</h3>
+                <ul className="space-y-2">
+                  {resources.map((resource: unknown) => {
+                    const r = resource as Record<string, unknown>
+                    return (
+                      <li key={String(r.id)} className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">{String(r.kind)}:</span>
+                        <span className="text-sm text-muted-foreground">{String(r.title)}</span>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            )
+          })()}
         </div>
       </div>
     </div>

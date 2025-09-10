@@ -202,7 +202,7 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE /api/courses - Delete course
+// DELETE /api/courses - Delete course and all related data
 export async function DELETE(request: Request) {
   try {
     await checkAdminAccess()
@@ -216,28 +216,106 @@ export async function DELETE(request: Request) {
     
     const supabase = await createClient()
     
-    // First delete all lessons and resources
+    console.log(`Starting cascade deletion for course: ${id}`)
+    
+    // 1. Delete user progress data (if exists)
+    try {
+      const { error: progressError } = await supabase
+        .from('user_progress')
+        .delete()
+        .eq('course_id', id)
+      
+      if (progressError) {
+        console.warn('Error deleting user progress:', progressError.message)
+        // Don't fail the entire operation for progress data
+      } else {
+        console.log('✅ Deleted user progress data')
+      }
+    } catch (error) {
+      console.warn('User progress table might not exist:', error)
+    }
+    
+    // 2. Delete enrollments
+    const { error: enrollmentsError } = await supabase
+      .from('enrollments')
+      .delete()
+      .eq('course_id', id)
+    
+    if (enrollmentsError) {
+      return NextResponse.json({ error: `Failed to delete enrollments: ${enrollmentsError.message}` }, { status: 500 })
+    }
+    console.log('✅ Deleted enrollments')
+    
+    // 3. Get all lessons for this course to delete their resources and sections
+    const { data: lessons, error: lessonsFetchError } = await supabase
+      .from('lessons')
+      .select('id')
+      .eq('course_id', id)
+    
+    if (lessonsFetchError) {
+      return NextResponse.json({ error: `Failed to fetch lessons: ${lessonsFetchError.message}` }, { status: 500 })
+    }
+    
+    // 4. Delete resources for each lesson
+    if (lessons && lessons.length > 0) {
+      const lessonIds = lessons.map(lesson => lesson.id)
+      
+      const { error: resourcesError } = await supabase
+        .from('resources')
+        .delete()
+        .in('lesson_id', lessonIds)
+      
+      if (resourcesError) {
+        return NextResponse.json({ error: `Failed to delete resources: ${resourcesError.message}` }, { status: 500 })
+      }
+      console.log('✅ Deleted resources')
+      
+      // 5. Delete lesson sections
+      const { error: sectionsError } = await supabase
+        .from('lesson_sections')
+        .delete()
+        .in('lesson_id', lessonIds)
+      
+      if (sectionsError) {
+        return NextResponse.json({ error: `Failed to delete lesson sections: ${sectionsError.message}` }, { status: 500 })
+      }
+      console.log('✅ Deleted lesson sections')
+    }
+    
+    // 6. Delete lessons
     const { error: lessonsError } = await supabase
       .from('lessons')
       .delete()
       .eq('course_id', id)
     
     if (lessonsError) {
-      return NextResponse.json({ error: lessonsError.message }, { status: 500 })
+      return NextResponse.json({ error: `Failed to delete lessons: ${lessonsError.message}` }, { status: 500 })
     }
+    console.log('✅ Deleted lessons')
     
-    // Then delete the course
-    const { error } = await supabase
+    // 7. Finally delete the course
+    const { error: courseError } = await supabase
       .from('courses')
       .delete()
       .eq('id', id)
     
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (courseError) {
+      return NextResponse.json({ error: `Failed to delete course: ${courseError.message}` }, { status: 500 })
     }
+    console.log('✅ Deleted course')
     
-    return NextResponse.json({ message: 'Course deleted successfully' })
+    return NextResponse.json({ 
+      message: 'Course and all related data deleted successfully',
+      deletedItems: {
+        enrollments: true,
+        resources: lessons?.length || 0,
+        lessonSections: true,
+        lessons: lessons?.length || 0,
+        course: true
+      }
+    })
   } catch (error) {
+    console.error('Error in course deletion:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to delete course' },
       { status: 500 }

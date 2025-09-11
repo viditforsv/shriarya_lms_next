@@ -93,6 +93,7 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!lesson_id || !course_id) {
+      console.error('Missing required fields:', { lesson_id, course_id })
       return NextResponse.json({ error: 'Lesson ID and Course ID are required' }, { status: 400 })
     }
 
@@ -102,17 +103,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is enrolled in the course
-    const { data: enrollment } = await supabase
-      .from('enrollments')
-      .select('id')
-      .eq('student_id', user.id)
-      .eq('course_id', course_id)
-      .eq('is_active', true)
+    // Check if user is enrolled in the course or if course is free
+    console.log('Checking course access for course_id:', course_id)
+    const { data: course } = await supabase
+      .from('courses')
+      .select('is_free')
+      .eq('id', course_id)
       .single()
 
-    if (!enrollment) {
-      return NextResponse.json({ error: 'User is not enrolled in this course' }, { status: 403 })
+    console.log('Course data:', course)
+    if (!course) {
+      console.error('Course not found for course_id:', course_id)
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+    }
+
+    // For free courses, allow progress tracking without enrollment
+    if (!course.is_free) {
+      const { data: enrollment } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('student_id', user.id)
+        .eq('course_id', course_id)
+        .eq('is_active', true)
+        .single()
+
+      if (!enrollment) {
+        return NextResponse.json({ error: 'User is not enrolled in this course' }, { status: 403 })
+      }
     }
 
     // Check if progress already exists

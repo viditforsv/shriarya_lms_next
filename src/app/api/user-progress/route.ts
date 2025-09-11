@@ -80,8 +80,14 @@ export async function GET(request: Request) {
 // POST - Create or update user progress
 export async function POST(request: Request) {
   try {
+    console.log('=== USER PROGRESS API CALLED ===');
+    console.log('Request method:', request.method);
+    console.log('Request URL:', request.url);
+    
     const supabase = await createClient()
     const body = await request.json()
+    
+    console.log('Request body received:', body);
 
     const {
       lesson_id,
@@ -90,6 +96,8 @@ export async function POST(request: Request) {
       time_spent_minutes = 0,
       is_completed = false
     } = body
+
+    console.log('Extracted fields:', { lesson_id, course_id, completion_percentage, time_spent_minutes, is_completed });
 
     // Validate required fields
     if (!lesson_id || !course_id) {

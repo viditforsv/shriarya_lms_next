@@ -158,6 +158,7 @@ export default function DynamicLessonPage({
           }
 
           setLesson(currentLesson);
+          console.log("Current lesson data:", currentLesson);
 
           // Use course data from RPC response
           if (courseContentData.course) {
@@ -205,26 +206,38 @@ export default function DynamicLessonPage({
 
     try {
       console.log("Creating initial progress for lesson:", lesson.id);
+      console.log("Lesson data:", { id: lesson.id, course_id: lesson.course_id, title: lesson.title });
+      console.log("User data:", { id: user.id, email: user.email });
+      
+      const requestBody = {
+        lesson_id: lesson.id,
+        course_id: lesson.course_id,
+        completion_percentage: 0,
+        time_spent_minutes: 0,
+        is_completed: false,
+      };
+      
+      console.log("Request body:", requestBody);
+      
       const response = await fetch("/api/user-progress", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          lesson_id: lesson.id,
-          course_id: lesson.course_id,
-          completion_percentage: 0,
-          time_spent_minutes: 0,
-          is_completed: false,
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         const data = await response.json();
         setUserProgress(data.progress);
         console.log("Created initial progress:", data.progress);
       } else {
+        const errorText = await response.text();
         console.error("Failed to create initial progress:", response.status);
+        console.error("Error response body:", errorText);
       }
     } catch (error) {
       console.error("Error creating initial progress:", error);

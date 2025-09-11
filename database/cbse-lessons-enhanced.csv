@@ -1,0 +1,4372 @@
+id,slug,title,unit_no,unit_name,chapter_no,chapter_name,lesson_number,lesson_order,is_preview,content_html,content,key_points,video_url,video_thumbnail,pdf_url,quiz_id,course_id,created_at,updated_at
+lesson-001,introduction-to-real-numbers,Introduction to Real Numbers,1,Number Systems,1,Real Numbers,1,1,true,"<div class=""lesson-content"">
+  <h2>Introduction to Real Numbers</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Number Systems</p>
+    <p><strong>Chapter:</strong> Real Numbers</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 1: Introduction to Real Numbers
+
+Unit: Number Systems
+Chapter: Real Numbers
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Real Numbers"",""Application in Number Systems"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.701Z,2025-09-11T12:06:39.706Z
+lesson-002,fundamental-theorem-of-arithmetic-statements-and-examples,Fundamental Theorem of Arithmetic - Statements and Examples,1,Number Systems,1,Real Numbers,2,2,false,"<div class=""lesson-content"">
+  <h2>Fundamental Theorem of Arithmetic - Statements and Examples</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Number Systems</p>
+    <p><strong>Chapter:</strong> Real Numbers</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 2: Fundamental Theorem of Arithmetic - Statements and Examples
+
+Unit: Number Systems
+Chapter: Real Numbers
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Fundamental Theorem of Arithmetic - Statements and Examples"",""Application in Number Systems"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-003,proofs-of-irrationality-of-2-3-5,"Proofs of Irrationality of √2, √3	, √5",1,Number Systems,1,Real Numbers,3,3,false,"<div class=""lesson-content"">
+  <h2>Proofs of Irrationality of √2, √3	, √5</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Number Systems</p>
+    <p><strong>Chapter:</strong> Real Numbers</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>","Lesson 3: Proofs of Irrationality of √2, √3	, √5
+
+Unit: Number Systems
+Chapter: Real Numbers
+
+This lesson covers important concepts and problem-solving techniques.","[""Understanding Proofs of Irrationality of √2, √3\t, √5"",""Application in Number Systems"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-004,advanced-irrationality-proofs-3-25-etc,Advanced Irrationality Proofs (3 + 2√5 etc.),1,Number Systems,1,Real Numbers,4,4,false,"<div class=""lesson-content"">
+  <h2>Advanced Irrationality Proofs (3 + 2√5 etc.)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Number Systems</p>
+    <p><strong>Chapter:</strong> Real Numbers</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 4: Advanced Irrationality Proofs (3 + 2√5 etc.)
+
+Unit: Number Systems
+Chapter: Real Numbers
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Advanced Irrationality Proofs (3 + 2√5 etc.)"",""Application in Number Systems"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-005,real-numbers-practice-problems,Real Numbers Practice Problems,1,Number Systems,1,Real Numbers,5,5,false,"<div class=""lesson-content"">
+  <h2>Real Numbers Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Number Systems</p>
+    <p><strong>Chapter:</strong> Real Numbers</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 5: Real Numbers Practice Problems
+
+Unit: Number Systems
+Chapter: Real Numbers
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Real Numbers Practice Problems"",""Application in Number Systems"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-006,introduction-to-polynomials,Introduction to Polynomials,2,Algebra,2,Polynomials,6,6,false,"<div class=""lesson-content"">
+  <h2>Introduction to Polynomials</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Polynomials</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 6: Introduction to Polynomials
+
+Unit: Algebra
+Chapter: Polynomials
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Polynomials"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-007,zeros-of-a-polynomial,Zeros of a Polynomial,2,Algebra,2,Polynomials,7,7,true,"<div class=""lesson-content"">
+  <h2>Zeros of a Polynomial</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Polynomials</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 7: Zeros of a Polynomial
+
+Unit: Algebra
+Chapter: Polynomials
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Zeros of a Polynomial"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-008,relationship-between-zeros-and-coefficients-of-quadratic-polynomials,Relationship between Zeros and Coefficients of Quadratic Polynomials,2,Algebra,2,Polynomials,8,8,false,"<div class=""lesson-content"">
+  <h2>Relationship between Zeros and Coefficients of Quadratic Polynomials</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Polynomials</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 8: Relationship between Zeros and Coefficients of Quadratic Polynomials
+
+Unit: Algebra
+Chapter: Polynomials
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Relationship between Zeros and Coefficients of Quadratic Polynomials"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-009,graphical-and-algebraic-methods-for-finding-zeros,Graphical and Algebraic Methods for Finding Zeros,2,Algebra,2,Polynomials,9,9,false,"<div class=""lesson-content"">
+  <h2>Graphical and Algebraic Methods for Finding Zeros</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Polynomials</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 9: Graphical and Algebraic Methods for Finding Zeros
+
+Unit: Algebra
+Chapter: Polynomials
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Graphical and Algebraic Methods for Finding Zeros"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-010,polynomials-practice-problems,Polynomials Practice Problems,2,Algebra,2,Polynomials,10,10,false,"<div class=""lesson-content"">
+  <h2>Polynomials Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Polynomials</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 10: Polynomials Practice Problems
+
+Unit: Algebra
+Chapter: Polynomials
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Polynomials Practice Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-011,introduction-to-pair-of-linear-equations-in-two-variables,Introduction to Pair of Linear Equations in Two Variables,2,Algebra,3,Pair of Linear Equations,11,11,false,"<div class=""lesson-content"">
+  <h2>Introduction to Pair of Linear Equations in Two Variables</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 11: Introduction to Pair of Linear Equations in Two Variables
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Pair of Linear Equations in Two Variables"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.706Z,2025-09-11T12:06:39.706Z
+lesson-012,graphical-method-and-consistencyinconsistency,Graphical Method and Consistency/Inconsistency,2,Algebra,3,Pair of Linear Equations,12,12,false,"<div class=""lesson-content"">
+  <h2>Graphical Method and Consistency/Inconsistency</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 12: Graphical Method and Consistency/Inconsistency
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Graphical Method and Consistency/Inconsistency"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-013,algebraic-conditions-for-number-of-solutions,Algebraic Conditions for Number of Solutions,2,Algebra,3,Pair of Linear Equations,13,13,false,"<div class=""lesson-content"">
+  <h2>Algebraic Conditions for Number of Solutions</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 13: Algebraic Conditions for Number of Solutions
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Algebraic Conditions for Number of Solutions"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-014,solution-by-substitution-method,Solution by Substitution Method,2,Algebra,3,Pair of Linear Equations,14,14,false,"<div class=""lesson-content"">
+  <h2>Solution by Substitution Method</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 14: Solution by Substitution Method
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Solution by Substitution Method"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-015,solution-by-elimination-method,Solution by Elimination Method,2,Algebra,3,Pair of Linear Equations,15,15,false,"<div class=""lesson-content"">
+  <h2>Solution by Elimination Method</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 15: Solution by Elimination Method
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Solution by Elimination Method"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-016,simple-situational-problems,Simple Situational Problems,2,Algebra,3,Pair of Linear Equations,16,16,false,"<div class=""lesson-content"">
+  <h2>Simple Situational Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 16: Simple Situational Problems
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Simple Situational Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-017,linear-equations-practice-problems,Linear Equations Practice Problems,2,Algebra,3,Pair of Linear Equations,17,17,false,"<div class=""lesson-content"">
+  <h2>Linear Equations Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Pair of Linear Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 17: Linear Equations Practice Problems
+
+Unit: Algebra
+Chapter: Pair of Linear Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Linear Equations Practice Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-018,introduction-to-quadratic-equations,Introduction to Quadratic Equations,2,Algebra,4,Quadratic Equations,18,18,false,"<div class=""lesson-content"">
+  <h2>Introduction to Quadratic Equations</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 18: Introduction to Quadratic Equations
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Quadratic Equations"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-019,standard-form-of-quadratic-equation-ax-bx-c-0,Standard Form of Quadratic Equation (ax² + bx + c = 0),2,Algebra,4,Quadratic Equations,19,19,false,"<div class=""lesson-content"">
+  <h2>Standard Form of Quadratic Equation (ax² + bx + c = 0)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 19: Standard Form of Quadratic Equation (ax² + bx + c = 0)
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Standard Form of Quadratic Equation (ax² + bx + c = 0)"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-020,solution-by-factorization-method,Solution by Factorization Method,2,Algebra,4,Quadratic Equations,20,20,false,"<div class=""lesson-content"">
+  <h2>Solution by Factorization Method</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 20: Solution by Factorization Method
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Solution by Factorization Method"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-021,quadratic-formula,Quadratic Formula,2,Algebra,4,Quadratic Equations,21,21,false,"<div class=""lesson-content"">
+  <h2>Quadratic Formula</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 21: Quadratic Formula
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Quadratic Formula"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-022,discriminant-and-nature-of-roots,Discriminant and Nature of Roots,2,Algebra,4,Quadratic Equations,22,22,false,"<div class=""lesson-content"">
+  <h2>Discriminant and Nature of Roots</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 22: Discriminant and Nature of Roots
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Discriminant and Nature of Roots"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-023,situational-problems-based-on-quadratic-equations,Situational Problems Based on Quadratic Equations,2,Algebra,4,Quadratic Equations,23,23,false,"<div class=""lesson-content"">
+  <h2>Situational Problems Based on Quadratic Equations</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 23: Situational Problems Based on Quadratic Equations
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Situational Problems Based on Quadratic Equations"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-024,quadratic-equations-practice-problems,Quadratic Equations Practice Problems,2,Algebra,4,Quadratic Equations,24,24,false,"<div class=""lesson-content"">
+  <h2>Quadratic Equations Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Quadratic Equations</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 24: Quadratic Equations Practice Problems
+
+Unit: Algebra
+Chapter: Quadratic Equations
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Quadratic Equations Practice Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-025,introduction-to-arithmetic-progressions,Introduction to Arithmetic Progressions,2,Algebra,5,Arithmetic Progressions,25,25,false,"<div class=""lesson-content"">
+  <h2>Introduction to Arithmetic Progressions</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 25: Introduction to Arithmetic Progressions
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Arithmetic Progressions"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-026,motivation-for-studying-arithmetic-progression,Motivation for Studying Arithmetic Progression,2,Algebra,5,Arithmetic Progressions,26,26,false,"<div class=""lesson-content"">
+  <h2>Motivation for Studying Arithmetic Progression</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 26: Motivation for Studying Arithmetic Progression
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Motivation for Studying Arithmetic Progression"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-027,derivation-of-nth-term-of-ap,Derivation of nth Term of AP,2,Algebra,5,Arithmetic Progressions,27,27,false,"<div class=""lesson-content"">
+  <h2>Derivation of nth Term of AP</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 27: Derivation of nth Term of AP
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Derivation of nth Term of AP"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-028,derivation-of-sum-of-first-n-terms-of-ap,Derivation of Sum of First n Terms of AP,2,Algebra,5,Arithmetic Progressions,28,28,false,"<div class=""lesson-content"">
+  <h2>Derivation of Sum of First n Terms of AP</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 28: Derivation of Sum of First n Terms of AP
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Derivation of Sum of First n Terms of AP"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-029,application-of-ap-in-daily-life-problems,Application of AP in Daily Life Problems,2,Algebra,5,Arithmetic Progressions,29,29,false,"<div class=""lesson-content"">
+  <h2>Application of AP in Daily Life Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 29: Application of AP in Daily Life Problems
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Application of AP in Daily Life Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-030,ap-practice-problems,AP Practice Problems,2,Algebra,5,Arithmetic Progressions,30,30,false,"<div class=""lesson-content"">
+  <h2>AP Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Algebra</p>
+    <p><strong>Chapter:</strong> Arithmetic Progressions</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 30: AP Practice Problems
+
+Unit: Algebra
+Chapter: Arithmetic Progressions
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding AP Practice Problems"",""Application in Algebra"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-031,introduction-to-coordinate-geometry,Introduction to Coordinate Geometry,3,Coordinate Geometry,6,Coordinate Geometry,31,31,false,"<div class=""lesson-content"">
+  <h2>Introduction to Coordinate Geometry</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 31: Introduction to Coordinate Geometry
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Coordinate Geometry"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-032,review-of-concepts-of-coordinate-geometry,Review of Concepts of Coordinate Geometry,3,Coordinate Geometry,6,Coordinate Geometry,32,32,true,"<div class=""lesson-content"">
+  <h2>Review of Concepts of Coordinate Geometry</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 32: Review of Concepts of Coordinate Geometry
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Review of Concepts of Coordinate Geometry"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-033,distance-formula,Distance Formula,3,Coordinate Geometry,6,Coordinate Geometry,33,33,false,"<div class=""lesson-content"">
+  <h2>Distance Formula</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 33: Distance Formula
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Distance Formula"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-034,section-formula-internal-division,Section Formula (Internal Division),3,Coordinate Geometry,6,Coordinate Geometry,34,34,false,"<div class=""lesson-content"">
+  <h2>Section Formula (Internal Division)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 34: Section Formula (Internal Division)
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Section Formula (Internal Division)"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-035,applications-of-distance-and-section-formulas,Applications of Distance and Section Formulas,3,Coordinate Geometry,6,Coordinate Geometry,35,35,false,"<div class=""lesson-content"">
+  <h2>Applications of Distance and Section Formulas</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 35: Applications of Distance and Section Formulas
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Applications of Distance and Section Formulas"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-036,coordinate-geometry-practice-problems,Coordinate Geometry Practice Problems,3,Coordinate Geometry,6,Coordinate Geometry,36,36,false,"<div class=""lesson-content"">
+  <h2>Coordinate Geometry Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Coordinate Geometry</p>
+    <p><strong>Chapter:</strong> Coordinate Geometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 36: Coordinate Geometry Practice Problems
+
+Unit: Coordinate Geometry
+Chapter: Coordinate Geometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Coordinate Geometry Practice Problems"",""Application in Coordinate Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-037,introduction-to-similar-triangles,Introduction to Similar Triangles,4,Geometry,7,Triangles,37,37,false,"<div class=""lesson-content"">
+  <h2>Introduction to Similar Triangles</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 37: Introduction to Similar Triangles
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Similar Triangles"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-038,definitions-examples-and-counter-examples-of-similar-triangles,Definitions Examples and Counter Examples of Similar Triangles,4,Geometry,7,Triangles,38,38,true,"<div class=""lesson-content"">
+  <h2>Definitions Examples and Counter Examples of Similar Triangles</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 38: Definitions Examples and Counter Examples of Similar Triangles
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Definitions Examples and Counter Examples of Similar Triangles"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-039,basic-proportionality-theorem-proof,Basic Proportionality Theorem (Proof),4,Geometry,7,Triangles,39,39,false,"<div class=""lesson-content"">
+  <h2>Basic Proportionality Theorem (Proof)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 39: Basic Proportionality Theorem (Proof)
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Basic Proportionality Theorem (Proof)"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-040,converse-of-basic-proportionality-theorem,Converse of Basic Proportionality Theorem,4,Geometry,7,Triangles,40,40,false,"<div class=""lesson-content"">
+  <h2>Converse of Basic Proportionality Theorem</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 40: Converse of Basic Proportionality Theorem
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Converse of Basic Proportionality Theorem"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-041,aaa-similarity-criterion,AAA Similarity Criterion,4,Geometry,7,Triangles,41,41,false,"<div class=""lesson-content"">
+  <h2>AAA Similarity Criterion</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 41: AAA Similarity Criterion
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding AAA Similarity Criterion"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-042,sss-similarity-criterion,SSS Similarity Criterion,4,Geometry,7,Triangles,42,42,false,"<div class=""lesson-content"">
+  <h2>SSS Similarity Criterion</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 42: SSS Similarity Criterion
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding SSS Similarity Criterion"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-043,sas-similarity-criterion,SAS Similarity Criterion,4,Geometry,7,Triangles,43,43,false,"<div class=""lesson-content"">
+  <h2>SAS Similarity Criterion</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 43: SAS Similarity Criterion
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding SAS Similarity Criterion"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-044,applications-of-similarity-criteria,Applications of Similarity Criteria,4,Geometry,7,Triangles,44,44,false,"<div class=""lesson-content"">
+  <h2>Applications of Similarity Criteria</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 44: Applications of Similarity Criteria
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Applications of Similarity Criteria"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-045,triangles-practice-problems,Triangles Practice Problems,4,Geometry,7,Triangles,45,45,false,"<div class=""lesson-content"">
+  <h2>Triangles Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Triangles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 45: Triangles Practice Problems
+
+Unit: Geometry
+Chapter: Triangles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Triangles Practice Problems"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-046,introduction-to-circles,Introduction to Circles,4,Geometry,8,Circles,46,46,false,"<div class=""lesson-content"">
+  <h2>Introduction to Circles</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 46: Introduction to Circles
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Circles"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-047,tangent-to-a-circle-at-point-of-contact,Tangent to a Circle at Point of Contact,4,Geometry,8,Circles,47,47,false,"<div class=""lesson-content"">
+  <h2>Tangent to a Circle at Point of Contact</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 47: Tangent to a Circle at Point of Contact
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Tangent to a Circle at Point of Contact"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-048,tangent-perpendicular-to-radius-theorem-proof,Tangent Perpendicular to Radius Theorem (Proof),4,Geometry,8,Circles,48,48,false,"<div class=""lesson-content"">
+  <h2>Tangent Perpendicular to Radius Theorem (Proof)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 48: Tangent Perpendicular to Radius Theorem (Proof)
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Tangent Perpendicular to Radius Theorem (Proof)"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-049,equal-tangents-from-external-point-theorem-proof,Equal Tangents from External Point Theorem (Proof),4,Geometry,8,Circles,49,49,false,"<div class=""lesson-content"">
+  <h2>Equal Tangents from External Point Theorem (Proof)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 49: Equal Tangents from External Point Theorem (Proof)
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Equal Tangents from External Point Theorem (Proof)"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-050,applications-of-tangent-properties,Applications of Tangent Properties,4,Geometry,8,Circles,50,50,false,"<div class=""lesson-content"">
+  <h2>Applications of Tangent Properties</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 50: Applications of Tangent Properties
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Applications of Tangent Properties"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-051,circles-practice-problems,Circles Practice Problems,4,Geometry,8,Circles,51,51,false,"<div class=""lesson-content"">
+  <h2>Circles Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Geometry</p>
+    <p><strong>Chapter:</strong> Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 51: Circles Practice Problems
+
+Unit: Geometry
+Chapter: Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Circles Practice Problems"",""Application in Geometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-052,introduction-to-trigonometry,Introduction to Trigonometry,5,Trigonometry,9,Introduction to Trigonometry,52,52,false,"<div class=""lesson-content"">
+  <h2>Introduction to Trigonometry</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 52: Introduction to Trigonometry
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Trigonometry"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-053,trigonometric-ratios-of-acute-angles,Trigonometric Ratios of Acute Angles,5,Trigonometry,9,Introduction to Trigonometry,53,53,true,"<div class=""lesson-content"">
+  <h2>Trigonometric Ratios of Acute Angles</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 53: Trigonometric Ratios of Acute Angles
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Trigonometric Ratios of Acute Angles"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-054,proof-of-existence-of-trigonometric-ratios,Proof of Existence of Trigonometric Ratios,5,Trigonometry,9,Introduction to Trigonometry,54,54,false,"<div class=""lesson-content"">
+  <h2>Proof of Existence of Trigonometric Ratios</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 54: Proof of Existence of Trigonometric Ratios
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Proof of Existence of Trigonometric Ratios"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-055,trigonometric-ratios-at-0-and-90,Trigonometric Ratios at 0° and 90°,5,Trigonometry,9,Introduction to Trigonometry,55,55,false,"<div class=""lesson-content"">
+  <h2>Trigonometric Ratios at 0° and 90°</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 55: Trigonometric Ratios at 0° and 90°
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Trigonometric Ratios at 0° and 90°"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-056,values-of-trigonometric-ratios-30-45-60,Values of Trigonometric Ratios (30° 45° 60°),5,Trigonometry,9,Introduction to Trigonometry,56,56,false,"<div class=""lesson-content"">
+  <h2>Values of Trigonometric Ratios (30° 45° 60°)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 56: Values of Trigonometric Ratios (30° 45° 60°)
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Values of Trigonometric Ratios (30° 45° 60°)"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-057,relationships-between-trigonometric-ratios,Relationships between Trigonometric Ratios,5,Trigonometry,9,Introduction to Trigonometry,57,57,false,"<div class=""lesson-content"">
+  <h2>Relationships between Trigonometric Ratios</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 57: Relationships between Trigonometric Ratios
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Relationships between Trigonometric Ratios"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-058,trigonometric-ratios-practice,Trigonometric Ratios Practice,5,Trigonometry,9,Introduction to Trigonometry,58,58,false,"<div class=""lesson-content"">
+  <h2>Trigonometric Ratios Practice</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Introduction to Trigonometry</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 58: Trigonometric Ratios Practice
+
+Unit: Trigonometry
+Chapter: Introduction to Trigonometry
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Trigonometric Ratios Practice"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-059,introduction-to-trigonometric-identities,Introduction to Trigonometric Identities,5,Trigonometry,10,Trigonometric Identities,59,59,false,"<div class=""lesson-content"">
+  <h2>Introduction to Trigonometric Identities</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Trigonometric Identities</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 59: Introduction to Trigonometric Identities
+
+Unit: Trigonometry
+Chapter: Trigonometric Identities
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Trigonometric Identities"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-060,proof-of-sina-cosa-1,Proof of sin²A + cos²A = 1,5,Trigonometry,10,Trigonometric Identities,60,60,false,"<div class=""lesson-content"">
+  <h2>Proof of sin²A + cos²A = 1</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Trigonometric Identities</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 60: Proof of sin²A + cos²A = 1
+
+Unit: Trigonometry
+Chapter: Trigonometric Identities
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Proof of sin²A + cos²A = 1"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-061,applications-of-sina-cosa-1,Applications of sin²A + cos²A = 1,5,Trigonometry,10,Trigonometric Identities,61,61,false,"<div class=""lesson-content"">
+  <h2>Applications of sin²A + cos²A = 1</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Trigonometric Identities</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 61: Applications of sin²A + cos²A = 1
+
+Unit: Trigonometry
+Chapter: Trigonometric Identities
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Applications of sin²A + cos²A = 1"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-062,other-simple-trigonometric-identities,Other Simple Trigonometric Identities,5,Trigonometry,10,Trigonometric Identities,62,62,false,"<div class=""lesson-content"">
+  <h2>Other Simple Trigonometric Identities</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Trigonometric Identities</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 62: Other Simple Trigonometric Identities
+
+Unit: Trigonometry
+Chapter: Trigonometric Identities
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Other Simple Trigonometric Identities"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-063,trigonometric-identities-practice,Trigonometric Identities Practice,5,Trigonometry,10,Trigonometric Identities,63,63,false,"<div class=""lesson-content"">
+  <h2>Trigonometric Identities Practice</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Trigonometric Identities</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 63: Trigonometric Identities Practice
+
+Unit: Trigonometry
+Chapter: Trigonometric Identities
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Trigonometric Identities Practice"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-064,introduction-to-heights-and-distances,Introduction to Heights and Distances,5,Trigonometry,11,Heights and Distances,64,64,false,"<div class=""lesson-content"">
+  <h2>Introduction to Heights and Distances</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 64: Introduction to Heights and Distances
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Heights and Distances"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-065,angle-of-elevation,Angle of Elevation,5,Trigonometry,11,Heights and Distances,65,65,false,"<div class=""lesson-content"">
+  <h2>Angle of Elevation</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 65: Angle of Elevation
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Angle of Elevation"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-066,angle-of-depression,Angle of Depression,5,Trigonometry,11,Heights and Distances,66,66,false,"<div class=""lesson-content"">
+  <h2>Angle of Depression</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 66: Angle of Depression
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Angle of Depression"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-067,simple-problems-on-heights-and-distances,Simple Problems on Heights and Distances,5,Trigonometry,11,Heights and Distances,67,67,false,"<div class=""lesson-content"">
+  <h2>Simple Problems on Heights and Distances</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 67: Simple Problems on Heights and Distances
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Simple Problems on Heights and Distances"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-068,problems-with-angles-30-45-60,Problems with Angles 30° 45° 60°,5,Trigonometry,11,Heights and Distances,68,68,false,"<div class=""lesson-content"">
+  <h2>Problems with Angles 30° 45° 60°</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 68: Problems with Angles 30° 45° 60°
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Problems with Angles 30° 45° 60°"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-069,real-life-applications-of-heights-and-distances,Real Life Applications of Heights and Distances,5,Trigonometry,11,Heights and Distances,69,69,false,"<div class=""lesson-content"">
+  <h2>Real Life Applications of Heights and Distances</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 69: Real Life Applications of Heights and Distances
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Real Life Applications of Heights and Distances"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-070,heights-and-distances-practice,Heights and Distances Practice,5,Trigonometry,11,Heights and Distances,70,70,false,"<div class=""lesson-content"">
+  <h2>Heights and Distances Practice</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Trigonometry</p>
+    <p><strong>Chapter:</strong> Heights and Distances</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 70: Heights and Distances Practice
+
+Unit: Trigonometry
+Chapter: Heights and Distances
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Heights and Distances Practice"",""Application in Trigonometry"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-071,introduction-to-areas-related-to-circles,Introduction to Areas Related to Circles,6,Mensuration,12,Areas Related to Circles,71,71,false,"<div class=""lesson-content"">
+  <h2>Introduction to Areas Related to Circles</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Areas Related to Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 71: Introduction to Areas Related to Circles
+
+Unit: Mensuration
+Chapter: Areas Related to Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Areas Related to Circles"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-072,area-of-sectors-of-a-circle,Area of Sectors of a Circle,6,Mensuration,12,Areas Related to Circles,72,72,true,"<div class=""lesson-content"">
+  <h2>Area of Sectors of a Circle</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Areas Related to Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 72: Area of Sectors of a Circle
+
+Unit: Mensuration
+Chapter: Areas Related to Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Area of Sectors of a Circle"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-073,area-of-segments-of-a-circle,Area of Segments of a Circle,6,Mensuration,12,Areas Related to Circles,73,73,false,"<div class=""lesson-content"">
+  <h2>Area of Segments of a Circle</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Areas Related to Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 73: Area of Segments of a Circle
+
+Unit: Mensuration
+Chapter: Areas Related to Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Area of Segments of a Circle"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-074,problems-with-central-angles-60-90-120,Problems with Central Angles 60° 90° 120°,6,Mensuration,12,Areas Related to Circles,74,74,false,"<div class=""lesson-content"">
+  <h2>Problems with Central Angles 60° 90° 120°</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Areas Related to Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 74: Problems with Central Angles 60° 90° 120°
+
+Unit: Mensuration
+Chapter: Areas Related to Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Problems with Central Angles 60° 90° 120°"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-075,areas-related-to-circles-practice,Areas Related to Circles Practice,6,Mensuration,12,Areas Related to Circles,75,75,false,"<div class=""lesson-content"">
+  <h2>Areas Related to Circles Practice</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Areas Related to Circles</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 75: Areas Related to Circles Practice
+
+Unit: Mensuration
+Chapter: Areas Related to Circles
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Areas Related to Circles Practice"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-076,introduction-to-surface-areas-and-volumes,Introduction to Surface Areas and Volumes,6,Mensuration,13,Surface Areas and Volumes,76,76,false,"<div class=""lesson-content"">
+  <h2>Introduction to Surface Areas and Volumes</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Surface Areas and Volumes</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 76: Introduction to Surface Areas and Volumes
+
+Unit: Mensuration
+Chapter: Surface Areas and Volumes
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Surface Areas and Volumes"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-077,combinations-of-cubes-and-cuboids,Combinations of Cubes and Cuboids,6,Mensuration,13,Surface Areas and Volumes,77,77,false,"<div class=""lesson-content"">
+  <h2>Combinations of Cubes and Cuboids</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Surface Areas and Volumes</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 77: Combinations of Cubes and Cuboids
+
+Unit: Mensuration
+Chapter: Surface Areas and Volumes
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Combinations of Cubes and Cuboids"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-078,combinations-of-spheres-and-hemispheres,Combinations of Spheres and Hemispheres,6,Mensuration,13,Surface Areas and Volumes,78,78,false,"<div class=""lesson-content"">
+  <h2>Combinations of Spheres and Hemispheres</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Surface Areas and Volumes</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 78: Combinations of Spheres and Hemispheres
+
+Unit: Mensuration
+Chapter: Surface Areas and Volumes
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Combinations of Spheres and Hemispheres"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-079,combinations-of-cylinders-and-cones,Combinations of Cylinders and Cones,6,Mensuration,13,Surface Areas and Volumes,79,79,false,"<div class=""lesson-content"">
+  <h2>Combinations of Cylinders and Cones</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Surface Areas and Volumes</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 79: Combinations of Cylinders and Cones
+
+Unit: Mensuration
+Chapter: Surface Areas and Volumes
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Combinations of Cylinders and Cones"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-080,surface-areas-and-volumes-practice,Surface Areas and Volumes Practice,6,Mensuration,13,Surface Areas and Volumes,80,80,false,"<div class=""lesson-content"">
+  <h2>Surface Areas and Volumes Practice</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Mensuration</p>
+    <p><strong>Chapter:</strong> Surface Areas and Volumes</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 80: Surface Areas and Volumes Practice
+
+Unit: Mensuration
+Chapter: Surface Areas and Volumes
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Surface Areas and Volumes Practice"",""Application in Mensuration"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.707Z,2025-09-11T12:06:39.707Z
+lesson-081,introduction-to-statistics,Introduction to Statistics,7,Statistics & Probability,14,Statistics,81,81,false,"<div class=""lesson-content"">
+  <h2>Introduction to Statistics</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 81: Introduction to Statistics
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Statistics"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-082,mean-of-grouped-data,Mean of Grouped Data,7,Statistics & Probability,14,Statistics,82,82,true,"<div class=""lesson-content"">
+  <h2>Mean of Grouped Data</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 82: Mean of Grouped Data
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Mean of Grouped Data"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-083,direct-method-for-mean,Direct Method for Mean,7,Statistics & Probability,14,Statistics,83,83,false,"<div class=""lesson-content"">
+  <h2>Direct Method for Mean</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 83: Direct Method for Mean
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Direct Method for Mean"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-084,assumed-mean-method,Assumed Mean Method,7,Statistics & Probability,14,Statistics,84,84,false,"<div class=""lesson-content"">
+  <h2>Assumed Mean Method</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 84: Assumed Mean Method
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Assumed Mean Method"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-085,step-deviation-method,Step Deviation Method,7,Statistics & Probability,14,Statistics,85,85,false,"<div class=""lesson-content"">
+  <h2>Step Deviation Method</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 85: Step Deviation Method
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Step Deviation Method"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-086,median-of-grouped-data-algebraic-method,Median of Grouped Data (Algebraic Method),7,Statistics & Probability,14,Statistics,86,86,false,"<div class=""lesson-content"">
+  <h2>Median of Grouped Data (Algebraic Method)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 86: Median of Grouped Data (Algebraic Method)
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Median of Grouped Data (Algebraic Method)"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-087,mode-of-grouped-data-algebraic-method,Mode of Grouped Data (Algebraic Method),7,Statistics & Probability,14,Statistics,87,87,false,"<div class=""lesson-content"">
+  <h2>Mode of Grouped Data (Algebraic Method)</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 87: Mode of Grouped Data (Algebraic Method)
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Mode of Grouped Data (Algebraic Method)"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-088,statistics-practice-problems,Statistics Practice Problems,7,Statistics & Probability,14,Statistics,88,88,false,"<div class=""lesson-content"">
+  <h2>Statistics Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Statistics</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 88: Statistics Practice Problems
+
+Unit: Statistics & Probability
+Chapter: Statistics
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Statistics Practice Problems"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-089,introduction-to-probability,Introduction to Probability,7,Statistics & Probability,15,Probability,89,89,false,"<div class=""lesson-content"">
+  <h2>Introduction to Probability</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Probability</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 89: Introduction to Probability
+
+Unit: Statistics & Probability
+Chapter: Probability
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Introduction to Probability"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-090,classical-definition-of-probability,Classical Definition of Probability,7,Statistics & Probability,15,Probability,90,90,false,"<div class=""lesson-content"">
+  <h2>Classical Definition of Probability</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Probability</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 90: Classical Definition of Probability
+
+Unit: Statistics & Probability
+Chapter: Probability
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Classical Definition of Probability"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-091,simple-problems-on-probability,Simple Problems on Probability,7,Statistics & Probability,15,Probability,91,91,false,"<div class=""lesson-content"">
+  <h2>Simple Problems on Probability</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Probability</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 91: Simple Problems on Probability
+
+Unit: Statistics & Probability
+Chapter: Probability
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Simple Problems on Probability"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-092,real-life-applications-of-probability,Real Life Applications of Probability,7,Statistics & Probability,15,Probability,92,92,false,"<div class=""lesson-content"">
+  <h2>Real Life Applications of Probability</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Probability</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 92: Real Life Applications of Probability
+
+Unit: Statistics & Probability
+Chapter: Probability
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Real Life Applications of Probability"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z
+lesson-093,probability-practice-problems,Probability Practice Problems,7,Statistics & Probability,15,Probability,93,93,false,"<div class=""lesson-content"">
+  <h2>Probability Practice Problems</h2>
+  <div class=""lesson-meta"">
+    <p><strong>Unit:</strong> Statistics & Probability</p>
+    <p><strong>Chapter:</strong> Probability</p>
+  </div>
+  
+  <div class=""lesson-body"">
+    <h3>Learning Objectives</h3>
+    <p>In this lesson, you will learn:</p>
+    <ul>
+      <li>Key concepts and principles</li>
+      <li>Step-by-step problem solving</li>
+      <li>Real-world applications</li>
+    </ul>
+    
+    <h3>Key Concepts</h3>
+    <p>Detailed explanation of the main concepts covered in this lesson.</p>
+    
+    <h3>Examples and Practice</h3>
+    <p>Worked examples and practice problems to reinforce learning.</p>
+    
+    <div class=""key-points"">
+      <h4>🔑 Key Points:</h4>
+      <ul>
+        <li>Important concept 1</li>
+        <li>Important concept 2</li>
+        <li>Important concept 3</li>
+      </ul>
+    </div>
+    
+    <div class=""quiz-section"">
+      <h4>❓ Quick Quiz:</h4>
+      <p>Test your understanding with these questions:</p>
+      <ol>
+        <li>Question 1</li>
+        <li>Question 2</li>
+        <li>Question 3</li>
+      </ol>
+    </div>
+  </div>
+</div>",Lesson 93: Probability Practice Problems
+
+Unit: Statistics & Probability
+Chapter: Probability
+
+This lesson covers important concepts and problem-solving techniques.,"[""Understanding Probability Practice Problems"",""Application in Statistics & Probability"",""Problem-solving techniques"",""Real-world connections""]",,,,,cbse-mathematics-class-10,2025-09-11T12:06:39.708Z,2025-09-11T12:06:39.708Z

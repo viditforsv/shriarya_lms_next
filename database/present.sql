@@ -48,8 +48,8 @@ CREATE TABLE public.courses (
   template_id uuid,
   template_data jsonb DEFAULT '{}'::jsonb,
   CONSTRAINT courses_pkey PRIMARY KEY (id),
-  CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.course_templates(id),
-  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id)
+  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id),
+  CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.course_templates(id)
 );
 CREATE TABLE public.enrollments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -58,23 +58,27 @@ CREATE TABLE public.enrollments (
   is_active boolean DEFAULT true,
   enrolled_at timestamp with time zone DEFAULT now(),
   CONSTRAINT enrollments_pkey PRIMARY KEY (id),
-  CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id),
-  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  course_id uuid NOT NULL,
   title text NOT NULL,
-  content text,
-  lesson_order integer NOT NULL,
-  created_at timestamp with time zone DEFAULT now(),
+  created_at timestamp without time zone DEFAULT now(),
+  course_id uuid,
+  slug text UNIQUE,
+  lesson_order integer,
   is_preview boolean DEFAULT false,
-  slug text,
   content_html text,
-  content_text text,
-  content_type text DEFAULT 'text'::text,
+  content text,
+  quiz_id uuid,
+  video_url text,
+  video_thumbnail text,
+  pdf_url text,
+  key_points jsonb,
   CONSTRAINT lessons_pkey PRIMARY KEY (id),
-  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
 );
 CREATE TABLE public.profiles (
   id uuid NOT NULL,
@@ -88,20 +92,84 @@ CREATE TABLE public.profiles (
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
-CREATE TABLE public.resources (
+CREATE TABLE public.question_bank (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  lesson_id uuid NOT NULL,
-  kind text CHECK (kind = ANY (ARRAY['video'::text, 'pdf'::text, 'image'::text, 'link'::text, 'audio'::text, 'zip'::text])),
-  url text NOT NULL,
-  mime text,
-  duration_sec integer,
-  created_at timestamp with time zone DEFAULT now(),
-  title text,
-  description text,
-  file_size integer,
-  cdn_url text,
-  local_url text,
-  upload_status text DEFAULT 'pending'::text,
-  CONSTRAINT resources_pkey PRIMARY KEY (id),
-  CONSTRAINT resources_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.lessons(id)
+  question_text text NOT NULL,
+  options jsonb NOT NULL,
+  correct_answer text NOT NULL,
+  explanation text,
+  difficulty text,
+  subject text,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT question_bank_pkey PRIMARY KEY (id)
 );
+CREATE TABLE public.quiz_questions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  quiz_id uuid,
+  question_id uuid,
+  question_order integer,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT quiz_questions_pkey PRIMARY KEY (id),
+  CONSTRAINT quiz_questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
+  CONSTRAINT quiz_questions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id)
+);
+CREATE TABLE public.quizzes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  lesson_id uuid,
+  title text NOT NULL,
+  difficulty text,
+  time_limit integer,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT quizzes_pkey PRIMARY KEY (id),
+  CONSTRAINT quizzes_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.lessons(id)
+);
+
+-- RPC Function for fetching complete course content
+CREATE OR REPLACE FUNCTION public.get_cbse_course_content(course_slug text)
+RETURNS jsonb
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  result jsonb;
+BEGIN
+  SELECT jsonb_build_object(
+    'course', row_to_json(c.*),
+    'lessons', COALESCE((
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', l.id,
+          'title', l.title,
+          'slug', l.slug,
+          'lesson_order', l.lesson_order,
+          'is_preview', l.is_preview,
+          'content_html', l.content_html,
+          'content', l.content,
+          'key_points', l.key_points,
+          'video_url', l.video_url,
+          'video_thumbnail', l.video_thumbnail,
+          'pdf_url', l.pdf_url,
+          'quiz_id', l.quiz_id,
+          'quiz', (
+            SELECT jsonb_build_object(
+              'id', q.id,
+              'title', q.title,
+              'difficulty', q.difficulty,
+              'time_limit', q.time_limit
+            )
+            FROM public.quizzes q
+            WHERE q.lesson_id = l.id
+            LIMIT 1
+          )
+        ) ORDER BY l.lesson_order
+      )
+      FROM public.lessons l
+      WHERE l.course_id = c.id
+    ), '[]'::jsonb)
+  )
+  INTO result
+  FROM public.courses c
+  WHERE c.slug = course_slug;
+
+  RETURN result;
+END;
+$$;

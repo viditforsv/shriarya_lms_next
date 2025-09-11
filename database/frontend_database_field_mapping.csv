@@ -1,0 +1,21 @@
+Frontend_Element,Database_Table,Database_Column,Usage_Location,Data_Type,Is_Active,Strategy,Notes
+Lesson ID,lessons,id,Lesson page navigation,UUID,TRUE,KEEP,Unique identifier for lesson
+Lesson Title,lessons,title,Lesson header display,TEXT,TRUE,KEEP,Main lesson title
+Lesson Slug,lessons,slug,URL routing,TEXT,TRUE,KEEP,Used in /courses/[slug]/lesson/[lessonSlug]
+Lesson Order,lessons,lesson_order,Lesson numbering,INTEGER,TRUE,RENAME to 'order',Sequential lesson number
+Preview Status,lessons,is_preview,Preview badge display,BOOLEAN,TRUE,RENAME to 'preview',Shows preview badge
+Course ID,lessons,course_id,Course association,UUID,TRUE,KEEP,Links lesson to course
+Created Date,lessons,created_at,Timestamp,TIMESTAMP,TRUE,RENAME to 'created',When lesson was created
+Lesson Content HTML,lessons,content_html,Notes tab content,TEXT,TRUE,KEEP,Primary content source
+Lesson Content,lessons,content,Notes tab fallback,TEXT,TRUE,KEEP,Fallback content source
+Key Points Structured,lessons,key_points,Key Points tab,JSONB,TRUE,ACTIVATE,Structured data instead of HTML parsing
+Quiz ID Reference,lessons,quiz_id,Quiz tab,UUID,TRUE,ACTIVATE,UUID pointing to quizzes table
+Video URL Direct,lessons,video_url,Video tab,TEXT,TRUE,ACTIVATE,Direct video access
+Video Thumbnail,lessons,video_thumbnail,Video tab,TEXT,TRUE,ACTIVATE,Video preview image
+PDF URL Direct,lessons,pdf_url,Resources section,TEXT,TRUE,ACTIVATE OPTIONAL,Direct PDF access
+Video Duration,lessons,video_duration,NOT USED,INTEGER,FALSE,REMOVE,Not needed - using direct video_url
+Quiz Difficulty,lessons,quiz_difficulty,NOT USED,TEXT,FALSE,REMOVE,Not implemented
+Quiz Time Limit,lessons,quiz_time_limit,NOT USED,INTEGER,FALSE,REMOVE,Not implemented
+Additional Resources,lessons,additional_resources,NOT USED,JSONB,FALSE,REMOVE,Not implemented
+Content Text,lessons,content_text,NOT USED,TEXT,FALSE,REMOVE,Not used
+Content Type,lessons,content_type,NOT USED,TEXT,FALSE,REMOVE,Not used

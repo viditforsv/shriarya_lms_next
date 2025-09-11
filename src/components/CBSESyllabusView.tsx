@@ -1,8 +1,13 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { BookOpen, Clock, Users, Award, CheckCircle } from 'lucide-react';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+import { BookOpen, Clock, CheckCircle } from "lucide-react";
 
 interface CBSEUnit {
   unitNo: number;
@@ -36,14 +41,15 @@ interface CBSESyllabusProps {
   totalLessons: number;
 }
 
-export function CBSESyllabusView({ 
-  units, 
-  chapters, 
-  lessons, 
-  completedLessons = 0, 
-  totalLessons 
+export function CBSESyllabusView({
+  units,
+  chapters,
+  lessons,
+  completedLessons = 0,
+  totalLessons,
 }: CBSESyllabusProps) {
-  const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+  const progressPercentage =
+    totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -66,15 +72,21 @@ export function CBSESyllabusView({
             <Progress value={progressPercentage} className="h-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">{units.length}</div>
+                <div className="text-2xl font-bold text-primary">
+                  {units.length}
+                </div>
                 <div className="text-sm text-muted-foreground">Units</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">{chapters.length}</div>
+                <div className="text-2xl font-bold text-primary">
+                  {chapters.length}
+                </div>
                 <div className="text-sm text-muted-foreground">Chapters</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">{lessons.length}</div>
+                <div className="text-2xl font-bold text-primary">
+                  {lessons.length}
+                </div>
                 <div className="text-sm text-muted-foreground">Lessons</div>
               </div>
               <div>
@@ -102,7 +114,10 @@ export function CBSESyllabusView({
             <CardContent>
               <div className="space-y-3">
                 {unit.chapters.map((chapter) => (
-                  <div key={chapter.chapterNo} className="border-l-2 border-primary/20 pl-4">
+                  <div
+                    key={chapter.chapterNo}
+                    className="border-l-2 border-primary/20 pl-4"
+                  >
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-medium">
@@ -135,8 +150,8 @@ export function CBSESyllabusView({
         <CardContent>
           <div className="space-y-2">
             {lessons.map((lesson) => (
-              <div 
-                key={lesson.lessonNo} 
+              <div
+                key={lesson.lessonNo}
                 className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -172,10 +187,17 @@ interface CBSEUnitViewProps {
   onLessonClick?: (lesson: CBSELesson) => void;
 }
 
-export function CBSEUnitView({ unit, chapters, lessons, onLessonClick }: CBSEUnitViewProps) {
-  const unitChapters = chapters.filter(chapter => chapter.unitNo === unit.unitNo);
-  const unitLessons = lessons.filter(lesson => {
-    const chapter = chapters.find(c => c.chapterNo === lesson.lessonNo);
+export function CBSEUnitView({
+  unit,
+  chapters,
+  lessons,
+  onLessonClick,
+}: CBSEUnitViewProps) {
+  const unitChapters = chapters.filter(
+    (chapter) => chapter.unitNo === unit.unitNo
+  );
+  const unitLessons = lessons.filter((lesson) => {
+    const chapter = chapters.find((c) => c.chapterNo === lesson.lessonNo);
     return chapter && chapter.unitNo === unit.unitNo;
   });
 
@@ -194,11 +216,15 @@ export function CBSEUnitView({ unit, chapters, lessons, onLessonClick }: CBSEUni
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-primary">{unitChapters.length}</div>
+              <div className="text-2xl font-bold text-primary">
+                {unitChapters.length}
+              </div>
               <div className="text-sm text-muted-foreground">Chapters</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">{unitLessons.length}</div>
+              <div className="text-2xl font-bold text-primary">
+                {unitLessons.length}
+              </div>
               <div className="text-sm text-muted-foreground">Lessons</div>
             </div>
             <div>
@@ -228,13 +254,15 @@ export function CBSEUnitView({ unit, chapters, lessons, onLessonClick }: CBSEUni
             <CardContent>
               <div className="space-y-2">
                 {unitLessons
-                  .filter(lesson => {
+                  .filter((lesson) => {
                     // This is a simplified mapping - in reality you'd need proper lesson-to-chapter mapping
-                    return lesson.lessonNo >= chapter.chapterNo * 10 && 
-                           lesson.lessonNo < (chapter.chapterNo + 1) * 10;
+                    return (
+                      lesson.lessonNo >= chapter.chapterNo * 10 &&
+                      lesson.lessonNo < (chapter.chapterNo + 1) * 10
+                    );
                   })
                   .map((lesson) => (
-                    <div 
+                    <div
                       key={lesson.lessonNo}
                       className="flex items-center justify-between p-2 rounded border hover:bg-muted/50 cursor-pointer transition-colors"
                       onClick={() => onLessonClick?.(lesson)}

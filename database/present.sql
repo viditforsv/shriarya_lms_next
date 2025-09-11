@@ -64,6 +64,7 @@ CREATE TABLE public.enrollments (
 CREATE TABLE public.lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,
+  notes text,
   created_at timestamp without time zone DEFAULT now(),
   course_id uuid,
   slug text UNIQUE,
@@ -123,53 +124,3 @@ CREATE TABLE public.quizzes (
   CONSTRAINT quizzes_pkey PRIMARY KEY (id),
   CONSTRAINT quizzes_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.lessons(id)
 );
-
--- RPC Function for fetching complete course content
-CREATE OR REPLACE FUNCTION public.get_cbse_course_content(course_slug text)
-RETURNS jsonb
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  result jsonb;
-BEGIN
-  SELECT jsonb_build_object(
-    'course', row_to_json(c.*),
-    'lessons', COALESCE((
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', l.id,
-          'title', l.title,
-          'slug', l.slug,
-          'lesson_order', l.lesson_order,
-          'is_preview', l.is_preview,
-          'content_html', l.content_html,
-          'content', l.content,
-          'key_points', l.key_points,
-          'video_url', l.video_url,
-          'video_thumbnail', l.video_thumbnail,
-          'pdf_url', l.pdf_url,
-          'quiz_id', l.quiz_id,
-          'quiz', (
-            SELECT jsonb_build_object(
-              'id', q.id,
-              'title', q.title,
-              'difficulty', q.difficulty,
-              'time_limit', q.time_limit
-            )
-            FROM public.quizzes q
-            WHERE q.lesson_id = l.id
-            LIMIT 1
-          )
-        ) ORDER BY l.lesson_order
-      )
-      FROM public.lessons l
-      WHERE l.course_id = c.id
-    ), '[]'::jsonb)
-  )
-  INTO result
-  FROM public.courses c
-  WHERE c.slug = course_slug;
-
-  RETURN result;
-END;
-$$;

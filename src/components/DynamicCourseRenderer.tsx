@@ -65,7 +65,6 @@ export function DynamicCourseRenderer({
 // Fallback function to render course overview when template structure is not available
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function renderCourseOverview(course: RenderedCourse, template: any) {
-  
   return (
     <div className="space-y-6">
       {/* Course Description */}
@@ -130,8 +129,8 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
         </CardContent>
       </Card>
 
-          {/* Syllabus Overview */}
-          {template?.syllabusContent && (
+      {/* Syllabus Overview */}
+      {template?.syllabusContent && (
         <Card>
           <CardHeader>
             <CardTitle>Complete Syllabus Coverage</CardTitle>
@@ -151,7 +150,8 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {template?.syllabusContent?.units?.map((unit: any, index: number) => (
+              {template?.syllabusContent?.units?.map(
+                (unit: any, index: number) => (
                   <div key={index} className="border-l-4 border-[#e27447] pl-3">
                     <h5 className="font-medium text-[#1e293b]">
                       Unit {unit.unitNo}: {unit.unitName}
@@ -175,32 +175,36 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
         </Card>
       )}
 
-          {/* Learning Outcomes */}
-          {template?.learningOutcomes && (
+      {/* Learning Outcomes */}
+      {template?.learningOutcomes && (
         <Card>
           <CardHeader>
             <CardTitle>Learning Outcomes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {template?.learningOutcomes?.map((outcome: any, index: number) => (
-                <div key={index}>
-                  <h5 className="font-medium text-[#1e293b] mb-2">
-                    {outcome.category}
-                  </h5>
-                  <ul className="space-y-1">
-                    {outcome.outcomes.map((item: string, itemIndex: number) => (
-                      <li
-                        key={itemIndex}
-                        className="flex items-start space-x-2 text-sm text-muted-foreground"
-                      >
-                        <div className="w-1.5 h-1.5 bg-[#e27447] rounded-full mt-2 flex-shrink-0"></div>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {template?.learningOutcomes?.map(
+                (outcome: any, index: number) => (
+                  <div key={index}>
+                    <h5 className="font-medium text-[#1e293b] mb-2">
+                      {outcome.category}
+                    </h5>
+                    <ul className="space-y-1">
+                      {outcome.outcomes.map(
+                        (item: string, itemIndex: number) => (
+                          <li
+                            key={itemIndex}
+                            className="flex items-start space-x-2 text-sm text-muted-foreground"
+                          >
+                            <div className="w-1.5 h-1.5 bg-[#e27447] rounded-full mt-2 flex-shrink-0"></div>
+                            <span>{item}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )
+              )}
             </div>
           </CardContent>
         </Card>

@@ -32,6 +32,9 @@ export interface Lesson {
   title: string
   course_id: string
   content: string | null
+  content_html: string | null
+  content_text: string | null
+  content_type: string | null
   lesson_order: number
   created_at: string
   is_preview: boolean
@@ -46,6 +49,12 @@ export interface Resource {
   mime: string | null
   duration_sec: number | null
   created_at: string
+  title: string | null
+  description: string | null
+  file_size: number | null
+  cdn_url: string | null
+  local_url: string | null
+  upload_status: string | null
 }
 
 export interface LessonWithResources extends Lesson {

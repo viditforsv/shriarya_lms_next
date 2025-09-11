@@ -641,11 +641,12 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           <CardContent>
             <div className="p-4 border rounded-sm">
               <div className="bg-gray-900 text-green-400 p-4 rounded-sm text-sm font-mono">
+                <pre>{`<SectionEditor
   content={sectionContent}
   onChange={(content) => setSectionContent(content)}
   placeholder="Enter your content here..."
 />`}</pre>
-            </div>
+              </div>
             </div>
           </CardContent>
         </Card>

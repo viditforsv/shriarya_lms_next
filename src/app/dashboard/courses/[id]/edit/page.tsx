@@ -13,7 +13,6 @@ import { Label } from "@/app/components-demo/ui/ui-components/label"
 import { useAuth } from "@/contexts/AuthContext"
 import { createClient } from "@/lib/supabase/client"
 import { Course, Lesson } from "@/lib/courses"
-import { SectionEditor } from "@/app/components-demo/content/section-editor"
 
 // Unused interface removed
 
@@ -461,7 +460,6 @@ export default function CourseBuilder({ params }: { params: Promise<{ id: string
                         {lessons.map((lesson) => (
                           <div key={lesson.id} className="border rounded-lg p-4">
                             <h3 className="font-medium mb-4">{lesson.title}</h3>
-                            <SectionEditor 
                               lessonId={lesson.id}
                               onSectionsChange={(sections) => {
                                 console.log('Sections updated for lesson:', lesson.title, sections)

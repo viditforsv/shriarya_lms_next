@@ -217,7 +217,6 @@ The deletion system works with these tables:
 - `courses` - Main course table
 - `lessons` - Course lessons
 - `resources` - Lesson resources (files, videos)
-- `lesson_sections` - Additional lesson content
 - `enrollments` - Student enrollments
 - `user_progress` - Student progress data (optional)
 

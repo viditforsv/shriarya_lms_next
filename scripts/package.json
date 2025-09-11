@@ -1,0 +1,26 @@
+{
+  "name": "cbse-syllabus-import",
+  "version": "1.0.0",
+  "description": "Import CBSE Class 10 Mathematics syllabus into the LMS database",
+  "main": "import-cbse-syllabus.js",
+  "scripts": {
+    "import": "node import-cbse-syllabus.js",
+    "import:cbse": "node import-cbse-syllabus.js",
+    "add-lessons": "node add-lessons-to-existing-course.js",
+    "restore-content": "node restore-course-content.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "keywords": [
+    "cbse",
+    "syllabus",
+    "import",
+    "lms",
+    "mathematics"
+  ],
+  "author": "Shri Arya Education",
+  "license": "MIT"
+}

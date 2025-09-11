@@ -272,7 +272,6 @@ export async function DELETE(request: Request) {
       
       // 5. Delete lesson sections
       const { error: sectionsError } = await supabase
-        .from('lesson_sections')
         .delete()
         .in('lesson_id', lessonIds)
       

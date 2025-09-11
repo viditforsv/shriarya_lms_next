@@ -3,6 +3,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
+import { Badge } from '@/app/components-demo/ui/ui-components/badge'
 import { RenderedCourse, CourseTemplate, TemplateSection } from '@/types/course-templates'
 
 interface DynamicCourseRendererProps {
@@ -22,6 +23,8 @@ export function DynamicCourseRenderer({ course, template }: DynamicCourseRendere
         return renderFactsSection(section, course)
       case 'lessons':
         return renderLessonsSection(section, course)
+      case 'badges':
+        return renderBadgesSection(section, course)
       default:
         return renderGenericSection(section, course)
     }
@@ -173,6 +176,67 @@ function renderLessonsSection(section: TemplateSection, course: RenderedCourse) 
         {course.lessons} lessons • {course.isFree ? 'Free' : `$${course.price || 0}`}
       </p>
       {/* This would be populated with actual lessons */}
+    </div>
+  )
+}
+
+// Render Badges Section
+function renderBadgesSection(section: TemplateSection, course: RenderedCourse) {
+  const badgeConfigs = [
+    // Course Tags
+    ...(course.tags?.map(tag => ({
+      text: tag,
+      variant: 'outline' as const,
+      className: 'border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors'
+    })) || []),
+    
+    // Course Info Badges
+    ...(course.curriculum ? [{
+      text: course.curriculum,
+      variant: 'outline' as const,
+      className: 'border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors'
+    }] : []),
+    
+    ...(course.subject ? [{
+      text: course.subject,
+      variant: 'outline' as const,
+      className: 'border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white transition-colors'
+    }] : []),
+    
+    ...(course.grade ? [{
+      text: course.grade,
+      variant: 'outline' as const,
+      className: 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white transition-colors'
+    }] : []),
+    
+    ...(course.level ? [{
+      text: course.level,
+      variant: 'outline' as const,
+      className: 'border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-colors'
+    }] : []),
+    
+    // Course Status Badges
+    {
+      text: course.isFree ? 'Free' : `$${course.price || 0}`,
+      variant: course.isFree ? 'secondary' as const : 'default' as const,
+      className: ''
+    }
+  ]
+
+  return (
+    <div>
+      <h4 className="font-semibold mb-4 text-[#1e293b]">Course Information</h4>
+      <div className="flex items-center flex-wrap gap-2">
+        {badgeConfigs.map((badge, index) => (
+          <Badge 
+            key={index} 
+            variant={badge.variant} 
+            className={badge.className}
+          >
+            {badge.text}
+          </Badge>
+        ))}
+      </div>
     </div>
   )
 }

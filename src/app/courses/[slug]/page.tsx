@@ -215,13 +215,40 @@ function CoursePageClient({ courseParams }: { courseParams: { slug: string } }) 
               <p className="text-xl text-muted-foreground mb-4">
                 {course.description || 'No description available'}
               </p>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center flex-wrap gap-2">
                 <Badge variant={course.isFree ? "secondary" : "default"}>
                   {course.isFree ? 'Free' : `$${course.price || 0}`}
                 </Badge>
                 {isEnrolled && (
                   <Badge variant="default" className="bg-green-100 text-green-800">
                     Enrolled
+                  </Badge>
+                )}
+                {/* Course Tags as Badges */}
+                {course.tags && course.tags.map((tag, index) => (
+                  <Badge key={index} variant="outline" className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors">
+                    {tag}
+                  </Badge>
+                ))}
+                {/* Additional Course Info Badges */}
+                {course.curriculum && (
+                  <Badge variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors">
+                    {course.curriculum}
+                  </Badge>
+                )}
+                {course.subject && (
+                  <Badge variant="outline" className="border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white transition-colors">
+                    {course.subject}
+                  </Badge>
+                )}
+                {course.grade && (
+                  <Badge variant="outline" className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white transition-colors">
+                    {course.grade}
+                  </Badge>
+                )}
+                {course.level && (
+                  <Badge variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-colors">
+                    {course.level}
                   </Badge>
                 )}
               </div>

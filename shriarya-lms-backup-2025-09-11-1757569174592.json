@@ -1,0 +1,847 @@
+{
+  "timestamp": "2025-09-11T05:39:32.066Z",
+  "project": "tqeyguvxcsebzhvhzngx",
+  "schema": "ShriArya LMS Database",
+  "version": "1.0",
+  "tables": {
+    "course_template_fields": {
+      "table": "course_template_fields",
+      "timestamp": "2025-09-11T05:39:33.366Z",
+      "rowCount": 0,
+      "data": []
+    },
+    "course_templates": {
+      "table": "course_templates",
+      "timestamp": "2025-09-11T05:39:33.656Z",
+      "rowCount": 1,
+      "data": [
+        {
+          "id": "09f36223-641c-4006-90ae-974df4858273",
+          "name": "CBSE Mathematics Template",
+          "slug": "cbse-mathematics-template",
+          "description": "Template for CBSE Mathematics courses with comprehensive structure",
+          "curriculum": "CBSE",
+          "subject": "Mathematics",
+          "grade": "Class 10",
+          "level": null,
+          "structure": {
+            "sections": [
+              {
+                "id": "overview",
+                "type": "overview",
+                "title": "Course Overview",
+                "fields": [
+                  "description",
+                  "features",
+                  "prerequisites",
+                  "learningOutcomes"
+                ]
+              },
+              {
+                "id": "syllabus",
+                "type": "syllabus",
+                "title": "Complete Syllabus",
+                "fields": [
+                  "syllabusContent"
+                ]
+              },
+              {
+                "id": "content",
+                "type": "lessons",
+                "title": "Course Content",
+                "fields": [
+                  "lessons"
+                ]
+              },
+              {
+                "id": "facts",
+                "type": "facts",
+                "title": "Course Facts",
+                "fields": [
+                  "duration",
+                  "lessons",
+                  "curriculum",
+                  "grade"
+                ]
+              }
+            ]
+          },
+          "fields": [
+            {
+              "key": "title",
+              "type": "text",
+              "label": "Course Title",
+              "required": true,
+              "placeholder": "e.g., CBSE Mathematics Class 10"
+            },
+            {
+              "key": "description",
+              "type": "textarea",
+              "label": "Course Description",
+              "required": true,
+              "placeholder": "Comprehensive course description..."
+            },
+            {
+              "key": "features",
+              "type": "array",
+              "label": "Course Features",
+              "itemType": "text",
+              "required": true,
+              "placeholder": "Add course features..."
+            },
+            {
+              "key": "prerequisites",
+              "type": "array",
+              "label": "Prerequisites",
+              "itemType": "text",
+              "required": false,
+              "placeholder": "Add prerequisites..."
+            },
+            {
+              "key": "learningOutcomes",
+              "type": "array",
+              "label": "Learning Outcomes",
+              "itemType": "text",
+              "required": true,
+              "placeholder": "Add learning outcomes..."
+            },
+            {
+              "key": "duration",
+              "type": "text",
+              "label": "Duration",
+              "required": true,
+              "placeholder": "e.g., 120 hours"
+            },
+            {
+              "key": "lessons",
+              "min": 1,
+              "type": "number",
+              "label": "Number of Lessons",
+              "required": true
+            },
+            {
+              "key": "thumbnail",
+              "type": "text",
+              "label": "Thumbnail URL",
+              "required": false,
+              "placeholder": "/images/courses/..."
+            },
+            {
+              "key": "tags",
+              "type": "array",
+              "label": "Tags",
+              "itemType": "text",
+              "required": false,
+              "placeholder": "Add tags..."
+            },
+            {
+              "key": "syllabusContent",
+              "type": "object",
+              "label": "Syllabus Content",
+              "required": true,
+              "structure": {
+                "chapters": [
+                  {
+                    "title": "Chapter Title",
+                    "units": [
+                      {
+                        "title": "Unit Title",
+                        "description": "Unit Description"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "settings": {
+            "ui": {
+              "showFacts": true,
+              "showProgress": true,
+              "showSyllabus": true,
+              "showEnrollment": true
+            },
+            "layout": {
+              "tabs": [
+                "overview",
+                "content"
+              ],
+              "sidebar": true,
+              "gridColumns": 3
+            },
+            "defaultValues": {
+              "isFree": true,
+              "status": "published",
+              "subject": "Mathematics",
+              "curriculum": "CBSE",
+              "instructor": "Shri Arya Education"
+            }
+          },
+          "is_active": true,
+          "created_at": "2025-09-10T12:00:20.682873+00:00",
+          "updated_at": "2025-09-10T12:00:20.682873+00:00",
+          "created_by": null
+        }
+      ]
+    },
+    "courses": {
+      "table": "courses",
+      "timestamp": "2025-09-11T05:39:33.827Z",
+      "rowCount": 2,
+      "data": [
+        {
+          "id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "CBSE Mathematics Class 10",
+          "description": "Comprehensive CBSE Class 10 Mathematics course covering all chapters with detailed explanations, practice problems, and board exam preparation.",
+          "instructor_id": "a2b1d35e-453b-4bc6-b68a-d9e370410459",
+          "created_at": "2025-09-08T06:04:14.117315+00:00",
+          "updated_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_free": true,
+          "slug": "cbse-mathematics-class-10",
+          "status": "published",
+          "price": 0,
+          "template_id": "09f36223-641c-4006-90ae-974df4858273",
+          "template_data": {
+            "tags": [
+              "CBSE",
+              "Mathematics",
+              "Class 10",
+              "Board Exam",
+              "NCERT"
+            ],
+            "grade": "Class 10",
+            "level": "Standard",
+            "lessons": 14,
+            "subject": "Mathematics",
+            "duration": "120 hours",
+            "features": [
+              "Complete NCERT syllabus coverage",
+              "Board exam focused preparation",
+              "Step-by-step problem solving",
+              "Practice tests and mock exams",
+              "Doubt clearing sessions"
+            ],
+            "thumbnail": "/images/courses/cbse-math-10.jpg",
+            "curriculum": "CBSE",
+            "instructor": "Shri Arya Education",
+            "prerequisites": [
+              "Basic understanding of Class 9 Mathematics",
+              "Knowledge of fundamental arithmetic operations"
+            ],
+            "syllabusContent": {
+              "chapters": [
+                {
+                  "title": "Unit I: Number Systems",
+                  "units": [
+                    {
+                      "title": "Real Numbers",
+                      "description": "Fundamental Theorem of Arithmetic, proofs of irrationality for √2, √3, √5"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit II: Algebra",
+                  "units": [
+                    {
+                      "title": "Polynomials",
+                      "description": "Polynomials, Pair of Linear Equations, Quadratic Equations, Arithmetic Progressions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit III: Coordinate Geometry",
+                  "units": [
+                    {
+                      "title": "Distance Formula",
+                      "description": "Distance Formula and Section (Internal Division) Formula"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit IV: Geometry",
+                  "units": [
+                    {
+                      "title": "Triangles",
+                      "description": "Triangles (similarity), Circles (tangent properties)"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit V: Trigonometry",
+                  "units": [
+                    {
+                      "title": "Trigonometric Ratios",
+                      "description": "Trigonometric ratios, Identities, Heights and Distances"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit VI: Mensuration",
+                  "units": [
+                    {
+                      "title": "Areas Related to Circles",
+                      "description": "Areas Related to Circles, Surface Areas and Volumes"
+                    }
+                  ]
+                },
+                {
+                  "title": "Unit VII: Statistics & Probability",
+                  "units": [
+                    {
+                      "title": "Data Analysis",
+                      "description": "Mean, Median, Mode of grouped data, Probability"
+                    }
+                  ]
+                }
+              ]
+            },
+            "learningOutcomes": [
+              "Master all CBSE Class 10 Mathematics concepts",
+              "Solve complex problems with confidence",
+              "Excel in board examinations",
+              "Develop strong mathematical reasonings"
+            ]
+          }
+        },
+        {
+          "id": "492e363b-423c-4467-96fd-a89abafa5017",
+          "title": "IBDP Mathematics AA HL",
+          "description": "Comprehensive IBDP Mathematics Analysis and Approaches Higher Level course covering all topics with detailed explanations, practice problems, and exam preparation.",
+          "instructor_id": "a2b1d35e-453b-4bc6-b68a-d9e370410459",
+          "created_at": "2025-09-10T12:47:16.671538+00:00",
+          "updated_at": "2025-09-10T12:47:16.671538+00:00",
+          "is_free": true,
+          "slug": "ibdp-mathematics-aa-hl",
+          "status": "published",
+          "price": 0,
+          "template_id": "09f36223-641c-4006-90ae-974df4858273",
+          "template_data": {
+            "tags": [
+              "IBDP",
+              "Mathematics",
+              "AA HL",
+              "Higher Level",
+              "International"
+            ],
+            "grade": "Grade 11-12",
+            "level": "Higher Level",
+            "lessons": 60,
+            "subject": "Mathematics",
+            "duration": "180 hours",
+            "features": [
+              "Complete IBDP AA HL syllabus coverage",
+              "Exam-focused preparation",
+              "Step-by-step problem solving",
+              "Practice tests and mock exams",
+              "Internal Assessment support"
+            ],
+            "thumbnail": "/images/courses/ibdp-math-aa-hl.jpg",
+            "curriculum": "IBDP",
+            "instructor": "Shri Arya Education",
+            "prerequisites": [
+              "Strong foundation in IGCSE/GCSE Mathematics",
+              "Basic understanding of algebra and geometry"
+            ],
+            "syllabusContent": {
+              "chapters": [
+                {
+                  "title": "Topic 1: Number and Algebra",
+                  "units": [
+                    {
+                      "title": "Sequences and Series",
+                      "description": "Arithmetic and geometric sequences, sigma notation"
+                    },
+                    {
+                      "title": "Exponents and Logarithms",
+                      "description": "Laws of exponents, logarithmic functions"
+                    }
+                  ]
+                },
+                {
+                  "title": "Topic 2: Functions",
+                  "units": [
+                    {
+                      "title": "Linear Functions",
+                      "description": "Slope, intercepts, linear models"
+                    },
+                    {
+                      "title": "Quadratic Functions",
+                      "description": "Parabolas, vertex form, discriminant"
+                    }
+                  ]
+                }
+              ]
+            },
+            "learningOutcomes": [
+              "Master all IBDP AA HL Mathematics concepts",
+              "Solve complex problems with confidence",
+              "Excel in IBDP examinations",
+              "Develop strong mathematical reasoning"
+            ]
+          }
+        }
+      ]
+    },
+    "enrollments": {
+      "table": "enrollments",
+      "timestamp": "2025-09-11T05:39:34.072Z",
+      "rowCount": 1,
+      "data": [
+        {
+          "id": "ef8e8e39-a8b2-41c8-8fdc-9de0ad11e67e",
+          "student_id": "a2b1d35e-453b-4bc6-b68a-d9e370410459",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "is_active": true,
+          "enrolled_at": "2025-09-02T17:37:36.973764+00:00"
+        }
+      ]
+    },
+    "lessons": {
+      "table": "lessons",
+      "timestamp": "2025-09-11T05:39:34.322Z",
+      "rowCount": 17,
+      "data": [
+        {
+          "id": "a4d92464-01f2-4d6c-a3c8-63fdd4ae3540",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Introduction to Polynomials",
+          "content": null,
+          "lesson_order": 5,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "polynomial-intro",
+          "content_html": "<h3>Introduction to Polynomials</h3>\n<p>A polynomial is an algebraic expression consisting of variables and coefficients, involving only addition, subtraction, multiplication, and non-negative integer exponents.</p>\n<h4>Components of a Polynomial:</h4>\n<ul>\n<li><strong>Terms:</strong> Individual parts separated by + or -</li>\n<li><strong>Coefficients:</strong> Numerical factors of variables</li>\n<li><strong>Variables:</strong> Letters representing unknown values</li>\n<li><strong>Degree:</strong> Highest power of the variable</li>\n</ul>\n<h4>Types of Polynomials:</h4>\n<ul>\n<li><strong>Monomial:</strong> Single term (e.g., 3x)</li>\n<li><strong>Binomial:</strong> Two terms (e.g., 2x + 5)</li>\n<li><strong>Trinomial:</strong> Three terms (e.g., x² + 3x + 2)</li>\n</ul>\n<h4>Examples:</h4>\n<p>• 2x³ + 5x² - 3x + 1 (degree 3)</p>\n<p>• 4x² - 7x + 2 (degree 2)</p>\n<p>• 3x + 5 (degree 1)</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "f8e33eaa-0327-47c7-866c-d0cddc568291",
+          "course_id": "492e363b-423c-4467-96fd-a89abafa5017",
+          "title": "Introduction",
+          "content": "Welcome to your new course! This is the introduction lesson. Edit this content to get started.",
+          "lesson_order": 1,
+          "created_at": "2025-09-10T12:47:16.671538+00:00",
+          "is_preview": true,
+          "slug": "introduction",
+          "content_html": null,
+          "content_text": null,
+          "content_type": "text"
+        },
+        {
+          "id": "267492cc-a0d0-4399-8318-51076ddf5d18",
+          "course_id": "492e363b-423c-4467-96fd-a89abafa5017",
+          "title": "Getting Started",
+          "content": "This lesson will help you understand the basics of the course content.",
+          "lesson_order": 2,
+          "created_at": "2025-09-10T12:47:16.671538+00:00",
+          "is_preview": false,
+          "slug": "getting-started",
+          "content_html": null,
+          "content_text": null,
+          "content_type": "text"
+        },
+        {
+          "id": "b9250bc5-b7a1-4754-ba71-d03acb27c3e8",
+          "course_id": "492e363b-423c-4467-96fd-a89abafa5017",
+          "title": "First Practice Session",
+          "content": "Complete this practice session to reinforce your learning.",
+          "lesson_order": 3,
+          "created_at": "2025-09-10T12:47:16.671538+00:00",
+          "is_preview": false,
+          "slug": "first-practice",
+          "content_html": null,
+          "content_text": null,
+          "content_type": "text"
+        },
+        {
+          "id": "c14a3e73-c69d-439c-8aec-fb7f14b9578a",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Euclid's Division Lemma",
+          "content": null,
+          "lesson_order": 3,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "euclid-division-lemma",
+          "content_html": "<h3>Euclid's Division Lemma</h3>\n<p>Euclid's Division Lemma is a fundamental theorem in number theory that states:</p>\n<blockquote>\n<p><strong>For any two positive integers a and b, there exist unique integers q and r such that:</strong></p>\n<p><strong>a = bq + r, where 0 ≤ r < b</strong></p>\n</blockquote>\n<h4>Understanding the Components:</h4>\n<ul>\n<li><strong>a:</strong> Dividend (the number being divided)</li>\n<li><strong>b:</strong> Divisor (the number dividing)</li>\n<li><strong>q:</strong> Quotient (the result of division)</li>\n<li><strong>r:</strong> Remainder (must be less than divisor)</li>\n</ul>\n<h4>Example:</h4>\n<p>For a = 17 and b = 5:</p>\n<p>17 = 5 × 3 + 2</p>\n<p>Here, q = 3 and r = 2 (since 0 ≤ 2 < 5)</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "7ebf7ce9-7854-47f0-b89d-ae2f21f9c9a1",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Fundamental Theorem of Arithmetic",
+          "content": null,
+          "lesson_order": 4,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "fundamental-theorem-arithmetic",
+          "content_html": "<h3>Fundamental Theorem of Arithmetic</h3>\n<p>The Fundamental Theorem of Arithmetic states that:</p>\n<blockquote>\n<p><strong>Every composite number can be expressed as a unique product of prime numbers, apart from the order of factors.</strong></p>\n</blockquote>\n<h4>Key Points:</h4>\n<ul>\n<li>Every number greater than 1 is either prime or can be written as a product of primes</li>\n<li>This factorization is unique (except for the order of factors)</li>\n<li>Prime factorization helps in finding HCF and LCM</li>\n</ul>\n<h4>Examples:</h4>\n<p>• 12 = 2² × 3</p>\n<p>• 18 = 2 × 3²</p>\n<p>• 30 = 2 × 3 × 5</p>\n<h4>Applications:</h4>\n<p>• Finding HCF: Take the lowest power of each common prime</p>\n<p>• Finding LCM: Take the highest power of each prime</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "1866e9bf-cf6a-4e49-a55c-b0f9c8b773c8",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Introduction to Real Numbers",
+          "content": "content 1",
+          "lesson_order": 1,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": true,
+          "slug": "real-numbers-intro",
+          "content_html": "<h3>Understanding Real Numbers</h3>\n<p>Real numbers form the foundation of mathematics. In this lesson, we'll explore:</p>\n<ul>\n<li><strong>Rational Numbers:</strong> Numbers that can be expressed as fractions (p/q where q ≠ 0)</li>\n<li><strong>Irrational Numbers:</strong> Numbers that cannot be expressed as fractions (like √2, √3, π)</li>\n<li><strong>Properties:</strong> Commutative, associative, and distributive properties</li>\n</ul>\n<h4>Key Concepts:</h4>\n<p>Every real number can be represented on the number line. Rational numbers have terminating or repeating decimal expansions, while irrational numbers have non-terminating, non-repeating decimal expansions.</p>\n<h4>Example:</h4>\n<p>√2 ≈ 1.414213562... (non-terminating, non-repeating)</p>\n<p>1/3 = 0.333... (repeating decimal)</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "bf1324fb-d3cb-494e-8706-7d0c353bde6b",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Properties of Real Numbers",
+          "content": "content 2",
+          "lesson_order": 2,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "real-numbers-properties",
+          "content_html": "<h3>Properties of Real Numbers</h3>\n<p>Real numbers follow several important properties:</p>\n<h4>1. Commutative Property</h4>\n<ul>\n<li><strong>Addition:</strong> a + b = b + a</li>\n<li><strong>Multiplication:</strong> a × b = b × a</li>\n</ul>\n<h4>2. Associative Property</h4>\n<ul>\n<li><strong>Addition:</strong> (a + b) + c = a + (b + c)</li>\n<li><strong>Multiplication:</strong> (a × b) × c = a × (b × c)</li>\n</ul>\n<h4>3. Distributive Property</h4>\n<p><strong>a × (b + c) = a × b + a × c</strong></p>\n<h4>Examples:</h4>\n<p>• 3 + 5 = 5 + 3 = 8 (Commutative)</p>\n<p>• (2 + 3) + 4 = 2 + (3 + 4) = 9 (Associative)</p>\n<p>• 2 × (3 + 4) = 2 × 3 + 2 × 4 = 14 (Distributive)</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "a1c248c0-44b5-464b-9d09-66c5556c4bb2",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Zeroes of Polynomials",
+          "content": null,
+          "lesson_order": 6,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "polynomial-zeroes",
+          "content_html": "<h3>Zeroes of Polynomials</h3>\n<p>The zeroes (or roots) of a polynomial are the values of the variable that make the polynomial equal to zero.</p>\n<h4>Finding Zeroes:</h4>\n<ul>\n<li><strong>Linear Polynomial (ax + b):</strong> Zero at x = -b/a</li>\n<li><strong>Quadratic Polynomial (ax² + bx + c):</strong> Use factorization or quadratic formula</li>\n<li><strong>Higher Degree:</strong> Use various methods like factorization, synthetic division</li>\n</ul>\n<h4>Relationship between Zeroes and Coefficients:</h4>\n<p>For a quadratic polynomial ax² + bx + c with zeroes α and β:</p>\n<ul>\n<li><strong>Sum of zeroes:</strong> α + β = -b/a</li>\n<li><strong>Product of zeroes:</strong> α × β = c/a</li>\n</ul>\n<h4>Examples:</h4>\n<p>• For x² - 5x + 6 = 0:</p>\n<p>  Zeroes: x = 2, x = 3</p>\n<p>  Sum: 2 + 3 = 5 = -(-5)/1</p>\n<p>  Product: 2 × 3 = 6 = 6/1</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "0a5304cd-e701-4ed9-aa78-e55e60cce53d",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Introduction to Linear Equations",
+          "content": null,
+          "lesson_order": 7,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "linear-equations-intro",
+          "content_html": "<h3>Introduction to Linear Equations</h3>\n<p>A linear equation in two variables is an equation of the form ax + by + c = 0, where a, b, and c are real numbers, and a and b are not both zero.</p>\n<h4>General Form:</h4>\n<p><strong>ax + by + c = 0</strong></p>\n<h4>Standard Form:</h4>\n<p><strong>ax + by = c</strong></p>\n<h4>Key Concepts:</h4>\n<ul>\n<li><strong>Solution:</strong> A pair of values (x, y) that satisfies the equation</li>\n<li><strong>Graph:</strong> A straight line on the coordinate plane</li>\n<li><strong>Consistency:</strong> Whether the system has solutions</li>\n</ul>\n<h4>Types of Solutions:</h4>\n<ul>\n<li><strong>Unique Solution:</strong> Lines intersect at one point</li>\n<li><strong>No Solution:</strong> Lines are parallel</li>\n<li><strong>Infinite Solutions:</strong> Lines coincide</li>\n</ul>\n<h4>Example:</h4>\n<p>2x + 3y = 7</p>\n<p>Solutions: (2, 1), (5, -1), (0, 7/3), etc.</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "ed26468d-010d-424e-b93f-de6225aa4337",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Graphical Method for Linear Equations",
+          "content": null,
+          "lesson_order": 8,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "graphical-method",
+          "content_html": "<h3>Graphical Method for Solving Linear Equations</h3>\n<p>The graphical method involves plotting the equations on a coordinate plane and finding their point of intersection.</p>\n<h4>Steps:</h4>\n<ol>\n<li><strong>Convert to slope-intercept form:</strong> y = mx + c</li>\n<li><strong>Find two points:</strong> Choose x-values and calculate y-values</li>\n<li><strong>Plot the points:</strong> Draw the line through both points</li>\n<li><strong>Find intersection:</strong> The solution is where lines meet</li>\n</ol>\n<h4>Advantages:</h4>\n<ul>\n<li>Visual representation of the solution</li>\n<li>Easy to understand</li>\n<li>Shows the relationship between variables</li>\n</ul>\n<h4>Limitations:</h4>\n<ul>\n<li>Not precise for decimal solutions</li>\n<li>Difficult for complex systems</li>\n<li>Time-consuming for large problems</li>\n</ul>\n<h4>Example:</h4>\n<p>Solve: x + y = 5 and 2x - y = 1</p>\n<p>Solution: (2, 3)</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "25abc481-0fd3-420f-b118-f149ee2312cb",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Algebraic Methods for Linear Equations",
+          "content": null,
+          "lesson_order": 9,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "algebraic-methods",
+          "content_html": "<h3>Algebraic Methods for Solving Linear Equations</h3>\n<p>There are three main algebraic methods to solve a system of linear equations:</p>\n<h4>1. Substitution Method:</h4>\n<ol>\n<li>Solve one equation for one variable</li>\n<li>Substitute this expression into the other equation</li>\n<li>Solve for the remaining variable</li>\n<li>Substitute back to find the other variable</li>\n</ol>\n<h4>2. Elimination Method:</h4>\n<ol>\n<li>Make coefficients of one variable equal</li>\n<li>Add or subtract equations to eliminate that variable</li>\n<li>Solve for the remaining variable</li>\n<li>Substitute back to find the other variable</li>\n</ol>\n<h4>3. Cross Multiplication Method:</h4>\n<p>For equations a₁x + b₁y + c₁ = 0 and a₂x + b₂y + c₂ = 0:</p>\n<p>x/(b₁c₂ - b₂c₁) = y/(c₁a₂ - c₂a₁) = 1/(a₁b₂ - a₂b₁)</p>\n<h4>Example (Substitution):</h4>\n<p>Solve: x + y = 5 and 2x - y = 1</p>\n<p>From first equation: y = 5 - x</p>\n<p>Substitute: 2x - (5 - x) = 1</p>\n<p>Solve: 3x = 6, so x = 2</p>\n<p>Therefore: y = 5 - 2 = 3</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "28869cbf-847b-4382-9fcf-1a559a273c7c",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Introduction to Quadratic Equations",
+          "content": null,
+          "lesson_order": 10,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "quadratic-intro",
+          "content_html": "<h3>Introduction to Quadratic Equations</h3>\n<p>A quadratic equation is a polynomial equation of degree 2, where the highest power of the variable is 2.</p>\n<h4>General Form:</h4>\n<p><strong>ax² + bx + c = 0</strong></p>\n<p>where a ≠ 0, and a, b, c are real numbers.</p>\n<h4>Standard Form:</h4>\n<p><strong>ax² + bx + c = 0</strong></p>\n<h4>Examples:</h4>\n<ul>\n<li>x² - 5x + 6 = 0 (a=1, b=-5, c=6)</li>\n<li>2x² + 3x - 1 = 0 (a=2, b=3, c=-1)</li>\n<li>x² - 4 = 0 (a=1, b=0, c=-4)</li>\n</ul>\n<h4>Methods to Solve:</h4>\n<ul>\n<li><strong>Factorization:</strong> Express as product of linear factors</li>\n<li><strong>Completing the Square:</strong> Convert to perfect square form</li>\n<li><strong>Quadratic Formula:</strong> Direct formula for roots</li>\n</ul>\n<h4>Nature of Roots:</h4>\n<p>Depends on the discriminant (b² - 4ac):</p>\n<ul>\n<li><strong>D > 0:</strong> Two distinct real roots</li>\n<li><strong>D = 0:</strong> One real root (repeated)</li>\n<li><strong>D < 0:</strong> No real roots (complex roots)</li>\n</ul>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "2ab2481e-171a-4cf2-99d2-0855a71bc002",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Quadratic Formula",
+          "content": null,
+          "lesson_order": 11,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "quadratic-formula",
+          "content_html": "<h3>Quadratic Formula</h3>\n<p>The quadratic formula provides a direct method to find the roots of any quadratic equation.</p>\n<h4>Formula:</h4>\n<p><strong>x = (-b ± √(b² - 4ac)) / 2a</strong></p>\n<h4>Components:</h4>\n<ul>\n<li><strong>a:</strong> Coefficient of x²</li>\n<li><strong>b:</strong> Coefficient of x</li>\n<li><strong>c:</strong> Constant term</li>\n<li><strong>Discriminant:</strong> b² - 4ac</li>\n</ul>\n<h4>Steps:</h4>\n<ol>\n<li>Identify a, b, c from the equation</li>\n<li>Calculate the discriminant (b² - 4ac)</li>\n<li>Substitute values into the formula</li>\n<li>Simplify to get the roots</li>\n</ol>\n<h4>Example:</h4>\n<p>Solve: 2x² - 7x + 3 = 0</p>\n<p>a = 2, b = -7, c = 3</p>\n<p>Discriminant = (-7)² - 4(2)(3) = 49 - 24 = 25</p>\n<p>x = (7 ± √25) / 4 = (7 ± 5) / 4</p>\n<p>Therefore: x = 3 or x = 0.5</p>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "6c76cad1-0786-46fb-a756-8a2f38909743",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Quadratic Equations Practice",
+          "content": null,
+          "lesson_order": 12,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "quadratic-practice",
+          "content_html": "<h3>Quadratic Equations Practice Problems</h3>\n<p>This lesson focuses on solving various types of quadratic equations using different methods.</p>\n<h4>Problem Types:</h4>\n<ul>\n<li><strong>Standard Form:</strong> ax² + bx + c = 0</li>\n<li><strong>Missing Terms:</strong> ax² + c = 0 or ax² + bx = 0</li>\n<li><strong>Word Problems:</strong> Real-life applications</li>\n<li><strong>Geometric Problems:</strong> Area, perimeter applications</li>\n</ul>\n<h4>Practice Problems:</h4>\n<ol>\n<li>Solve: x² - 6x + 8 = 0</li>\n<li>Solve: 3x² - 12 = 0</li>\n<li>Solve: 2x² + 5x = 0</li>\n<li>A rectangle has length 5 more than width. If area is 84, find dimensions.</li>\n</ol>\n<h4>Solutions:</h4>\n<ol>\n<li>x = 2 or x = 4 (factorization)</li>\n<li>x = ±2 (square root method)</li>\n<li>x = 0 or x = -2.5 (factorization)</li>\n<li>Width = 7, Length = 12</li>\n</ol>\n<h4>Tips:</h4>\n<ul>\n<li>Always check your solutions by substitution</li>\n<li>Use the most appropriate method for each problem</li>\n<li>Practice mental math for simple cases</li>\n</ul>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "5f28c3dc-f2c2-4fc9-a5f3-104cd722e091",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "Introduction to Arithmetic Progressions",
+          "content": null,
+          "lesson_order": 13,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "ap-intro",
+          "content_html": "<h3>Introduction to Arithmetic Progressions</h3>\n<p>An Arithmetic Progression (AP) is a sequence of numbers where the difference between consecutive terms is constant.</p>\n<h4>Definition:</h4>\n<p>A sequence a₁, a₂, a₃, ..., aₙ is an AP if:</p>\n<p><strong>a₂ - a₁ = a₃ - a₂ = a₄ - a₃ = ... = d</strong></p>\n<p>where d is called the <strong>common difference</strong>.</p>\n<h4>General Form:</h4>\n<p><strong>a, a + d, a + 2d, a + 3d, ...</strong></p>\n<h4>Key Terms:</h4>\n<ul>\n<li><strong>First term (a):</strong> The starting value</li>\n<li><strong>Common difference (d):</strong> The constant difference</li>\n<li><strong>nth term (aₙ):</strong> The term at position n</li>\n</ul>\n<h4>Examples:</h4>\n<ul>\n<li>2, 5, 8, 11, 14, ... (a = 2, d = 3)</li>\n<li>10, 7, 4, 1, -2, ... (a = 10, d = -3)</li>\n<li>3, 3, 3, 3, 3, ... (a = 3, d = 0)</li>\n</ul>\n<h4>Applications:</h4>\n<ul>\n<li>Financial calculations (interest, installments)</li>\n<li>Time and distance problems</li>\n<li>Pattern recognition</li>\n</ul>",
+          "content_text": null,
+          "content_type": "html"
+        },
+        {
+          "id": "aba1e756-7797-40ba-8fc9-506f7a9573c7",
+          "course_id": "60070fd5-e847-46d2-8786-94c8022f8682",
+          "title": "AP Formulas and Properties",
+          "content": null,
+          "lesson_order": 14,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "is_preview": false,
+          "slug": "ap-formulas",
+          "content_html": "<h3>AP Formulas and Properties</h3>\n<p>This lesson covers the essential formulas for working with Arithmetic Progressions.</p>\n<h4>1. nth Term Formula:</h4>\n<p><strong>aₙ = a + (n - 1)d</strong></p>\n<h4>2. Sum of First n Terms:</h4>\n<p><strong>Sₙ = n/2 [2a + (n - 1)d]</strong></p>\n<p>or</p>\n<p><strong>Sₙ = n/2 [a + aₙ]</strong></p>\n<h4>3. Sum of Terms from mth to nth:</h4>\n<p><strong>Sₘ₋ₙ = (n - m + 1)/2 [aₘ + aₙ]</strong></p>\n<h4>Properties:</h4>\n<ul>\n<li><strong>Three consecutive terms:</strong> If a, b, c are in AP, then 2b = a + c</li>\n<li><strong>Arithmetic Mean:</strong> AM = (a + b)/2</li>\n<li><strong>Sum of equidistant terms:</strong> Equal from beginning and end</li>\n</ul>\n<h4>Examples:</h4>\n<p>For AP: 3, 7, 11, 15, 19, ... (a = 3, d = 4)</p>\n<ul>\n<li>10th term: a₁₀ = 3 + (10-1)×4 = 39</li>\n<li>Sum of first 10 terms: S₁₀ = 10/2 [2×3 + 9×4] = 210</li>\n</ul>",
+          "content_text": null,
+          "content_type": "html"
+        }
+      ]
+    },
+    "profiles": {
+      "table": "profiles",
+      "timestamp": "2025-09-11T05:39:34.468Z",
+      "rowCount": 4,
+      "data": [
+        {
+          "id": "65a02ae6-52b6-4204-9910-91233f2e4152",
+          "first_name": "Vidit",
+          "last_name": "Aggarwal",
+          "role": "admin",
+          "created_at": "2025-09-01T11:58:58.344416+00:00",
+          "updated_at": "2025-09-01T11:59:37.91717+00:00",
+          "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocJzLBtI9WM5Esa7DYJt-wD_TTmbhV6IsGFYbNe8PMoxSIpZ6Dvo=s96-c",
+          "email": "viditvia@gmail.com"
+        },
+        {
+          "id": "94726b85-7b1d-4d3f-9355-7c727ebd3bd6",
+          "first_name": "Shrividhya",
+          "last_name": "Classes",
+          "role": "admin",
+          "created_at": "2025-09-01T14:57:17.58821+00:00",
+          "updated_at": "2025-09-01T14:57:17.58821+00:00",
+          "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIIyczb-FUdfrwfSCOgMVkIGGydBAk9IlarEZR6Ie3nolouRTa1=s96-c",
+          "email": "shrividhyaclasses@gmail.com"
+        },
+        {
+          "id": "a2b1d35e-453b-4bc6-b68a-d9e370410459",
+          "first_name": "Vidit",
+          "last_name": "Aggarwal",
+          "role": "admin",
+          "created_at": "2025-09-01T16:20:52.49395+00:00",
+          "updated_at": "2025-09-01T16:20:52.49395+00:00",
+          "avatar_url": "",
+          "email": "vidit@shrividhya.in"
+        },
+        {
+          "id": "32c4f660-65b3-489d-a035-e697224aabad",
+          "first_name": "Marketing",
+          "last_name": "Shrividhya Classes",
+          "role": "student",
+          "created_at": "2025-09-01T15:03:44.340822+00:00",
+          "updated_at": "2025-09-01T15:03:44.340822+00:00",
+          "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIkBK6lMkgVTsMMV0qB4zleJjoMCq3ZXsh3Jn_78UzHuzn1WQ=s96-c",
+          "email": "shrividhyaclassesmarketing@gmail.com"
+        }
+      ]
+    },
+    "resources": {
+      "table": "resources",
+      "timestamp": "2025-09-11T05:39:34.592Z",
+      "rowCount": 11,
+      "data": [
+        {
+          "id": "84ed5663-34c1-4019-9b89-bff9bf3ddc9a",
+          "lesson_id": "1866e9bf-cf6a-4e49-a55c-b0f9c8b773c8",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=h2R3Boke8FY",
+          "mime": "video/youtube",
+          "duration_sec": 1800,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Real Numbers Introduction Video",
+          "description": "Comprehensive video introduction to real numbers",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "c9bd3bfa-70ff-4758-905d-8f42c5a1c415",
+          "lesson_id": "1866e9bf-cf6a-4e49-a55c-b0f9c8b773c8",
+          "kind": "pdf",
+          "url": "/pdfs/real-numbers-notes.pdf",
+          "mime": "application/pdf",
+          "duration_sec": null,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Real Numbers Study Notes",
+          "description": "Detailed study notes for real numbers",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "f7531f38-ea59-44fc-a387-0f625a47ee84",
+          "lesson_id": "bf1324fb-d3cb-494e-8706-7d0c353bde6b",
+          "kind": "pdf",
+          "url": "https://example.com/real-numbers-properties.pdf",
+          "mime": "application/pdf",
+          "duration_sec": null,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Properties Worksheet",
+          "description": "Practice worksheet on properties of real numbers",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "0ae3fcf9-beb6-442e-b509-0c417e5ebb3f",
+          "lesson_id": "c14a3e73-c69d-439c-8aec-fb7f14b9578a",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=example",
+          "mime": "video/youtube",
+          "duration_sec": 2100,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Euclid's Division Lemma Video",
+          "description": "Detailed explanation of Euclid's Division Lemma",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "9896d412-94e2-42d6-8d40-182f862726ad",
+          "lesson_id": "7ebf7ce9-7854-47f0-b89d-ae2f21f9c9a1",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=example2",
+          "mime": "video/youtube",
+          "duration_sec": 2400,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Fundamental Theorem Video",
+          "description": "Comprehensive video on Fundamental Theorem of Arithmetic",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "ed1115df-3e59-448f-b8a5-f8377b3df892",
+          "lesson_id": "7ebf7ce9-7854-47f0-b89d-ae2f21f9c9a1",
+          "kind": "pdf",
+          "url": "/pdfs/prime-factorization.pdf",
+          "mime": "application/pdf",
+          "duration_sec": null,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Prime Factorization Worksheet",
+          "description": "Practice problems on prime factorization",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "589c82c8-d9e1-471a-9b54-d9474df5915d",
+          "lesson_id": "a4d92464-01f2-4d6c-a3c8-63fdd4ae3540",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=example3",
+          "mime": "video/youtube",
+          "duration_sec": 1800,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Polynomial Introduction Video",
+          "description": "Introduction to polynomials and their types",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "7af1a0c4-c82e-46e6-8317-4ed825ae9256",
+          "lesson_id": "2ab2481e-171a-4cf2-99d2-0855a71bc002",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=example4",
+          "mime": "video/youtube",
+          "duration_sec": 2000,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Quadratic Formula Explained",
+          "description": "Step-by-step explanation of quadratic formula",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "5c3e9888-1c54-462c-8790-157f4c2630c3",
+          "lesson_id": "2ab2481e-171a-4cf2-99d2-0855a71bc002",
+          "kind": "pdf",
+          "url": "/pdfs/quadratic-practice.pdf",
+          "mime": "application/pdf",
+          "duration_sec": null,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Quadratic Formula Practice Sheet",
+          "description": "Practice problems using quadratic formula",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "83f08c6a-7273-4af1-a53f-255850b48137",
+          "lesson_id": "5f28c3dc-f2c2-4fc9-a5f3-104cd722e091",
+          "kind": "video",
+          "url": "https://www.youtube.com/watch?v=example5",
+          "mime": "video/youtube",
+          "duration_sec": 1900,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "Arithmetic Progressions Introduction",
+          "description": "Introduction to arithmetic progressions",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        },
+        {
+          "id": "d52be834-df40-4527-9a7d-bdfdc5f1c8a8",
+          "lesson_id": "aba1e756-7797-40ba-8fc9-506f7a9573c7",
+          "kind": "pdf",
+          "url": "/pdfs/ap-formulas.pdf",
+          "mime": "application/pdf",
+          "duration_sec": null,
+          "created_at": "2025-09-10T14:00:59.317226+00:00",
+          "title": "AP Formulas Cheat Sheet",
+          "description": "Quick reference for AP formulas",
+          "file_size": null,
+          "cdn_url": null,
+          "local_url": null,
+          "upload_status": "pending"
+        }
+      ]
+    }
+  }
+}

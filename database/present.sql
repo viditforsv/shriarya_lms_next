@@ -48,8 +48,8 @@ CREATE TABLE public.courses (
   template_id uuid,
   template_data jsonb DEFAULT '{}'::jsonb,
   CONSTRAINT courses_pkey PRIMARY KEY (id),
-  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id),
-  CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.course_templates(id)
+  CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.course_templates(id),
+  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.enrollments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -60,17 +60,6 @@ CREATE TABLE public.enrollments (
   CONSTRAINT enrollments_pkey PRIMARY KEY (id),
   CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id),
   CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
-);
-CREATE TABLE public.lesson_sections (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  lesson_id uuid,
-  section_type text NOT NULL CHECK (section_type = ANY (ARRAY['text'::text, 'video'::text, 'quiz'::text, 'practice'::text, 'download'::text])),
-  content jsonb,
-  section_order integer NOT NULL,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT lesson_sections_pkey PRIMARY KEY (id),
-  CONSTRAINT lesson_sections_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.lessons(id)
 );
 CREATE TABLE public.lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

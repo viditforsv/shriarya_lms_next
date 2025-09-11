@@ -39,7 +39,7 @@ export interface TemplateStructure {
 export interface TemplateSection {
   id: string
   title: string
-  type: 'overview' | 'syllabus' | 'lessons' | 'facts' | 'custom'
+  type: 'overview' | 'syllabus' | 'lessons' | 'facts' | 'badges' | 'custom'
   fields: string[]
   order?: number
   visible?: boolean

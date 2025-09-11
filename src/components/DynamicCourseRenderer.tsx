@@ -183,14 +183,14 @@ function renderLessonsSection(section: TemplateSection, course: RenderedCourse) 
 // Render Badges Section
 function renderBadgesSection(section: TemplateSection, course: RenderedCourse) {
   const badgeConfigs = [
-    // Course Tags
-    ...(course.tags?.map(tag => ({
-      text: tag,
-      variant: 'outline' as const,
-      className: 'border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors'
-    })) || []),
+    // Course Status Badges
+    {
+      text: course.isFree ? 'Free' : `$${course.price || 0}`,
+      variant: course.isFree ? 'secondary' as const : 'default' as const,
+      className: ''
+    },
     
-    // Course Info Badges
+    // Course Info Badges (Priority - show these first)
     ...(course.curriculum ? [{
       text: course.curriculum,
       variant: 'outline' as const,
@@ -215,12 +215,21 @@ function renderBadgesSection(section: TemplateSection, course: RenderedCourse) {
       className: 'border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-colors'
     }] : []),
     
-    // Course Status Badges
-    {
-      text: course.isFree ? 'Free' : `$${course.price || 0}`,
-      variant: course.isFree ? 'secondary' as const : 'default' as const,
-      className: ''
-    }
+    // Additional Tags - Only show tags that aren't already displayed above
+    ...(course.tags?.filter(tag => {
+      // Filter out tags that are already shown as individual badges
+      const lowerTag = tag.toLowerCase()
+      return !(
+        lowerTag === course.curriculum?.toLowerCase() ||
+        lowerTag === course.subject?.toLowerCase() ||
+        lowerTag === course.grade?.toLowerCase() ||
+        lowerTag === course.level?.toLowerCase()
+      )
+    }).map(tag => ({
+      text: tag,
+      variant: 'outline' as const,
+      className: 'border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors'
+    })) || [])
   ]
 
   return (

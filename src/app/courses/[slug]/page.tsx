@@ -224,13 +224,8 @@ function CoursePageClient({ courseParams }: { courseParams: { slug: string } }) 
                     Enrolled
                   </Badge>
                 )}
-                {/* Course Tags as Badges */}
-                {course.tags && course.tags.map((tag, index) => (
-                  <Badge key={index} variant="outline" className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors">
-                    {tag}
-                  </Badge>
-                ))}
-                {/* Additional Course Info Badges */}
+                
+                {/* Smart Badge Display - Avoid Duplicates */}
                 {course.curriculum && (
                   <Badge variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors">
                     {course.curriculum}
@@ -251,6 +246,24 @@ function CoursePageClient({ courseParams }: { courseParams: { slug: string } }) 
                     {course.level}
                   </Badge>
                 )}
+                
+                {/* Additional Tags - Only show tags that aren't already displayed above */}
+                {course.tags && course.tags
+                  .filter(tag => {
+                    // Filter out tags that are already shown as individual badges
+                    const lowerTag = tag.toLowerCase()
+                    return !(
+                      lowerTag === course.curriculum?.toLowerCase() ||
+                      lowerTag === course.subject?.toLowerCase() ||
+                      lowerTag === course.grade?.toLowerCase() ||
+                      lowerTag === course.level?.toLowerCase()
+                    )
+                  })
+                  .map((tag, index) => (
+                    <Badge key={index} variant="outline" className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors">
+                      {tag}
+                    </Badge>
+                  ))}
               </div>
             </div>
             <div className="ml-6">

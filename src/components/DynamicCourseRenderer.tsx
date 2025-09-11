@@ -63,7 +63,9 @@ export function DynamicCourseRenderer({
 }
 
 // Fallback function to render course overview when template structure is not available
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function renderCourseOverview(course: RenderedCourse, template: any) {
+  
   return (
     <div className="space-y-6">
       {/* Course Description */}
@@ -85,7 +87,7 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
                 Course Highlights
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {template.courseHighlights.map(
+                {template?.courseHighlights?.map(
                   (highlight: string, index: number) => (
                     <div key={index} className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-[#e27447] rounded-full"></div>
@@ -103,10 +105,10 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
           {template?.features && (
             <div className="mb-6">
               <h4 className="font-semibold mb-4 text-[#1e293b]">
-                What You'll Get
+                What You&apos;ll Get
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {template.features.map((feature: any, index: number) => (
+                {template?.features?.map((feature: any, index: number) => (
                   <div
                     key={index}
                     className="flex items-start space-x-3 p-3 border rounded-sm"
@@ -128,8 +130,8 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
         </CardContent>
       </Card>
 
-      {/* Syllabus Overview */}
-      {template?.syllabusContent && (
+          {/* Syllabus Overview */}
+          {template?.syllabusContent && (
         <Card>
           <CardHeader>
             <CardTitle>Complete Syllabus Coverage</CardTitle>
@@ -137,20 +139,19 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
           <CardContent>
             <div className="mb-4">
               <h4 className="font-semibold text-[#1e293b]">
-                {template.syllabusContent.board} -{" "}
-                {template.syllabusContent.grade}{" "}
-                {template.syllabusContent.subject}
+                {template?.syllabusContent?.board} -{" "}
+                {template?.syllabusContent?.grade}{" "}
+                {template?.syllabusContent?.subject}
               </h4>
               <p className="text-sm text-muted-foreground">
-                {template.syllabusContent.totalUnits} Units •{" "}
-                {template.syllabusContent.totalChapters} Chapters •{" "}
-                {template.syllabusContent.totalLessons} Lessons
+                {template?.syllabusContent?.totalUnits} Units •{" "}
+                {template?.syllabusContent?.totalChapters} Chapters •{" "}
+                {template?.syllabusContent?.totalLessons} Lessons
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {template.syllabusContent.units?.map(
-                (unit: any, index: number) => (
+              {template?.syllabusContent?.units?.map((unit: any, index: number) => (
                   <div key={index} className="border-l-4 border-[#e27447] pl-3">
                     <h5 className="font-medium text-[#1e293b]">
                       Unit {unit.unitNo}: {unit.unitName}
@@ -174,15 +175,15 @@ function renderCourseOverview(course: RenderedCourse, template: any) {
         </Card>
       )}
 
-      {/* Learning Outcomes */}
-      {template?.learningOutcomes && (
+          {/* Learning Outcomes */}
+          {template?.learningOutcomes && (
         <Card>
           <CardHeader>
             <CardTitle>Learning Outcomes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {template.learningOutcomes.map((outcome: any, index: number) => (
+              {template?.learningOutcomes?.map((outcome: any, index: number) => (
                 <div key={index}>
                   <h5 className="font-medium text-[#1e293b] mb-2">
                     {outcome.category}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -100,6 +100,7 @@ export default function DynamicLessonPage({
   const [practiceAnswers, setPracticeAnswers] = useState<
     Record<string, string>
   >({});
+  const [lessonStartTime, setLessonStartTime] = useState<Date | null>(null);
 
   // Resolve params
   useEffect(() => {
@@ -198,6 +199,130 @@ export default function DynamicLessonPage({
     loadLesson();
   }, [resolvedParams]);
 
+  // Create initial progress entry for new users
+  const createInitialProgress = useCallback(async () => {
+    if (!lesson || !user) return;
+
+    try {
+      console.log("Creating initial progress for lesson:", lesson.id);
+      const response = await fetch("/api/user-progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lesson_id: lesson.id,
+          course_id: lesson.course_id,
+          completion_percentage: 0,
+          time_spent_minutes: 0,
+          is_completed: false,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserProgress(data.progress);
+        console.log("Created initial progress:", data.progress);
+      } else {
+        console.error("Failed to create initial progress:", response.status);
+      }
+    } catch (error) {
+      console.error("Error creating initial progress:", error);
+    }
+  }, [lesson, user]);
+
+  // Track lesson interactions and update progress
+  const updateProgress = useCallback(async (completionPercentage: number, timeSpentMinutes?: number) => {
+    if (!lesson || !user) return;
+
+    try {
+      const response = await fetch("/api/user-progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lesson_id: lesson.id,
+          course_id: lesson.course_id,
+          completion_percentage: completionPercentage,
+          time_spent_minutes: timeSpentMinutes || 0,
+          is_completed: completionPercentage >= 100,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserProgress(data.progress);
+        console.log("Progress updated:", data.progress);
+      }
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  }, [lesson, user]);
+
+  // Fetch user progress when lesson and user are available
+  useEffect(() => {
+    const fetchUserProgress = async () => {
+      if (!lesson || !user) return;
+
+      try {
+        console.log("Fetching user progress for lesson:", lesson.id);
+        const response = await fetch(
+          `/api/user-progress?lessonId=${lesson.id}&courseId=${lesson.course_id}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("User progress data:", data);
+          
+          if (data.progress && data.progress.length > 0) {
+            // User has existing progress
+            setUserProgress(data.progress[0]);
+            console.log("Found existing progress:", data.progress[0]);
+          } else {
+            // No existing progress - create initial progress entry
+            console.log("No existing progress found, creating initial entry");
+            await createInitialProgress();
+          }
+        } else {
+          console.error("Failed to fetch user progress:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching user progress:", error);
+      }
+    };
+
+    fetchUserProgress();
+  }, [lesson, user, createInitialProgress]);
+
+  // Track lesson start time
+  useEffect(() => {
+    if (lesson && user) {
+      setLessonStartTime(new Date());
+    }
+  }, [lesson, user]);
+
+  // Auto-update progress based on time spent
+  useEffect(() => {
+    if (!lessonStartTime || !userProgress) return;
+
+    const interval = setInterval(() => {
+      const timeSpent = Math.floor((Date.now() - lessonStartTime.getTime()) / 60000); // minutes
+      
+      // Update progress every 2 minutes if user is actively viewing
+      if (timeSpent > 0 && timeSpent % 2 === 0) {
+        const currentProgress = userProgress.completion_percentage;
+        const timeBasedProgress = Math.min(95, Math.floor(timeSpent * 2)); // Max 95% from time
+        
+        if (timeBasedProgress > currentProgress) {
+          updateProgress(timeBasedProgress, timeSpent);
+        }
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [lessonStartTime, userProgress, updateProgress]);
+
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free;
   };
@@ -225,29 +350,34 @@ export default function DynamicLessonPage({
   };
 
   const handleMarkComplete = async () => {
-    if (!lesson || !user) return;
+    await updateProgress(100);
+    alert("🎉 Lesson marked as complete!");
+  };
 
-    try {
-      const response = await fetch("/api/user-progress", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lesson_id: lesson.id,
-          course_id: lesson.course_id,
-          completion_percentage: 100,
-          is_completed: true,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserProgress(data.progress);
-        alert("🎉 Lesson marked as complete!");
-      }
-    } catch (error) {
-      console.error("Error marking lesson complete:", error);
+  // Track tab changes as progress
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as "video" | "notes" | "keypoints" | "quiz");
+    
+    // Update progress based on tab interaction
+    let progressPercentage = 0;
+    switch (value) {
+      case "video":
+        progressPercentage = 25;
+        break;
+      case "notes":
+        progressPercentage = 50;
+        break;
+      case "keypoints":
+        progressPercentage = 75;
+        break;
+      case "quiz":
+        progressPercentage = 90;
+        break;
+    }
+    
+    // Only update if it's higher than current progress
+    if (userProgress && progressPercentage > userProgress.completion_percentage) {
+      updateProgress(progressPercentage);
     }
   };
 
@@ -451,9 +581,7 @@ export default function DynamicLessonPage({
             {/* Content Tabs */}
             <Tabs
               value={activeTab}
-              onValueChange={(value) =>
-                setActiveTab(value as "video" | "notes" | "keypoints" | "quiz")
-              }
+              onValueChange={handleTabChange}
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-4 rounded-lg bg-white border border-gray-200 p-1 shadow-sm">

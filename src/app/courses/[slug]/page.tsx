@@ -21,40 +21,44 @@ import {
 import { RenderedCourse, CourseTemplate } from '@/types/course-templates'
 import { DynamicCourseRenderer } from '@/components/DynamicCourseRenderer'
 
-export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { user } = useAuth()
+export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
+  console.log('CoursePage component mounted')
+  const resolvedParams = await params
+  console.log('Params resolved:', resolvedParams)
+  
+  return <CoursePageClient courseParams={resolvedParams} />
+}
+
+function CoursePageClient({ courseParams }: { courseParams: { slug: string } }) {
+  // const { user } = useAuth()
+  const user = null
   const [course, setCourse] = useState<RenderedCourse | null>(null)
   const [template, setTemplate] = useState<CourseTemplate | null>(null)
   const [lessons, setLessons] = useState<LessonConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
-  const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
-
-  // Resolve params
-  useEffect(() => {
-    params.then(setResolvedParams)
-  }, [params])
 
   useEffect(() => {
-    if (!resolvedParams) return
-
     const loadCourse = async () => {
       try {
         setIsLoading(true)
         setError(null)
 
         // Try to fetch course with template first
-        const response = await fetch(`/api/courses/${resolvedParams.slug}/with-template`)
+        console.log('Fetching course:', courseParams.slug)
+        const response = await fetch(`/api/courses/${courseParams.slug}/with-template`)
+        console.log('Response status:', response.status)
         
         if (response.ok) {
           const data = await response.json()
+          console.log('Course data received:', data)
           setCourse(data.rendered)
           setTemplate(data.template)
           
           // Fetch lessons for this course from database
           try {
-            const lessonsResponse = await fetch(`/api/lessons?course_slug=${resolvedParams.slug}`)
+            const lessonsResponse = await fetch(`/api/lessons?course_slug=${courseParams.slug}`)
             if (lessonsResponse.ok) {
               const lessonsData = await lessonsResponse.json()
               // Convert database lessons to LessonConfig format
@@ -72,13 +76,13 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
               setLessons(convertedLessons)
             } else {
               // Fallback to old system if API fails
-              const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+              const lessonsData = getLessonsByCourseSlugSync(courseParams.slug)
               setLessons(lessonsData)
             }
           } catch (error) {
             console.error('Error fetching lessons:', error)
             // Fallback to old system
-            const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+            const lessonsData = getLessonsByCourseSlugSync(courseParams.slug)
             setLessons(lessonsData)
           }
           
@@ -86,7 +90,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
           setIsEnrolled(data.rendered.isFree || false)
         } else {
           // Fallback to old system
-          const courseData = getCourseBySlug(resolvedParams.slug)
+          const courseData = getCourseBySlug(courseParams.slug)
           if (!courseData) {
             throw new Error('Course not found')
           }
@@ -96,7 +100,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
 
           // Fetch lessons for this course from database
           try {
-            const lessonsResponse = await fetch(`/api/lessons?course_slug=${resolvedParams.slug}`)
+            const lessonsResponse = await fetch(`/api/lessons?course_slug=${courseParams.slug}`)
             if (lessonsResponse.ok) {
               const lessonsData = await lessonsResponse.json()
               // Convert database lessons to LessonConfig format
@@ -114,13 +118,13 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
               setLessons(convertedLessons)
             } else {
               // Fallback to old system if API fails
-              const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+              const lessonsData = getLessonsByCourseSlugSync(courseParams.slug)
               setLessons(lessonsData)
             }
           } catch (error) {
             console.error('Error fetching lessons:', error)
             // Fallback to old system
-            const lessonsData = getLessonsByCourseSlugSync(resolvedParams.slug)
+            const lessonsData = getLessonsByCourseSlugSync(courseParams.slug)
             setLessons(lessonsData)
           }
 
@@ -130,19 +134,22 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
 
       } catch (err) {
         console.error('Error loading course:', err)
+        console.error('Error details:', err)
         setError('Course not found')
       } finally {
+        console.log('Setting isLoading to false')
         setIsLoading(false)
       }
     }
 
+    console.log('Calling loadCourse with courseParams:', courseParams)
     loadCourse()
-  }, [resolvedParams])
+  }, [courseParams.slug])
 
   const handleLessonClick = (lesson: LessonConfig) => {
     if (lesson.isPreview || isEnrolled || course?.isFree) {
       if (lesson.slug) {
-        window.location.href = `/courses/${resolvedParams?.slug}/lesson/${lesson.slug}`
+        window.location.href = `/courses/${courseParams?.slug}/lesson/${lesson.slug}`
       } else {
         console.log('Lesson slug not available:', lesson.title)
       }
@@ -176,6 +183,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading course...</p>
+          <p className="text-sm text-gray-500 mt-2">Debug: courseParams = {JSON.stringify(courseParams)}</p>
+          <p className="text-sm text-gray-500">Debug: isLoading = {isLoading.toString()}</p>
         </div>
       </div>
     )
@@ -223,7 +232,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                   Enroll Now
                 </Button>
               ) : (
-                <Link href={`/courses/${resolvedParams?.slug}/lesson/${lessons[0]?.slug || 'introduction'}`}>
+                <Link href={`/courses/${courseParams?.slug}/lesson/${lessons[0]?.slug || 'introduction'}`}>
                   <Button className="bg-[#e27447] hover:bg-[#d1653a]">
                     <Play className="w-4 h-4 mr-2" />
                     {isEnrolled ? 'Continue Learning' : 'Start Learning'}

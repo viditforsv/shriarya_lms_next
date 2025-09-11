@@ -42,3 +42,4 @@ next-env.d.ts
 
 # dev templates (local reference only)
 /dev-templates/
+scripts/node_modules/

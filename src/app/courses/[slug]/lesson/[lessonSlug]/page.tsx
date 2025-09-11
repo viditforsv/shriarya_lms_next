@@ -456,33 +456,33 @@ export default function DynamicLessonPage({
               }
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-4 rounded-sm bg-[#feefea] p-1">
+              <TabsList className="grid w-full grid-cols-4 rounded-lg bg-white border border-gray-200 p-1 shadow-sm">
                 <TabsTrigger
                   value="video"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
+                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
                 >
-                  <Play className="w-4 h-4 mr-2" />
+                  <Play className="w-5 h-5 mr-2" />
                   Video
                 </TabsTrigger>
                 <TabsTrigger
                   value="notes"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
+                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
                 >
-                  <FileText className="w-4 h-4 mr-2" />
+                  <FileText className="w-5 h-5 mr-2" />
                   Notes
                 </TabsTrigger>
                 <TabsTrigger
                   value="keypoints"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
+                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
                 >
-                  <Bookmark className="w-4 h-4 mr-2" />
+                  <Bookmark className="w-5 h-5 mr-2" />
                   Key Points
                 </TabsTrigger>
                 <TabsTrigger
                   value="quiz"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-base"
+                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
                 >
-                  <BookOpen className="w-4 h-4 mr-2" />
+                  <BookOpen className="w-5 h-5 mr-2" />
                   Quiz
                 </TabsTrigger>
               </TabsList>

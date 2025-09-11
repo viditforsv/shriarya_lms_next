@@ -27,9 +27,16 @@ import {
 interface CollapsibleSidebarProps {
   currentLessonSlug?: string
   courseSlug: string
+  lessons?: Array<{
+    id: string
+    title: string
+    slug: string
+    lesson_order: number
+    is_preview: boolean
+  }>
 }
 
-export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: CollapsibleSidebarProps) {
+export function CollapsibleSidebar({ currentLessonSlug, courseSlug, lessons }: CollapsibleSidebarProps) {
   const [syllabus] = useState(CBSE_CLASS_10_MATHEMATICS_SYLLABUS)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   
@@ -115,7 +122,15 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isSidebarCollapsed])
 
-  const progress = getSyllabusProgress(syllabus)
+  // Use actual lessons data if available, otherwise fall back to syllabus
+  const lessonData = lessons && lessons.length > 0 ? lessons : []
+  
+  // Calculate progress from actual lessons
+  const progress = lessonData.length > 0 ? {
+    completed: lessonData.filter(l => !l.is_preview).length,
+    total: lessonData.length,
+    percentage: Math.round((lessonData.filter(l => !l.is_preview).length / lessonData.length) * 100)
+  } : getSyllabusProgress(syllabus)
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections)
@@ -281,100 +296,144 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug }: Collapsibl
 
         {/* Course Content Section */}
         <div className="space-y-4 flex-1 overflow-y-auto">
-              {syllabus.map((section) => (
-                <div key={section.id} className="border-b border-[#feefea] last:border-b-0">
-                  {/* Section Header */}
-                  <div
-                    className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#feefea]/50 transition-colors"
-                    onClick={() => toggleSection(section.id)}
-                  >
-                    <div className="flex items-center space-x-2">
-                      {expandedSections.has(section.id) ? (
-                        <ChevronDown className="w-4 h-4 text-[#e27447]" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 text-[#e27447]" />
-                      )}
-                      <BookOpen className="w-4 h-4 text-[#e27447]" />
-                      <span className="font-semibold text-[#1e293b] text-base">{section.title}</span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {section.chapters.length}
-                    </Badge>
-                  </div>
-
-                  {/* Chapters */}
-                  {expandedSections.has(section.id) && (
-                    <div className="bg-[#feefea]/20">
-                      {section.chapters.map((chapter) => (
-                        <div key={chapter.id}>
-                          {/* Chapter Header */}
-                          <div
-                            className="flex items-center justify-between p-3 pl-8 cursor-pointer hover:bg-[#feefea]/30 transition-colors"
-                            onClick={() => toggleChapter(chapter.id)}
-                          >
-                            <div className="flex items-center space-x-2">
-                              {expandedChapters.has(chapter.id) ? (
-                                <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                              ) : (
-                                <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                              )}
-                              <FileText className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-base font-medium text-[#1e293b]">{chapter.title}</span>
-                            </div>
-                            <Badge variant="outline" className="text-xs">
-                              {chapter.subsections.length}
-                            </Badge>
-                          </div>
-
-                          {/* Subsections */}
-                          {expandedChapters.has(chapter.id) && (
-                            <div className="bg-white/50">
-                              {chapter.subsections.map((subsection) => {
-                                const status = getSubsectionStatus(subsection)
-                                const isCurrent = subsection.slug === currentLessonSlug
-                                
-                                return (
-                                  <Link
-                                    key={subsection.id}
-                                    href={`/courses/${courseSlug}/lesson/${subsection.slug}`}
-                                    className={`flex items-center justify-between p-3 pl-12 hover:bg-[#feefea]/40 transition-colors ${
-                                      isCurrent ? 'bg-[#feefea] border-r-2 border-[#e27447]' : ''
-                                    }`}
-                                  >
-                                    <div className="flex items-center space-x-3">
-                                      <div className={`w-6 h-6 rounded-sm flex items-center justify-center text-xs font-medium ${getStatusColor(status)}`}>
-                                        {getStatusIcon(status)}
-                                      </div>
-                                      <div>
-                                        <h4 className={`text-sm font-medium ${
-                                          isCurrent ? 'text-[#1e293b]' : 'text-muted-foreground'
-                                        }`}>
-                                          {subsection.title}
-                                        </h4>
-                                        {subsection.duration && (
-                                          <p className="text-sm text-muted-foreground flex items-center space-x-1">
-                                            <Clock className="w-3 h-3" />
-                                            <span>{subsection.duration}</span>
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                    {subsection.isPreview && (
-                                      <Badge variant="secondary" className="text-xs">
-                                        Preview
-                                      </Badge>
-                                    )}
-                                  </Link>
-                                )
-                              })}
-                            </div>
-                          )}
+          {lessonData.length > 0 ? (
+            // Render actual lessons from database
+            <div className="space-y-2">
+              {lessonData
+                .sort((a, b) => a.lesson_order - b.lesson_order)
+                .map((lesson) => {
+                  const isCurrent = lesson.slug === currentLessonSlug
+                  const status = isCurrent ? 'current' : (lesson.is_preview ? 'preview' : 'locked')
+                  
+                  return (
+                    <Link
+                      key={lesson.id}
+                      href={`/courses/${courseSlug}/lesson/${lesson.slug}`}
+                      className={`flex items-center justify-between p-3 hover:bg-[#feefea]/40 transition-colors rounded-sm ${
+                        isCurrent ? 'bg-[#feefea] border-r-2 border-[#e27447]' : ''
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-6 h-6 rounded-sm flex items-center justify-center text-xs font-medium ${getStatusColor(status)}`}>
+                          {getStatusIcon(status)}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div>
+                          <h4 className={`text-sm font-medium ${
+                            isCurrent ? 'text-[#1e293b]' : 'text-muted-foreground'
+                          }`}>
+                            {lesson.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            Lesson {lesson.lesson_order}
+                          </p>
+                        </div>
+                      </div>
+                      {lesson.is_preview && (
+                        <Badge variant="secondary" className="text-xs">
+                          Preview
+                        </Badge>
+                      )}
+                    </Link>
+                  )
+                })}
+            </div>
+          ) : (
+            // Fallback to syllabus structure
+            syllabus.map((section) => (
+              <div key={section.id} className="border-b border-[#feefea] last:border-b-0">
+                {/* Section Header */}
+                <div
+                  className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#feefea]/50 transition-colors"
+                  onClick={() => toggleSection(section.id)}
+                >
+                  <div className="flex items-center space-x-2">
+                    {expandedSections.has(section.id) ? (
+                      <ChevronDown className="w-4 h-4 text-[#e27447]" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-[#e27447]" />
+                    )}
+                    <BookOpen className="w-4 h-4 text-[#e27447]" />
+                    <span className="font-semibold text-[#1e293b] text-base">{section.title}</span>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {section.chapters.length}
+                  </Badge>
                 </div>
-              ))}
+
+                {/* Chapters */}
+                {expandedSections.has(section.id) && (
+                  <div className="bg-[#feefea]/20">
+                    {section.chapters.map((chapter) => (
+                      <div key={chapter.id}>
+                        {/* Chapter Header */}
+                        <div
+                          className="flex items-center justify-between p-3 pl-8 cursor-pointer hover:bg-[#feefea]/30 transition-colors"
+                          onClick={() => toggleChapter(chapter.id)}
+                        >
+                          <div className="flex items-center space-x-2">
+                            {expandedChapters.has(chapter.id) ? (
+                              <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                            )}
+                            <FileText className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-base font-medium text-[#1e293b]">{chapter.title}</span>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {chapter.subsections.length}
+                          </Badge>
+                        </div>
+
+                        {/* Subsections */}
+                        {expandedChapters.has(chapter.id) && (
+                          <div className="bg-white/50">
+                            {chapter.subsections.map((subsection) => {
+                              const status = getSubsectionStatus(subsection)
+                              const isCurrent = subsection.slug === currentLessonSlug
+                              
+                              return (
+                                <Link
+                                  key={subsection.id}
+                                  href={`/courses/${courseSlug}/lesson/${subsection.slug}`}
+                                  className={`flex items-center justify-between p-3 pl-12 hover:bg-[#feefea]/40 transition-colors ${
+                                    isCurrent ? 'bg-[#feefea] border-r-2 border-[#e27447]' : ''
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className={`w-6 h-6 rounded-sm flex items-center justify-center text-xs font-medium ${getStatusColor(status)}`}>
+                                      {getStatusIcon(status)}
+                                    </div>
+                                    <div>
+                                      <h4 className={`text-sm font-medium ${
+                                        isCurrent ? 'text-[#1e293b]' : 'text-muted-foreground'
+                                      }`}>
+                                        {subsection.title}
+                                      </h4>
+                                      {subsection.duration && (
+                                        <p className="text-sm text-muted-foreground flex items-center space-x-1">
+                                          <Clock className="w-3 h-3" />
+                                          <span>{subsection.duration}</span>
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {subsection.isPreview && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      Preview
+                                    </Badge>
+                                  )}
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

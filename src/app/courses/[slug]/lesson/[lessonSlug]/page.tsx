@@ -403,6 +403,7 @@ export default function DynamicLessonPage({
           <CollapsibleSidebar
             currentLessonSlug={lesson.slug}
             courseSlug={resolvedParams?.slug || ""}
+            lessons={allLessons}
           />
 
           {/* Main Content */}

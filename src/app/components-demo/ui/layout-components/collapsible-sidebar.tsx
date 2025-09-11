@@ -40,6 +40,11 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug, lessons }: C
   const [syllabus] = useState(CBSE_CLASS_10_MATHEMATICS_SYLLABUS)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('Sidebar collapsed state changed to:', isSidebarCollapsed);
+  }, [isSidebarCollapsed])
+  
   // Initialize expanded sections from localStorage or default
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
     if (typeof window !== 'undefined') {
@@ -114,6 +119,7 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug, lessons }: C
       // Cmd/Ctrl + \ to toggle left sidebar
       if ((event.metaKey || event.ctrlKey) && event.key === '\\' && !event.shiftKey) {
         event.preventDefault()
+        console.log('Keyboard shortcut triggered, current state:', isSidebarCollapsed);
         setIsSidebarCollapsed(!isSidebarCollapsed)
       }
     }
@@ -206,15 +212,18 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug, lessons }: C
               <Badge variant="secondary" className="text-xs">📚</Badge>
             </div>
             <div className="flex justify-center mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsSidebarCollapsed(false)}
-                className="rounded-sm p-2"
-                title="Expand sidebar (⌘\)"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                console.log('Expand button clicked, current state:', isSidebarCollapsed);
+                setIsSidebarCollapsed(false);
+              }}
+              className="rounded-sm p-2"
+              title="Expand sidebar (⌘\)"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
             </div>
           </div>
           
@@ -251,7 +260,10 @@ export function CollapsibleSidebar({ currentLessonSlug, courseSlug, lessons }: C
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setIsSidebarCollapsed(true)}
+              onClick={() => {
+                console.log('Collapse button clicked, current state:', isSidebarCollapsed);
+                setIsSidebarCollapsed(true);
+              }}
               className="rounded-sm"
               title="Close sidebar (⌘\)"
             >

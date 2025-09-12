@@ -200,11 +200,13 @@ export default function DynamicLessonPage({
 
   // Create initial progress entry for new users
   const createInitialProgress = useCallback(async () => {
-    if (!lesson || !user) {
-      console.log("Skipping progress creation - missing lesson or user:", {
-        lesson: !!lesson,
-        user: !!user,
-      });
+    if (!lesson) {
+      console.log("Skipping progress creation - missing lesson");
+      return;
+    }
+    
+    if (!user) {
+      console.log("Skipping progress creation - user not authenticated (this is OK for free courses)");
       return;
     }
 
@@ -302,7 +304,12 @@ export default function DynamicLessonPage({
   // Fetch user progress when lesson and user are available
   useEffect(() => {
     const fetchUserProgress = async () => {
-      if (!lesson || !user) return;
+      if (!lesson) return;
+      
+      if (!user) {
+        console.log("User not authenticated - skipping progress tracking (OK for free courses)");
+        return;
+      }
 
       try {
         console.log("Fetching user progress for lesson:", lesson.id);
@@ -341,14 +348,14 @@ export default function DynamicLessonPage({
 
   // Track lesson start time
   useEffect(() => {
-    if (lesson && user) {
+    if (lesson) {
       setLessonStartTime(new Date());
     }
-  }, [lesson, user]);
+  }, [lesson]);
 
   // Auto-update progress based on time spent
   useEffect(() => {
-    if (!lessonStartTime || !userProgress) return;
+    if (!lessonStartTime || !userProgress || !user) return;
 
     const interval = setInterval(() => {
       const timeSpent = Math.floor(
@@ -396,6 +403,10 @@ export default function DynamicLessonPage({
   };
 
   const handleMarkComplete = async () => {
+    if (!user) {
+      alert("🎉 Lesson completed! (Sign in to track your progress)");
+      return;
+    }
     await updateProgress(100);
     alert("🎉 Lesson marked as complete!");
   };
@@ -421,8 +432,9 @@ export default function DynamicLessonPage({
         break;
     }
 
-    // Only update if it's higher than current progress
+    // Only update if it's higher than current progress and user is authenticated
     if (
+      user &&
       userProgress &&
       progressPercentage > userProgress.completion_percentage
     ) {

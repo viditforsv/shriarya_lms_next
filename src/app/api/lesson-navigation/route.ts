@@ -29,14 +29,16 @@ export async function GET(request: Request) {
     // Fetch only navigation data (no heavy content)
     const { data: lessons, error } = await supabase
       .from("lessons")
-      .select(`
+      .select(
+        `
         id,
         title,
         slug,
         lesson_order,
         is_preview,
         video_thumbnail
-      `)
+      `
+      )
       .eq("course_id", course.id)
       .order("lesson_order", { ascending: true });
 
@@ -48,13 +50,16 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json({
-      lessons: lessons || []
-    }, {
-      headers: {
-        'Cache-Control': 'public, max-age=180, stale-while-revalidate=360', // 3min cache, 6min stale
+    return NextResponse.json(
+      {
+        lessons: lessons || [],
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=180, stale-while-revalidate=360", // 3min cache, 6min stale
+        },
       }
-    });
+    );
   } catch (error) {
     console.error("Error in lesson navigation API:", error);
     return NextResponse.json(

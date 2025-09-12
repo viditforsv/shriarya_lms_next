@@ -1,0 +1,94 @@
+Unit No.,Unit Name,Chapter Number,Chapter Name,Lesson Number,Lesson Name
+1,Number Systems,1,Real Numbers,1,Introduction to Real Numbers
+1,Number Systems,1,Real Numbers,2,Fundamental Theorem of Arithmetic - Statements and Examples
+1,Number Systems,1,Real Numbers,3,"Proofs of Irrationality of √2, √3	, √5"
+1,Number Systems,1,Real Numbers,4,Advanced Irrationality Proofs (3 + 2√5 etc.)
+1,Number Systems,1,Real Numbers,5,Real Numbers Practice Problems
+2,Algebra,2,Polynomials,7,Introduction to Polynomials
+2,Algebra,2,Polynomials,8,Zeros of a Polynomial
+2,Algebra,2,Polynomials,9,Relationship between Zeros and Coefficients of Quadratic Polynomials
+2,Algebra,2,Polynomials,10,Graphical and Algebraic Methods for Finding Zeros
+2,Algebra,2,Polynomials,11,Polynomials Practice Problems
+2,Algebra,3,Pair of Linear Equations,12,Introduction to Pair of Linear Equations in Two Variables
+2,Algebra,3,Pair of Linear Equations,13,Graphical Method and Consistency/Inconsistency
+2,Algebra,3,Pair of Linear Equations,14,Algebraic Conditions for Number of Solutions
+2,Algebra,3,Pair of Linear Equations,15,Solution by Substitution Method
+2,Algebra,3,Pair of Linear Equations,16,Solution by Elimination Method
+2,Algebra,3,Pair of Linear Equations,17,Simple Situational Problems
+2,Algebra,3,Pair of Linear Equations,18,Linear Equations Practice Problems
+2,Algebra,4,Quadratic Equations,19,Introduction to Quadratic Equations
+2,Algebra,4,Quadratic Equations,20,Standard Form of Quadratic Equation (ax² + bx + c = 0)
+2,Algebra,4,Quadratic Equations,21,Solution by Factorization Method
+2,Algebra,4,Quadratic Equations,22,Quadratic Formula
+2,Algebra,4,Quadratic Equations,23,Discriminant and Nature of Roots
+2,Algebra,4,Quadratic Equations,24,Situational Problems Based on Quadratic Equations
+2,Algebra,4,Quadratic Equations,25,Quadratic Equations Practice Problems
+2,Algebra,5,Arithmetic Progressions,26,Introduction to Arithmetic Progressions
+2,Algebra,5,Arithmetic Progressions,27,Motivation for Studying Arithmetic Progression
+2,Algebra,5,Arithmetic Progressions,28,Derivation of nth Term of AP
+2,Algebra,5,Arithmetic Progressions,29,Derivation of Sum of First n Terms of AP
+2,Algebra,5,Arithmetic Progressions,30,Application of AP in Daily Life Problems
+2,Algebra,5,Arithmetic Progressions,31,AP Practice Problems
+3,Coordinate Geometry,6,Coordinate Geometry,32,Introduction to Coordinate Geometry
+3,Coordinate Geometry,6,Coordinate Geometry,33,Review of Concepts of Coordinate Geometry
+3,Coordinate Geometry,6,Coordinate Geometry,34,Distance Formula
+3,Coordinate Geometry,6,Coordinate Geometry,35,Section Formula (Internal Division)
+3,Coordinate Geometry,6,Coordinate Geometry,36,Applications of Distance and Section Formulas
+3,Coordinate Geometry,6,Coordinate Geometry,37,Coordinate Geometry Practice Problems
+4,Geometry,7,Triangles,38,Introduction to Similar Triangles
+4,Geometry,7,Triangles,39,Definitions Examples and Counter Examples of Similar Triangles
+4,Geometry,7,Triangles,40,Basic Proportionality Theorem (Proof)
+4,Geometry,7,Triangles,41,Converse of Basic Proportionality Theorem
+4,Geometry,7,Triangles,42,AAA Similarity Criterion
+4,Geometry,7,Triangles,43,SSS Similarity Criterion
+4,Geometry,7,Triangles,44,SAS Similarity Criterion
+4,Geometry,7,Triangles,45,Applications of Similarity Criteria
+4,Geometry,7,Triangles,46,Triangles Practice Problems
+4,Geometry,8,Circles,47,Introduction to Circles
+4,Geometry,8,Circles,48,Tangent to a Circle at Point of Contact
+4,Geometry,8,Circles,49,Tangent Perpendicular to Radius Theorem (Proof)
+4,Geometry,8,Circles,50,Equal Tangents from External Point Theorem (Proof)
+4,Geometry,8,Circles,51,Applications of Tangent Properties
+4,Geometry,8,Circles,52,Circles Practice Problems
+5,Trigonometry,9,Introduction to Trigonometry,53,Introduction to Trigonometry
+5,Trigonometry,9,Introduction to Trigonometry,54,Trigonometric Ratios of Acute Angles
+5,Trigonometry,9,Introduction to Trigonometry,55,Proof of Existence of Trigonometric Ratios
+5,Trigonometry,9,Introduction to Trigonometry,56,Trigonometric Ratios at 0° and 90°
+5,Trigonometry,9,Introduction to Trigonometry,57,Values of Trigonometric Ratios (30° 45° 60°)
+5,Trigonometry,9,Introduction to Trigonometry,58,Relationships between Trigonometric Ratios
+5,Trigonometry,9,Introduction to Trigonometry,59,Trigonometric Ratios Practice
+5,Trigonometry,10,Trigonometric Identities,60,Introduction to Trigonometric Identities
+5,Trigonometry,10,Trigonometric Identities,61,Proof of sin²A + cos²A = 1
+5,Trigonometry,10,Trigonometric Identities,62,Applications of sin²A + cos²A = 1
+5,Trigonometry,10,Trigonometric Identities,63,Other Simple Trigonometric Identities
+5,Trigonometry,10,Trigonometric Identities,64,Trigonometric Identities Practice
+5,Trigonometry,11,Heights and Distances,65,Introduction to Heights and Distances
+5,Trigonometry,11,Heights and Distances,66,Angle of Elevation
+5,Trigonometry,11,Heights and Distances,67,Angle of Depression
+5,Trigonometry,11,Heights and Distances,68,Simple Problems on Heights and Distances
+5,Trigonometry,11,Heights and Distances,69,Problems with Angles 30° 45° 60°
+5,Trigonometry,11,Heights and Distances,70,Real Life Applications of Heights and Distances
+5,Trigonometry,11,Heights and Distances,71,Heights and Distances Practice
+6,Mensuration,12,Areas Related to Circles,72,Introduction to Areas Related to Circles
+6,Mensuration,12,Areas Related to Circles,73,Area of Sectors of a Circle
+6,Mensuration,12,Areas Related to Circles,74,Area of Segments of a Circle
+6,Mensuration,12,Areas Related to Circles,75,Problems with Central Angles 60° 90° 120°
+6,Mensuration,12,Areas Related to Circles,76,Areas Related to Circles Practice
+6,Mensuration,13,Surface Areas and Volumes,77,Introduction to Surface Areas and Volumes
+6,Mensuration,13,Surface Areas and Volumes,78,Combinations of Cubes and Cuboids
+6,Mensuration,13,Surface Areas and Volumes,79,Combinations of Spheres and Hemispheres
+6,Mensuration,13,Surface Areas and Volumes,80,Combinations of Cylinders and Cones
+6,Mensuration,13,Surface Areas and Volumes,81,Surface Areas and Volumes Practice
+7,Statistics & Probability,14,Statistics,82,Introduction to Statistics
+7,Statistics & Probability,14,Statistics,83,Mean of Grouped Data
+7,Statistics & Probability,14,Statistics,84,Direct Method for Mean
+7,Statistics & Probability,14,Statistics,85,Assumed Mean Method
+7,Statistics & Probability,14,Statistics,86,Step Deviation Method
+7,Statistics & Probability,14,Statistics,87,Median of Grouped Data (Algebraic Method)
+7,Statistics & Probability,14,Statistics,88,Mode of Grouped Data (Algebraic Method)
+7,Statistics & Probability,14,Statistics,89,Statistics Practice Problems
+7,Statistics & Probability,15,Probability,90,Introduction to Probability
+7,Statistics & Probability,15,Probability,91,Classical Definition of Probability
+7,Statistics & Probability,15,Probability,92,Simple Problems on Probability
+7,Statistics & Probability,15,Probability,93,Real Life Applications of Probability
+7,Statistics & Probability,15,Probability,94,Probability Practice Problems

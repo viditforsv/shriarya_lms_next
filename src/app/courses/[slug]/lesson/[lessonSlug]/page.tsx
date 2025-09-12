@@ -118,19 +118,25 @@ export default function DynamicLessonPage({
         setError(null);
 
         // 🚀 OPTIMIZED: Load data in parallel for better performance
-        const [courseMetadataResponse, lessonNavigationResponse, lessonContentResponse] = await Promise.all([
+        const [
+          courseMetadataResponse,
+          lessonNavigationResponse,
+          lessonContentResponse,
+        ] = await Promise.all([
           // 1. Load lightweight course metadata
           fetch(`/api/course-metadata?slug=${resolvedParams.slug}`),
           // 2. Load lesson navigation (titles, slugs, order only)
           fetch(`/api/lesson-navigation?course_slug=${resolvedParams.slug}`),
           // 3. Load specific lesson content
-          fetch(`/api/lesson-content?lesson_slug=${resolvedParams.lessonSlug}&course_slug=${resolvedParams.slug}`)
+          fetch(
+            `/api/lesson-content?lesson_slug=${resolvedParams.lessonSlug}&course_slug=${resolvedParams.slug}`
+          ),
         ]);
 
         console.log("API responses received:", {
           courseMetadata: courseMetadataResponse.status,
           lessonNavigation: lessonNavigationResponse.status,
-          lessonContent: lessonContentResponse.status
+          lessonContent: lessonContentResponse.status,
         });
 
         // Process course metadata
@@ -158,7 +164,11 @@ export default function DynamicLessonPage({
         if (lessonNavigationResponse.ok) {
           const navigationData = await lessonNavigationResponse.json();
           setAllLessons(navigationData.lessons || []);
-          console.log("Lesson navigation loaded:", navigationData.lessons?.length, "lessons");
+          console.log(
+            "Lesson navigation loaded:",
+            navigationData.lessons?.length,
+            "lessons"
+          );
         }
 
         // Process specific lesson content
@@ -171,7 +181,6 @@ export default function DynamicLessonPage({
           console.error("Failed to fetch lesson content:", errorText);
           throw new Error("Failed to fetch lesson content from database");
         }
-
       } catch (err) {
         console.error("Error loading lesson:", err);
         console.error("Error details:", {
@@ -192,18 +201,25 @@ export default function DynamicLessonPage({
   // Create initial progress entry for new users
   const createInitialProgress = useCallback(async () => {
     if (!lesson || !user) {
-      console.log("Skipping progress creation - missing lesson or user:", { lesson: !!lesson, user: !!user });
+      console.log("Skipping progress creation - missing lesson or user:", {
+        lesson: !!lesson,
+        user: !!user,
+      });
       return;
     }
 
     try {
       console.log("Creating initial progress for lesson:", lesson.id);
-      console.log("Lesson data:", { id: lesson.id, course_id: lesson.course_id, title: lesson.title });
+      console.log("Lesson data:", {
+        id: lesson.id,
+        course_id: lesson.course_id,
+        title: lesson.title,
+      });
       console.log("User data:", { id: user.id, email: user.email });
-      
+
       // Check if user has valid session
       console.log("User session:", session ? "exists" : "missing");
-      
+
       const requestBody = {
         lesson_id: lesson.id,
         course_id: lesson.course_id,
@@ -211,9 +227,9 @@ export default function DynamicLessonPage({
         time_spent_minutes: 0,
         is_completed: false,
       };
-      
+
       console.log("Request body:", requestBody);
-      
+
       const response = await fetch("/api/user-progress", {
         method: "POST",
         headers: {
@@ -223,7 +239,10 @@ export default function DynamicLessonPage({
       });
 
       console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -233,10 +252,12 @@ export default function DynamicLessonPage({
         const errorText = await response.text();
         console.error("Failed to create initial progress:", response.status);
         console.error("Error response body:", errorText);
-        
+
         // If it's a 401 error, the user might not be properly authenticated
         if (response.status === 401) {
-          console.warn("User authentication failed - progress tracking disabled");
+          console.warn(
+            "User authentication failed - progress tracking disabled"
+          );
           // Don't throw error, just skip progress tracking for unauthenticated users
           return;
         }
@@ -247,33 +268,36 @@ export default function DynamicLessonPage({
   }, [lesson, user, session]);
 
   // Track lesson interactions and update progress
-  const updateProgress = useCallback(async (completionPercentage: number, timeSpentMinutes?: number) => {
-    if (!lesson || !user) return;
+  const updateProgress = useCallback(
+    async (completionPercentage: number, timeSpentMinutes?: number) => {
+      if (!lesson || !user) return;
 
-    try {
-      const response = await fetch("/api/user-progress", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          lesson_id: lesson.id,
-          course_id: lesson.course_id,
-          completion_percentage: completionPercentage,
-          time_spent_minutes: timeSpentMinutes || 0,
-          is_completed: completionPercentage >= 100,
-        }),
-      });
+      try {
+        const response = await fetch("/api/user-progress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lesson_id: lesson.id,
+            course_id: lesson.course_id,
+            completion_percentage: completionPercentage,
+            time_spent_minutes: timeSpentMinutes || 0,
+            is_completed: completionPercentage >= 100,
+          }),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        setUserProgress(data.progress);
-        console.log("Progress updated:", data.progress);
+        if (response.ok) {
+          const data = await response.json();
+          setUserProgress(data.progress);
+          console.log("Progress updated:", data.progress);
+        }
+      } catch (error) {
+        console.error("Error updating progress:", error);
       }
-    } catch (error) {
-      console.error("Error updating progress:", error);
-    }
-  }, [lesson, user]);
+    },
+    [lesson, user]
+  );
 
   // Fetch user progress when lesson and user are available
   useEffect(() => {
@@ -289,7 +313,7 @@ export default function DynamicLessonPage({
         if (response.ok) {
           const data = await response.json();
           console.log("User progress data:", data);
-          
+
           if (data.progress && data.progress.length > 0) {
             // User has existing progress
             setUserProgress(data.progress[0]);
@@ -327,13 +351,15 @@ export default function DynamicLessonPage({
     if (!lessonStartTime || !userProgress) return;
 
     const interval = setInterval(() => {
-      const timeSpent = Math.floor((Date.now() - lessonStartTime.getTime()) / 60000); // minutes
-      
+      const timeSpent = Math.floor(
+        (Date.now() - lessonStartTime.getTime()) / 60000
+      ); // minutes
+
       // Update progress every 2 minutes if user is actively viewing
       if (timeSpent > 0 && timeSpent % 2 === 0) {
         const currentProgress = userProgress.completion_percentage;
         const timeBasedProgress = Math.min(95, Math.floor(timeSpent * 2)); // Max 95% from time
-        
+
         if (timeBasedProgress > currentProgress) {
           updateProgress(timeBasedProgress, timeSpent);
         }
@@ -377,7 +403,7 @@ export default function DynamicLessonPage({
   // Track tab changes as progress
   const handleTabChange = (value: string) => {
     setActiveTab(value as "video" | "notes" | "keypoints" | "quiz");
-    
+
     // Update progress based on tab interaction
     let progressPercentage = 0;
     switch (value) {
@@ -394,9 +420,12 @@ export default function DynamicLessonPage({
         progressPercentage = 90;
         break;
     }
-    
+
     // Only update if it's higher than current progress
-    if (userProgress && progressPercentage > userProgress.completion_percentage) {
+    if (
+      userProgress &&
+      progressPercentage > userProgress.completion_percentage
+    ) {
       updateProgress(progressPercentage);
     }
   };
@@ -597,33 +626,33 @@ export default function DynamicLessonPage({
               onValueChange={handleTabChange}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-4 rounded-lg bg-white border border-gray-200 p-1 shadow-sm">
+              <TabsList className="grid w-full grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
                 <TabsTrigger
                   value="video"
-                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
                 >
-                  <Play className="w-5 h-5 mr-2" />
+                  <Play className="w-4 h-4 mr-2" />
                   Video
                 </TabsTrigger>
                 <TabsTrigger
                   value="notes"
-                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
                 >
-                  <FileText className="w-5 h-5 mr-2" />
+                  <FileText className="w-4 h-4 mr-2" />
                   Notes
                 </TabsTrigger>
                 <TabsTrigger
                   value="keypoints"
-                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
                 >
-                  <Bookmark className="w-5 h-5 mr-2" />
+                  <Bookmark className="w-4 h-4 mr-2" />
                   Key Points
                 </TabsTrigger>
                 <TabsTrigger
                   value="quiz"
-                  className="rounded-md data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-50 hover:text-gray-700 font-semibold transition-all duration-300 text-base py-3 px-4 data-[state=inactive]:text-gray-600"
+                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
                 >
-                  <BookOpen className="w-5 h-5 mr-2" />
+                  <BookOpen className="w-4 h-4 mr-2" />
                   Quiz
                 </TabsTrigger>
               </TabsList>

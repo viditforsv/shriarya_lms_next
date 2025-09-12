@@ -204,9 +204,11 @@ export default function DynamicLessonPage({
       console.log("Skipping progress creation - missing lesson");
       return;
     }
-    
+
     if (!user) {
-      console.log("Skipping progress creation - user not authenticated (this is OK for free courses)");
+      console.log(
+        "Skipping progress creation - user not authenticated (this is OK for free courses)"
+      );
       return;
     }
 
@@ -237,6 +239,7 @@ export default function DynamicLessonPage({
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Include cookies for authentication
         body: JSON.stringify(requestBody),
       });
 
@@ -280,6 +283,7 @@ export default function DynamicLessonPage({
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include", // Include cookies for authentication
           body: JSON.stringify({
             lesson_id: lesson.id,
             course_id: lesson.course_id,
@@ -305,16 +309,21 @@ export default function DynamicLessonPage({
   useEffect(() => {
     const fetchUserProgress = async () => {
       if (!lesson) return;
-      
+
       if (!user) {
-        console.log("User not authenticated - skipping progress tracking (OK for free courses)");
+        console.log(
+          "User not authenticated - skipping progress tracking (OK for free courses)"
+        );
         return;
       }
 
       try {
         console.log("Fetching user progress for lesson:", lesson.id);
         const response = await fetch(
-          `/api/user-progress?lessonId=${lesson.id}&courseId=${lesson.course_id}`
+          `/api/user-progress?lessonId=${lesson.id}&courseId=${lesson.course_id}`,
+          {
+            credentials: "include", // Include cookies for authentication
+          }
         );
 
         if (response.ok) {
@@ -374,7 +383,7 @@ export default function DynamicLessonPage({
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
-  }, [lessonStartTime, userProgress, updateProgress]);
+  }, [lessonStartTime, userProgress, updateProgress, user]);
 
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free;

@@ -1,12 +1,12 @@
 interface CourseDeletionResult {
-  message: string
+  message: string;
   deletedItems: {
-    enrollments: boolean
-    resources: number
-    lessonSections: boolean
-    lessons: number
-    course: boolean
-  }
+    enrollments: boolean;
+    resources: number;
+    lessonSections: boolean;
+    lessons: number;
+    course: boolean;
+  };
 }
 
 /**
@@ -15,45 +15,55 @@ interface CourseDeletionResult {
  * @param courseTitle - The title of the course (for user feedback)
  * @returns Promise<boolean> - true if deletion was successful
  */
-export async function deleteCourse(courseId: string, courseTitle: string): Promise<boolean> {
+export async function deleteCourse(
+  courseId: string,
+  courseTitle: string
+): Promise<boolean> {
   try {
     // Show confirmation dialog
     const confirmed = window.confirm(
       `Are you sure you want to delete "${courseTitle}"?\n\nThis will permanently delete:\n` +
-      `• All lessons and content\n` +
-      `• All student enrollments\n` +
-      `• All student progress data\n` +
-      `• All uploaded resources\n\n` +
-      `This action cannot be undone.`
-    )
+        `• All lessons and content\n` +
+        `• All student enrollments\n` +
+        `• All student progress data\n` +
+        `• All uploaded resources\n\n` +
+        `This action cannot be undone.`
+    );
 
     if (!confirmed) {
-      return false
+      return false;
     }
 
-    console.log(`Deleting "${courseTitle}"...`)
+    console.log(`Deleting "${courseTitle}"...`);
 
     const response = await fetch(`/api/courses?id=${courseId}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-    })
+      credentials: "include", // Include cookies for authentication
+    });
 
-    const result: CourseDeletionResult = await response.json()
+    const result: CourseDeletionResult = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || 'Failed to delete course')
+      throw new Error(result.message || "Failed to delete course");
     }
 
-    console.log(`"${courseTitle}" deleted successfully!`)
-    console.log(`Removed ${result.deletedItems.lessons} lessons and all related data`)
+    console.log(`"${courseTitle}" deleted successfully!`);
+    console.log(
+      `Removed ${result.deletedItems.lessons} lessons and all related data`
+    );
 
-    return true
+    return true;
   } catch (error) {
-    console.error('Error deleting course:', error)
-    alert(`Failed to delete course: ${error instanceof Error ? error.message : 'An unexpected error occurred'}`)
-    return false
+    console.error("Error deleting course:", error);
+    alert(
+      `Failed to delete course: ${
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      }`
+    );
+    return false;
   }
 }
 
@@ -65,15 +75,15 @@ export async function deleteCourse(courseId: string, courseTitle: string): Promi
  * @returns Promise<boolean> - true if deletion was successful
  */
 export async function deleteCourseWithCleanup(
-  courseId: string, 
+  courseId: string,
   courseTitle: string,
   onSuccess?: () => void
 ): Promise<boolean> {
-  const success = await deleteCourse(courseId, courseTitle)
-  
+  const success = await deleteCourse(courseId, courseTitle);
+
   if (success && onSuccess) {
-    onSuccess()
+    onSuccess();
   }
-  
-  return success
+
+  return success;
 }

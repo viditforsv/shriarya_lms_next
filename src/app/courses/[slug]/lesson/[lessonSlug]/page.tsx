@@ -35,6 +35,7 @@ import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { CompletionDot } from "@/app/components-demo/ui/template-status";
 import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { LessonPageSkeleton } from "@/components/skeletons";
 
 interface Course {
   id: string;
@@ -116,73 +117,61 @@ export default function DynamicLessonPage({
         setIsLoading(true);
         setError(null);
 
-        // Fetch complete course content using RPC function
-        console.log("Fetching course content for:", resolvedParams.slug);
-        const courseContentResponse = await fetch(
-          `/api/course-content?course_slug=${resolvedParams.slug}`
-        );
-        console.log(
-          "Course content API response status:",
-          courseContentResponse.status
-        );
+        // 🚀 OPTIMIZED: Load data in parallel for better performance
+        const [courseMetadataResponse, lessonNavigationResponse, lessonContentResponse] = await Promise.all([
+          // 1. Load lightweight course metadata
+          fetch(`/api/course-metadata?slug=${resolvedParams.slug}`),
+          // 2. Load lesson navigation (titles, slugs, order only)
+          fetch(`/api/lesson-navigation?course_slug=${resolvedParams.slug}`),
+          // 3. Load specific lesson content
+          fetch(`/api/lesson-content?lesson_slug=${resolvedParams.lessonSlug}&course_slug=${resolvedParams.slug}`)
+        ]);
 
-        if (courseContentResponse.ok) {
-          const courseContentData = await courseContentResponse.json();
-          console.log("Course content data received:", courseContentData);
+        console.log("API responses received:", {
+          courseMetadata: courseMetadataResponse.status,
+          lessonNavigation: lessonNavigationResponse.status,
+          lessonContent: lessonContentResponse.status
+        });
 
-          // Use the clean data structure from RPC function
-          const lessons: Lesson[] = courseContentData.lessons || [];
-          console.log(
-            "Lessons from RPC:",
-            lessons.map((l) => ({ slug: l.slug, title: l.title }))
-          );
-          setAllLessons(lessons);
-
-          // Find the specific lesson from the loaded lessons
-          const currentLesson = lessons.find(
-            (l) => l.slug === resolvedParams.lessonSlug
-          );
-          console.log("Looking for lesson slug:", resolvedParams.lessonSlug);
-          console.log("Found lesson:", currentLesson);
-
-          if (!currentLesson) {
-            // Debug information
-            console.error("Lesson not found:", {
-              requestedLessonSlug: resolvedParams.lessonSlug,
-              courseSlug: resolvedParams.slug,
-              availableLessons: lessons.map((l: Lesson) => l.slug),
-            });
-            throw new Error(
-              `Lesson "${resolvedParams.lessonSlug}" not found in course "${resolvedParams.slug}"`
-            );
-          }
-
-          setLesson(currentLesson);
-          console.log("Current lesson data:", currentLesson);
-
-          // Use course data from RPC response
-          if (courseContentData.course) {
-            const courseData: Course = {
-              id: courseContentData.course.id,
-              title: courseContentData.course.title,
-              description: courseContentData.course.description,
-              slug: courseContentData.course.slug,
-              is_free: courseContentData.course.is_free || false,
-              created_at: courseContentData.course.created_at,
-              template_data: courseContentData.course.template_data,
-              profiles: {
-                first_name: "System",
-                last_name: "Admin",
-              },
-            };
-            setCourse(courseData);
-            setIsEnrolled(courseData.is_free || false);
-          }
-        } else {
-          const errorText = await courseContentResponse.text();
-          console.error("Failed to fetch course content:", errorText);
-          throw new Error("Failed to fetch course content from database");
+        // Process course metadata
+        if (courseMetadataResponse.ok) {
+          const courseData = await courseMetadataResponse.json();
+          const course: Course = {
+            id: courseData.course.id,
+            title: courseData.course.title,
+            description: courseData.course.description,
+            slug: courseData.course.slug,
+            is_free: courseData.course.is_free || false,
+            created_at: new Date().toISOString(),
+            template_data: courseData.course.template_data || {},
+            profiles: {
+              first_name: "System",
+              last_name: "Admin",
+            },
+          };
+          setCourse(course);
+          setIsEnrolled(course.is_free || false);
+          console.log("Course metadata loaded:", course.title);
         }
+
+        // Process lesson navigation
+        if (lessonNavigationResponse.ok) {
+          const navigationData = await lessonNavigationResponse.json();
+          setAllLessons(navigationData.lessons || []);
+          console.log("Lesson navigation loaded:", navigationData.lessons?.length, "lessons");
+        }
+
+        // Process specific lesson content
+        if (lessonContentResponse.ok) {
+          const lessonData = await lessonContentResponse.json();
+          setLesson(lessonData.lesson);
+          console.log("Lesson content loaded:", lessonData.lesson.title);
+        } else {
+          const errorText = await lessonContentResponse.text();
+          console.error("Failed to fetch lesson content:", errorText);
+          throw new Error("Failed to fetch lesson content from database");
+        }
+
       } catch (err) {
         console.error("Error loading lesson:", err);
         console.error("Error details:", {
@@ -434,14 +423,7 @@ export default function DynamicLessonPage({
   ];
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading lesson...</p>
-        </div>
-      </div>
-    );
+    return <LessonPageSkeleton />;
   }
 
   if (error || !lesson || !course) {

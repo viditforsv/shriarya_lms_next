@@ -5,6 +5,7 @@ export { Badge } from './badge'
 export { Input } from './input'
 export { Label } from './label'
 export { Progress } from './progress'
+export { Skeleton } from './skeleton'
 
 // Future UI components can be added here:
 // export { Select } from './select'

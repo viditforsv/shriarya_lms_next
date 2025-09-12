@@ -82,7 +82,7 @@ export default function DynamicLessonPage({
 }: {
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
@@ -191,12 +191,18 @@ export default function DynamicLessonPage({
 
   // Create initial progress entry for new users
   const createInitialProgress = useCallback(async () => {
-    if (!lesson || !user) return;
+    if (!lesson || !user) {
+      console.log("Skipping progress creation - missing lesson or user:", { lesson: !!lesson, user: !!user });
+      return;
+    }
 
     try {
       console.log("Creating initial progress for lesson:", lesson.id);
       console.log("Lesson data:", { id: lesson.id, course_id: lesson.course_id, title: lesson.title });
       console.log("User data:", { id: user.id, email: user.email });
+      
+      // Check if user has valid session
+      console.log("User session:", session ? "exists" : "missing");
       
       const requestBody = {
         lesson_id: lesson.id,
@@ -227,11 +233,18 @@ export default function DynamicLessonPage({
         const errorText = await response.text();
         console.error("Failed to create initial progress:", response.status);
         console.error("Error response body:", errorText);
+        
+        // If it's a 401 error, the user might not be properly authenticated
+        if (response.status === 401) {
+          console.warn("User authentication failed - progress tracking disabled");
+          // Don't throw error, just skip progress tracking for unauthenticated users
+          return;
+        }
       }
     } catch (error) {
       console.error("Error creating initial progress:", error);
     }
-  }, [lesson, user]);
+  }, [lesson, user, session]);
 
   // Track lesson interactions and update progress
   const updateProgress = useCallback(async (completionPercentage: number, timeSpentMinutes?: number) => {
@@ -288,6 +301,11 @@ export default function DynamicLessonPage({
           }
         } else {
           console.error("Failed to fetch user progress:", response.status);
+          // If it's a 401, don't try to create progress
+          if (response.status === 401) {
+            console.warn("User not authenticated - skipping progress tracking");
+            return;
+          }
         }
       } catch (error) {
         console.error("Error fetching user progress:", error);

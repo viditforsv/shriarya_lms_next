@@ -72,16 +72,21 @@ export function CoursePageClient({
     if (courseParams.slug === "cbse-mathematics-class-10") {
       // Map subsection to lesson order based on CBSE syllabus structure
       const subsectionToOrderMap: Record<string, number> = {
+        // Unit 1: Number Systems - Real Numbers
         "introduction-to-real-numbers": 1,
         "fundamental-theorem-arithmetic": 2,
         "proofs-irrationality": 3,
         "advanced-irrationality-proofs": 4,
         "real-numbers-practice-problems": 5,
+        
+        // Unit 2: Algebra - Polynomials
         "introduction-to-polynomials": 7,
         "zeros-of-a-polynomial": 8,
         "relationship-between-zeros-and-coefficients": 9,
         "graphical-and-algebraic-methods": 10,
         "polynomials-practice-problems": 11,
+        
+        // Unit 2: Algebra - Pair of Linear Equations
         "introduction-to-pair-of-linear-equations": 12,
         "graphical-method-and-consistency": 13,
         "algebraic-conditions-for-number-of-solutions": 14,
@@ -89,6 +94,8 @@ export function CoursePageClient({
         "solution-by-elimination-method": 16,
         "simple-situational-problems": 17,
         "linear-equations-practice-problems": 18,
+        
+        // Unit 2: Algebra - Quadratic Equations
         "introduction-to-quadratic-equations": 19,
         "standard-form-of-quadratic-equation": 20,
         "solution-by-factorization-method": 21,
@@ -96,18 +103,24 @@ export function CoursePageClient({
         "discriminant-and-nature-of-roots": 23,
         "situational-problems-based-on-quadratic-equations": 24,
         "quadratic-equations-practice-problems": 25,
+        
+        // Unit 2: Algebra - Arithmetic Progressions
         "introduction-to-arithmetic-progressions": 26,
         "motivation-for-studying-arithmetic-progression": 27,
         "derivation-of-nth-term-of-ap": 28,
         "derivation-of-sum-of-first-n-terms-of-ap": 29,
         "application-of-ap-in-daily-life-problems": 30,
         "ap-practice-problems": 31,
+        
+        // Unit 3: Coordinate Geometry
         "introduction-to-coordinate-geometry": 32,
         "review-of-concepts-of-coordinate-geometry": 33,
         "distance-formula": 34,
         "section-formula-internal-division": 35,
         "applications-of-distance-and-section-formulas": 36,
         "coordinate-geometry-practice-problems": 37,
+        
+        // Unit 4: Geometry - Triangles
         "introduction-to-similar-triangles": 38,
         "definitions-examples-and-counter-examples": 39,
         "basic-proportionality-theorem-proof": 40,
@@ -117,12 +130,16 @@ export function CoursePageClient({
         "sas-similarity-criterion": 44,
         "applications-of-similarity-criteria": 45,
         "triangles-practice-problems": 46,
+        
+        // Unit 4: Geometry - Circles
         "introduction-to-circles": 47,
         "tangent-to-a-circle-at-point-of-contact": 48,
         "tangent-perpendicular-to-radius-theorem-proof": 49,
         "equal-tangents-from-external-point-theorem-proof": 50,
         "applications-of-tangent-properties": 51,
         "circles-practice-problems": 52,
+        
+        // Unit 5: Trigonometry - Introduction to Trigonometry
         "introduction-to-trigonometry": 53,
         "trigonometric-ratios-of-acute-angles": 54,
         "proof-of-existence-of-trigonometric-ratios": 55,
@@ -130,11 +147,15 @@ export function CoursePageClient({
         "values-of-trigonometric-ratios-30-45-60": 57,
         "relationships-between-trigonometric-ratios": 58,
         "trigonometric-ratios-practice": 59,
+        
+        // Unit 5: Trigonometry - Trigonometric Identities
         "introduction-to-trigonometric-identities": 60,
         "proof-of-sin2a-cos2a-1": 61,
         "applications-of-sin2a-cos2a-1": 62,
         "other-simple-trigonometric-identities": 63,
         "trigonometric-identities-practice": 64,
+        
+        // Unit 5: Trigonometry - Heights and Distances
         "introduction-to-heights-and-distances": 65,
         "angle-of-elevation": 66,
         "angle-of-depression": 67,
@@ -142,16 +163,22 @@ export function CoursePageClient({
         "problems-with-angles-30-45-60": 69,
         "real-life-applications-of-heights-and-distances": 70,
         "heights-and-distances-practice": 71,
+        
+        // Unit 6: Mensuration - Areas Related to Circles
         "introduction-to-areas-related-to-circles": 72,
         "area-of-sectors-of-a-circle": 73,
         "area-of-segments-of-a-circle": 74,
         "problems-with-central-angles-60-90-120": 75,
         "areas-related-to-circles-practice": 76,
+        
+        // Unit 6: Mensuration - Surface Areas and Volumes
         "introduction-to-surface-areas-and-volumes": 77,
         "combinations-of-cubes-and-cuboids": 78,
         "combinations-of-spheres-and-hemispheres": 79,
         "combinations-of-cylinders-and-cones": 80,
         "surface-areas-and-volumes-practice": 81,
+        
+        // Unit 7: Statistics & Probability - Statistics
         "introduction-to-statistics": 82,
         "mean-of-grouped-data": 83,
         "direct-method-for-mean": 84,
@@ -160,6 +187,8 @@ export function CoursePageClient({
         "median-of-grouped-data-algebraic-method": 87,
         "mode-of-grouped-data-algebraic-method": 88,
         "statistics-practice-problems": 89,
+        
+        // Unit 7: Statistics & Probability - Probability
         "introduction-to-probability": 90,
         "classical-definition-of-probability": 91,
         "simple-problems-on-probability": 92,

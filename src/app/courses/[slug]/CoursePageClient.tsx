@@ -68,56 +68,131 @@ export function CoursePageClient({
     // Find the first subsection (lesson) for this chapter
     const firstSubsection = chapter.subsections[0];
 
-    // For CBSE course, we need to map the subsection slug to a lesson slug
+    // For CBSE course, find the actual lesson from database based on lesson order
     if (courseParams.slug === "cbse-mathematics-class-10") {
-      // Import the mapping to find the corresponding lesson
-      const mapping: Record<string, string> = {
-        "fundamental-theorem-arithmetic": "fundamental-theorem-arithmetic",
-        "proofs-irrationality": "real-numbers-properties",
-        "properties-real-numbers": "real-numbers-properties",
-        "zeros-polynomial": "polynomial-zeroes",
-        "relationship-zeros-coefficients": "polynomial-zeroes",
-        "graphical-method": "graphical-method",
-        "algebraic-solution": "algebraic-methods",
-        "euclid-division-lemma": "euclid-division-lemma",
-        "standard-form": "quadratic-intro",
-        "factorization-quadratic-formula": "quadratic-formula",
-        "nature-roots-discriminant": "quadratic-practice",
-        "nth-term": "ap-intro",
-        "sum-n-terms": "ap-formulas",
-        "word-problems": "ap-practice",
-        "applications-problems": "ap-practice",
-        "similarity-criteria": "triangles-intro",
-        "basic-proportionality": "similarity-triangles",
-        "basic-proportionality-theorem": "similarity-triangles",
-        applications: "triangles-practice",
-        "concepts-coordinate-geometry": "coordinate-intro",
-        "distance-formula": "distance-formula",
-        "section-formula": "coordinate-practice",
-        "area-triangle": "coordinate-practice",
-        "introduction-trigonometry": "trigonometry-intro",
-        "trigonometric-ratios": "trigonometric-ratios",
-        "values-30-45-60": "trigonometric-ratios",
-        "relationships-ratios": "trigonometry-practice",
-        "complementary-angles": "trigonometry-practice",
-        "proof-application-sin2-cos2": "trigonometry-practice",
-        "angles-elevation-depression": "trig-applications",
-        "trig-applications": "trig-applications",
-        "tangent-circle": "circles-intro",
-        tangents: "circles-intro",
-        "properties-tangents": "circle-theorems",
-        "tangent-properties": "circle-theorems",
-        "applications-circles": "circles-practice",
-        "areas-related-circles": "mensuration-intro",
-        "surface-areas-volumes": "mensuration-practice",
-        "mean-median-mode": "statistics-intro",
-        "probability-basics": "probability-intro",
+      // Map subsection to lesson order based on CBSE syllabus structure
+      const subsectionToOrderMap: Record<string, number> = {
+        "introduction-to-real-numbers": 1,
+        "fundamental-theorem-arithmetic": 2,
+        "proofs-irrationality": 3,
+        "advanced-irrationality-proofs": 4,
+        "real-numbers-practice-problems": 5,
+        "introduction-to-polynomials": 7,
+        "zeros-of-a-polynomial": 8,
+        "relationship-between-zeros-and-coefficients": 9,
+        "graphical-and-algebraic-methods": 10,
+        "polynomials-practice-problems": 11,
+        "introduction-to-pair-of-linear-equations": 12,
+        "graphical-method-and-consistency": 13,
+        "algebraic-conditions-for-number-of-solutions": 14,
+        "solution-by-substitution-method": 15,
+        "solution-by-elimination-method": 16,
+        "simple-situational-problems": 17,
+        "linear-equations-practice-problems": 18,
+        "introduction-to-quadratic-equations": 19,
+        "standard-form-of-quadratic-equation": 20,
+        "solution-by-factorization-method": 21,
+        "quadratic-formula": 22,
+        "discriminant-and-nature-of-roots": 23,
+        "situational-problems-based-on-quadratic-equations": 24,
+        "quadratic-equations-practice-problems": 25,
+        "introduction-to-arithmetic-progressions": 26,
+        "motivation-for-studying-arithmetic-progression": 27,
+        "derivation-of-nth-term-of-ap": 28,
+        "derivation-of-sum-of-first-n-terms-of-ap": 29,
+        "application-of-ap-in-daily-life-problems": 30,
+        "ap-practice-problems": 31,
+        "introduction-to-coordinate-geometry": 32,
+        "review-of-concepts-of-coordinate-geometry": 33,
+        "distance-formula": 34,
+        "section-formula-internal-division": 35,
+        "applications-of-distance-and-section-formulas": 36,
+        "coordinate-geometry-practice-problems": 37,
+        "introduction-to-similar-triangles": 38,
+        "definitions-examples-and-counter-examples": 39,
+        "basic-proportionality-theorem-proof": 40,
+        "converse-of-basic-proportionality-theorem": 41,
+        "aaa-similarity-criterion": 42,
+        "sss-similarity-criterion": 43,
+        "sas-similarity-criterion": 44,
+        "applications-of-similarity-criteria": 45,
+        "triangles-practice-problems": 46,
+        "introduction-to-circles": 47,
+        "tangent-to-a-circle-at-point-of-contact": 48,
+        "tangent-perpendicular-to-radius-theorem-proof": 49,
+        "equal-tangents-from-external-point-theorem-proof": 50,
+        "applications-of-tangent-properties": 51,
+        "circles-practice-problems": 52,
+        "introduction-to-trigonometry": 53,
+        "trigonometric-ratios-of-acute-angles": 54,
+        "proof-of-existence-of-trigonometric-ratios": 55,
+        "trigonometric-ratios-at-0-and-90": 56,
+        "values-of-trigonometric-ratios-30-45-60": 57,
+        "relationships-between-trigonometric-ratios": 58,
+        "trigonometric-ratios-practice": 59,
+        "introduction-to-trigonometric-identities": 60,
+        "proof-of-sin2a-cos2a-1": 61,
+        "applications-of-sin2a-cos2a-1": 62,
+        "other-simple-trigonometric-identities": 63,
+        "trigonometric-identities-practice": 64,
+        "introduction-to-heights-and-distances": 65,
+        "angle-of-elevation": 66,
+        "angle-of-depression": 67,
+        "simple-problems-on-heights-and-distances": 68,
+        "problems-with-angles-30-45-60": 69,
+        "real-life-applications-of-heights-and-distances": 70,
+        "heights-and-distances-practice": 71,
+        "introduction-to-areas-related-to-circles": 72,
+        "area-of-sectors-of-a-circle": 73,
+        "area-of-segments-of-a-circle": 74,
+        "problems-with-central-angles-60-90-120": 75,
+        "areas-related-to-circles-practice": 76,
+        "introduction-to-surface-areas-and-volumes": 77,
+        "combinations-of-cubes-and-cuboids": 78,
+        "combinations-of-spheres-and-hemispheres": 79,
+        "combinations-of-cylinders-and-cones": 80,
+        "surface-areas-and-volumes-practice": 81,
+        "introduction-to-statistics": 82,
+        "mean-of-grouped-data": 83,
+        "direct-method-for-mean": 84,
+        "assumed-mean-method": 85,
+        "step-deviation-method": 86,
+        "median-of-grouped-data-algebraic-method": 87,
+        "mode-of-grouped-data-algebraic-method": 88,
+        "statistics-practice-problems": 89,
+        "introduction-to-probability": 90,
+        "classical-definition-of-probability": 91,
+        "simple-problems-on-probability": 92,
+        "real-life-applications-of-probability": 93,
+        "probability-practice-problems": 94,
       };
 
-      const lessonSlug = mapping[firstSubsection.slug] || firstSubsection.slug;
+      const lessonOrder = subsectionToOrderMap[firstSubsection.slug];
+      
+      if (lessonOrder && lessons.length > 0) {
+        // Find the lesson with matching order
+        const targetLesson = lessons.find(lesson => lesson.order === lessonOrder);
+        
+        if (targetLesson) {
+          // Navigate to the actual lesson from database
+          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
+          return;
+        }
+      }
 
-      // Navigate to the lesson
-      window.location.href = `/courses/${courseParams.slug}/lesson/${lessonSlug}`;
+      // Fallback: try to find lesson by slug
+      const fallbackLesson = lessons.find(lesson => 
+        lesson.slug === firstSubsection.slug || 
+        lesson.title.toLowerCase().includes(firstSubsection.title.toLowerCase())
+      );
+      
+      if (fallbackLesson) {
+        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
+        return;
+      }
+
+      console.error("Could not find lesson for subsection:", firstSubsection.slug);
+      alert("Lesson not found. Please try again.");
     } else {
       // For other courses, use the subsection slug directly
       window.location.href = `/courses/${courseParams.slug}/lesson/${firstSubsection.slug}`;

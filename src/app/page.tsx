@@ -1,15 +1,21 @@
-'use client'
+"use client";
 
 // Removed unused imports
 import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  
+
   // Use auth context
   const authContext = useAuth();
   const user = authContext?.user;
@@ -38,21 +44,22 @@ export default function Home() {
               Welcome back, {user.user_metadata?.full_name || user.email}!
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Continue your learning journey with personalized courses and progress tracking.
+              Continue your learning journey with personalized courses and
+              progress tracking.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-accent hover:bg-accent/90"
-                onClick={() => router.push('/courses/enrolled')}
+                onClick={() => router.push("/courses/enrolled")}
               >
                 My Courses
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="outline"
-                onClick={() => router.push('/courses')}
+                onClick={() => router.push("/courses/discover")}
               >
                 Browse Courses
               </Button>
@@ -98,7 +105,9 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription>
-                    <span className="text-2xl font-bold text-purple-600">24</span>
+                    <span className="text-2xl font-bold text-purple-600">
+                      24
+                    </span>
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -110,7 +119,9 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription>
-                    <span className="text-2xl font-bold text-orange-600">2</span>
+                    <span className="text-2xl font-bold text-orange-600">
+                      2
+                    </span>
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -128,25 +139,25 @@ export default function Home() {
       <section className="bg-gradient-to-br from-secondary to-muted py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold text-foreground mb-6">
-            Welcome to{" "}
-            <span className="text-accent">ShriArya LMS</span>
+            Welcome to <span className="text-accent">ShriArya LMS</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            A modern learning management system designed to transform education 
-            with interactive courses, real-time collaboration, and personalized learning experiences.
+            A modern learning management system designed to transform education
+            with interactive courses, real-time collaboration, and personalized
+            learning experiences.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-accent hover:bg-accent/90"
-              onClick={() => router.push('/auth')}
+              onClick={() => router.push("/auth")}
             >
               Get Started
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
-              onClick={() => router.push('/auth')}
+              onClick={() => router.push("/auth")}
             >
               Sign In
             </Button>
@@ -168,7 +179,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Access comprehensive course materials, videos, and interactive content
+                  Access comprehensive course materials, videos, and interactive
+                  content
                 </CardDescription>
               </CardContent>
             </Card>
@@ -180,7 +192,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Connect with peers and instructors through discussion forums and live sessions
+                  Connect with peers and instructors through discussion forums
+                  and live sessions
                 </CardDescription>
               </CardContent>
             </Card>
@@ -192,7 +205,8 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Monitor your learning progress with detailed analytics and achievements
+                  Monitor your learning progress with detailed analytics and
+                  achievements
                 </CardDescription>
               </CardContent>
             </Card>
@@ -242,18 +256,18 @@ export default function Home() {
             Join thousands of learners who are already transforming their skills
           </p>
           <div className="flex gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
-              onClick={() => router.push('/auth')}
+              onClick={() => router.push("/auth")}
             >
               Get Started
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="border-accent-foreground text-accent-foreground hover:bg-accent-foreground hover:text-white"
-              onClick={() => router.push('/auth')}
+              onClick={() => router.push("/auth")}
             >
               Learn More
             </Button>

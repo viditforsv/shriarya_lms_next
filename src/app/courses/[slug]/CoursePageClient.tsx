@@ -28,6 +28,7 @@ import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { Chapter } from "@/lib/cbse-syllabus";
 import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS } from "@/lib/cbse-syllabus";
+import { syllabus as ibdpSyllabus } from "@/lib/courses/ibdp-mathematics-aa-hl/syllabus";
 
 export function CoursePageClient({
   courseParams,
@@ -37,10 +38,16 @@ export function CoursePageClient({
   // const { user } = useAuth()
   const user = null;
 
-  // Simple function to get units for CBSE course
+  // Check if this is an IBDP course
+  const isIBDPCourse = courseParams.slug === "ibdp-mathematics-aa-hl";
+
+  // Simple function to get units for courses
   const getUnitsForCourse = () => {
     if (courseParams.slug === "cbse-mathematics-class-10") {
       return CBSE_CLASS_10_MATHEMATICS_SYLLABUS;
+    }
+    if (isIBDPCourse) {
+      return ibdpSyllabus;
     }
     return [];
   };
@@ -78,14 +85,14 @@ export function CoursePageClient({
         "proofs-irrationality": 3,
         "advanced-irrationality-proofs": 4,
         "real-numbers-practice-problems": 5,
-        
+
         // Unit 2: Algebra - Polynomials
         "introduction-to-polynomials": 7,
         "zeros-of-a-polynomial": 8,
         "relationship-between-zeros-and-coefficients": 9,
         "graphical-and-algebraic-methods": 10,
         "polynomials-practice-problems": 11,
-        
+
         // Unit 2: Algebra - Pair of Linear Equations
         "introduction-to-pair-of-linear-equations": 12,
         "graphical-method-and-consistency": 13,
@@ -94,7 +101,7 @@ export function CoursePageClient({
         "solution-by-elimination-method": 16,
         "simple-situational-problems": 17,
         "linear-equations-practice-problems": 18,
-        
+
         // Unit 2: Algebra - Quadratic Equations
         "introduction-to-quadratic-equations": 19,
         "standard-form-of-quadratic-equation": 20,
@@ -103,7 +110,7 @@ export function CoursePageClient({
         "discriminant-and-nature-of-roots": 23,
         "situational-problems-based-on-quadratic-equations": 24,
         "quadratic-equations-practice-problems": 25,
-        
+
         // Unit 2: Algebra - Arithmetic Progressions
         "introduction-to-arithmetic-progressions": 26,
         "motivation-for-studying-arithmetic-progression": 27,
@@ -111,7 +118,7 @@ export function CoursePageClient({
         "derivation-of-sum-of-first-n-terms-of-ap": 29,
         "application-of-ap-in-daily-life-problems": 30,
         "ap-practice-problems": 31,
-        
+
         // Unit 3: Coordinate Geometry
         "introduction-to-coordinate-geometry": 32,
         "review-of-concepts-of-coordinate-geometry": 33,
@@ -119,7 +126,7 @@ export function CoursePageClient({
         "section-formula-internal-division": 35,
         "applications-of-distance-and-section-formulas": 36,
         "coordinate-geometry-practice-problems": 37,
-        
+
         // Unit 4: Geometry - Triangles
         "introduction-to-similar-triangles": 38,
         "definitions-examples-and-counter-examples": 39,
@@ -130,7 +137,7 @@ export function CoursePageClient({
         "sas-similarity-criterion": 44,
         "applications-of-similarity-criteria": 45,
         "triangles-practice-problems": 46,
-        
+
         // Unit 4: Geometry - Circles
         "introduction-to-circles": 47,
         "tangent-to-a-circle-at-point-of-contact": 48,
@@ -138,7 +145,7 @@ export function CoursePageClient({
         "equal-tangents-from-external-point-theorem-proof": 50,
         "applications-of-tangent-properties": 51,
         "circles-practice-problems": 52,
-        
+
         // Unit 5: Trigonometry - Introduction to Trigonometry
         "introduction-to-trigonometry": 53,
         "trigonometric-ratios-of-acute-angles": 54,
@@ -147,14 +154,14 @@ export function CoursePageClient({
         "values-of-trigonometric-ratios-30-45-60": 57,
         "relationships-between-trigonometric-ratios": 58,
         "trigonometric-ratios-practice": 59,
-        
+
         // Unit 5: Trigonometry - Trigonometric Identities
         "introduction-to-trigonometric-identities": 60,
         "proof-of-sin2a-cos2a-1": 61,
         "applications-of-sin2a-cos2a-1": 62,
         "other-simple-trigonometric-identities": 63,
         "trigonometric-identities-practice": 64,
-        
+
         // Unit 5: Trigonometry - Heights and Distances
         "introduction-to-heights-and-distances": 65,
         "angle-of-elevation": 66,
@@ -163,21 +170,21 @@ export function CoursePageClient({
         "problems-with-angles-30-45-60": 69,
         "real-life-applications-of-heights-and-distances": 70,
         "heights-and-distances-practice": 71,
-        
+
         // Unit 6: Mensuration - Areas Related to Circles
         "introduction-to-areas-related-to-circles": 72,
         "area-of-sectors-of-a-circle": 73,
         "area-of-segments-of-a-circle": 74,
         "problems-with-central-angles-60-90-120": 75,
         "areas-related-to-circles-practice": 76,
-        
+
         // Unit 6: Mensuration - Surface Areas and Volumes
         "introduction-to-surface-areas-and-volumes": 77,
         "combinations-of-cubes-and-cuboids": 78,
         "combinations-of-spheres-and-hemispheres": 79,
         "combinations-of-cylinders-and-cones": 80,
         "surface-areas-and-volumes-practice": 81,
-        
+
         // Unit 7: Statistics & Probability - Statistics
         "introduction-to-statistics": 82,
         "mean-of-grouped-data": 83,
@@ -187,7 +194,7 @@ export function CoursePageClient({
         "median-of-grouped-data-algebraic-method": 87,
         "mode-of-grouped-data-algebraic-method": 88,
         "statistics-practice-problems": 89,
-        
+
         // Unit 7: Statistics & Probability - Probability
         "introduction-to-probability": 90,
         "classical-definition-of-probability": 91,
@@ -197,11 +204,13 @@ export function CoursePageClient({
       };
 
       const lessonOrder = subsectionToOrderMap[firstSubsection.slug];
-      
+
       if (lessonOrder && lessons.length > 0) {
         // Find the lesson with matching order
-        const targetLesson = lessons.find(lesson => lesson.order === lessonOrder);
-        
+        const targetLesson = lessons.find(
+          (lesson) => lesson.order === lessonOrder
+        );
+
         if (targetLesson) {
           // Navigate to the actual lesson from database
           window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
@@ -210,17 +219,124 @@ export function CoursePageClient({
       }
 
       // Fallback: try to find lesson by slug
-      const fallbackLesson = lessons.find(lesson => 
-        lesson.slug === firstSubsection.slug || 
-        lesson.title.toLowerCase().includes(firstSubsection.title.toLowerCase())
+      const fallbackLesson = lessons.find(
+        (lesson) =>
+          lesson.slug === firstSubsection.slug ||
+          lesson.title
+            .toLowerCase()
+            .includes(firstSubsection.title.toLowerCase())
       );
-      
+
       if (fallbackLesson) {
         window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
         return;
       }
 
-      console.error("Could not find lesson for subsection:", firstSubsection.slug);
+      console.error(
+        "Could not find lesson for subsection:",
+        firstSubsection.slug
+      );
+      alert("Lesson not found. Please try again.");
+    } else if (isIBDPCourse) {
+      // Map IBDP subsection to lesson order based on IBDP syllabus structure
+      const ibdpSubsectionToOrderMap: Record<string, number> = {
+        // Number and Algebra - Sequences and Series
+        "arithmetic-sequences": 1,
+        "geometric-sequences": 2,
+        "infinite-series": 3,
+
+        // Number and Algebra - Binomial Theorem
+        "binomial-expansion": 4,
+        "binomial-coefficients": 5,
+
+        // Number and Algebra - Complex Numbers
+        "complex-arithmetic": 6,
+        "polar-form": 7,
+        "complex-roots": 8,
+
+        // Functions - Function Concepts
+        "domain-range": 9,
+        "composite-functions": 10,
+        "inverse-functions": 11,
+
+        // Functions - Polynomial Functions
+        "polynomial-properties": 12,
+        "factor-theorem": 13,
+
+        // Functions - Exponential and Logarithmic Functions
+        "exponential-functions": 14,
+        "logarithmic-functions": 15,
+        "exponential-models": 16,
+
+        // Geometry and Trigonometry - Trigonometric Functions
+        "unit-circle": 17,
+        "trigonometric-identities": 18,
+        "trigonometric-equations": 19,
+
+        // Geometry and Trigonometry - Vectors
+        "vector-operations": 20,
+        "scalar-product": 21,
+        "vector-product": 22,
+
+        // Statistics and Probability - Descriptive Statistics
+        "measures-central-tendency": 23,
+        "measures-dispersion": 24,
+        "normal-distribution": 25,
+
+        // Statistics and Probability - Probability
+        "conditional-probability": 26,
+        "bayes-theorem": 27,
+        "discrete-random-variables": 28,
+
+        // Calculus - Limits and Continuity
+        "limit-concepts": 29,
+        continuity: 30,
+
+        // Calculus - Differentiation
+        "derivative-rules": 31,
+        "chain-rule": 32,
+        "implicit-differentiation": 33,
+        "applications-derivatives": 34,
+
+        // Calculus - Integration
+        "integration-techniques": 35,
+        "integration-by-parts": 36,
+        "applications-integration": 37,
+      };
+
+      const lessonOrder = ibdpSubsectionToOrderMap[firstSubsection.slug];
+
+      if (lessonOrder && lessons.length > 0) {
+        // Find the lesson with matching order
+        const targetLesson = lessons.find(
+          (lesson) => lesson.order === lessonOrder
+        );
+
+        if (targetLesson) {
+          // Navigate to the actual lesson from database
+          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
+          return;
+        }
+      }
+
+      // Fallback: try to find lesson by slug
+      const fallbackLesson = lessons.find(
+        (lesson) =>
+          lesson.slug === firstSubsection.slug ||
+          lesson.title
+            .toLowerCase()
+            .includes(firstSubsection.title.toLowerCase())
+      );
+
+      if (fallbackLesson) {
+        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
+        return;
+      }
+
+      console.error(
+        "Could not find lesson for subsection:",
+        firstSubsection.slug
+      );
       alert("Lesson not found. Please try again.");
     } else {
       // For other courses, use the subsection slug directly
@@ -300,7 +416,48 @@ export function CoursePageClient({
             throw new Error("Course not found");
           }
 
-          setCourse(courseData as RenderedCourse);
+          // For IBDP courses, add default template data
+          if (isIBDPCourse) {
+            const ibdpCourseData = {
+              ...courseData,
+              template_data: {
+                curriculum: "IBDP",
+                subject: "Mathematics",
+                grade: "Higher Level",
+                level: "Analysis & Approaches HL",
+                duration: "250 hours",
+                lessons: 45,
+                features: [
+                  "Complete IBDP AA HL syllabus coverage",
+                  "Exam-focused preparation",
+                  "Step-by-step problem solving",
+                  "Practice tests and mock exams",
+                  "Internal Assessment support",
+                ],
+                prerequisites: [
+                  "Strong foundation in IGCSE/GCSE Mathematics",
+                  "Basic understanding of algebra and geometry",
+                ],
+                learningOutcomes: [
+                  "Master all IBDP AA HL Mathematics concepts",
+                  "Solve complex problems with confidence",
+                  "Excel in IBDP examinations",
+                  "Develop strong mathematical reasoning",
+                ],
+                tags: [
+                  "IBDP",
+                  "Mathematics",
+                  "Analysis & Approaches",
+                  "HL",
+                  "International",
+                  "University Prep",
+                ],
+              },
+            };
+            setCourse(ibdpCourseData as unknown as RenderedCourse);
+          } else {
+            setCourse(courseData as unknown as RenderedCourse);
+          }
           setTemplate(null);
 
           // Fetch lessons for this course from database
@@ -352,7 +509,7 @@ export function CoursePageClient({
 
     console.log("Calling loadCourse with courseParams:", courseParams);
     loadCourse();
-  }, [courseParams.slug, courseParams]);
+  }, [courseParams.slug, courseParams, isIBDPCourse]);
 
   const handleEnroll = async () => {
     if (!user) {

@@ -310,13 +310,6 @@ export default function DynamicLessonPage({
     const fetchUserProgress = async () => {
       if (!lesson) return;
 
-      if (!user) {
-        console.log(
-          "User not authenticated - skipping progress tracking (OK for free courses)"
-        );
-        return;
-      }
-
       try {
         console.log("Fetching user progress for lesson:", lesson.id);
         const response = await fetch(
@@ -335,9 +328,18 @@ export default function DynamicLessonPage({
             setUserProgress(data.progress[0]);
             console.log("Found existing progress:", data.progress[0]);
           } else {
-            // No existing progress - create initial progress entry
-            console.log("No existing progress found, creating initial entry");
-            await createInitialProgress();
+            // No existing progress - create initial progress entry only if user is authenticated
+            console.log("No existing progress found");
+            if (user && session) {
+              console.log(
+                "Creating initial progress entry for authenticated user"
+              );
+              await createInitialProgress();
+            } else {
+              console.log(
+                "User not authenticated - skipping progress creation"
+              );
+            }
           }
         } else {
           console.error("Failed to fetch user progress:", response.status);
@@ -346,14 +348,26 @@ export default function DynamicLessonPage({
             console.warn("User not authenticated - skipping progress tracking");
             return;
           }
+          // For other errors, only try to create progress if user is authenticated
+          if (user && session) {
+            console.log(
+              "Attempting to create initial progress after fetch error"
+            );
+            await createInitialProgress();
+          }
         }
       } catch (error) {
         console.error("Error fetching user progress:", error);
       }
     };
 
-    fetchUserProgress();
-  }, [lesson, user, createInitialProgress]);
+    // Only fetch progress if user is authenticated
+    if (user && session) {
+      fetchUserProgress();
+    } else {
+      console.log("User not authenticated - skipping progress fetch");
+    }
+  }, [lesson, user, session, createInitialProgress]);
 
   // Track lesson start time
   useEffect(() => {

@@ -1,220 +1,231 @@
 // Enhanced course configuration system with template integration
 // This replaces the static folder structure with dynamic course management
 
-import { getCourseData } from './course-registry'
-import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS, Section } from './cbse-syllabus'
+import { getCourseData } from "./course-registry";
+import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS, Section } from "./cbse-syllabus";
 
 export interface CourseConfig {
-  id: string
-  slug: string
-  title: string
-  description: string
-  curriculum: 'CBSE' | 'ICSE' | 'IBDP' | 'IGCSE'
-  subject: string
-  grade?: string
-  level?: string
-  isFree: boolean
-  price?: number
-  status: 'published' | 'draft' | 'archived'
-  instructor: string
-  duration: string
-  lessons: number
-  thumbnail: string
-  features: string[]
-  prerequisites: string[]
-  learningOutcomes: string[]
-  tags: string[]
-  createdAt: string
-  updatedAt: string
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  curriculum: "CBSE" | "ICSE" | "IBDP" | "IGCSE";
+  subject: string;
+  grade?: string;
+  level?: string;
+  isFree: boolean;
+  price?: number;
+  status: "published" | "draft" | "archived";
+  instructor: string;
+  duration: string;
+  lessons: number;
+  thumbnail: string;
+  features: string[];
+  prerequisites: string[];
+  learningOutcomes: string[];
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
   // New fields for template integration
-  templateId?: string
-  structure?: Record<string, unknown>
-  settings?: Record<string, unknown>
-  assessmentTypes?: Record<string, unknown>[]
-  resourceTypes?: Record<string, unknown>[]
+  templateId?: string;
+  structure?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+  assessmentTypes?: Record<string, unknown>[];
+  resourceTypes?: Record<string, unknown>[];
 }
 
 export interface LessonConfig {
-  id: string
-  slug: string
-  title: string
-  description: string
-  duration: string
-  type: 'video' | 'document' | 'quiz' | 'assignment' | 'practice'
-  isPreview: boolean
-  order: number
-  resources: ResourceConfig[]
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  duration: string;
+  type: "video" | "document" | "quiz" | "assignment" | "practice";
+  isPreview: boolean;
+  order: number;
+  resources: ResourceConfig[];
 }
 
 export interface ResourceConfig {
-  id: string
-  type: 'video' | 'pdf' | 'image' | 'link' | 'audio'
-  url: string
-  title: string
-  description?: string
-  duration?: number
-  isYouTube?: boolean
-  youtubeId?: string
+  id: string;
+  type: "video" | "pdf" | "image" | "link" | "audio";
+  url: string;
+  title: string;
+  description?: string;
+  duration?: number;
+  isYouTube?: boolean;
+  youtubeId?: string;
 }
 
 // Centralized course database
 export const COURSE_DATABASE: Record<string, CourseConfig> = {
-  'cbse-mathematics-class-10': {
-    id: 'cbse-mathematics-class-10',
-    slug: 'cbse-mathematics-class-10',
-    title: 'CBSE Mathematics Class 10',
-    description: 'Comprehensive CBSE Class 10 Mathematics course covering all chapters with detailed explanations, practice problems, and board exam preparation.',
-    curriculum: 'CBSE',
-    subject: 'Mathematics',
-    grade: 'Class 10',
+  "cbse-mathematics-class-10": {
+    id: "cbse-mathematics-class-10",
+    slug: "cbse-mathematics-class-10",
+    title: "CBSE Mathematics Class 10",
+    description:
+      "Comprehensive CBSE Class 10 Mathematics course covering all chapters with detailed explanations, practice problems, and board exam preparation.",
+    curriculum: "CBSE",
+    subject: "Mathematics",
+    grade: "Class 10",
     isFree: true,
-    status: 'published',
-    instructor: 'Shri Arya Education',
-    duration: '120 hours',
+    status: "published",
+    instructor: "Shri Arya Education",
+    duration: "120 hours",
     lessons: 45,
-    thumbnail: '/images/courses/cbse-math-10.jpg',
+    thumbnail: "/images/courses/cbse-math-10.jpg",
     features: [
-      'Complete NCERT syllabus coverage',
-      'Board exam focused preparation',
-      'Step-by-step problem solving',
-      'Practice tests and mock exams',
-      'Doubt clearing sessions'
+      "Complete NCERT syllabus coverage",
+      "Board exam focused preparation",
+      "Step-by-step problem solving",
+      "Practice tests and mock exams",
+      "Doubt clearing sessions",
     ],
     prerequisites: [
-      'Basic understanding of Class 9 Mathematics',
-      'Knowledge of fundamental arithmetic operations'
+      "Basic understanding of Class 9 Mathematics",
+      "Knowledge of fundamental arithmetic operations",
     ],
     learningOutcomes: [
-      'Master all CBSE Class 10 Mathematics concepts',
-      'Solve complex problems with confidence',
-      'Excel in board examinations',
-      'Develop strong mathematical reasoning'
+      "Master all CBSE Class 10 Mathematics concepts",
+      "Solve complex problems with confidence",
+      "Excel in board examinations",
+      "Develop strong mathematical reasoning",
     ],
-    tags: ['CBSE', 'Mathematics', 'Class 10', 'Board Exam', 'NCERT'],
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-15'
+    tags: ["CBSE", "Mathematics", "Class 10", "Board Exam", "NCERT"],
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-15",
   },
-  'cbse-mathematics-class-9': {
-    id: 'cbse-mathematics-class-9',
-    slug: 'cbse-mathematics-class-9',
-    title: 'CBSE Mathematics Class 9',
-    description: 'Foundation course for CBSE Class 9 Mathematics covering fundamental concepts and building strong mathematical base.',
-    curriculum: 'CBSE',
-    subject: 'Mathematics',
-    grade: 'Class 9',
+  "cbse-mathematics-class-9": {
+    id: "cbse-mathematics-class-9",
+    slug: "cbse-mathematics-class-9",
+    title: "CBSE Mathematics Class 9",
+    description:
+      "Foundation course for CBSE Class 9 Mathematics covering fundamental concepts and building strong mathematical base.",
+    curriculum: "CBSE",
+    subject: "Mathematics",
+    grade: "Class 9",
     isFree: true,
-    status: 'published',
-    instructor: 'Shri Arya Education',
-    duration: '100 hours',
+    status: "published",
+    instructor: "Shri Arya Education",
+    duration: "100 hours",
     lessons: 12,
-    thumbnail: '/images/courses/cbse-math-9.jpg',
+    thumbnail: "/images/courses/cbse-math-9.jpg",
     features: [
-      'NCERT syllabus coverage',
-      'Concept building approach',
-      'Interactive learning methods',
-      'Regular assessments'
+      "NCERT syllabus coverage",
+      "Concept building approach",
+      "Interactive learning methods",
+      "Regular assessments",
     ],
     prerequisites: [
-      'Basic arithmetic knowledge',
-      'Understanding of elementary geometry'
+      "Basic arithmetic knowledge",
+      "Understanding of elementary geometry",
     ],
     learningOutcomes: [
-      'Build strong mathematical foundation',
-      'Understand fundamental concepts clearly',
-      'Prepare for Class 10 Mathematics',
-      'Develop problem-solving skills'
+      "Build strong mathematical foundation",
+      "Understand fundamental concepts clearly",
+      "Prepare for Class 10 Mathematics",
+      "Develop problem-solving skills",
     ],
-    tags: ['CBSE', 'Mathematics', 'Class 9', 'Foundation', 'NCERT'],
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-10'
+    tags: ["CBSE", "Mathematics", "Class 9", "Foundation", "NCERT"],
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-10",
   },
-  'ibdp-mathematics-aa-hl': {
-    id: 'ibdp-mathematics-aa-hl',
-    slug: 'ibdp-mathematics-aa-hl',
-    title: 'IBDP Mathematics Analysis & Approaches HL',
-    description: 'Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches, calculus, and mathematical reasoning.',
-    curriculum: 'IBDP',
-    subject: 'Mathematics',
-    level: 'Analysis & Approaches HL',
+  "ibdp-mathematics-aa-hl": {
+    id: "ibdp-mathematics-aa-hl",
+    slug: "ibdp-mathematics-aa-hl",
+    title: "IBDP Mathematics Analysis & Approaches HL",
+    description:
+      "Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches, calculus, and mathematical reasoning.",
+    curriculum: "IBDP",
+    subject: "Mathematics",
+    level: "Analysis & Approaches HL",
     isFree: false,
     price: 399,
-    status: 'published',
-    instructor: 'Shri Arya Education',
-    duration: '250 hours',
-    lessons: 35,
-    thumbnail: '/images/courses/ibdp-math-aa-hl.jpg',
+    status: "published",
+    instructor: "Shri Arya Education",
+    duration: "250 hours",
+    lessons: 52,
+    thumbnail: "/images/courses/ibdp-math-aa-hl.jpg",
     features: [
-      'Complete IBDP AA HL curriculum',
-      'Advanced calculus and analysis',
-      'Complex numbers and sequences',
-      'University-level preparation',
-      'International assessment standards',
-      'Comprehensive problem-solving approach'
+      "Complete IBDP AA HL curriculum",
+      "Advanced calculus and analysis",
+      "Complex numbers and sequences",
+      "University-level preparation",
+      "International assessment standards",
+      "Comprehensive problem-solving approach",
     ],
     prerequisites: [
-      'Strong foundation in mathematics',
-      'Previous IBDP or equivalent experience',
-      'Advanced algebra and trigonometry knowledge',
-      'Basic calculus understanding'
+      "Strong foundation in mathematics",
+      "Previous IBDP or equivalent experience",
+      "Advanced algebra and trigonometry knowledge",
+      "Basic calculus understanding",
     ],
     learningOutcomes: [
-      'Master advanced mathematical concepts',
-      'Develop analytical thinking skills',
-      'Prepare for university mathematics',
-      'Excel in IBDP assessments',
-      'Apply mathematics to real-world problems'
+      "Master advanced mathematical concepts",
+      "Develop analytical thinking skills",
+      "Prepare for university mathematics",
+      "Excel in IBDP assessments",
+      "Apply mathematics to real-world problems",
     ],
-    tags: ['IBDP', 'Mathematics', 'Analysis & Approaches', 'HL', 'International', 'University Prep'],
-    createdAt: '2024-01-20',
-    updatedAt: '2024-01-20'
+    tags: [
+      "IBDP",
+      "Mathematics",
+      "Analysis & Approaches",
+      "HL",
+      "International",
+      "University Prep",
+    ],
+    createdAt: "2024-01-20",
+    updatedAt: "2024-01-20",
   },
-  'ibdp-mathematics-analysis-approaches-hl': {
-    id: 'ibdp-mathematics-analysis-approaches-hl',
-    slug: 'ibdp-mathematics-analysis-approaches-hl',
-    title: 'IBDP Mathematics Analysis & Approaches HL',
-    description: 'Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches and mathematical reasoning.',
-    curriculum: 'IBDP',
-    subject: 'Mathematics',
-    level: 'Analysis & Approaches HL',
+  "ibdp-mathematics-analysis-approaches-hl": {
+    id: "ibdp-mathematics-analysis-approaches-hl",
+    slug: "ibdp-mathematics-analysis-approaches-hl",
+    title: "IBDP Mathematics Analysis & Approaches HL",
+    description:
+      "Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches and mathematical reasoning.",
+    curriculum: "IBDP",
+    subject: "Mathematics",
+    level: "Analysis & Approaches HL",
     isFree: false,
     price: 299,
-    status: 'published',
-    instructor: 'Shri Arya Education',
-    duration: '200 hours',
+    status: "published",
+    instructor: "Shri Arya Education",
+    duration: "200 hours",
     lessons: 20,
-    thumbnail: '/images/courses/ibdp-math-hl.jpg',
+    thumbnail: "/images/courses/ibdp-math-hl.jpg",
     features: [
-      'IBDP curriculum alignment',
-      'Higher Level content',
-      'Mathematical analysis focus',
-      'University preparation',
-      'International standards'
+      "IBDP curriculum alignment",
+      "Higher Level content",
+      "Mathematical analysis focus",
+      "University preparation",
+      "International standards",
     ],
     prerequisites: [
-      'Strong foundation in mathematics',
-      'Previous IBDP or equivalent experience',
-      'Advanced problem-solving skills'
+      "Strong foundation in mathematics",
+      "Previous IBDP or equivalent experience",
+      "Advanced problem-solving skills",
     ],
     learningOutcomes: [
-      'Master IBDP Mathematics HL concepts',
-      'Develop analytical thinking',
-      'Prepare for university mathematics',
-      'Excel in IBDP examinations'
+      "Master IBDP Mathematics HL concepts",
+      "Develop analytical thinking",
+      "Prepare for university mathematics",
+      "Excel in IBDP examinations",
     ],
-    tags: ['IBDP', 'Mathematics', 'Higher Level', 'Analysis', 'International'],
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-20'
-  }
-}
+    tags: ["IBDP", "Mathematics", "Higher Level", "Analysis", "International"],
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-20",
+  },
+};
 
 // Lesson configurations for each course
 export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
-  'cbse-mathematics-class-10': [
+  "cbse-mathematics-class-10": [
     // Chapter 1: Real Numbers
     {
-      id: 'real-numbers-intro',
-      slug: 'real-numbers-intro',
-      title: 'Introduction to Real Numbers',
+      id: "real-numbers-intro",
+      slug: "real-numbers-intro",
+      title: "Introduction to Real Numbers",
       description: `
         <h3>Understanding Real Numbers</h3>
         <p>Real numbers form the foundation of mathematics. In this lesson, we'll explore:</p>
@@ -229,32 +240,32 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         <p>√2 ≈ 1.414213562... (non-terminating, non-repeating)</p>
         <p>1/3 = 0.333... (repeating decimal)</p>
       `,
-      duration: '45 minutes',
-      type: 'video',
+      duration: "45 minutes",
+      type: "video",
       isPreview: true,
       order: 1,
       resources: [
         {
-          id: 'real-numbers-video',
-          type: 'video',
-          url: 'https://www.youtube.com/watch?v=h2R3Boke8FY',
-          title: 'Real Numbers Introduction Video',
+          id: "real-numbers-video",
+          type: "video",
+          url: "https://www.youtube.com/watch?v=h2R3Boke8FY",
+          title: "Real Numbers Introduction Video",
           duration: 1800,
           isYouTube: true,
-          youtubeId: 'h2R3Boke8FY'
+          youtubeId: "h2R3Boke8FY",
         },
         {
-          id: 'real-numbers-pdf',
-          type: 'pdf',
-          url: '/pdfs/real-numbers-notes.pdf',
-          title: 'Real Numbers Study Notes'
-        }
-      ]
+          id: "real-numbers-pdf",
+          type: "pdf",
+          url: "/pdfs/real-numbers-notes.pdf",
+          title: "Real Numbers Study Notes",
+        },
+      ],
     },
     {
-      id: 'real-numbers-properties',
-      slug: 'real-numbers-properties',
-      title: 'Properties of Real Numbers',
+      id: "real-numbers-properties",
+      slug: "real-numbers-properties",
+      title: "Properties of Real Numbers",
       description: `
         <h3>Properties of Real Numbers</h3>
         <p>Real numbers follow several important properties:</p>
@@ -275,23 +286,23 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         <p>• (2 + 3) + 4 = 2 + (3 + 4) = 9 (Associative)</p>
         <p>• 2 × (3 + 4) = 2 × 3 + 2 × 4 = 14 (Distributive)</p>
       `,
-      duration: '40 minutes',
-      type: 'video',
+      duration: "40 minutes",
+      type: "video",
       isPreview: false,
       order: 2,
       resources: [
         {
-          id: 'properties-worksheet',
-          url: 'https://example.com/real-numbers-properties.pdf',
-          type: 'pdf',
-          title: 'Properties Worksheet'
-        }
-      ]
+          id: "properties-worksheet",
+          url: "https://example.com/real-numbers-properties.pdf",
+          type: "pdf",
+          title: "Properties Worksheet",
+        },
+      ],
     },
     {
-      id: 'euclid-division-lemma',
-      slug: 'euclid-division-lemma',
-      title: 'Euclid\'s Division Lemma',
+      id: "euclid-division-lemma",
+      slug: "euclid-division-lemma",
+      title: "Euclid's Division Lemma",
       description: `
         <h3>Euclid's Division Lemma</h3>
         <p>Euclid's Division Lemma is a fundamental theorem in number theory that states:</p>
@@ -311,24 +322,24 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         <p>17 = 5 × 3 + 2</p>
         <p>Here, q = 3 and r = 2 (since 0 ≤ 2 < 5)</p>
       `,
-      duration: '50 minutes',
-      type: 'video',
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 2,
       resources: [
         {
-          id: 'euclid-video',
-          type: 'video',
-          url: 'https://shrividhyaclasses.b-cdn.net/AI%20Enabled%20QPG.mp4',
-          title: 'Euclid\'s Division Lemma Video',
-          duration: 2000
-        }
-      ]
+          id: "euclid-video",
+          type: "video",
+          url: "https://shrividhyaclasses.b-cdn.net/AI%20Enabled%20QPG.mp4",
+          title: "Euclid's Division Lemma Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'fundamental-theorem-arithmetic',
-      slug: 'fundamental-theorem-arithmetic',
-      title: 'Fundamental Theorem of Arithmetic',
+      id: "fundamental-theorem-arithmetic",
+      slug: "fundamental-theorem-arithmetic",
+      title: "Fundamental Theorem of Arithmetic",
       description: `
         <h3>Fundamental Theorem of Arithmetic</h3>
         <p>The Fundamental Theorem of Arithmetic states that every integer greater than 1 can be expressed as a unique product of prime numbers.</p>
@@ -361,30 +372,30 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         <p>HCF = 2¹ × 3¹ = 6</p>
         <p>LCM = 2² × 3² = 36</p>
       `,
-      duration: '55 minutes',
-      type: 'video',
+      duration: "55 minutes",
+      type: "video",
       isPreview: false,
       order: 3,
       resources: [
         {
-          id: 'fta-video',
-          type: 'video',
-          url: '/videos/fundamental-theorem-arithmetic.mp4',
-          title: 'Fundamental Theorem of Arithmetic Video',
-          duration: 2200
+          id: "fta-video",
+          type: "video",
+          url: "/videos/fundamental-theorem-arithmetic.mp4",
+          title: "Fundamental Theorem of Arithmetic Video",
+          duration: 2200,
         },
         {
-          id: 'fta-worksheet',
-          type: 'pdf',
-          url: '/pdfs/fundamental-theorem-worksheet.pdf',
-          title: 'Prime Factorization Worksheet'
-        }
-      ]
+          id: "fta-worksheet",
+          type: "pdf",
+          url: "/pdfs/fundamental-theorem-worksheet.pdf",
+          title: "Prime Factorization Worksheet",
+        },
+      ],
     },
     {
-      id: 'real-numbers-quiz',
-      slug: 'real-numbers-quiz',
-      title: 'Real Numbers Interactive Quiz',
+      id: "real-numbers-quiz",
+      slug: "real-numbers-quiz",
+      title: "Real Numbers Interactive Quiz",
       description: `
         <h3>Real Numbers Interactive Quiz</h3>
         <p>Test your understanding of real numbers concepts with these interactive multiple choice questions.</p>
@@ -438,29 +449,29 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li>Understand decimal expansions</li>
         </ul>
       `,
-      duration: '30 minutes',
-      type: 'quiz',
+      duration: "30 minutes",
+      type: "quiz",
       isPreview: false,
       order: 5,
       resources: [
         {
-          id: 'real-numbers-quiz-interactive',
-          type: 'link',
-          url: '/interactive/real-numbers-quiz',
-          title: 'Interactive Real Numbers Quiz'
+          id: "real-numbers-quiz-interactive",
+          type: "link",
+          url: "/interactive/real-numbers-quiz",
+          title: "Interactive Real Numbers Quiz",
         },
         {
-          id: 'real-numbers-quiz-pdf',
-          type: 'pdf',
-          url: '/pdfs/real-numbers-quiz.pdf',
-          title: 'Real Numbers Quiz PDF'
-        }
-      ]
+          id: "real-numbers-quiz-pdf",
+          type: "pdf",
+          url: "/pdfs/real-numbers-quiz.pdf",
+          title: "Real Numbers Quiz PDF",
+        },
+      ],
     },
     {
-      id: 'real-numbers-practice',
-      slug: 'real-numbers-practice',
-      title: 'Real Numbers Practice Problems',
+      id: "real-numbers-practice",
+      slug: "real-numbers-practice",
+      title: "Real Numbers Practice Problems",
       description: `
         <h3>Real Numbers Practice Problems</h3>
         <p>Comprehensive practice problems covering all concepts of real numbers including rational and irrational numbers, properties, and applications.</p>
@@ -503,31 +514,31 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Properties:</strong> Apply commutative, associative, distributive laws</li>
         </ul>
       `,
-      duration: '60 minutes',
-      type: 'practice',
+      duration: "60 minutes",
+      type: "practice",
       isPreview: false,
       order: 6,
       resources: [
         {
-          id: 'practice-worksheet',
-          type: 'pdf',
-          url: '/pdfs/real-numbers-practice.pdf',
-          title: 'Practice Worksheet'
+          id: "practice-worksheet",
+          type: "pdf",
+          url: "/pdfs/real-numbers-practice.pdf",
+          title: "Practice Worksheet",
         },
         {
-          id: 'practice-solutions',
-          type: 'pdf',
-          url: '/pdfs/real-numbers-solutions.pdf',
-          title: 'Detailed Solutions'
-        }
-      ]
+          id: "practice-solutions",
+          type: "pdf",
+          url: "/pdfs/real-numbers-solutions.pdf",
+          title: "Detailed Solutions",
+        },
+      ],
     },
 
     // Chapter 2: Polynomials
     {
-      id: 'polynomials-intro',
-      slug: 'polynomials-intro',
-      title: 'Introduction to Polynomials',
+      id: "polynomials-intro",
+      slug: "polynomials-intro",
+      title: "Introduction to Polynomials",
       description: `
         <h3>Introduction to Polynomials</h3>
         <p>A polynomial is an algebraic expression consisting of variables and coefficients, involving only addition, subtraction, multiplication, and non-negative integer exponents.</p>
@@ -547,24 +558,24 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li>x⁴ + 3x² - 1 (Degree: 4, Leading coefficient: 1)</li>
         </ul>
       `,
-      duration: '40 minutes',
-      type: 'video',
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 5,
       resources: [
         {
-          id: 'polynomials-video',
-          type: 'video',
-          url: '/videos/polynomials-intro.mp4',
-          title: 'Polynomials Introduction Video',
-          duration: 1600
-        }
-      ]
+          id: "polynomials-video",
+          type: "video",
+          url: "/videos/polynomials-intro.mp4",
+          title: "Polynomials Introduction Video",
+          duration: 1600,
+        },
+      ],
     },
     {
-      id: 'polynomial-zeroes',
-      slug: 'polynomial-zeroes',
-      title: 'Zeroes of Polynomials',
+      id: "polynomial-zeroes",
+      slug: "polynomial-zeroes",
+      title: "Zeroes of Polynomials",
       description: `
         <h3>Zeroes of Polynomials</h3>
         <p>The zeroes (or roots) of a polynomial are the values of the variable that make the polynomial equal to zero.</p>
@@ -608,30 +619,30 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Product of zeroes:</strong> α × β = c/a</li>
         </ul>
       `,
-      duration: '50 minutes',
-      type: 'video',
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 6,
       resources: [
         {
-          id: 'zeroes-video',
-          type: 'video',
-          url: '/videos/polynomial-zeroes.mp4',
-          title: 'Zeroes of Polynomials Video',
-          duration: 2000
+          id: "zeroes-video",
+          type: "video",
+          url: "/videos/polynomial-zeroes.mp4",
+          title: "Zeroes of Polynomials Video",
+          duration: 2000,
         },
         {
-          id: 'zeroes-worksheet',
-          type: 'pdf',
-          url: '/pdfs/polynomial-zeroes-worksheet.pdf',
-          title: 'Zeroes Practice Worksheet'
-        }
-      ]
+          id: "zeroes-worksheet",
+          type: "pdf",
+          url: "/pdfs/polynomial-zeroes-worksheet.pdf",
+          title: "Zeroes Practice Worksheet",
+        },
+      ],
     },
     {
-      id: 'polynomials-practice',
-      slug: 'polynomials-practice',
-      title: 'Polynomials Practice Problems',
+      id: "polynomials-practice",
+      slug: "polynomials-practice",
+      title: "Polynomials Practice Problems",
       description: `
         <h3>Polynomials Practice Problems</h3>
         <p>Comprehensive practice problems covering polynomial concepts including degree, coefficients, zeroes, and factorization.</p>
@@ -673,31 +684,31 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Special Identities:</strong> Apply a² - b², (a + b)², etc.</li>
         </ul>
       `,
-      duration: '55 minutes',
-      type: 'practice',
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 7,
       resources: [
         {
-          id: 'polynomials-worksheet',
-          type: 'pdf',
-          url: '/pdfs/polynomials-practice.pdf',
-          title: 'Polynomials Practice Worksheet'
+          id: "polynomials-worksheet",
+          type: "pdf",
+          url: "/pdfs/polynomials-practice.pdf",
+          title: "Polynomials Practice Worksheet",
         },
         {
-          id: 'polynomials-solutions',
-          type: 'pdf',
-          url: '/pdfs/polynomials-solutions.pdf',
-          title: 'Detailed Solutions'
-        }
-      ]
+          id: "polynomials-solutions",
+          type: "pdf",
+          url: "/pdfs/polynomials-solutions.pdf",
+          title: "Detailed Solutions",
+        },
+      ],
     },
 
     // Chapter 3: Pair of Linear Equations in Two Variables
     {
-      id: 'linear-equations-intro',
-      slug: 'linear-equations-intro',
-      title: 'Introduction to Linear Equations',
+      id: "linear-equations-intro",
+      slug: "linear-equations-intro",
+      title: "Introduction to Linear Equations",
       description: `
         <h3>Introduction to Linear Equations in Two Variables</h3>
         <p>Linear equations in two variables are fundamental in algebra and have wide applications in real-world problems.</p>
@@ -748,30 +759,30 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Mixture Problems:</strong> Combining different quantities</li>
         </ul>
       `,
-      duration: '45 minutes',
-      type: 'video',
+      duration: "45 minutes",
+      type: "video",
       isPreview: true,
       order: 8,
       resources: [
         {
-          id: 'linear-video',
-          type: 'video',
-          url: '/videos/linear-equations-intro.mp4',
-          title: 'Linear Equations Introduction Video',
-          duration: 1800
+          id: "linear-video",
+          type: "video",
+          url: "/videos/linear-equations-intro.mp4",
+          title: "Linear Equations Introduction Video",
+          duration: 1800,
         },
         {
-          id: 'linear-notes',
-          type: 'pdf',
-          url: '/pdfs/linear-equations-notes.pdf',
-          title: 'Linear Equations Study Notes'
-        }
-      ]
+          id: "linear-notes",
+          type: "pdf",
+          url: "/pdfs/linear-equations-notes.pdf",
+          title: "Linear Equations Study Notes",
+        },
+      ],
     },
     {
-      id: 'graphical-method',
-      slug: 'graphical-method',
-      title: 'Graphical Method of Solution',
+      id: "graphical-method",
+      slug: "graphical-method",
+      title: "Graphical Method of Solution",
       description: `
         <h3>Graphical Method of Solving Linear Equations</h3>
         <p>The graphical method involves plotting both equations on the same coordinate plane and finding their point of intersection.</p>
@@ -821,127 +832,128 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Limitations:</strong> Not precise for exact solutions, time-consuming</li>
         </ul>
       `,
-      duration: '50 minutes',
-      type: 'video',
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 9,
       resources: [
         {
-          id: 'graphical-video',
-          type: 'video',
-          url: '/videos/graphical-method.mp4',
-          title: 'Graphical Method Video',
-          duration: 2000
+          id: "graphical-video",
+          type: "video",
+          url: "/videos/graphical-method.mp4",
+          title: "Graphical Method Video",
+          duration: 2000,
         },
         {
-          id: 'graphical-worksheet',
-          type: 'pdf',
-          url: '/pdfs/graphical-method-worksheet.pdf',
-          title: 'Graphical Method Worksheet'
-        }
-      ]
+          id: "graphical-worksheet",
+          type: "pdf",
+          url: "/pdfs/graphical-method-worksheet.pdf",
+          title: "Graphical Method Worksheet",
+        },
+      ],
     },
     {
-      id: 'algebraic-methods',
-      slug: 'algebraic-methods',
-      title: 'Algebraic Methods of Solution',
-      description: 'Substitution and elimination methods for solving linear equations.',
-      duration: '55 minutes',
-      type: 'video',
+      id: "algebraic-methods",
+      slug: "algebraic-methods",
+      title: "Algebraic Methods of Solution",
+      description:
+        "Substitution and elimination methods for solving linear equations.",
+      duration: "55 minutes",
+      type: "video",
       isPreview: false,
       order: 10,
       resources: [
         {
-          id: 'algebraic-video',
-          type: 'video',
-          url: '/videos/algebraic-methods.mp4',
-          title: 'Algebraic Methods Video',
-          duration: 2200
-        }
-      ]
+          id: "algebraic-video",
+          type: "video",
+          url: "/videos/algebraic-methods.mp4",
+          title: "Algebraic Methods Video",
+          duration: 2200,
+        },
+      ],
     },
     {
-      id: 'linear-equations-practice',
-      slug: 'linear-equations-practice',
-      title: 'Linear Equations Practice Problems',
-      description: 'Practice problems on solving linear equations.',
-      duration: '60 minutes',
-      type: 'practice',
+      id: "linear-equations-practice",
+      slug: "linear-equations-practice",
+      title: "Linear Equations Practice Problems",
+      description: "Practice problems on solving linear equations.",
+      duration: "60 minutes",
+      type: "practice",
       isPreview: false,
       order: 11,
       resources: [
         {
-          id: 'linear-worksheet',
-          type: 'pdf',
-          url: '/pdfs/linear-equations-practice.pdf',
-          title: 'Linear Equations Practice Worksheet'
-        }
-      ]
+          id: "linear-worksheet",
+          type: "pdf",
+          url: "/pdfs/linear-equations-practice.pdf",
+          title: "Linear Equations Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 4: Quadratic Equations
     {
-      id: 'quadratic-intro',
-      slug: 'quadratic-intro',
-      title: 'Introduction to Quadratic Equations',
-      description: 'Understanding quadratic equations and their standard form.',
-      duration: '40 minutes',
-      type: 'video',
+      id: "quadratic-intro",
+      slug: "quadratic-intro",
+      title: "Introduction to Quadratic Equations",
+      description: "Understanding quadratic equations and their standard form.",
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 12,
       resources: [
         {
-          id: 'quadratic-video',
-          type: 'video',
-          url: '/videos/quadratic-intro.mp4',
-          title: 'Quadratic Equations Introduction Video',
-          duration: 1600
-        }
-      ]
+          id: "quadratic-video",
+          type: "video",
+          url: "/videos/quadratic-intro.mp4",
+          title: "Quadratic Equations Introduction Video",
+          duration: 1600,
+        },
+      ],
     },
     {
-      id: 'quadratic-formula',
-      slug: 'quadratic-formula',
-      title: 'Quadratic Formula',
-      description: 'Derivation and application of the quadratic formula.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "quadratic-formula",
+      slug: "quadratic-formula",
+      title: "Quadratic Formula",
+      description: "Derivation and application of the quadratic formula.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 13,
       resources: [
         {
-          id: 'formula-video',
-          type: 'video',
-          url: '/videos/quadratic-formula.mp4',
-          title: 'Quadratic Formula Video',
-          duration: 2000
-        }
-      ]
+          id: "formula-video",
+          type: "video",
+          url: "/videos/quadratic-formula.mp4",
+          title: "Quadratic Formula Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'quadratic-practice',
-      slug: 'quadratic-practice',
-      title: 'Quadratic Equations Practice Problems',
-      description: 'Practice problems on solving quadratic equations.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "quadratic-practice",
+      slug: "quadratic-practice",
+      title: "Quadratic Equations Practice Problems",
+      description: "Practice problems on solving quadratic equations.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 14,
       resources: [
         {
-          id: 'quadratic-worksheet',
-          type: 'pdf',
-          url: '/pdfs/quadratic-practice.pdf',
-          title: 'Quadratic Equations Practice Worksheet'
-        }
-      ]
+          id: "quadratic-worksheet",
+          type: "pdf",
+          url: "/pdfs/quadratic-practice.pdf",
+          title: "Quadratic Equations Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 5: Arithmetic Progressions
     {
-      id: 'ap-intro',
-      slug: 'ap-intro',
-      title: 'Introduction to Arithmetic Progressions',
+      id: "ap-intro",
+      slug: "ap-intro",
+      title: "Introduction to Arithmetic Progressions",
       description: `
         <h3>Introduction to Arithmetic Progressions (AP)</h3>
         <p>An Arithmetic Progression is a sequence of numbers where the difference between consecutive terms is constant.</p>
@@ -991,30 +1003,30 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Pattern Recognition:</strong> Finding missing terms in sequences</li>
         </ul>
       `,
-      duration: '45 minutes',
-      type: 'video',
+      duration: "45 minutes",
+      type: "video",
       isPreview: true,
       order: 15,
       resources: [
         {
-          id: 'ap-video',
-          type: 'video',
-          url: '/videos/ap-intro.mp4',
-          title: 'Arithmetic Progressions Introduction Video',
-          duration: 1800
+          id: "ap-video",
+          type: "video",
+          url: "/videos/ap-intro.mp4",
+          title: "Arithmetic Progressions Introduction Video",
+          duration: 1800,
         },
         {
-          id: 'ap-notes',
-          type: 'pdf',
-          url: '/pdfs/ap-intro-notes.pdf',
-          title: 'AP Introduction Study Notes'
-        }
-      ]
+          id: "ap-notes",
+          type: "pdf",
+          url: "/pdfs/ap-intro-notes.pdf",
+          title: "AP Introduction Study Notes",
+        },
+      ],
     },
     {
-      id: 'ap-formulas',
-      slug: 'ap-formulas',
-      title: 'AP Formulas and Sum',
+      id: "ap-formulas",
+      slug: "ap-formulas",
+      title: "AP Formulas and Sum",
       description: `
         <h3>AP Formulas: nth Term and Sum of n Terms</h3>
         <p>Master the essential formulas for Arithmetic Progressions to solve problems efficiently.</p>
@@ -1076,30 +1088,30 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Sum of first n even numbers:</strong> Sₙ = n(n+1)</li>
         </ul>
       `,
-      duration: '50 minutes',
-      type: 'video',
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 16,
       resources: [
         {
-          id: 'ap-formulas-video',
-          type: 'video',
-          url: '/videos/ap-formulas.mp4',
-          title: 'AP Formulas Video',
-          duration: 2000
+          id: "ap-formulas-video",
+          type: "video",
+          url: "/videos/ap-formulas.mp4",
+          title: "AP Formulas Video",
+          duration: 2000,
         },
         {
-          id: 'ap-formulas-worksheet',
-          type: 'pdf',
-          url: '/pdfs/ap-formulas-worksheet.pdf',
-          title: 'AP Formulas Worksheet'
-        }
-      ]
+          id: "ap-formulas-worksheet",
+          type: "pdf",
+          url: "/pdfs/ap-formulas-worksheet.pdf",
+          title: "AP Formulas Worksheet",
+        },
+      ],
     },
     {
-      id: 'ap-practice',
-      slug: 'ap-practice',
-      title: 'Arithmetic Progressions Practice Problems',
+      id: "ap-practice",
+      slug: "ap-practice",
+      title: "Arithmetic Progressions Practice Problems",
       description: `
         <h3>Arithmetic Progressions Practice Problems</h3>
         <p>Comprehensive practice problems covering all aspects of Arithmetic Progressions including finding terms, sums, and solving word problems.</p>
@@ -1147,31 +1159,31 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li>Calculation errors in arithmetic operations</li>
         </ul>
       `,
-      duration: '55 minutes',
-      type: 'practice',
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 17,
       resources: [
         {
-          id: 'ap-worksheet',
-          type: 'pdf',
-          url: '/pdfs/ap-practice.pdf',
-          title: 'AP Practice Worksheet'
+          id: "ap-worksheet",
+          type: "pdf",
+          url: "/pdfs/ap-practice.pdf",
+          title: "AP Practice Worksheet",
         },
         {
-          id: 'ap-solutions',
-          type: 'pdf',
-          url: '/pdfs/ap-solutions.pdf',
-          title: 'Detailed Solutions'
-        }
-      ]
+          id: "ap-solutions",
+          type: "pdf",
+          url: "/pdfs/ap-solutions.pdf",
+          title: "Detailed Solutions",
+        },
+      ],
     },
 
     // Chapter 6: Triangles
     {
-      id: 'triangles-intro',
-      slug: 'triangles-intro',
-      title: 'Introduction to Triangles',
+      id: "triangles-intro",
+      slug: "triangles-intro",
+      title: "Introduction to Triangles",
       description: `
         <h3>Introduction to Triangles and Similarity</h3>
         <p>Triangles are fundamental geometric shapes with important properties and relationships that form the basis of many geometric proofs and applications.</p>
@@ -1230,127 +1242,127 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
           <li><strong>Photography:</strong> Maintaining aspect ratios</li>
         </ul>
       `,
-      duration: '40 minutes',
-      type: 'video',
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 18,
       resources: [
         {
-          id: 'triangles-video',
-          type: 'video',
-          url: '/videos/triangles-intro.mp4',
-          title: 'Triangles Introduction Video',
-          duration: 1600
+          id: "triangles-video",
+          type: "video",
+          url: "/videos/triangles-intro.mp4",
+          title: "Triangles Introduction Video",
+          duration: 1600,
         },
         {
-          id: 'triangles-notes',
-          type: 'pdf',
-          url: '/pdfs/triangles-intro-notes.pdf',
-          title: 'Triangles Study Notes'
-        }
-      ]
+          id: "triangles-notes",
+          type: "pdf",
+          url: "/pdfs/triangles-intro-notes.pdf",
+          title: "Triangles Study Notes",
+        },
+      ],
     },
     {
-      id: 'similarity-triangles',
-      slug: 'similarity-triangles',
-      title: 'Similarity of Triangles',
-      description: 'Understanding similar triangles and their properties.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "similarity-triangles",
+      slug: "similarity-triangles",
+      title: "Similarity of Triangles",
+      description: "Understanding similar triangles and their properties.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 19,
       resources: [
         {
-          id: 'similarity-video',
-          type: 'video',
-          url: '/videos/similarity-triangles.mp4',
-          title: 'Similarity of Triangles Video',
-          duration: 2000
-        }
-      ]
+          id: "similarity-video",
+          type: "video",
+          url: "/videos/similarity-triangles.mp4",
+          title: "Similarity of Triangles Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'triangles-practice',
-      slug: 'triangles-practice',
-      title: 'Triangles Practice Problems',
-      description: 'Practice problems on triangles and similarity.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "triangles-practice",
+      slug: "triangles-practice",
+      title: "Triangles Practice Problems",
+      description: "Practice problems on triangles and similarity.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 20,
       resources: [
         {
-          id: 'triangles-worksheet',
-          type: 'pdf',
-          url: '/pdfs/triangles-practice.pdf',
-          title: 'Triangles Practice Worksheet'
-        }
-      ]
+          id: "triangles-worksheet",
+          type: "pdf",
+          url: "/pdfs/triangles-practice.pdf",
+          title: "Triangles Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 7: Coordinate Geometry
     {
-      id: 'coordinate-intro',
-      slug: 'coordinate-intro',
-      title: 'Introduction to Coordinate Geometry',
-      description: 'Understanding coordinate system and plotting points.',
-      duration: '40 minutes',
-      type: 'video',
+      id: "coordinate-intro",
+      slug: "coordinate-intro",
+      title: "Introduction to Coordinate Geometry",
+      description: "Understanding coordinate system and plotting points.",
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 21,
       resources: [
         {
-          id: 'coordinate-video',
-          type: 'video',
-          url: '/videos/coordinate-intro.mp4',
-          title: 'Coordinate Geometry Introduction Video',
-          duration: 1600
-        }
-      ]
+          id: "coordinate-video",
+          type: "video",
+          url: "/videos/coordinate-intro.mp4",
+          title: "Coordinate Geometry Introduction Video",
+          duration: 1600,
+        },
+      ],
     },
     {
-      id: 'distance-formula',
-      slug: 'distance-formula',
-      title: 'Distance Formula',
-      description: 'Learning distance formula and its applications.',
-      duration: '45 minutes',
-      type: 'video',
+      id: "distance-formula",
+      slug: "distance-formula",
+      title: "Distance Formula",
+      description: "Learning distance formula and its applications.",
+      duration: "45 minutes",
+      type: "video",
       isPreview: false,
       order: 22,
       resources: [
         {
-          id: 'distance-video',
-          type: 'video',
-          url: '/videos/distance-formula.mp4',
-          title: 'Distance Formula Video',
-          duration: 1800
-        }
-      ]
+          id: "distance-video",
+          type: "video",
+          url: "/videos/distance-formula.mp4",
+          title: "Distance Formula Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'coordinate-practice',
-      slug: 'coordinate-practice',
-      title: 'Coordinate Geometry Practice Problems',
-      description: 'Practice problems on coordinate geometry.',
-      duration: '50 minutes',
-      type: 'practice',
+      id: "coordinate-practice",
+      slug: "coordinate-practice",
+      title: "Coordinate Geometry Practice Problems",
+      description: "Practice problems on coordinate geometry.",
+      duration: "50 minutes",
+      type: "practice",
       isPreview: false,
       order: 23,
       resources: [
         {
-          id: 'coordinate-worksheet',
-          type: 'pdf',
-          url: '/pdfs/coordinate-practice.pdf',
-          title: 'Coordinate Geometry Practice Worksheet'
-        }
-      ]
+          id: "coordinate-worksheet",
+          type: "pdf",
+          url: "/pdfs/coordinate-practice.pdf",
+          title: "Coordinate Geometry Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 8: Introduction to Trigonometry
     {
-      id: 'trigonometry-intro',
-      slug: 'trigonometry-intro',
-      title: 'Introduction to Trigonometry',
+      id: "trigonometry-intro",
+      slug: "trigonometry-intro",
+      title: "Introduction to Trigonometry",
       description: `
         <h3>Introduction to Trigonometry</h3>
         <p>Trigonometry is the branch of mathematics that deals with the relationships between the sides and angles of triangles.</p>
@@ -1391,693 +1403,1823 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
         <h4>Fundamental Identity:</h4>
         <p><strong>sin²θ + cos²θ = 1</strong></p>
       `,
-      duration: '45 minutes',
-      type: 'video',
+      duration: "45 minutes",
+      type: "video",
       isPreview: true,
       order: 24,
       resources: [
         {
-          id: 'trig-video',
-          type: 'video',
-          url: '/videos/trigonometry-intro.mp4',
-          title: 'Trigonometry Introduction Video',
-          duration: 1800
-        }
-      ]
+          id: "trig-video",
+          type: "video",
+          url: "/videos/trigonometry-intro.mp4",
+          title: "Trigonometry Introduction Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'trigonometric-ratios',
-      slug: 'trigonometric-ratios',
-      title: 'Trigonometric Ratios',
-      description: 'Learning sine, cosine, tangent and their relationships.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "trigonometric-ratios",
+      slug: "trigonometric-ratios",
+      title: "Trigonometric Ratios",
+      description: "Learning sine, cosine, tangent and their relationships.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 25,
       resources: [
         {
-          id: 'ratios-video',
-          type: 'video',
-          url: '/videos/trigonometric-ratios.mp4',
-          title: 'Trigonometric Ratios Video',
-          duration: 2000
-        }
-      ]
+          id: "ratios-video",
+          type: "video",
+          url: "/videos/trigonometric-ratios.mp4",
+          title: "Trigonometric Ratios Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'trigonometry-practice',
-      slug: 'trigonometry-practice',
-      title: 'Trigonometry Practice Problems',
-      description: 'Practice problems on trigonometric ratios.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "trigonometry-practice",
+      slug: "trigonometry-practice",
+      title: "Trigonometry Practice Problems",
+      description: "Practice problems on trigonometric ratios.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 26,
       resources: [
         {
-          id: 'trig-worksheet',
-          type: 'pdf',
-          url: '/pdfs/trigonometry-practice.pdf',
-          title: 'Trigonometry Practice Worksheet'
-        }
-      ]
+          id: "trig-worksheet",
+          type: "pdf",
+          url: "/pdfs/trigonometry-practice.pdf",
+          title: "Trigonometry Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 9: Some Applications of Trigonometry
     {
-      id: 'trig-applications',
-      slug: 'trig-applications',
-      title: 'Applications of Trigonometry',
-      description: 'Real-world applications of trigonometry in heights and distances.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "trig-applications",
+      slug: "trig-applications",
+      title: "Applications of Trigonometry",
+      description:
+        "Real-world applications of trigonometry in heights and distances.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 27,
       resources: [
         {
-          id: 'applications-video',
-          type: 'video',
-          url: '/videos/trig-applications.mp4',
-          title: 'Trigonometry Applications Video',
-          duration: 2000
-        }
-      ]
+          id: "applications-video",
+          type: "video",
+          url: "/videos/trig-applications.mp4",
+          title: "Trigonometry Applications Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'trig-applications-practice',
-      slug: 'trig-applications-practice',
-      title: 'Trigonometry Applications Practice',
-      description: 'Practice problems on trigonometry applications.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "trig-applications-practice",
+      slug: "trig-applications-practice",
+      title: "Trigonometry Applications Practice",
+      description: "Practice problems on trigonometry applications.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 28,
       resources: [
         {
-          id: 'applications-worksheet',
-          type: 'pdf',
-          url: '/pdfs/trig-applications-practice.pdf',
-          title: 'Trigonometry Applications Practice Worksheet'
-        }
-      ]
+          id: "applications-worksheet",
+          type: "pdf",
+          url: "/pdfs/trig-applications-practice.pdf",
+          title: "Trigonometry Applications Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 10: Circles
     {
-      id: 'circles-intro',
-      slug: 'circles-intro',
-      title: 'Introduction to Circles',
-      description: 'Understanding circles and their properties.',
-      duration: '40 minutes',
-      type: 'video',
+      id: "circles-intro",
+      slug: "circles-intro",
+      title: "Introduction to Circles",
+      description: "Understanding circles and their properties.",
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 29,
       resources: [
         {
-          id: 'circles-video',
-          type: 'video',
-          url: '/videos/circles-intro.mp4',
-          title: 'Circles Introduction Video',
-          duration: 1600
-        }
-      ]
+          id: "circles-video",
+          type: "video",
+          url: "/videos/circles-intro.mp4",
+          title: "Circles Introduction Video",
+          duration: 1600,
+        },
+      ],
     },
     {
-      id: 'circle-theorems',
-      slug: 'circle-theorems',
-      title: 'Circle Theorems',
-      description: 'Learning important theorems related to circles.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "circle-theorems",
+      slug: "circle-theorems",
+      title: "Circle Theorems",
+      description: "Learning important theorems related to circles.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 30,
       resources: [
         {
-          id: 'theorems-video',
-          type: 'video',
-          url: '/videos/circle-theorems.mp4',
-          title: 'Circle Theorems Video',
-          duration: 2000
-        }
-      ]
+          id: "theorems-video",
+          type: "video",
+          url: "/videos/circle-theorems.mp4",
+          title: "Circle Theorems Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'circles-practice',
-      slug: 'circles-practice',
-      title: 'Circles Practice Problems',
-      description: 'Practice problems on circles and their properties.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "circles-practice",
+      slug: "circles-practice",
+      title: "Circles Practice Problems",
+      description: "Practice problems on circles and their properties.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 31,
       resources: [
         {
-          id: 'circles-worksheet',
-          type: 'pdf',
-          url: '/pdfs/circles-practice.pdf',
-          title: 'Circles Practice Worksheet'
-        }
-      ]
+          id: "circles-worksheet",
+          type: "pdf",
+          url: "/pdfs/circles-practice.pdf",
+          title: "Circles Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 11: Constructions
     {
-      id: 'constructions-intro',
-      slug: 'constructions-intro',
-      title: 'Introduction to Constructions',
-      description: 'Learning geometric constructions using compass and ruler.',
-      duration: '45 minutes',
-      type: 'video',
+      id: "constructions-intro",
+      slug: "constructions-intro",
+      title: "Introduction to Constructions",
+      description: "Learning geometric constructions using compass and ruler.",
+      duration: "45 minutes",
+      type: "video",
       isPreview: false,
       order: 32,
       resources: [
         {
-          id: 'constructions-video',
-          type: 'video',
-          url: '/videos/constructions-intro.mp4',
-          title: 'Constructions Introduction Video',
-          duration: 1800
-        }
-      ]
+          id: "constructions-video",
+          type: "video",
+          url: "/videos/constructions-intro.mp4",
+          title: "Constructions Introduction Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'constructions-practice',
-      slug: 'constructions-practice',
-      title: 'Constructions Practice',
-      description: 'Practice geometric constructions.',
-      duration: '50 minutes',
-      type: 'practice',
+      id: "constructions-practice",
+      slug: "constructions-practice",
+      title: "Constructions Practice",
+      description: "Practice geometric constructions.",
+      duration: "50 minutes",
+      type: "practice",
       isPreview: false,
       order: 33,
       resources: [
         {
-          id: 'constructions-worksheet',
-          type: 'pdf',
-          url: '/pdfs/constructions-practice.pdf',
-          title: 'Constructions Practice Worksheet'
-        }
-      ]
+          id: "constructions-worksheet",
+          type: "pdf",
+          url: "/pdfs/constructions-practice.pdf",
+          title: "Constructions Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 12: Areas Related to Circles
     {
-      id: 'circle-areas-intro',
-      slug: 'circle-areas-intro',
-      title: 'Areas Related to Circles',
-      description: 'Calculating areas of sectors and segments of circles.',
-      duration: '45 minutes',
-      type: 'video',
+      id: "circle-areas-intro",
+      slug: "circle-areas-intro",
+      title: "Areas Related to Circles",
+      description: "Calculating areas of sectors and segments of circles.",
+      duration: "45 minutes",
+      type: "video",
       isPreview: false,
       order: 34,
       resources: [
         {
-          id: 'areas-video',
-          type: 'video',
-          url: '/videos/circle-areas-intro.mp4',
-          title: 'Circle Areas Video',
-          duration: 1800
-        }
-      ]
+          id: "areas-video",
+          type: "video",
+          url: "/videos/circle-areas-intro.mp4",
+          title: "Circle Areas Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'circle-areas-practice',
-      slug: 'circle-areas-practice',
-      title: 'Circle Areas Practice Problems',
-      description: 'Practice problems on areas related to circles.',
-      duration: '50 minutes',
-      type: 'practice',
+      id: "circle-areas-practice",
+      slug: "circle-areas-practice",
+      title: "Circle Areas Practice Problems",
+      description: "Practice problems on areas related to circles.",
+      duration: "50 minutes",
+      type: "practice",
       isPreview: false,
       order: 35,
       resources: [
         {
-          id: 'areas-worksheet',
-          type: 'pdf',
-          url: '/pdfs/circle-areas-practice.pdf',
-          title: 'Circle Areas Practice Worksheet'
-        }
-      ]
+          id: "areas-worksheet",
+          type: "pdf",
+          url: "/pdfs/circle-areas-practice.pdf",
+          title: "Circle Areas Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 13: Surface Areas and Volumes
     {
-      id: 'surface-volumes-intro',
-      slug: 'surface-volumes-intro',
-      title: 'Surface Areas and Volumes',
-      description: 'Calculating surface areas and volumes of 3D shapes.',
-      duration: '50 minutes',
-      type: 'video',
+      id: "surface-volumes-intro",
+      slug: "surface-volumes-intro",
+      title: "Surface Areas and Volumes",
+      description: "Calculating surface areas and volumes of 3D shapes.",
+      duration: "50 minutes",
+      type: "video",
       isPreview: false,
       order: 36,
       resources: [
         {
-          id: 'surface-video',
-          type: 'video',
-          url: '/videos/surface-volumes-intro.mp4',
-          title: 'Surface Areas and Volumes Video',
-          duration: 2000
-        }
-      ]
+          id: "surface-video",
+          type: "video",
+          url: "/videos/surface-volumes-intro.mp4",
+          title: "Surface Areas and Volumes Video",
+          duration: 2000,
+        },
+      ],
     },
     {
-      id: 'surface-volumes-practice',
-      slug: 'surface-volumes-practice',
-      title: 'Surface Areas and Volumes Practice',
-      description: 'Practice problems on surface areas and volumes.',
-      duration: '55 minutes',
-      type: 'practice',
+      id: "surface-volumes-practice",
+      slug: "surface-volumes-practice",
+      title: "Surface Areas and Volumes Practice",
+      description: "Practice problems on surface areas and volumes.",
+      duration: "55 minutes",
+      type: "practice",
       isPreview: false,
       order: 37,
       resources: [
         {
-          id: 'surface-worksheet',
-          type: 'pdf',
-          url: '/pdfs/surface-volumes-practice.pdf',
-          title: 'Surface Areas and Volumes Practice Worksheet'
-        }
-      ]
+          id: "surface-worksheet",
+          type: "pdf",
+          url: "/pdfs/surface-volumes-practice.pdf",
+          title: "Surface Areas and Volumes Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 14: Statistics
     {
-      id: 'statistics-intro',
-      slug: 'statistics-intro',
-      title: 'Introduction to Statistics',
-      description: 'Understanding mean, median, mode and their applications.',
-      duration: '45 minutes',
-      type: 'video',
+      id: "statistics-intro",
+      slug: "statistics-intro",
+      title: "Introduction to Statistics",
+      description: "Understanding mean, median, mode and their applications.",
+      duration: "45 minutes",
+      type: "video",
       isPreview: false,
       order: 38,
       resources: [
         {
-          id: 'stats-video',
-          type: 'video',
-          url: '/videos/statistics-intro.mp4',
-          title: 'Statistics Introduction Video',
-          duration: 1800
-        }
-      ]
+          id: "stats-video",
+          type: "video",
+          url: "/videos/statistics-intro.mp4",
+          title: "Statistics Introduction Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'statistics-practice',
-      slug: 'statistics-practice',
-      title: 'Statistics Practice Problems',
-      description: 'Practice problems on statistics.',
-      duration: '50 minutes',
-      type: 'practice',
+      id: "statistics-practice",
+      slug: "statistics-practice",
+      title: "Statistics Practice Problems",
+      description: "Practice problems on statistics.",
+      duration: "50 minutes",
+      type: "practice",
       isPreview: false,
       order: 39,
       resources: [
         {
-          id: 'stats-worksheet',
-          type: 'pdf',
-          url: '/pdfs/statistics-practice.pdf',
-          title: 'Statistics Practice Worksheet'
-        }
-      ]
+          id: "stats-worksheet",
+          type: "pdf",
+          url: "/pdfs/statistics-practice.pdf",
+          title: "Statistics Practice Worksheet",
+        },
+      ],
     },
 
     // Chapter 15: Probability
     {
-      id: 'probability-intro',
-      slug: 'probability-intro',
-      title: 'Introduction to Probability',
-      description: 'Understanding probability and its applications.',
-      duration: '45 minutes',
-      type: 'video',
+      id: "probability-intro",
+      slug: "probability-intro",
+      title: "Introduction to Probability",
+      description: "Understanding probability and its applications.",
+      duration: "45 minutes",
+      type: "video",
       isPreview: false,
       order: 40,
       resources: [
         {
-          id: 'probability-video',
-          type: 'video',
-          url: '/videos/probability-intro.mp4',
-          title: 'Probability Introduction Video',
-          duration: 1800
-        }
-      ]
+          id: "probability-video",
+          type: "video",
+          url: "/videos/probability-intro.mp4",
+          title: "Probability Introduction Video",
+          duration: 1800,
+        },
+      ],
     },
     {
-      id: 'probability-practice',
-      slug: 'probability-practice',
-      title: 'Probability Practice Problems',
-      description: 'Practice problems on probability.',
-      duration: '50 minutes',
-      type: 'practice',
+      id: "probability-practice",
+      slug: "probability-practice",
+      title: "Probability Practice Problems",
+      description: "Practice problems on probability.",
+      duration: "50 minutes",
+      type: "practice",
       isPreview: false,
       order: 41,
       resources: [
         {
-          id: 'probability-worksheet',
-          type: 'pdf',
-          url: '/pdfs/probability-practice.pdf',
-          title: 'Probability Practice Worksheet'
-        }
-      ]
+          id: "probability-worksheet",
+          type: "pdf",
+          url: "/pdfs/probability-practice.pdf",
+          title: "Probability Practice Worksheet",
+        },
+      ],
     },
 
     // Mock Tests and Assessments
     {
-      id: 'mock-test-1',
-      slug: 'mock-test-1',
-      title: 'Mock Test 1 - Chapters 1-5',
-      description: 'Comprehensive mock test covering first 5 chapters.',
-      duration: '180 minutes',
-      type: 'quiz',
+      id: "mock-test-1",
+      slug: "mock-test-1",
+      title: "Mock Test 1 - Chapters 1-5",
+      description: "Comprehensive mock test covering first 5 chapters.",
+      duration: "180 minutes",
+      type: "quiz",
       isPreview: false,
       order: 42,
       resources: [
         {
-          id: 'mock-test-1-pdf',
-          type: 'pdf',
-          url: '/pdfs/mock-test-1.pdf',
-          title: 'Mock Test 1 Question Paper'
-        }
-      ]
+          id: "mock-test-1-pdf",
+          type: "pdf",
+          url: "/pdfs/mock-test-1.pdf",
+          title: "Mock Test 1 Question Paper",
+        },
+      ],
     },
     {
-      id: 'mock-test-2',
-      slug: 'mock-test-2',
-      title: 'Mock Test 2 - Chapters 6-10',
-      description: 'Comprehensive mock test covering chapters 6-10.',
-      duration: '180 minutes',
-      type: 'quiz',
+      id: "mock-test-2",
+      slug: "mock-test-2",
+      title: "Mock Test 2 - Chapters 6-10",
+      description: "Comprehensive mock test covering chapters 6-10.",
+      duration: "180 minutes",
+      type: "quiz",
       isPreview: false,
       order: 43,
       resources: [
         {
-          id: 'mock-test-2-pdf',
-          type: 'pdf',
-          url: '/pdfs/mock-test-2.pdf',
-          title: 'Mock Test 2 Question Paper'
-        }
-      ]
+          id: "mock-test-2-pdf",
+          type: "pdf",
+          url: "/pdfs/mock-test-2.pdf",
+          title: "Mock Test 2 Question Paper",
+        },
+      ],
     },
     {
-      id: 'mock-test-3',
-      slug: 'mock-test-3',
-      title: 'Mock Test 3 - Chapters 11-15',
-      description: 'Comprehensive mock test covering chapters 11-15.',
-      duration: '180 minutes',
-      type: 'quiz',
+      id: "mock-test-3",
+      slug: "mock-test-3",
+      title: "Mock Test 3 - Chapters 11-15",
+      description: "Comprehensive mock test covering chapters 11-15.",
+      duration: "180 minutes",
+      type: "quiz",
       isPreview: false,
       order: 44,
       resources: [
         {
-          id: 'mock-test-3-pdf',
-          type: 'pdf',
-          url: '/pdfs/mock-test-3.pdf',
-          title: 'Mock Test 3 Question Paper'
-        }
-      ]
+          id: "mock-test-3-pdf",
+          type: "pdf",
+          url: "/pdfs/mock-test-3.pdf",
+          title: "Mock Test 3 Question Paper",
+        },
+      ],
     },
     {
-      id: 'final-mock-test',
-      slug: 'final-mock-test',
-      title: 'Final Mock Test - Complete Syllabus',
-      description: 'Complete syllabus mock test for board exam preparation.',
-      duration: '180 minutes',
-      type: 'quiz',
+      id: "final-mock-test",
+      slug: "final-mock-test",
+      title: "Final Mock Test - Complete Syllabus",
+      description: "Complete syllabus mock test for board exam preparation.",
+      duration: "180 minutes",
+      type: "quiz",
       isPreview: false,
       order: 45,
       resources: [
         {
-          id: 'final-mock-test-pdf',
-          type: 'pdf',
-          url: '/pdfs/final-mock-test.pdf',
-          title: 'Final Mock Test Question Paper'
-        }
-      ]
-    }
+          id: "final-mock-test-pdf",
+          type: "pdf",
+          url: "/pdfs/final-mock-test.pdf",
+          title: "Final Mock Test Question Paper",
+        },
+      ],
+    },
   ],
-  'cbse-mathematics-class-9': [
+  "cbse-mathematics-class-9": [
     {
-      id: 'number-systems',
-      slug: 'number-systems',
-      title: 'Number Systems',
-      description: 'Introduction to different types of numbers and their properties.',
-      duration: '40 minutes',
-      type: 'video',
+      id: "number-systems",
+      slug: "number-systems",
+      title: "Number Systems",
+      description:
+        "Introduction to different types of numbers and their properties.",
+      duration: "40 minutes",
+      type: "video",
       isPreview: true,
       order: 1,
       resources: [
         {
-          id: 'number-systems-video',
-          type: 'video',
-          url: '/videos/number-systems.mp4',
-          title: 'Number Systems Video',
-          duration: 1600
-        }
-      ]
-    }
+          id: "number-systems-video",
+          type: "video",
+          url: "/videos/number-systems.mp4",
+          title: "Number Systems Video",
+          duration: 1600,
+        },
+      ],
+    },
   ],
-  'ibdp-mathematics-analysis-approaches-hl': [
+  "ibdp-mathematics-aa-hl": [
+    // Number and Algebra - Sequences and Series
     {
-      id: 'functions-and-graphs',
-      slug: 'functions-and-graphs',
-      title: 'Functions and Graphs',
-      description: 'Advanced study of functions, their properties, and graphical representations.',
-      duration: '90 minutes',
-      type: 'video',
+      id: "arithmetic-sequences",
+      slug: "arithmetic-sequences",
+      title: "Arithmetic Sequences",
+      description:
+        "Understanding arithmetic sequences, their properties, and applications.",
+      duration: "60 minutes",
+      type: "video",
       isPreview: true,
       order: 1,
       resources: [
         {
-          id: 'functions-video',
-          type: 'video',
-          url: '/videos/functions-graphs.mp4',
-          title: 'Functions and Graphs Video',
-          duration: 3600
-        }
-      ]
-    }
-  ]
-}
+          id: "arithmetic-sequences-video",
+          type: "video",
+          url: "/videos/arithmetic-sequences.mp4",
+          title: "Arithmetic Sequences Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "geometric-sequences",
+      slug: "geometric-sequences",
+      title: "Geometric Sequences",
+      description:
+        "Learning geometric sequences, common ratios, and their properties.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 2,
+      resources: [
+        {
+          id: "geometric-sequences-video",
+          type: "video",
+          url: "/videos/geometric-sequences.mp4",
+          title: "Geometric Sequences Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "infinite-series",
+      slug: "infinite-series",
+      title: "Infinite Series",
+      description:
+        "Understanding convergence and divergence of infinite series.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 3,
+      resources: [
+        {
+          id: "infinite-series-video",
+          type: "video",
+          url: "/videos/infinite-series.mp4",
+          title: "Infinite Series Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Number and Algebra - Complex Numbers
+    {
+      id: "complex-numbers-intro",
+      slug: "complex-numbers-intro",
+      title: "Introduction to Complex Numbers",
+      description:
+        "Understanding complex numbers, their representation, and basic operations.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: true,
+      order: 4,
+      resources: [
+        {
+          id: "complex-numbers-intro-video",
+          type: "video",
+          url: "/videos/complex-numbers-intro.mp4",
+          title: "Complex Numbers Introduction Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "complex-operations",
+      slug: "complex-operations",
+      title: "Operations with Complex Numbers",
+      description:
+        "Addition, subtraction, multiplication, and division of complex numbers.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 5,
+      resources: [
+        {
+          id: "complex-operations-video",
+          type: "video",
+          url: "/videos/complex-operations.mp4",
+          title: "Complex Operations Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "polar-form",
+      slug: "polar-form",
+      title: "Polar Form of Complex Numbers",
+      description:
+        "Converting complex numbers to polar form and understanding De Moivre's theorem.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 6,
+      resources: [
+        {
+          id: "polar-form-video",
+          type: "video",
+          url: "/videos/polar-form.mp4",
+          title: "Polar Form Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Functions - Linear Functions
+    {
+      id: "linear-functions",
+      slug: "linear-functions",
+      title: "Linear Functions",
+      description:
+        "Understanding linear functions, their graphs, and properties.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: true,
+      order: 7,
+      resources: [
+        {
+          id: "linear-functions-video",
+          type: "video",
+          url: "/videos/linear-functions.mp4",
+          title: "Linear Functions Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "quadratic-functions",
+      slug: "quadratic-functions",
+      title: "Quadratic Functions",
+      description:
+        "Quadratic functions, their graphs, vertex form, and applications.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 8,
+      resources: [
+        {
+          id: "quadratic-functions-video",
+          type: "video",
+          url: "/videos/quadratic-functions.mp4",
+          title: "Quadratic Functions Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "exponential-functions",
+      slug: "exponential-functions",
+      title: "Exponential Functions",
+      description:
+        "Exponential functions, their properties, and applications in real-world problems.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 9,
+      resources: [
+        {
+          id: "exponential-functions-video",
+          type: "video",
+          url: "/videos/exponential-functions.mp4",
+          title: "Exponential Functions Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "logarithmic-functions",
+      slug: "logarithmic-functions",
+      title: "Logarithmic Functions",
+      description:
+        "Logarithmic functions, their properties, and relationship with exponential functions.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 10,
+      resources: [
+        {
+          id: "logarithmic-functions-video",
+          type: "video",
+          url: "/videos/logarithmic-functions.mp4",
+          title: "Logarithmic Functions Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Functions - Trigonometric Functions
+    {
+      id: "trigonometric-functions",
+      slug: "trigonometric-functions",
+      title: "Trigonometric Functions",
+      description: "Sine, cosine, tangent functions and their graphs.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: true,
+      order: 11,
+      resources: [
+        {
+          id: "trigonometric-functions-video",
+          type: "video",
+          url: "/videos/trigonometric-functions.mp4",
+          title: "Trigonometric Functions Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "trigonometric-identities",
+      slug: "trigonometric-identities",
+      title: "Trigonometric Identities",
+      description:
+        "Fundamental trigonometric identities and their applications.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 12,
+      resources: [
+        {
+          id: "trigonometric-identities-video",
+          type: "video",
+          url: "/videos/trigonometric-identities.mp4",
+          title: "Trigonometric Identities Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "trigonometric-equations",
+      slug: "trigonometric-equations",
+      title: "Trigonometric Equations",
+      description: "Solving trigonometric equations and their applications.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 13,
+      resources: [
+        {
+          id: "trigonometric-equations-video",
+          type: "video",
+          url: "/videos/trigonometric-equations.mp4",
+          title: "Trigonometric Equations Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Geometry and Trigonometry - Vectors
+    {
+      id: "vectors-intro",
+      slug: "vectors-intro",
+      title: "Introduction to Vectors",
+      description:
+        "Understanding vectors, their representation, and basic operations.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: true,
+      order: 14,
+      resources: [
+        {
+          id: "vectors-intro-video",
+          type: "video",
+          url: "/videos/vectors-intro.mp4",
+          title: "Vectors Introduction Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "vector-operations",
+      slug: "vector-operations",
+      title: "Vector Operations",
+      description:
+        "Addition, subtraction, scalar multiplication, and dot product of vectors.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 15,
+      resources: [
+        {
+          id: "vector-operations-video",
+          type: "video",
+          url: "/videos/vector-operations.mp4",
+          title: "Vector Operations Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "cross-product",
+      slug: "cross-product",
+      title: "Cross Product",
+      description: "Cross product of vectors and its geometric interpretation.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 16,
+      resources: [
+        {
+          id: "cross-product-video",
+          type: "video",
+          url: "/videos/cross-product.mp4",
+          title: "Cross Product Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Geometry and Trigonometry - 3D Geometry
+    {
+      id: "3d-geometry",
+      slug: "3d-geometry",
+      title: "3D Geometry",
+      description:
+        "Three-dimensional coordinate geometry and equations of lines and planes.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: true,
+      order: 17,
+      resources: [
+        {
+          id: "3d-geometry-video",
+          type: "video",
+          url: "/videos/3d-geometry.mp4",
+          title: "3D Geometry Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "equations-lines-planes",
+      slug: "equations-lines-planes",
+      title: "Equations of Lines and Planes",
+      description:
+        "Parametric and symmetric equations of lines, and equations of planes.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 18,
+      resources: [
+        {
+          id: "equations-lines-planes-video",
+          type: "video",
+          url: "/videos/equations-lines-planes.mp4",
+          title: "Equations of Lines and Planes Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Statistics and Probability - Descriptive Statistics
+    {
+      id: "descriptive-statistics",
+      slug: "descriptive-statistics",
+      title: "Descriptive Statistics",
+      description:
+        "Mean, median, mode, standard deviation, and other measures of central tendency.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: true,
+      order: 19,
+      resources: [
+        {
+          id: "descriptive-statistics-video",
+          type: "video",
+          url: "/videos/descriptive-statistics.mp4",
+          title: "Descriptive Statistics Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "probability-distributions",
+      slug: "probability-distributions",
+      title: "Probability Distributions",
+      description: "Binomial, normal, and other probability distributions.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 20,
+      resources: [
+        {
+          id: "probability-distributions-video",
+          type: "video",
+          url: "/videos/probability-distributions.mp4",
+          title: "Probability Distributions Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "hypothesis-testing",
+      slug: "hypothesis-testing",
+      title: "Hypothesis Testing",
+      description:
+        "Introduction to hypothesis testing and statistical inference.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 21,
+      resources: [
+        {
+          id: "hypothesis-testing-video",
+          type: "video",
+          url: "/videos/hypothesis-testing.mp4",
+          title: "Hypothesis Testing Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Calculus - Limits and Continuity
+    {
+      id: "limits-continuity",
+      slug: "limits-continuity",
+      title: "Limits and Continuity",
+      description: "Understanding limits, continuity, and their properties.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: true,
+      order: 22,
+      resources: [
+        {
+          id: "limits-continuity-video",
+          type: "video",
+          url: "/videos/limits-continuity.mp4",
+          title: "Limits and Continuity Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "derivatives",
+      slug: "derivatives",
+      title: "Derivatives",
+      description: "Understanding derivatives, their rules, and applications.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 23,
+      resources: [
+        {
+          id: "derivatives-video",
+          type: "video",
+          url: "/videos/derivatives.mp4",
+          title: "Derivatives Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "applications-derivatives",
+      slug: "applications-derivatives",
+      title: "Applications of Derivatives",
+      description:
+        "Using derivatives to find maxima, minima, and optimization problems.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 24,
+      resources: [
+        {
+          id: "applications-derivatives-video",
+          type: "video",
+          url: "/videos/applications-derivatives.mp4",
+          title: "Applications of Derivatives Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "integration",
+      slug: "integration",
+      title: "Integration",
+      description: "Understanding integration, its rules, and techniques.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 25,
+      resources: [
+        {
+          id: "integration-video",
+          type: "video",
+          url: "/videos/integration.mp4",
+          title: "Integration Video",
+          duration: 3000,
+        },
+      ],
+    },
+    {
+      id: "applications-integration",
+      slug: "applications-integration",
+      title: "Applications of Integration",
+      description:
+        "Using integration to find areas, volumes, and other applications.",
+      duration: "75 minutes",
+      type: "video",
+      isPreview: false,
+      order: 26,
+      resources: [
+        {
+          id: "applications-integration-video",
+          type: "video",
+          url: "/videos/applications-integration.mp4",
+          title: "Applications of Integration Video",
+          duration: 3000,
+        },
+      ],
+    },
+    // Additional lessons to complete the syllabus
+    {
+      id: "binomial-expansion",
+      slug: "binomial-expansion",
+      title: "Binomial Expansion",
+      description: "Understanding binomial expansion and Pascal's triangle.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 27,
+      resources: [
+        {
+          id: "binomial-expansion-video",
+          type: "video",
+          url: "/videos/binomial-expansion.mp4",
+          title: "Binomial Expansion Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "binomial-coefficients",
+      slug: "binomial-coefficients",
+      title: "Binomial Coefficients and Pascal's Triangle",
+      description:
+        "Working with binomial coefficients and Pascal's triangle patterns.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 28,
+      resources: [
+        {
+          id: "binomial-coefficients-video",
+          type: "video",
+          url: "/videos/binomial-coefficients.mp4",
+          title: "Binomial Coefficients Video",
+          duration: 1800,
+        },
+      ],
+    },
+    {
+      id: "complex-arithmetic",
+      slug: "complex-arithmetic",
+      title: "Complex Number Arithmetic",
+      description:
+        "Basic operations with complex numbers: addition, subtraction, multiplication, division.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 29,
+      resources: [
+        {
+          id: "complex-arithmetic-video",
+          type: "video",
+          url: "/videos/complex-arithmetic.mp4",
+          title: "Complex Arithmetic Video",
+          duration: 2000,
+        },
+      ],
+    },
+    {
+      id: "complex-roots",
+      slug: "complex-roots",
+      title: "Roots of Complex Numbers",
+      description:
+        "Finding nth roots of complex numbers using De Moivre's theorem.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 30,
+      resources: [
+        {
+          id: "complex-roots-video",
+          type: "video",
+          url: "/videos/complex-roots.mp4",
+          title: "Complex Roots Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "domain-range",
+      slug: "domain-range",
+      title: "Domain and Range",
+      description:
+        "Understanding domain and range of functions, including restrictions and notation.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 31,
+      resources: [
+        {
+          id: "domain-range-video",
+          type: "video",
+          url: "/videos/domain-range.mp4",
+          title: "Domain and Range Video",
+          duration: 1800,
+        },
+      ],
+    },
+    {
+      id: "composite-functions",
+      slug: "composite-functions",
+      title: "Composite Functions",
+      description:
+        "Understanding composition of functions and their properties.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 32,
+      resources: [
+        {
+          id: "composite-functions-video",
+          type: "video",
+          url: "/videos/composite-functions.mp4",
+          title: "Composite Functions Video",
+          duration: 2000,
+        },
+      ],
+    },
+    {
+      id: "inverse-functions",
+      slug: "inverse-functions",
+      title: "Inverse Functions",
+      description:
+        "Finding and working with inverse functions, including restrictions.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 33,
+      resources: [
+        {
+          id: "inverse-functions-video",
+          type: "video",
+          url: "/videos/inverse-functions.mp4",
+          title: "Inverse Functions Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "polynomial-properties",
+      slug: "polynomial-properties",
+      title: "Properties of Polynomial Functions",
+      description:
+        "Understanding polynomial functions, their graphs, and key properties.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 34,
+      resources: [
+        {
+          id: "polynomial-properties-video",
+          type: "video",
+          url: "/videos/polynomial-properties.mp4",
+          title: "Polynomial Properties Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "factor-theorem",
+      slug: "factor-theorem",
+      title: "Factor and Remainder Theorems",
+      description:
+        "Using factor and remainder theorems to analyze polynomial functions.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 35,
+      resources: [
+        {
+          id: "factor-theorem-video",
+          type: "video",
+          url: "/videos/factor-theorem.mp4",
+          title: "Factor Theorem Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "exponential-models",
+      slug: "exponential-models",
+      title: "Exponential Growth and Decay Models",
+      description:
+        "Applying exponential functions to real-world growth and decay problems.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 36,
+      resources: [
+        {
+          id: "exponential-models-video",
+          type: "video",
+          url: "/videos/exponential-models.mp4",
+          title: "Exponential Models Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "unit-circle",
+      slug: "unit-circle",
+      title: "Unit Circle and Radian Measure",
+      description:
+        "Understanding the unit circle, radian measure, and trigonometric values.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 37,
+      resources: [
+        {
+          id: "unit-circle-video",
+          type: "video",
+          url: "/videos/unit-circle.mp4",
+          title: "Unit Circle Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "scalar-product",
+      slug: "scalar-product",
+      title: "Scalar Product",
+      description:
+        "Understanding the scalar (dot) product of vectors and its applications.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 38,
+      resources: [
+        {
+          id: "scalar-product-video",
+          type: "video",
+          url: "/videos/scalar-product.mp4",
+          title: "Scalar Product Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "vector-product",
+      slug: "vector-product",
+      title: "Vector Product",
+      description:
+        "Understanding the vector (cross) product and its geometric interpretation.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 39,
+      resources: [
+        {
+          id: "vector-product-video",
+          type: "video",
+          url: "/videos/vector-product.mp4",
+          title: "Vector Product Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "measures-central-tendency",
+      slug: "measures-central-tendency",
+      title: "Measures of Central Tendency",
+      description:
+        "Understanding mean, median, mode, and their applications in statistics.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 40,
+      resources: [
+        {
+          id: "measures-central-tendency-video",
+          type: "video",
+          url: "/videos/measures-central-tendency.mp4",
+          title: "Measures of Central Tendency Video",
+          duration: 1800,
+        },
+      ],
+    },
+    {
+      id: "measures-dispersion",
+      slug: "measures-dispersion",
+      title: "Measures of Dispersion",
+      description:
+        "Understanding variance, standard deviation, and other measures of spread.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 41,
+      resources: [
+        {
+          id: "measures-dispersion-video",
+          type: "video",
+          url: "/videos/measures-dispersion.mp4",
+          title: "Measures of Dispersion Video",
+          duration: 2000,
+        },
+      ],
+    },
+    {
+      id: "normal-distribution",
+      slug: "normal-distribution",
+      title: "Normal Distribution",
+      description:
+        "Understanding the normal distribution, z-scores, and probability calculations.",
+      duration: "65 minutes",
+      type: "video",
+      isPreview: false,
+      order: 42,
+      resources: [
+        {
+          id: "normal-distribution-video",
+          type: "video",
+          url: "/videos/normal-distribution.mp4",
+          title: "Normal Distribution Video",
+          duration: 2600,
+        },
+      ],
+    },
+    {
+      id: "conditional-probability",
+      slug: "conditional-probability",
+      title: "Conditional Probability",
+      description:
+        "Understanding conditional probability and its applications in real-world problems.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 43,
+      resources: [
+        {
+          id: "conditional-probability-video",
+          type: "video",
+          url: "/videos/conditional-probability.mp4",
+          title: "Conditional Probability Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "bayes-theorem",
+      slug: "bayes-theorem",
+      title: "Bayes' Theorem",
+      description:
+        "Understanding Bayes' theorem and its applications in probability.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 44,
+      resources: [
+        {
+          id: "bayes-theorem-video",
+          type: "video",
+          url: "/videos/bayes-theorem.mp4",
+          title: "Bayes' Theorem Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "discrete-random-variables",
+      slug: "discrete-random-variables",
+      title: "Discrete Random Variables",
+      description:
+        "Understanding discrete random variables, probability distributions, and expected values.",
+      duration: "65 minutes",
+      type: "video",
+      isPreview: false,
+      order: 45,
+      resources: [
+        {
+          id: "discrete-random-variables-video",
+          type: "video",
+          url: "/videos/discrete-random-variables.mp4",
+          title: "Discrete Random Variables Video",
+          duration: 2600,
+        },
+      ],
+    },
+    {
+      id: "limit-concepts",
+      slug: "limit-concepts",
+      title: "Limit Concepts",
+      description: "Understanding the concept of limits and their properties.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 46,
+      resources: [
+        {
+          id: "limit-concepts-video",
+          type: "video",
+          url: "/videos/limit-concepts.mp4",
+          title: "Limit Concepts Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "continuity",
+      slug: "continuity",
+      title: "Continuity",
+      description: "Understanding continuity of functions and its properties.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 47,
+      resources: [
+        {
+          id: "continuity-video",
+          type: "video",
+          url: "/videos/continuity.mp4",
+          title: "Continuity Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "derivative-rules",
+      slug: "derivative-rules",
+      title: "Derivative Rules",
+      description:
+        "Learning the fundamental rules of differentiation: power rule, product rule, quotient rule.",
+      duration: "65 minutes",
+      type: "video",
+      isPreview: false,
+      order: 48,
+      resources: [
+        {
+          id: "derivative-rules-video",
+          type: "video",
+          url: "/videos/derivative-rules.mp4",
+          title: "Derivative Rules Video",
+          duration: 2600,
+        },
+      ],
+    },
+    {
+      id: "chain-rule",
+      slug: "chain-rule",
+      title: "Chain Rule",
+      description:
+        "Understanding the chain rule for differentiating composite functions.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 49,
+      resources: [
+        {
+          id: "chain-rule-video",
+          type: "video",
+          url: "/videos/chain-rule.mp4",
+          title: "Chain Rule Video",
+          duration: 2400,
+        },
+      ],
+    },
+    {
+      id: "implicit-differentiation",
+      slug: "implicit-differentiation",
+      title: "Implicit Differentiation",
+      description: "Learning to differentiate implicitly defined functions.",
+      duration: "55 minutes",
+      type: "video",
+      isPreview: false,
+      order: 50,
+      resources: [
+        {
+          id: "implicit-differentiation-video",
+          type: "video",
+          url: "/videos/implicit-differentiation.mp4",
+          title: "Implicit Differentiation Video",
+          duration: 2200,
+        },
+      ],
+    },
+    {
+      id: "integration-techniques",
+      slug: "integration-techniques",
+      title: "Integration Techniques",
+      description:
+        "Learning various techniques of integration: substitution, partial fractions, trigonometric substitution.",
+      duration: "65 minutes",
+      type: "video",
+      isPreview: false,
+      order: 51,
+      resources: [
+        {
+          id: "integration-techniques-video",
+          type: "video",
+          url: "/videos/integration-techniques.mp4",
+          title: "Integration Techniques Video",
+          duration: 2600,
+        },
+      ],
+    },
+    {
+      id: "integration-by-parts",
+      slug: "integration-by-parts",
+      title: "Integration by Parts",
+      description: "Understanding integration by parts and its applications.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 52,
+      resources: [
+        {
+          id: "integration-by-parts-video",
+          type: "video",
+          url: "/videos/integration-by-parts.mp4",
+          title: "Integration by Parts Video",
+          duration: 2400,
+        },
+      ],
+    },
+  ],
+  "ibdp-mathematics-analysis-approaches-hl": [
+    {
+      id: "functions-and-graphs",
+      slug: "functions-and-graphs",
+      title: "Functions and Graphs",
+      description:
+        "Advanced study of functions, their properties, and graphical representations.",
+      duration: "90 minutes",
+      type: "video",
+      isPreview: true,
+      order: 1,
+      resources: [
+        {
+          id: "functions-video",
+          type: "video",
+          url: "/videos/functions-graphs.mp4",
+          title: "Functions and Graphs Video",
+          duration: 3600,
+        },
+      ],
+    },
+  ],
+};
 
 // Syllabus to Lesson Mapping
 export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
-  // Real Numbers subsections
-  'fundamental-theorem-arithmetic': 'fundamental-theorem-arithmetic',
-  'proofs-irrationality': 'real-numbers-properties', // Map to properties lesson
-  'properties-real-numbers': 'real-numbers-properties',
-  
+  // IBDP Mathematics AA HL - Number and Algebra
+  "arithmetic-sequences": "arithmetic-sequences",
+  "geometric-sequences": "geometric-sequences",
+  "infinite-series": "infinite-series",
+  "binomial-expansion": "binomial-expansion",
+  "binomial-coefficients": "binomial-coefficients",
+  "complex-numbers-intro": "complex-numbers-intro",
+  "complex-operations": "complex-operations",
+  "polar-form": "polar-form",
+  "complex-arithmetic": "complex-arithmetic",
+  "complex-roots": "complex-roots",
+
+  // IBDP Mathematics AA HL - Functions
+  "linear-functions": "linear-functions",
+  "quadratic-functions": "quadratic-functions",
+  "exponential-functions": "exponential-functions",
+  "logarithmic-functions": "logarithmic-functions",
+  "trigonometric-functions": "trigonometric-functions",
+  "trigonometric-identities": "trigonometric-identities",
+  "trigonometric-equations": "trigonometric-equations",
+  "domain-range": "domain-range",
+  "composite-functions": "composite-functions",
+  "inverse-functions": "inverse-functions",
+  "polynomial-properties": "polynomial-properties",
+  "factor-theorem": "factor-theorem",
+  "exponential-models": "exponential-models",
+
+  // IBDP Mathematics AA HL - Geometry and Trigonometry
+  "vectors-intro": "vectors-intro",
+  "vector-operations": "vector-operations",
+  "cross-product": "cross-product",
+  "3d-geometry": "3d-geometry",
+  "equations-lines-planes": "equations-lines-planes",
+  "unit-circle": "unit-circle",
+  "scalar-product": "scalar-product",
+  "vector-product": "vector-product",
+
+  // IBDP Mathematics AA HL - Statistics and Probability
+  "descriptive-statistics": "descriptive-statistics",
+  "probability-distributions": "probability-distributions",
+  "hypothesis-testing": "hypothesis-testing",
+  "measures-central-tendency": "measures-central-tendency",
+  "measures-dispersion": "measures-dispersion",
+  "normal-distribution": "normal-distribution",
+  "conditional-probability": "conditional-probability",
+  "bayes-theorem": "bayes-theorem",
+  "discrete-random-variables": "discrete-random-variables",
+
+  // IBDP Mathematics AA HL - Calculus
+  "limits-continuity": "limits-continuity",
+  derivatives: "derivatives",
+  "applications-derivatives": "applications-derivatives",
+  integration: "integration",
+  "applications-integration": "applications-integration",
+  "limit-concepts": "limit-concepts",
+  continuity: "continuity",
+  "derivative-rules": "derivative-rules",
+  "chain-rule": "chain-rule",
+  "implicit-differentiation": "implicit-differentiation",
+  "integration-techniques": "integration-techniques",
+  "integration-by-parts": "integration-by-parts",
+
+  // CBSE Mathematics Class 10 - Real Numbers subsections
+  "fundamental-theorem-arithmetic": "fundamental-theorem-arithmetic",
+  "proofs-irrationality": "real-numbers-properties", // Map to properties lesson
+  "properties-real-numbers": "real-numbers-properties",
+
   // Polynomials subsections
-  'zeros-polynomial': 'polynomial-zeroes',
-  'relationship-zeros-coefficients': 'polynomial-zeroes', // Map to same lesson
-  
+  "zeros-polynomial": "polynomial-zeroes",
+  "relationship-zeros-coefficients": "polynomial-zeroes", // Map to same lesson
+
   // Linear Equations subsections
-  'graphical-method': 'graphical-method',
-  'algebraic-solution': 'algebraic-methods',
-  
+  "graphical-method": "graphical-method",
+  "algebraic-solution": "algebraic-methods",
+
   // Quadratic Equations subsections
-  'euclid-division-lemma': 'euclid-division-lemma',
-  'standard-form': 'quadratic-intro',
-  'factorization-quadratic-formula': 'quadratic-formula',
-  'nature-roots-discriminant': 'quadratic-practice',
-  
+  "euclid-division-lemma": "euclid-division-lemma",
+  "standard-form": "quadratic-intro",
+  "factorization-quadratic-formula": "quadratic-formula",
+  "nature-roots-discriminant": "quadratic-practice",
+
   // Arithmetic Progressions subsections
-  'nth-term': 'ap-intro',
-  'sum-n-terms': 'ap-formulas',
-  'word-problems': 'ap-practice',
-  'applications-problems': 'ap-practice',
-  
+  "nth-term": "ap-intro",
+  "sum-n-terms": "ap-formulas",
+  "word-problems": "ap-practice",
+  "applications-problems": "ap-practice",
+
   // Triangles subsections
-  'similarity-criteria': 'triangles-intro',
-  'basic-proportionality': 'similarity-triangles',
-  'basic-proportionality-theorem': 'similarity-triangles',
-  'applications': 'triangles-practice',
-  
+  "similarity-criteria": "triangles-intro",
+  "basic-proportionality": "similarity-triangles",
+  "basic-proportionality-theorem": "similarity-triangles",
+  applications: "triangles-practice",
+
   // Coordinate Geometry subsections
-  'concepts-coordinate-geometry': 'coordinate-intro',
-  'distance-formula': 'distance-formula',
-  'section-formula': 'coordinate-practice',
-  'area-triangle': 'coordinate-practice',
-  
+  "concepts-coordinate-geometry": "coordinate-intro",
+  "distance-formula": "distance-formula",
+  "section-formula": "coordinate-practice",
+  "area-triangle": "coordinate-practice",
+
   // Trigonometry subsections
-  'introduction-trigonometry': 'trigonometry-intro',
-  'trigonometric-ratios': 'trigonometric-ratios',
-  'values-30-45-60': 'trigonometric-ratios',
-  'relationships-ratios': 'trigonometry-practice',
-  'complementary-angles': 'trigonometry-practice',
-  'proof-application-sin2-cos2': 'trigonometry-practice',
-  'angles-elevation-depression': 'trig-applications',
-  'trig-applications': 'trig-applications',
-  
+  "introduction-trigonometry": "trigonometry-intro",
+  "trigonometric-ratios": "trigonometric-ratios",
+  "values-30-45-60": "trigonometric-ratios",
+  "relationships-ratios": "trigonometry-practice",
+  "complementary-angles": "trigonometry-practice",
+  "proof-application-sin2-cos2": "trigonometry-practice",
+  "angles-elevation-depression": "trig-applications",
+  "trig-applications": "trig-applications",
+
   // Circles subsections
-  'tangent-circle': 'circles-intro',
-  'tangents': 'circles-intro',
-  'properties-tangents': 'circle-theorems',
-  'chords': 'circle-theorems',
-  'angles': 'circles-practice',
-  
+  "tangent-circle": "circles-intro",
+  tangents: "circles-intro",
+  "properties-tangents": "circle-theorems",
+  chords: "circle-theorems",
+  angles: "circles-practice",
+
   // Constructions subsections
-  'basic-constructions': 'constructions-intro',
-  'advanced-constructions': 'constructions-practice',
-  
+  "basic-constructions": "constructions-intro",
+  "advanced-constructions": "constructions-practice",
+
   // Areas Related to Circles subsections
-  'areas-related-circles': 'circle-areas-intro',
-  'areas-sectors-segments': 'circle-areas-intro',
-  'sector-area': 'circle-areas-intro',
-  'perimeter-circumference': 'circle-areas-practice',
-  'segment-area': 'circle-areas-practice',
-  
+  "areas-related-circles": "circle-areas-intro",
+  "areas-sectors-segments": "circle-areas-intro",
+  "sector-area": "circle-areas-intro",
+  "perimeter-circumference": "circle-areas-practice",
+  "segment-area": "circle-areas-practice",
+
   // Surface Areas and Volumes subsections
-  'cubes-cuboids': 'surface-volumes-intro',
-  'spheres-hemispheres': 'surface-volumes-intro',
-  'cylinders-cones': 'surface-volumes-intro',
-  'combinations-solids': 'surface-volumes-practice',
-  'surface-area': 'surface-volumes-intro',
-  'volume': 'surface-volumes-practice',
-  
+  "cubes-cuboids": "surface-volumes-intro",
+  "spheres-hemispheres": "surface-volumes-intro",
+  "cylinders-cones": "surface-volumes-intro",
+  "combinations-solids": "surface-volumes-practice",
+  "surface-area": "surface-volumes-intro",
+  volume: "surface-volumes-practice",
+
   // Statistics subsections
-  'statistics': 'statistics-intro',
-  'mean-median-mode': 'statistics-intro',
-  'stats-applications': 'statistics-practice',
-  
+  statistics: "statistics-intro",
+  "mean-median-mode": "statistics-intro",
+  "stats-applications": "statistics-practice",
+
   // Probability subsections
-  'probability': 'probability-intro',
-  'classical-definition': 'probability-intro',
-  'basic-probability': 'probability-intro',
-  'simple-problems': 'probability-practice',
-  'prob-applications': 'probability-practice'
-}
+  probability: "probability-intro",
+  "classical-definition": "probability-intro",
+  "basic-probability": "probability-intro",
+  "simple-problems": "probability-practice",
+  "prob-applications": "probability-practice",
+};
 
 // Helper functions
 export function getAllCourses(): CourseConfig[] {
-  return Object.values(COURSE_DATABASE).filter(course => course.status === 'published')
+  return Object.values(COURSE_DATABASE).filter(
+    (course) => course.status === "published"
+  );
 }
 
 export function getCourseBySlug(slug: string): CourseConfig | null {
-  return COURSE_DATABASE[slug] || null
+  return COURSE_DATABASE[slug] || null;
 }
 
 export function getCoursesByCurriculum(curriculum: string): CourseConfig[] {
   return Object.values(COURSE_DATABASE).filter(
-    course => course.curriculum.toLowerCase() === curriculum.toLowerCase() && course.status === 'published'
-  )
+    (course) =>
+      course.curriculum.toLowerCase() === curriculum.toLowerCase() &&
+      course.status === "published"
+  );
 }
 
 export function getLessonsByCourseSlugSync(courseSlug: string): LessonConfig[] {
-  return LESSON_DATABASE[courseSlug] || []
+  return LESSON_DATABASE[courseSlug] || [];
 }
 
-export function getLessonBySlug(courseSlug: string, lessonSlug: string): LessonConfig | null {
-  const lessons = LESSON_DATABASE[courseSlug] || []
-  
+export function getLessonBySlug(
+  courseSlug: string,
+  lessonSlug: string
+): LessonConfig | null {
+  const lessons = LESSON_DATABASE[courseSlug] || [];
+
   // First try direct match
-  let lesson = lessons.find(lesson => lesson.slug === lessonSlug)
-  
+  let lesson = lessons.find((lesson) => lesson.slug === lessonSlug);
+
   // If not found, try syllabus mapping
   if (!lesson) {
-    const mappedSlug = SYLLABUS_LESSON_MAPPING[lessonSlug]
+    const mappedSlug = SYLLABUS_LESSON_MAPPING[lessonSlug];
     if (mappedSlug) {
-      lesson = lessons.find(lesson => lesson.slug === mappedSlug)
+      lesson = lessons.find((lesson) => lesson.slug === mappedSlug);
     }
   }
-  
-  return lesson || null
+
+  return lesson || null;
 }
 
 // New function to get lesson by syllabus subsection slug
-export function getLessonBySyllabusSlug(courseSlug: string, syllabusSlug: string): LessonConfig | null {
-  const mappedSlug = SYLLABUS_LESSON_MAPPING[syllabusSlug]
+export function getLessonBySyllabusSlug(
+  courseSlug: string,
+  syllabusSlug: string
+): LessonConfig | null {
+  const mappedSlug = SYLLABUS_LESSON_MAPPING[syllabusSlug];
   if (!mappedSlug) {
-    console.warn(`No mapping found for syllabus slug: ${syllabusSlug}`)
-    return null
+    console.warn(`No mapping found for syllabus slug: ${syllabusSlug}`);
+    return null;
   }
-  
-  const lessons = LESSON_DATABASE[courseSlug] || []
-  return lessons.find(lesson => lesson.slug === mappedSlug) || null
+
+  const lessons = LESSON_DATABASE[courseSlug] || [];
+  return lessons.find((lesson) => lesson.slug === mappedSlug) || null;
 }
 
 // Fallback function for backward compatibility
 export function getSyllabusByCourseSlugSync(courseSlug: string) {
   switch (courseSlug) {
-    case 'cbse-mathematics-class-10':
-      return CBSE_CLASS_10_MATHEMATICS_SYLLABUS
+    case "cbse-mathematics-class-10":
+      return CBSE_CLASS_10_MATHEMATICS_SYLLABUS;
+    case "ibdp-mathematics-aa-hl":
+      // Return empty array for now - syllabus will be loaded dynamically
+      // This avoids the require() issue in build
+      return [];
     default:
-      return []
+      return [];
   }
 }
 
 // Dynamic course loading functions
 export async function getSyllabusByCourseSlug(courseSlug: string) {
   try {
-    const courseData = await getCourseData(courseSlug)
-    return courseData.syllabus as Section[]
+    const courseData = await getCourseData(courseSlug);
+    return courseData.syllabus as Section[];
   } catch (error) {
-    console.error(`Failed to load syllabus for course ${courseSlug}:`, error)
-    return []
+    console.error(`Failed to load syllabus for course ${courseSlug}:`, error);
+    return [];
   }
 }
 
-export async function getLessonsByCourseSlug(courseSlug: string): Promise<LessonConfig[]> {
+export async function getLessonsByCourseSlug(
+  courseSlug: string
+): Promise<LessonConfig[]> {
   try {
-    const courseData = await getCourseData(courseSlug)
-    return courseData.lessons as LessonConfig[]
+    const courseData = await getCourseData(courseSlug);
+    return courseData.lessons as LessonConfig[];
   } catch (error) {
-    console.error(`Failed to load lessons for course ${courseSlug}:`, error)
-    return []
+    console.error(`Failed to load lessons for course ${courseSlug}:`, error);
+    return [];
   }
 }
 
-export async function getMappingByCourseSlug(courseSlug: string): Promise<Record<string, string>> {
+export async function getMappingByCourseSlug(
+  courseSlug: string
+): Promise<Record<string, string>> {
   try {
-    const courseData = await getCourseData(courseSlug)
-    return courseData.mapping as Record<string, string>
+    const courseData = await getCourseData(courseSlug);
+    return courseData.mapping as Record<string, string>;
   } catch (error) {
-    console.error(`Failed to load mapping for course ${courseSlug}:`, error)
-    return {}
+    console.error(`Failed to load mapping for course ${courseSlug}:`, error);
+    return {};
   }
 }
 
 // Updated getLessonBySlug to use dynamic loading
-export async function getLessonBySlugDynamic(courseSlug: string, lessonSlug: string): Promise<LessonConfig | null> {
+export async function getLessonBySlugDynamic(
+  courseSlug: string,
+  lessonSlug: string
+): Promise<LessonConfig | null> {
   try {
-    const courseData = await getCourseData(courseSlug)
-    const lessons = courseData.lessons as LessonConfig[]
-    const mapping = courseData.mapping as Record<string, string>
-    
+    const courseData = await getCourseData(courseSlug);
+    const lessons = courseData.lessons as LessonConfig[];
+    const mapping = courseData.mapping as Record<string, string>;
+
     // First try direct match
-    let lesson = lessons.find(lesson => lesson.slug === lessonSlug)
-    
+    let lesson = lessons.find((lesson) => lesson.slug === lessonSlug);
+
     // If not found, try syllabus mapping
     if (!lesson) {
-      const mappedSlug = mapping[lessonSlug]
+      const mappedSlug = mapping[lessonSlug];
       if (mappedSlug) {
-        lesson = lessons.find(lesson => lesson.slug === mappedSlug)
+        lesson = lessons.find((lesson) => lesson.slug === mappedSlug);
       }
     }
-    
-    return lesson || null
+
+    return lesson || null;
   } catch (error) {
-    console.error(`Failed to load lesson ${lessonSlug} for course ${courseSlug}:`, error)
-    return null
+    console.error(
+      `Failed to load lesson ${lessonSlug} for course ${courseSlug}:`,
+      error
+    );
+    return null;
   }
 }
 
 // Function to get all syllabus subsections mapped to lessons
-export function getSyllabusLessons(courseSlug: string): Array<{syllabusSlug: string, lesson: LessonConfig | null}> {
-  const syllabusSubsections = Object.keys(SYLLABUS_LESSON_MAPPING)
-  return syllabusSubsections.map(syllabusSlug => ({
+export function getSyllabusLessons(
+  courseSlug: string
+): Array<{ syllabusSlug: string; lesson: LessonConfig | null }> {
+  const syllabusSubsections = Object.keys(SYLLABUS_LESSON_MAPPING);
+  return syllabusSubsections.map((syllabusSlug) => ({
     syllabusSlug,
-    lesson: getLessonBySyllabusSlug(courseSlug, syllabusSlug)
-  }))
+    lesson: getLessonBySyllabusSlug(courseSlug, syllabusSlug),
+  }));
 }
 
 export function getFreeCourses(): CourseConfig[] {
   return Object.values(COURSE_DATABASE).filter(
-    course => course.isFree && course.status === 'published'
-  )
+    (course) => course.isFree && course.status === "published"
+  );
 }
 
 export function searchCourses(query: string): CourseConfig[] {
-  const searchTerm = query.toLowerCase()
+  const searchTerm = query.toLowerCase();
   return Object.values(COURSE_DATABASE).filter(
-    course => 
-      course.status === 'published' &&
+    (course) =>
+      course.status === "published" &&
       (course.title.toLowerCase().includes(searchTerm) ||
-       course.description.toLowerCase().includes(searchTerm) ||
-       course.subject.toLowerCase().includes(searchTerm) ||
-       course.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
-  )
+        course.description.toLowerCase().includes(searchTerm) ||
+        course.subject.toLowerCase().includes(searchTerm) ||
+        course.tags.some((tag) => tag.toLowerCase().includes(searchTerm)))
+  );
 }

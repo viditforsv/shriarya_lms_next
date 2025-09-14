@@ -26,6 +26,8 @@ import {
   Eye,
   Edit,
   Plus,
+  RotateCcw,
+  X,
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
@@ -153,6 +155,24 @@ export default function QuestionBankPage() {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
+  // Check if any filters are active
+  const hasActiveFilters = () => {
+    return (
+      searchTerm ||
+      Object.values(filters).some((value) => value && value !== "")
+    );
+  };
+
+  // Get count of active filters
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (searchTerm) count++;
+    Object.values(filters).forEach((value) => {
+      if (value && value !== "") count++;
+    });
+    return count;
+  };
+
   const goToPage = (page: number) => {
     setPagination((prev) => ({ ...prev, page }));
   };
@@ -266,11 +286,151 @@ export default function QuestionBankPage() {
             </Select>
           </div>
 
+          {/* Additional Filters Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <Select
+              value={filters.board || undefined}
+              onValueChange={(value) => handleFilterChange("board", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Board" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="IBDP">IBDP</SelectItem>
+                <SelectItem value="CBSE">CBSE</SelectItem>
+                <SelectItem value="ICSE">ICSE</SelectItem>
+                <SelectItem value="IGCSE">IGCSE</SelectItem>
+                <SelectItem value="A-Levels">A-Levels</SelectItem>
+                <SelectItem value="SAT">SAT</SelectItem>
+                <SelectItem value="ACT">ACT</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.subject || undefined}
+              onValueChange={(value) => handleFilterChange("subject", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Subject" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="IBDP Mathematics AA HL">IBDP Mathematics AA HL</SelectItem>
+                <SelectItem value="IBDP Mathematics AI HL">IBDP Mathematics AI HL</SelectItem>
+                <SelectItem value="IBDP Mathematics AA SL">IBDP Mathematics AA SL</SelectItem>
+                <SelectItem value="IBDP Mathematics AI SL">IBDP Mathematics AI SL</SelectItem>
+                <SelectItem value="CBSE Mathematics">CBSE Mathematics</SelectItem>
+                <SelectItem value="ICSE Mathematics">ICSE Mathematics</SelectItem>
+                <SelectItem value="IGCSE Mathematics">IGCSE Mathematics</SelectItem>
+                <SelectItem value="A-Level Mathematics">A-Level Mathematics</SelectItem>
+                <SelectItem value="SAT Mathematics">SAT Mathematics</SelectItem>
+                <SelectItem value="ACT Mathematics">ACT Mathematics</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.grade || undefined}
+              onValueChange={(value) => handleFilterChange("grade", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Grade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="9">Grade 9</SelectItem>
+                <SelectItem value="10">Grade 10</SelectItem>
+                <SelectItem value="11">Grade 11</SelectItem>
+                <SelectItem value="12">Grade 12</SelectItem>
+                <SelectItem value="13">Grade 13</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.topic || undefined}
+              onValueChange={(value) => handleFilterChange("topic", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Topic" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Algebra">Algebra</SelectItem>
+                <SelectItem value="Functions">Functions</SelectItem>
+                <SelectItem value="Trigonometry">Trigonometry</SelectItem>
+                <SelectItem value="Statistics">Statistics</SelectItem>
+                <SelectItem value="Probability">Probability</SelectItem>
+                <SelectItem value="Calculus">Calculus</SelectItem>
+                <SelectItem value="Geometry">Geometry</SelectItem>
+                <SelectItem value="Number Theory">Number Theory</SelectItem>
+                <SelectItem value="Complex Numbers">Complex Numbers</SelectItem>
+                <SelectItem value="Sequences and Series">Sequences and Series</SelectItem>
+                <SelectItem value="Vectors">Vectors</SelectItem>
+                <SelectItem value="Matrices">Matrices</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Active Filters Display */}
+          {hasActiveFilters() && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    Active Filters ({getActiveFilterCount()})
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-blue-600 border-blue-300 hover:bg-blue-100"
+                >
+                  <RotateCcw className="w-3 h-3 mr-1" />
+                  Reset All
+                </Button>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {searchTerm && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    Search: &quot;{searchTerm}&quot;
+                    <X
+                      className="w-3 h-3 cursor-pointer hover:text-red-600"
+                      onClick={() => setSearchTerm("")}
+                    />
+                  </Badge>
+                )}
+                {Object.entries(filters).map(([key, value]) => {
+                  if (!value || value === "") return null;
+                  return (
+                    <Badge key={key} variant="secondary" className="flex items-center gap-1">
+                      {key.replace('_', ' ')}: {value}
+                      <X
+                        className="w-3 h-3 cursor-pointer hover:text-red-600"
+                        onClick={() => handleFilterChange(key, "")}
+                      />
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={clearFilters}>
-                Clear Filters
-              </Button>
+              {hasActiveFilters() ? (
+                <Button 
+                  variant="outline" 
+                  onClick={clearFilters}
+                  className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Reset Filters
+                </Button>
+              ) : (
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  No filters applied
+                </div>
+              )}
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>

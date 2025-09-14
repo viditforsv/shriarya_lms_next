@@ -1,70 +1,82 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext'
-import { AdminOnly, StudentOnly } from '@/app/components-demo/ui/form-components/RoleGuard'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { BookOpen, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  AdminOnly,
+  StudentOnly,
+} from "@/app/components-demo/ui/form-components/RoleGuard";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { BookOpen, ArrowRight, HelpCircle } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface EnrolledCourse {
-  id: string
-  title: string
-  slug: string | null
-  is_free: boolean
+  id: string;
+  title: string;
+  slug: string | null;
+  is_free: boolean;
   enrollment: {
-    enrolled_at: string
-  }
+    enrolled_at: string;
+  };
 }
 
 export default function DashboardPage() {
-  const { user, profile, signOut } = useAuth()
-  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([])
-  const [isLoadingCourses, setIsLoadingCourses] = useState(false)
-  const supabase = createClient()
+  const { user, profile, signOut } = useAuth();
+  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchEnrolledCourses = async () => {
-      if (!user) return
+      if (!user) return;
 
       try {
-        setIsLoadingCourses(true)
+        setIsLoadingCourses(true);
         const { data, error } = await supabase
-          .from('enrollments')
-          .select(`
+          .from("enrollments")
+          .select(
+            `
             *,
             courses (*)
-          `)
-          .eq('student_id', user.id)
-          .eq('is_active', true)
-          .order('enrolled_at', { ascending: false })
-          .limit(3)
+          `
+          )
+          .eq("student_id", user.id)
+          .eq("is_active", true)
+          .order("enrolled_at", { ascending: false })
+          .limit(3);
 
         if (error) {
-          console.error('Error fetching enrolled courses:', error)
-          return
+          console.error("Error fetching enrolled courses:", error);
+          return;
         }
 
-        const courses = data?.map(item => ({
-          ...item.courses,
-          enrollment: {
-            enrolled_at: item.enrolled_at
-          }
-        })) || []
+        const courses =
+          data?.map((item) => ({
+            ...item.courses,
+            enrollment: {
+              enrolled_at: item.enrolled_at,
+            },
+          })) || [];
 
-        setEnrolledCourses(courses)
+        setEnrolledCourses(courses);
       } catch (err) {
-        console.error('Error fetching enrolled courses:', err)
+        console.error("Error fetching enrolled courses:", err);
       } finally {
-        setIsLoadingCourses(false)
+        setIsLoadingCourses(false);
       }
-    }
+    };
 
-    fetchEnrolledCourses()
-  }, [user, supabase])
+    fetchEnrolledCourses();
+  }, [user, supabase]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,17 +105,25 @@ export default function DashboardPage() {
                 ) : enrolledCourses.length > 0 ? (
                   <div className="space-y-3">
                     {enrolledCourses.map((course) => (
-                      <div key={course.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-sm">
+                      <div
+                        key={course.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-sm"
+                      >
                         <div className="flex items-center space-x-3">
                           <BookOpen className="w-5 h-5 text-[#e27447]" />
                           <div>
-                            <p className="font-medium text-sm">{course.title}</p>
+                            <p className="font-medium text-sm">
+                              {course.title}
+                            </p>
                             <div className="flex items-center space-x-2">
                               <Badge variant="outline" className="text-xs">
-                                {course.is_free ? 'Free' : 'Paid'}
+                                {course.is_free ? "Free" : "Paid"}
                               </Badge>
                               <span className="text-xs text-muted-foreground">
-                                Enrolled {new Date(course.enrollment.enrolled_at).toLocaleDateString()}
+                                Enrolled{" "}
+                                {new Date(
+                                  course.enrollment.enrolled_at
+                                ).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
@@ -122,7 +142,9 @@ export default function DashboardPage() {
                 ) : (
                   <div className="text-center py-4">
                     <BookOpen className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-3">No courses enrolled yet</p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      No courses enrolled yet
+                    </p>
                     <Link href="/courses">
                       <Button size="sm">Browse Courses</Button>
                     </Link>
@@ -145,12 +167,27 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Assignments</CardTitle>
-                <CardDescription>Check your pending assignments</CardDescription>
+                <CardTitle>Question Bank</CardTitle>
+                <CardDescription>
+                  Browse and manage IBDP Mathematics questions
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/assignments">
-                  <Button className="w-full">View Assignments</Button>
+                <div className="flex items-center space-x-2 mb-3">
+                  <HelpCircle className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium">
+                    233 Questions Available
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Access past year questions, practice problems, and create
+                  custom assessments.
+                </p>
+                <Link href="/question-bank">
+                  <Button className="w-full">
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    Browse Question Bank
+                  </Button>
                 </Link>
               </CardContent>
             </Card>
@@ -163,7 +200,9 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Site Administration</CardTitle>
-                <CardDescription>Access all administrative functions</CardDescription>
+                <CardDescription>
+                  Access all administrative functions
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Link href="/admin/site-administration">
@@ -231,9 +270,9 @@ export default function DashboardPage() {
             <CardDescription>Sign out of your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
-              variant="outline" 
-              className="w-full" 
+            <Button
+              variant="outline"
+              className="w-full"
               onClick={() => signOut()}
             >
               Sign Out
@@ -242,5 +281,5 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

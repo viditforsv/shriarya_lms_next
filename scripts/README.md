@@ -1,129 +1,105 @@
-# CBSE Syllabus Import Guide
+# Scripts Directory
 
-This guide explains how to import the CBSE Class 10 Mathematics syllabus into your LMS database.
+This directory contains various utility scripts for managing the ShriArya LMS system.
 
-## Prerequisites
-
-1. **Node.js** (v16 or higher)
-2. **Supabase Project** with the following environment variables in `.env.local`:
-
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ```
-
-3. **CSV File**: `docs/CBSE-10-Maths-Complete-Syllabus.csv` (already created)
-
-## Installation
-
-1. Navigate to the scripts directory:
-
-   ```bash
-   cd scripts
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-## Running the Import
-
-1. **Run the import script**:
-
-   ```bash
-   npm run import
-   ```
-
-   Or directly:
-
-   ```bash
-   node import-cbse-syllabus.js
-   ```
-
-## What the Script Does
-
-The import script will:
-
-1. **Create a Course Template** for CBSE Mathematics courses
-2. **Create a Course Instance** with the complete syllabus
-3. **Import 94 Lessons** organized by units and chapters
-4. **Set up the Database Structure** with proper relationships
-
-### Database Structure Created
-
-- **Course Template**: `cbse-mathematics-template`
-- **Course Instance**: `cbse-class-10-mathematics`
-- **94 Lessons** with proper ordering and metadata
-- **7 Units** covering all CBSE topics
-- **15 Chapters** organized by subject areas
-
-### Course Structure
+## Directory Structure
 
 ```
-Unit 1: Number Systems (6 lessons)
-├── Chapter 1: Real Numbers
-│   ├── Introduction to Real Numbers
-│   ├── Fundamental Theorem of Arithmetic
-│   ├── Proofs of Irrationality
-│   └── Practice Problems
-
-Unit 2: Algebra (25 lessons)
-├── Chapter 2: Polynomials
-├── Chapter 3: Pair of Linear Equations
-├── Chapter 4: Quadratic Equations
-└── Chapter 5: Arithmetic Progressions
-
-Unit 3: Coordinate Geometry (6 lessons)
-├── Chapter 6: Coordinate Geometry
-
-Unit 4: Geometry (10 lessons)
-├── Chapter 7: Triangles
-└── Chapter 8: Circles
-
-Unit 5: Trigonometry (19 lessons)
-├── Chapter 9: Introduction to Trigonometry
-├── Chapter 10: Trigonometric Identities
-└── Chapter 11: Heights and Distances
-
-Unit 6: Mensuration (10 lessons)
-├── Chapter 12: Areas Related to Circles
-└── Chapter 13: Surface Areas and Volumes
-
-Unit 7: Statistics & Probability (13 lessons)
-├── Chapter 14: Statistics
-└── Chapter 15: Probability
+scripts/
+├── sql/                           # Database schema and security scripts
+│   ├── enable-rls-security.sql    # Enable Row Level Security on tables
+│   └── fix-question-bank-structure.sql # Fix question bank table structure
+├── database-imports/              # Data import scripts
+│   ├── import-cbse-syllabus.js    # Import CBSE syllabus data
+│   ├── import-lessons.js          # Import lesson data
+│   └── prepare-lesson-data.js     # Prepare lesson data for import
+├── course-management/             # Course management utilities
+│   ├── add-lessons-to-existing-course.js
+│   ├── check-course.js
+│   ├── restore-course-content.js
+│   ├── update-lesson-content.js
+│   └── update-lessons-with-sections.js
+├── create-flexible-question-structure.js # Question bank utilities
+├── reorder-csv-columns.js         # CSV data processing utilities
+└── README.md                      # This file
 ```
 
-## Frontend Integration
+## Script Categories
 
-The frontend has been updated to support the CBSE syllabus structure:
+### 🔒 SQL Scripts (`sql/`)
 
-### New Components
+Database schema modifications and security configurations.
 
-1. **CBSESyllabusView**: Displays the complete syllabus structure
-2. **CBSEUnitView**: Shows individual units with chapters and lessons
-3. **Updated Course Page**: Integrates CBSE-specific views
+- **`enable-rls-security.sql`**: Enables Row Level Security (RLS) on public tables to fix security lint errors
+- **`fix-question-bank-structure.sql`**: Recreates question bank tables with proper structure
 
-### API Endpoints
+### 📥 Database Imports (`database-imports/`)
 
-- `GET /api/syllabus/[courseSlug]`: Fetch syllabus data
-- `POST /api/syllabus/[courseSlug]`: Update syllabus structure
+Scripts for importing data into the system.
 
-### Course Page Features
+- **`import-cbse-syllabus.js`**: Imports CBSE Class 10 Mathematics syllabus
+- **`import-lessons.js`**: Imports lesson data from CSV files
+- **`prepare-lesson-data.js`**: Prepares lesson data for import
 
-- **Tabbed Interface**: Overview, Syllabus, Lessons
-- **Progress Tracking**: Shows completion percentage
-- **Unit Navigation**: Easy navigation between units
-- **Lesson Access**: Direct links to individual lessons
+### 🎓 Course Management (`course-management/`)
 
-## Accessing the Course
+Utilities for managing courses and their content.
 
-After successful import, you can access the course at:
+- **`add-lessons-to-existing-course.js`**: Adds lessons to existing courses
+- **`check-course.js`**: Validates course data and structure
+- **`restore-course-content.js`**: Restores course content from backups
+- **`update-lesson-content.js`**: Updates lesson content
+- **`update-lessons-with-sections.js`**: Updates lessons with section information
 
+### 🔧 Utilities
+
+General utility scripts for data processing and system maintenance.
+
+- **`create-flexible-question-structure.js`**: Creates flexible question bank structure
+- **`reorder-csv-columns.js`**: Reorders CSV columns for proper data import
+
+## Usage
+
+### Running SQL Scripts
+
+Execute SQL scripts directly in the Supabase SQL Editor:
+
+```sql
+-- Copy and paste the contents of any .sql file
 ```
-https://your-domain.com/courses/cbse-class-10-mathematics
+
+### Running JavaScript Scripts
+
+Most JavaScript scripts require Node.js and Supabase configuration:
+
+```bash
+# Set up environment variables in .env.local
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Run scripts from the project root
+node scripts/database-imports/import-cbse-syllabus.js
 ```
+
+## Security Notes
+
+- **RLS Security**: Always run `sql/enable-rls-security.sql` after creating new public tables
+- **Service Role Key**: Only use service role keys in server-side scripts, never in client-side code
+- **Data Validation**: Always validate data before running import scripts
+
+## Maintenance
+
+### Adding New Scripts
+
+1. Place scripts in the appropriate subdirectory based on their purpose
+2. Update this README with script descriptions
+3. Add proper error handling and logging
+
+### Cleaning Up
+
+- Remove unused scripts regularly
+- Keep only the latest versions of duplicate scripts
+- Document any breaking changes in script behavior
 
 ## Troubleshooting
 
@@ -135,75 +111,27 @@ https://your-domain.com/courses/cbse-class-10-mathematics
    Error: Missing Supabase configuration
    ```
 
-   **Solution**: Ensure `.env.local` has the correct Supabase credentials
+   **Solution**: Ensure `.env.local` has correct Supabase credentials
 
-2. **CSV File Not Found**
+2. **Permission Errors**
 
-   ```
-   Error: CSV file not found
-   ```
-
-   **Solution**: Ensure `docs/CBSE-10-Maths-Complete-Syllabus.csv` exists
-
-3. **Database Permission Issues**
    ```
    Error: Authentication required
    ```
+
    **Solution**: Check that `SUPABASE_SERVICE_ROLE_KEY` has proper permissions
 
-### Verification
-
-After import, verify the data:
-
-1. **Check Course Template**:
-
-   ```sql
-   SELECT * FROM course_templates WHERE slug = 'cbse-mathematics-template';
+3. **Database Connection Issues**
    ```
-
-2. **Check Course Instance**:
-
-   ```sql
-   SELECT * FROM courses WHERE slug = 'cbse-class-10-mathematics';
+   Error: Connection timeout
    ```
+   **Solution**: Verify Supabase URL and network connectivity
 
-3. **Check Lessons Count**:
-   ```sql
-   SELECT COUNT(*) FROM lessons WHERE course_id = 'your-course-id';
-   ```
+### Getting Help
 
-## Customization
+For issues with specific scripts:
 
-### Modifying the Syllabus
-
-To update the syllabus:
-
-1. Edit `docs/CBSE-10-Maths-Complete-Syllabus.csv`
-2. Re-run the import script
-3. The script will update existing data
-
-### Adding New Courses
-
-To create additional CBSE courses:
-
-1. Modify `COURSE_CONFIG` in the script
-2. Update the CSV file structure
-3. Run the import script
-
-## Support
-
-For issues or questions:
-
-1. Check the console output for detailed error messages
+1. Check the script's console output for detailed error messages
 2. Verify database permissions and connectivity
 3. Ensure all prerequisites are met
-
-## Next Steps
-
-After successful import:
-
-1. **Test the Course**: Navigate to the course page
-2. **Verify Lessons**: Check that all lessons are accessible
-3. **Test Progress**: Ensure progress tracking works
-4. **Customize Content**: Add specific content to individual lessons
-5. **Set Up Resources**: Add videos, PDFs, and other resources to lessons
+4. Check the script's comments for usage instructions

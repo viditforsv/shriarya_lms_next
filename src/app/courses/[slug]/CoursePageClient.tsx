@@ -26,6 +26,7 @@ import {
 } from "@/lib/course-config";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
+import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { Chapter } from "@/lib/cbse-syllabus";
 import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS } from "@/lib/cbse-syllabus";
 import { syllabus as ibdpSyllabus } from "@/lib/courses/ibdp-mathematics-aa-hl/syllabus";
@@ -816,75 +817,79 @@ export function CoursePageClient({
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      {/* Display units with chapters in accordion */}
-                      {getUnitsForCourse().map((unit, index) => {
-                        const isExpanded = expandedUnits.has(unit.id);
-                        return (
-                          <div key={unit.id} className="border rounded-sm">
-                            {/* Unit Header */}
-                            <div
-                              className="flex items-center space-x-3 p-4 hover:bg-gray-50 cursor-pointer"
-                              onClick={() => toggleUnit(unit.id)}
-                            >
-                              <div className="w-10 h-10 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                                {index + 1}
-                              </div>
-                              <div className="flex-1">
+                    {isIBDPCourse ? (
+                      <IBDPCourseStructure courseSlug={courseParams.slug} />
+                    ) : (
+                      <div className="space-y-2">
+                        {/* Display units with chapters in accordion */}
+                        {getUnitsForCourse().map((unit, index) => {
+                          const isExpanded = expandedUnits.has(unit.id);
+                          return (
+                            <div key={unit.id} className="border rounded-sm">
+                              {/* Unit Header */}
+                              <div
+                                className="flex items-center space-x-3 p-4 hover:bg-gray-50 cursor-pointer"
+                                onClick={() => toggleUnit(unit.id)}
+                              >
+                                <div className="w-10 h-10 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
+                                  {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2">
+                                    <h4 className="font-medium text-lg">
+                                      {unit.title}
+                                    </h4>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    {unit.chapters?.length || 0} chapters
+                                  </p>
+                                </div>
                                 <div className="flex items-center space-x-2">
-                                  <h4 className="font-medium text-lg">
-                                    {unit.title}
-                                  </h4>
+                                  <ChevronRight
+                                    className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                                      isExpanded ? "rotate-90" : ""
+                                    }`}
+                                  />
                                 </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {unit.chapters?.length || 0} chapters
-                                </p>
                               </div>
-                              <div className="flex items-center space-x-2">
-                                <ChevronRight
-                                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-                                    isExpanded ? "rotate-90" : ""
-                                  }`}
-                                />
-                              </div>
-                            </div>
 
-                            {/* Chapters (Expanded Content) */}
-                            {isExpanded && unit.chapters && (
-                              <div className="border-t bg-gray-50/50">
-                                <div className="p-4 space-y-2">
-                                  {unit.chapters.map(
-                                    (chapter, chapterIndex) => (
-                                      <div
-                                        key={chapter.id}
-                                        className="flex items-center space-x-3 p-3 rounded-sm bg-white border hover:bg-gray-50 cursor-pointer"
-                                        onClick={() =>
-                                          handleChapterClick(chapter)
-                                        }
-                                      >
-                                        <div className="w-8 h-8 bg-gray-200 text-gray-700 rounded-sm flex items-center justify-center text-xs font-medium">
-                                          {chapterIndex + 1}
+                              {/* Chapters (Expanded Content) */}
+                              {isExpanded && unit.chapters && (
+                                <div className="border-t bg-gray-50/50">
+                                  <div className="p-4 space-y-2">
+                                    {unit.chapters.map(
+                                      (chapter, chapterIndex) => (
+                                        <div
+                                          key={chapter.id}
+                                          className="flex items-center space-x-3 p-3 rounded-sm bg-white border hover:bg-gray-50 cursor-pointer"
+                                          onClick={() =>
+                                            handleChapterClick(chapter)
+                                          }
+                                        >
+                                          <div className="w-8 h-8 bg-gray-200 text-gray-700 rounded-sm flex items-center justify-center text-xs font-medium">
+                                            {chapterIndex + 1}
+                                          </div>
+                                          <div className="flex-1">
+                                            <h5 className="font-medium text-gray-800">
+                                              {chapter.title}
+                                            </h5>
+                                            <p className="text-xs text-gray-500">
+                                              {chapter.subsections?.length || 0}{" "}
+                                              topics
+                                            </p>
+                                          </div>
+                                          <ChevronRight className="w-4 h-4 text-gray-400" />
                                         </div>
-                                        <div className="flex-1">
-                                          <h5 className="font-medium text-gray-800">
-                                            {chapter.title}
-                                          </h5>
-                                          <p className="text-xs text-gray-500">
-                                            {chapter.subsections?.length || 0}{" "}
-                                            topics
-                                          </p>
-                                        </div>
-                                        <ChevronRight className="w-4 h-4 text-gray-400" />
-                                      </div>
-                                    )
-                                  )}
+                                      )
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -900,8 +905,10 @@ export function CoursePageClient({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Chapters</span>
-                  <span className="font-medium">7</span>
+                  <span className="text-muted-foreground">Total Units</span>
+                  <span className="font-medium">
+                    {isIBDPCourse ? "5" : "7"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Lessons</span>
@@ -923,7 +930,9 @@ export function CoursePageClient({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Exam Board</span>
-                  <span className="font-medium">CBSE</span>
+                  <span className="font-medium">
+                    {isIBDPCourse ? "IBO" : "CBSE"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Academic Year</span>
@@ -931,7 +940,9 @@ export function CoursePageClient({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Textbook</span>
-                  <span className="font-medium">NCERT</span>
+                  <span className="font-medium">
+                    {isIBDPCourse ? "IBDP" : "NCERT"}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -939,52 +950,93 @@ export function CoursePageClient({
             {/* Chapter Overview */}
             <Card>
               <CardHeader>
-                <CardTitle>Chapter Overview</CardTitle>
+                <CardTitle>Unit Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      1. Number Systems
-                    </span>
-                    <span className="font-medium">Real Numbers</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">2. Algebra</span>
-                    <span className="font-medium">
-                      Polynomials, Linear & Quadratic
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      3. Coordinate Geometry
-                    </span>
-                    <span className="font-medium">
-                      Distance & Section Formula
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">4. Geometry</span>
-                    <span className="font-medium">Triangles & Circles</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      5. Trigonometry
-                    </span>
-                    <span className="font-medium">Ratios & Identities</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      6. Mensuration
-                    </span>
-                    <span className="font-medium">Areas & Volumes</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      7. Statistics & Probability
-                    </span>
-                    <span className="font-medium">Data Analysis</span>
-                  </div>
+                  {isIBDPCourse ? (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          1. Number and Algebra
+                        </span>
+                        <span className="font-medium">89 lessons</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          2. Functions
+                        </span>
+                        <span className="font-medium">45 lessons</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          3. Geometry and Trigonometry
+                        </span>
+                        <span className="font-medium">42 lessons</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          4. Statistics and Probability
+                        </span>
+                        <span className="font-medium">58 lessons</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          5. Calculus
+                        </span>
+                        <span className="font-medium">59 lessons</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          1. Number Systems
+                        </span>
+                        <span className="font-medium">Real Numbers</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          2. Algebra
+                        </span>
+                        <span className="font-medium">
+                          Polynomials, Linear & Quadratic
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          3. Coordinate Geometry
+                        </span>
+                        <span className="font-medium">
+                          Distance & Section Formula
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          4. Geometry
+                        </span>
+                        <span className="font-medium">Triangles & Circles</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          5. Trigonometry
+                        </span>
+                        <span className="font-medium">Ratios & Identities</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          6. Mensuration
+                        </span>
+                        <span className="font-medium">Areas & Volumes</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          7. Statistics & Probability
+                        </span>
+                        <span className="font-medium">Data Analysis</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

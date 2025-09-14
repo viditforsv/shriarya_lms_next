@@ -1,93 +1,119 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/app/components-demo/ui/ui-components/button"
-import { ChevronDown, Search, User, LogOut, Settings, BookOpen } from "lucide-react"
-import Image from "next/image"
-import { useAuth } from "@/contexts/AuthContext"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  ChevronDown,
+  Search,
+  User,
+  LogOut,
+  Settings,
+  BookOpen,
+} from "lucide-react";
+import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Header() {
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   // Use auth context directly
-  const authContext = useAuth()
-  const user = authContext?.user
-  const profile = authContext?.profile
-  const signOut = authContext?.signOut
+  const authContext = useAuth();
+  const user = authContext?.user;
+  const profile = authContext?.profile;
+  const signOut = authContext?.signOut;
 
   // Debug logging - only log when values actually change
   useEffect(() => {
-    if (isMounted && process.env.NODE_ENV === 'development') {
-      console.log('Header - Auth state:', { 
-        user: user?.email, 
+    if (isMounted && process.env.NODE_ENV === "development") {
+      console.log("Header - Auth state:", {
+        user: user?.email,
         profile: profile?.role,
         loading: authContext?.loading,
-        userExists: !!user
-      })
+        userExists: !!user,
+      });
     }
-  }, [isMounted, user?.email, profile?.role, authContext?.loading, user])
+  }, [isMounted, user?.email, profile?.role, authContext?.loading, user]);
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element
-      if (isUserDropdownOpen && !target.closest('.user-dropdown')) {
-        setIsUserDropdownOpen(false)
+      const target = event.target as Element;
+      if (isUserDropdownOpen && !target.closest(".user-dropdown")) {
+        setIsUserDropdownOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isUserDropdownOpen])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserDropdownOpen]);
 
   // Get navigation based on user role
   const getNavigation = () => {
-    if (!isMounted) return []
-    
-    if (profile?.role === 'admin') {
+    if (!isMounted) return [];
+
+    if (profile?.role === "admin") {
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
-        { name: "Site Administration", href: "/admin/site-administration", hasDropdown: false },
-      ]
+        {
+          name: "Browse Courses",
+          href: "/courses/discover",
+          hasDropdown: false,
+        },
+        {
+          name: "Site Administration",
+          href: "/admin/site-administration",
+          hasDropdown: false,
+        },
+      ];
     } else if (user) {
       // Authenticated users (students)
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
+        {
+          name: "Browse Courses",
+          href: "/courses/discover",
+          hasDropdown: false,
+        },
         { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
-      ]
+      ];
     } else {
       // Public users (not logged in)
       return [
         { name: "Home", href: "/", hasDropdown: false },
-        { name: "Browse Courses", href: "/courses/discover", hasDropdown: false },
+        {
+          name: "Browse Courses",
+          href: "/courses/discover",
+          hasDropdown: false,
+        },
         { name: "About", href: "/about", hasDropdown: false },
         { name: "Contact", href: "/contact", hasDropdown: false },
         { name: "Pricing", href: "/pricing", hasDropdown: false },
-      ]
+      ];
     }
-  }
+  };
 
-  const navigation = getNavigation()
+  const navigation = getNavigation();
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
-              <Image 
-                src="/images/main_logo.webp" 
-                alt="ShriArya LMS Logo" 
+              <Image
+                src="/images/main_logo.webp"
+                alt="ShriArya LMS Logo"
                 width={40}
                 height={40}
               />
@@ -113,9 +139,9 @@ export function Header() {
           {/* Main Navigation */}
           <nav className="hidden lg:flex items-center space-x-6">
             {navigation.map((item) => (
-              <Link 
+              <Link
                 key={item.name}
-                href={item.href} 
+                href={item.href}
                 className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent"
               >
                 {item.name}
@@ -125,7 +151,6 @@ export function Header() {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-
             {/* User Actions */}
             {user ? (
               <div className="relative user-dropdown">
@@ -137,28 +162,45 @@ export function Header() {
                     <User className="w-4 h-4 text-accent" />
                   </div>
                   <span className="hidden md:block">{user.email}</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      isUserDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
-                
+
                 {/* User Dropdown Menu */}
                 {isUserDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
                     <div className="py-2">
                       <div className="px-4 py-2 border-b border-[#feefea]">
-                        <p className="text-sm font-medium text-[#1e293b]">{user.email}</p>
-                        <p className="text-xs text-muted-foreground">Signed in</p>
+                        <p className="text-sm font-medium text-[#1e293b]">
+                          {user.email}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Signed in
+                        </p>
                       </div>
-                      
+
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                        Dashboard
+                      </Link>
+
                       <Link
                         href="/courses/enrolled"
                         className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
-                        <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                        <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
                         My Courses
                       </Link>
-                      
-                      {profile?.role === 'admin' && (
+
+                      {profile?.role === "admin" && (
                         <Link
                           href="/admin/site-administration"
                           className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
@@ -168,7 +210,7 @@ export function Header() {
                           Site Administration
                         </Link>
                       )}
-                      
+
                       <Link
                         href="/profile"
                         className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
@@ -177,28 +219,19 @@ export function Header() {
                         <User className="w-4 h-4 mr-3 text-[#e27447]" />
                         Profile
                       </Link>
-                      
-                      <Link
-                        href="/courses/enrolled"
-                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
-                        onClick={() => setIsUserDropdownOpen(false)}
-                      >
-                        <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
-                        My Courses
-                      </Link>
-                      
+
                       <div className="border-t border-[#feefea] mt-2 pt-2">
                         <button
                           onClick={async (e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            console.log('Sign out button clicked')
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log("Sign out button clicked");
                             try {
-                              setIsUserDropdownOpen(false)
-                              await signOut?.()
-                              console.log('Sign out completed successfully')
+                              setIsUserDropdownOpen(false);
+                              await signOut?.();
+                              console.log("Sign out completed successfully");
                             } catch (error) {
-                              console.error('Sign out error:', error)
+                              console.error("Sign out error:", error);
                             }
                           }}
                           className="flex items-center w-full px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
@@ -214,7 +247,9 @@ export function Header() {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link href="/auth">
-                  <Button size="sm" variant="outline">Log In</Button>
+                  <Button size="sm" variant="outline">
+                    Log In
+                  </Button>
                 </Link>
                 <Link href="/auth">
                   <Button size="sm">Sign Up</Button>
@@ -229,5 +264,5 @@ export function Header() {
         {/* Removed mobile navigation - web-only app */}
       </div>
     </header>
-  )
+  );
 }

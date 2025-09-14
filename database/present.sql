@@ -77,9 +77,11 @@ CREATE TABLE public.lessons (
   video_thumbnail text,
   pdf_url text,
   key_points jsonb,
+  unit_name text,
+  chapter_name text,
   CONSTRAINT lessons_pkey PRIMARY KEY (id),
-  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
+  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
+  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
 );
 CREATE TABLE public.profiles (
   id uuid NOT NULL,
@@ -95,24 +97,49 @@ CREATE TABLE public.profiles (
 );
 CREATE TABLE public.question_bank (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
+  is_pyq boolean NOT NULL DEFAULT true,
+  question_number text,
+  total_marks integer,
+  pyq_year integer,
+  month text,
+  paper_number integer,
+  Time Zone text,
   question_text text NOT NULL,
-  options jsonb NOT NULL,
-  correct_answer text NOT NULL,
+  tags ARRAY DEFAULT '{}'::text[],
+  section text,
+  subject text NOT NULL DEFAULT 'IBDP Mathematics AA HL'::text,
   explanation text,
-  difficulty text,
-  subject text,
-  created_at timestamp without time zone DEFAULT now(),
+  calculator text,
+  correct_answer text,
+  difficulty integer CHECK (difficulty >= 1 AND difficulty <= 10),
+  created_at timestamp with time zone DEFAULT now(),
+  image_url text,
+  solution_steps jsonb DEFAULT '[]'::jsonb,
+  solution_image text,
+  question_type text NOT NULL DEFAULT 'subjective'::text CHECK (question_type = ANY (ARRAY['mcq'::text, 'subjective'::text, 'true_false'::text, 'fill_blank'::text])),
+  mark_allocation jsonb,
+  board text NOT NULL DEFAULT 'IBDP'::text,
+  grade text NOT NULL DEFAULT '12'::text,
+  topic text,
+  subtopic text,
+  source text NOT NULL DEFAULT 'IBDP'::text,
+  paper_type text,
+  updated_at timestamp with time zone DEFAULT now(),
+  created_by uuid,
+  is_active boolean NOT NULL DEFAULT true,
+  year integer,
+  options jsonb DEFAULT '[]'::jsonb,
   CONSTRAINT question_bank_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.quiz_questions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  quiz_id uuid,
-  question_id uuid,
-  question_order integer,
-  created_at timestamp without time zone DEFAULT now(),
+  quiz_id uuid NOT NULL,
+  question_id uuid NOT NULL,
+  question_order integer NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT quiz_questions_pkey PRIMARY KEY (id),
-  CONSTRAINT quiz_questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
-  CONSTRAINT quiz_questions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id)
+  CONSTRAINT quiz_questions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id),
+  CONSTRAINT quiz_questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
 );
 CREATE TABLE public.quizzes (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

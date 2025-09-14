@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -32,9 +32,7 @@ import {
   Eye,
 } from "lucide-react";
 import { VideoResource } from "@/app/components-demo/ui/youtube-video";
-import { CompletionDot } from "@/app/components-demo/ui/template-status";
 import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
-import { useAuth } from "@/contexts/AuthContext";
 import { LessonPageSkeleton } from "@/components/skeletons";
 
 interface Course {
@@ -68,21 +66,11 @@ interface Lesson {
   quiz_id?: string;
 }
 
-interface UserProgress {
-  id: string;
-  completion_percentage: number;
-  time_spent_minutes: number;
-  last_accessed_at: string;
-  completed_at: string | null;
-  is_completed: boolean;
-}
-
 export default function DynamicLessonPage({
   params,
 }: {
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
-  const { user, session } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
@@ -97,11 +85,9 @@ export default function DynamicLessonPage({
     lessonSlug: string;
   } | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [practiceAnswers, setPracticeAnswers] = useState<
     Record<string, string>
   >({});
-  const [lessonStartTime, setLessonStartTime] = useState<Date | null>(null);
 
   // Resolve params
   useEffect(() => {
@@ -198,207 +184,6 @@ export default function DynamicLessonPage({
     loadLesson();
   }, [resolvedParams]);
 
-  // Create initial progress entry for new users
-  const createInitialProgress = useCallback(async () => {
-    if (!lesson) {
-      console.log("Skipping progress creation - missing lesson");
-      return;
-    }
-
-    if (!user) {
-      console.log(
-        "Skipping progress creation - user not authenticated (this is OK for free courses)"
-      );
-      return;
-    }
-
-    try {
-      console.log("Creating initial progress for lesson:", lesson.id);
-      console.log("Lesson data:", {
-        id: lesson.id,
-        course_id: lesson.course_id,
-        title: lesson.title,
-      });
-      console.log("User data:", { id: user.id, email: user.email });
-
-      // Check if user has valid session
-      console.log("User session:", session ? "exists" : "missing");
-
-      const requestBody = {
-        lesson_id: lesson.id,
-        course_id: lesson.course_id,
-        completion_percentage: 0,
-        time_spent_minutes: 0,
-        is_completed: false,
-      };
-
-      console.log("Request body:", requestBody);
-
-      const response = await fetch("/api/user-progress", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Include cookies for authentication
-        body: JSON.stringify(requestBody),
-      });
-
-      console.log("Response status:", response.status);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserProgress(data.progress);
-        console.log("Created initial progress:", data.progress);
-      } else {
-        const errorText = await response.text();
-        console.error("Failed to create initial progress:", response.status);
-        console.error("Error response body:", errorText);
-
-        // If it's a 401 error, the user might not be properly authenticated
-        if (response.status === 401) {
-          console.warn(
-            "User authentication failed - progress tracking disabled"
-          );
-          // Don't throw error, just skip progress tracking for unauthenticated users
-          return;
-        }
-      }
-    } catch (error) {
-      console.error("Error creating initial progress:", error);
-    }
-  }, [lesson, user, session]);
-
-  // Track lesson interactions and update progress
-  const updateProgress = useCallback(
-    async (completionPercentage: number, timeSpentMinutes?: number) => {
-      if (!lesson || !user) return;
-
-      try {
-        const response = await fetch("/api/user-progress", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Include cookies for authentication
-          body: JSON.stringify({
-            lesson_id: lesson.id,
-            course_id: lesson.course_id,
-            completion_percentage: completionPercentage,
-            time_spent_minutes: timeSpentMinutes || 0,
-            is_completed: completionPercentage >= 100,
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUserProgress(data.progress);
-          console.log("Progress updated:", data.progress);
-        }
-      } catch (error) {
-        console.error("Error updating progress:", error);
-      }
-    },
-    [lesson, user]
-  );
-
-  // Fetch user progress when lesson and user are available
-  useEffect(() => {
-    const fetchUserProgress = async () => {
-      if (!lesson) return;
-
-      try {
-        console.log("Fetching user progress for lesson:", lesson.id);
-        const response = await fetch(
-          `/api/user-progress?lessonId=${lesson.id}&courseId=${lesson.course_id}`,
-          {
-            credentials: "include", // Include cookies for authentication
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("User progress data:", data);
-
-          if (data.progress && data.progress.length > 0) {
-            // User has existing progress
-            setUserProgress(data.progress[0]);
-            console.log("Found existing progress:", data.progress[0]);
-          } else {
-            // No existing progress - create initial progress entry only if user is authenticated
-            console.log("No existing progress found");
-            if (user && session) {
-              console.log(
-                "Creating initial progress entry for authenticated user"
-              );
-              await createInitialProgress();
-            } else {
-              console.log(
-                "User not authenticated - skipping progress creation"
-              );
-            }
-          }
-        } else {
-          console.error("Failed to fetch user progress:", response.status);
-          // If it's a 401, don't try to create progress
-          if (response.status === 401) {
-            console.warn("User not authenticated - skipping progress tracking");
-            return;
-          }
-          // For other errors, only try to create progress if user is authenticated
-          if (user && session) {
-            console.log(
-              "Attempting to create initial progress after fetch error"
-            );
-            await createInitialProgress();
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user progress:", error);
-      }
-    };
-
-    // Only fetch progress if user is authenticated
-    if (user && session) {
-      fetchUserProgress();
-    } else {
-      console.log("User not authenticated - skipping progress fetch");
-    }
-  }, [lesson, user, session, createInitialProgress]);
-
-  // Track lesson start time
-  useEffect(() => {
-    if (lesson) {
-      setLessonStartTime(new Date());
-    }
-  }, [lesson]);
-
-  // Auto-update progress based on time spent
-  useEffect(() => {
-    if (!lessonStartTime || !userProgress || !user) return;
-
-    const interval = setInterval(() => {
-      const timeSpent = Math.floor(
-        (Date.now() - lessonStartTime.getTime()) / 60000
-      ); // minutes
-
-      // Update progress every 2 minutes if user is actively viewing
-      if (timeSpent > 0 && timeSpent % 2 === 0) {
-        const currentProgress = userProgress.completion_percentage;
-        const timeBasedProgress = Math.min(95, Math.floor(timeSpent * 2)); // Max 95% from time
-
-        if (timeBasedProgress > currentProgress) {
-          updateProgress(timeBasedProgress, timeSpent);
-        }
-      }
-    }, 60000); // Check every minute
-
-    return () => clearInterval(interval);
-  }, [lessonStartTime, userProgress, updateProgress, user]);
-
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free;
   };
@@ -426,43 +211,12 @@ export default function DynamicLessonPage({
   };
 
   const handleMarkComplete = async () => {
-    if (!user) {
-      alert("🎉 Lesson completed! (Sign in to track your progress)");
-      return;
-    }
-    await updateProgress(100);
-    alert("🎉 Lesson marked as complete!");
+    alert("🎉 Lesson completed!");
   };
 
   // Track tab changes as progress
   const handleTabChange = (value: string) => {
     setActiveTab(value as "video" | "notes" | "keypoints" | "quiz");
-
-    // Update progress based on tab interaction
-    let progressPercentage = 0;
-    switch (value) {
-      case "video":
-        progressPercentage = 25;
-        break;
-      case "notes":
-        progressPercentage = 50;
-        break;
-      case "keypoints":
-        progressPercentage = 75;
-        break;
-      case "quiz":
-        progressPercentage = 90;
-        break;
-    }
-
-    // Only update if it's higher than current progress and user is authenticated
-    if (
-      user &&
-      userProgress &&
-      progressPercentage > userProgress.completion_percentage
-    ) {
-      updateProgress(progressPercentage);
-    }
   };
 
   const handleBookmarkToggle = () => {
@@ -553,9 +307,8 @@ export default function DynamicLessonPage({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with completion indicator */}
+      {/* Header */}
       <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
-        <CompletionDot isCompleted={userProgress?.is_completed || false} />
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -755,12 +508,9 @@ export default function DynamicLessonPage({
                       <Button
                         className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
                         onClick={handleMarkComplete}
-                        disabled={userProgress?.is_completed}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
-                        {userProgress?.is_completed
-                          ? "Completed"
-                          : "Mark as Complete"}
+                        Mark as Complete
                       </Button>
                     </div>
                   </CardContent>

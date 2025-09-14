@@ -523,6 +523,28 @@ export default function QuestionDetailPage() {
                       </div>
                     </>
                   )}
+
+                  <div>
+                    <Label htmlFor="tags">Chapter Tags</Label>
+                    <Textarea
+                      id="tags"
+                      value={question.tags ? question.tags.join(", ") : ""}
+                      onChange={(e) =>
+                        setQuestion({
+                          ...question,
+                          tags: e.target.value
+                            .split(",")
+                            .map((tag) => tag.trim())
+                            .filter((tag) => tag.length > 0),
+                        })
+                      }
+                      placeholder="Enter chapter tags separated by commas (e.g., Complex numbers, Polynomials)"
+                      className="min-h-[80px]"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Separate multiple chapter tags with commas
+                    </p>
+                  </div>
                 </>
               ) : (
                 <>
@@ -607,15 +629,19 @@ export default function QuestionDetailPage() {
           {/* Tags */}
           <Card>
             <CardHeader>
-              <CardTitle>Tags</CardTitle>
+              <CardTitle>Chapter Tags</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {question.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
+                {question.tags && question.tags.length > 0 ? (
+                  question.tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="text-sm">
+                      {tag}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-gray-500 text-sm">No chapter tags assigned</span>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -73,7 +73,8 @@ export default function QuestionDetailPage() {
         const data = await response.json();
         setQuestion(data);
       } else {
-        console.error("Failed to fetch question");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to fetch question:", response.status, response.statusText, errorData);
       }
     } catch (error) {
       console.error("Error fetching question:", error);
@@ -105,7 +106,8 @@ export default function QuestionDetailPage() {
         setEditMode(false);
         router.push(`/question-bank/${questionId}`);
       } else {
-        console.error("Failed to save question");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to save question:", response.status, response.statusText, errorData);
       }
     } catch (error) {
       console.error("Error saving question:", error);
@@ -125,7 +127,8 @@ export default function QuestionDetailPage() {
       if (response.ok) {
         router.push("/question-bank");
       } else {
-        console.error("Failed to delete question");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to delete question:", response.status, response.statusText, errorData);
       }
     } catch (error) {
       console.error("Error deleting question:", error);
@@ -156,7 +159,8 @@ export default function QuestionDetailPage() {
         const newQuestion = await response.json();
         router.push(`/question-bank/${newQuestion.id}`);
       } else {
-        console.error("Failed to duplicate question");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to duplicate question:", response.status, response.statusText, errorData);
       }
     } catch (error) {
       console.error("Error duplicating question:", error);

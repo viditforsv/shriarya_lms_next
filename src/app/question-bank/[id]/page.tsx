@@ -528,7 +528,22 @@ export default function QuestionDetailPage() {
                     <Label htmlFor="tags">Chapter Tags</Label>
                     <Textarea
                       id="tags"
-                      value={question.tags ? question.tags.join(", ") : ""}
+                      value={(() => {
+                        // Handle different tag formats for display in edit mode
+                        if (!question.tags) return "";
+
+                        if (Array.isArray(question.tags)) {
+                          return question.tags.join(", ");
+                        } else if (typeof question.tags === "string") {
+                          // If it's a single string, split it and rejoin for editing
+                          return (question.tags as string)
+                            .split(/[,;|]/)
+                            .map((tag) => tag.trim())
+                            .join(", ");
+                        }
+
+                        return "";
+                      })()}
                       onChange={(e) =>
                         setQuestion({
                           ...question,
@@ -633,15 +648,39 @@ export default function QuestionDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {question.tags && question.tags.length > 0 ? (
-                  question.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
-                      {tag}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-gray-500 text-sm">No chapter tags assigned</span>
-                )}
+                {(() => {
+                  // Handle different tag formats from database
+                  let tagsArray: string[] = [];
+
+                  if (question.tags) {
+                    if (Array.isArray(question.tags)) {
+                      // Already an array
+                      tagsArray = question.tags;
+                    } else if (typeof question.tags === "string") {
+                      // Single string - split by common separators
+                      tagsArray = (question.tags as string)
+                        .split(/[,;|]/)
+                        .map((tag) => tag.trim())
+                        .filter((tag) => tag.length > 0);
+                    }
+                  }
+
+                  return tagsArray.length > 0 ? (
+                    tagsArray.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-sm"
+                      >
+                        {tag}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-gray-500 text-sm">
+                      No chapter tags assigned
+                    </span>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>

@@ -84,6 +84,7 @@ export default function QuestionBankPage() {
     grade: "",
     topic: "",
     is_pyq: "",
+    qa_status: "",
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -106,6 +107,7 @@ export default function QuestionBankPage() {
         ...(filters.grade && { grade: filters.grade }),
         ...(filters.topic && { topic: filters.topic }),
         ...(filters.is_pyq && { is_pyq: filters.is_pyq }),
+        ...(filters.qa_status && { qa_status: filters.qa_status }),
       });
 
       const response = await fetch(`/api/question-bank?${params}`);
@@ -150,6 +152,7 @@ export default function QuestionBankPage() {
       grade: "",
       topic: "",
       is_pyq: "",
+      qa_status: "",
     });
     setSearchTerm("");
     setPagination((prev) => ({ ...prev, page: 1 }));
@@ -363,6 +366,26 @@ export default function QuestionBankPage() {
                 <SelectItem value="Sequences and Series">Sequences and Series</SelectItem>
                 <SelectItem value="Vectors">Vectors</SelectItem>
                 <SelectItem value="Matrices">Matrices</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* QA Status Filter */}
+          <div className="mb-4">
+            <Select
+              value={filters.qa_status || undefined}
+              onValueChange={(value) => handleFilterChange("qa_status", value)}
+            >
+              <SelectTrigger className="w-full md:w-64">
+                <SelectValue placeholder="QA Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending Review</SelectItem>
+                <SelectItem value="in_review">In Review</SelectItem>
+                <SelectItem value="needs_revision">Needs Revision</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
               </SelectContent>
             </Select>
           </div>

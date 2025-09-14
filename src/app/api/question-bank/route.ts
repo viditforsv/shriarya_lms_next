@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     const grade = searchParams.get("grade") || "";
     const topic = searchParams.get("topic") || "";
     const is_pyq = searchParams.get("is_pyq") || "";
+    const qa_status = searchParams.get("qa_status") || "";
 
     // Calculate offset
     const offset = (page - 1) * limit;
@@ -79,6 +80,17 @@ export async function GET(request: NextRequest) {
     }
     if (is_pyq) {
       query = query.eq("is_pyq", is_pyq === "true");
+    }
+
+    // Apply QA status filter
+    if (qa_status) {
+      if (qa_status === "pending") {
+        // Questions without QA records or with pending status
+        query = query.or(`question_qa.qa_status.eq.pending,question_qa.is.null`);
+      } else {
+        // Questions with specific QA status
+        query = query.eq("question_qa.qa_status", qa_status);
+      }
     }
 
     // Apply search

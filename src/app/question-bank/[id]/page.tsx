@@ -232,7 +232,7 @@ export default function QuestionDetailPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Question {question.question_number || "N/A"}
+                Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
               </h1>
               <p className="text-gray-600 mt-1">
                 {question.total_marks} marks • {question.question_type} •
@@ -288,7 +288,7 @@ export default function QuestionDetailPage() {
           </button>
           <span>/</span>
           <span className="text-gray-900 font-medium">
-            Question {question.question_number || "N/A"}
+            Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
           </span>
         </nav>
       </div>

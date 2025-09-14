@@ -496,7 +496,7 @@ export default function QuestionBankPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      Question {question.question_number || "N/A"}
+                      Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
                     </CardTitle>
                     <p className="text-sm text-gray-500 mt-1">
                       {question.total_marks} marks • {question.question_type}

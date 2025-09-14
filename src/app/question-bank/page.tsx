@@ -589,7 +589,7 @@ export default function QuestionBankPage() {
                       size="sm"
                       variant="outline"
                       onClick={() =>
-                        router.push(`/question-bank/${question.id}`)
+                        window.open(`/question-bank/${question.id}`, '_blank')
                       }
                     >
                       <Eye className="w-4 h-4" />
@@ -598,7 +598,7 @@ export default function QuestionBankPage() {
                       size="sm"
                       variant="outline"
                       onClick={() =>
-                        router.push(`/question-bank/${question.id}/edit`)
+                        window.open(`/question-bank/${question.id}/edit`, '_blank')
                       }
                     >
                       <Edit className="w-4 h-4" />

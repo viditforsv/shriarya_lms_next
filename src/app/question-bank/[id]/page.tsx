@@ -5,22 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Textarea } from "@/app/components-demo/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components-demo/ui/select";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Switch } from "@/app/components-demo/ui/switch";
 import { ArrowLeft, Save, Edit, Trash2, Copy } from "lucide-react";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
 import { renderMixedContent } from "@/components/MathRenderer";
@@ -78,6 +64,8 @@ export default function QuestionDetailPage() {
   }, []);
 
   const fetchQuestion = useCallback(async () => {
+    if (!questionId) return;
+
     setLoading(true);
     try {
       const response = await fetch(`/api/question-bank/${questionId}`);
@@ -86,15 +74,13 @@ export default function QuestionDetailPage() {
         setQuestion(data);
       } else {
         console.error("Failed to fetch question");
-        router.push("/question-bank");
       }
     } catch (error) {
       console.error("Error fetching question:", error);
-      router.push("/question-bank");
     } finally {
       setLoading(false);
     }
-  }, [questionId, router]);
+  }, [questionId]);
 
   useEffect(() => {
     if (questionId) {
@@ -179,31 +165,26 @@ export default function QuestionDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
           <Skeleton className="h-8 w-64 mb-4" />
           <Skeleton className="h-4 w-96" />
         </div>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-48" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-32 w-full mb-4" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="p-6">
+          <Skeleton className="h-32 w-full mb-4" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!question) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Question Not Found
@@ -218,9 +199,9 @@ export default function QuestionDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="mb-6">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -293,443 +274,343 @@ export default function QuestionDetailPage() {
         </nav>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Question Text */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Question</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {editMode ? (
-                <Textarea
-                  value={question.question_text || ""}
-                  onChange={(e) =>
-                    setQuestion({ ...question, question_text: e.target.value })
-                  }
-                  className="min-h-[200px]"
-                  placeholder="Enter question text..."
-                />
-              ) : (
-                <div className="prose max-w-none">
-                  {renderMixedContent(question.question_text)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Solution */}
-          {question.explanation && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Solution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {editMode ? (
-                  <Textarea
-                    value={question.explanation || ""}
+      {/* Sidebar Content - Moved Above */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Question Details */}
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Question Details</h3>
+            {editMode ? (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="question_number" className="text-sm">Question Number</Label>
+                  <Input
+                    id="question_number"
+                    value={question.question_number || ""}
                     onChange={(e) =>
-                      setQuestion({ ...question, explanation: e.target.value })
+                      setQuestion({
+                        ...question,
+                        question_number: e.target.value,
+                      })
                     }
-                    className="min-h-[200px]"
-                    placeholder="Enter solution..."
+                    className="mt-1"
                   />
-                ) : (
-                  <div className="prose max-w-none">
-                    {renderMixedContent(question.explanation)}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                </div>
+                <div>
+                  <Label htmlFor="total_marks" className="text-sm">Total Marks</Label>
+                  <Input
+                    id="total_marks"
+                    type="number"
+                    value={question.total_marks || ""}
+                    onChange={(e) =>
+                      setQuestion({
+                        ...question,
+                        total_marks: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="difficulty" className="text-sm">Difficulty (1-10)</Label>
+                  <Input
+                    id="difficulty"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={question.difficulty || ""}
+                    onChange={(e) =>
+                      setQuestion({
+                        ...question,
+                        difficulty: parseInt(e.target.value) || 1,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Question Number:</span>
+                  <span className="font-medium">
+                    {question.question_number || "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Total Marks:</span>
+                  <span className="font-medium">{question.total_marks}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Difficulty:</span>
+                  <span className="font-medium">{question.difficulty}/10</span>
+                </div>
+              </div>
+            )}
+          </div>
 
-          {/* Solution Steps */}
-          {question.solution_steps && question.solution_steps.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Solution Steps</CardTitle>
-              </CardHeader>
-              <CardContent>
+          {/* Subject & Board */}
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Subject & Board</h3>
+            {editMode ? (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="subject" className="text-sm">Subject</Label>
+                  <Input
+                    id="subject"
+                    value={question.subject || ""}
+                    onChange={(e) =>
+                      setQuestion({ ...question, subject: e.target.value })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="board" className="text-sm">Board</Label>
+                  <Input
+                    id="board"
+                    value={question.board || ""}
+                    onChange={(e) =>
+                      setQuestion({ ...question, board: e.target.value })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subject:</span>
+                  <span className="font-medium">{question.subject}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Board:</span>
+                  <span className="font-medium">{question.board}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Grade & Topic */}
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Grade & Topic</h3>
+            {editMode ? (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="grade" className="text-sm">Grade</Label>
+                  <Input
+                    id="grade"
+                    value={question.grade || ""}
+                    onChange={(e) =>
+                      setQuestion({ ...question, grade: e.target.value })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="topic" className="text-sm">Topic</Label>
+                  <Input
+                    id="topic"
+                    value={question.topic || ""}
+                    onChange={(e) =>
+                      setQuestion({ ...question, topic: e.target.value })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Grade:</span>
+                  <span className="font-medium">{question.grade}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Topic:</span>
+                  <span className="font-medium">{question.topic}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Chapter Tags */}
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Chapter Tags</h3>
+            {editMode ? (
+              <div>
+                <Label htmlFor="tags" className="text-sm">Chapter Tags</Label>
+                <Textarea
+                  id="tags"
+                  value={(() => {
+                    if (!question.tags) return "";
+                    if (Array.isArray(question.tags)) {
+                      return question.tags.join(", ");
+                    } else if (typeof question.tags === 'string') {
+                      return (question.tags as string)
+                        .split(/[,;|]/)
+                        .map((tag) => tag.trim())
+                        .join(", ");
+                    }
+                    return "";
+                  })()}
+                  onChange={(e) =>
+                    setQuestion({
+                      ...question,
+                      tags: e.target.value
+                        .split(",")
+                        .map((tag) => tag.trim())
+                        .filter((tag) => tag.length > 0),
+                    })
+                  }
+                  placeholder="Enter chapter tags separated by commas"
+                  className="mt-1 min-h-[60px] text-sm"
+                />
+              </div>
+            ) : (
+              <div className="text-sm">
+                {(() => {
+                  let tagsArray: string[] = [];
+                  if (question.tags) {
+                    if (Array.isArray(question.tags)) {
+                      tagsArray = question.tags;
+                    } else if (typeof question.tags === 'string') {
+                      tagsArray = (question.tags as string)
+                        .split(/[,;|]/)
+                        .map(tag => tag.trim())
+                        .filter(tag => tag.length > 0);
+                    }
+                  }
+                  return tagsArray.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {tagsArray.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 text-xs">No chapter tags assigned</span>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Side-by-Side Editing and Rendering */}
+      <div className="flex h-screen">
+        {/* Left Side - Editing */}
+        <div className="flex-1 bg-white border-r border-gray-200 overflow-y-auto">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">Edit Question</h2>
+            
+            {/* Question Text */}
+            <div className="mb-6">
+              <Label htmlFor="question_text" className="text-sm font-medium">Question Text</Label>
+              <Textarea
+                id="question_text"
+                value={question.question_text || ""}
+                onChange={(e) =>
+                  setQuestion({ ...question, question_text: e.target.value })
+                }
+                className="mt-2 min-h-[200px]"
+                placeholder="Enter question text..."
+              />
+            </div>
+
+            {/* Solution */}
+            {question.explanation && (
+              <div className="mb-6">
+                <Label htmlFor="explanation" className="text-sm font-medium">Solution</Label>
+                <Textarea
+                  id="explanation"
+                  value={question.explanation || ""}
+                  onChange={(e) =>
+                    setQuestion({ ...question, explanation: e.target.value })
+                  }
+                  className="mt-2 min-h-[200px]"
+                  placeholder="Enter solution..."
+                />
+              </div>
+            )}
+
+            {/* Solution Steps */}
+            {question.solution_steps && question.solution_steps.length > 0 && (
+              <div className="mb-6">
+                <Label className="text-sm font-medium">Solution Steps</Label>
+                <div className="mt-2 space-y-3">
+                  {question.solution_steps.map((step, index) => (
+                    <div key={index} className="border border-gray-200 rounded p-3">
+                      <Label htmlFor={`step_${index}`} className="text-xs text-gray-600">
+                        Step {index + 1}
+                      </Label>
+                      <Textarea
+                        id={`step_${index}`}
+                        value={step}
+                        onChange={(e) => {
+                          const newSteps = [...question.solution_steps];
+                          newSteps[index] = e.target.value;
+                          setQuestion({ ...question, solution_steps: newSteps });
+                        }}
+                        className="mt-1 min-h-[100px]"
+                        placeholder={`Enter step ${index + 1}...`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side - Rendering */}
+        <div className="flex-1 bg-gray-50 overflow-y-auto">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">Live Preview</h2>
+            
+            {/* Question Preview */}
+            <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="font-medium mb-3 text-gray-900">Question</h3>
+              <div className="prose max-w-none">
+                {renderMixedContent(question.question_text)}
+              </div>
+            </div>
+
+            {/* Solution Preview */}
+            {question.explanation && (
+              <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-medium mb-3 text-gray-900">Solution</h3>
+                <div className="prose max-w-none">
+                  {renderMixedContent(question.explanation)}
+                </div>
+              </div>
+            )}
+
+            {/* Solution Steps Preview */}
+            {question.solution_steps && question.solution_steps.length > 0 && (
+              <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-medium mb-3 text-gray-900">Solution Steps</h3>
                 <div className="space-y-4">
                   {question.solution_steps.map((step, index) => (
-                    <div
-                      key={index}
-                      className="border-l-4 border-blue-200 pl-4"
-                    >
+                    <div key={index} className="border-l-4 border-blue-200 pl-4">
                       <div className="prose max-w-none">
                         {renderMixedContent(step)}
                       </div>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Question Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Question Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {editMode ? (
-                <>
-                  <div>
-                    <Label htmlFor="question_number">Question Number</Label>
-                    <Input
-                      id="question_number"
-                      value={question.question_number || ""}
-                      onChange={(e) =>
-                        setQuestion({
-                          ...question,
-                          question_number: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="total_marks">Total Marks</Label>
-                    <Input
-                      id="total_marks"
-                      type="number"
-                      value={question.total_marks || ""}
-                      onChange={(e) =>
-                        setQuestion({
-                          ...question,
-                          total_marks: parseInt(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="difficulty">Difficulty (1-10)</Label>
-                    <Input
-                      id="difficulty"
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={question.difficulty || ""}
-                      onChange={(e) =>
-                        setQuestion({
-                          ...question,
-                          difficulty: parseInt(e.target.value),
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="question_type">Question Type</Label>
-                    <Select
-                      value={question.question_type}
-                      onValueChange={(value) =>
-                        setQuestion({ ...question, question_type: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mcq">Multiple Choice</SelectItem>
-                        <SelectItem value="subjective">Subjective</SelectItem>
-                        <SelectItem value="true_false">True/False</SelectItem>
-                        <SelectItem value="fill_blank">
-                          Fill in the Blank
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="topic">Topic</Label>
-                    <Input
-                      id="topic"
-                      value={question.topic || ""}
-                      onChange={(e) =>
-                        setQuestion({ ...question, topic: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subtopic">Subtopic</Label>
-                    <Input
-                      id="subtopic"
-                      value={question.subtopic || ""}
-                      onChange={(e) =>
-                        setQuestion({ ...question, subtopic: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="is_pyq"
-                      checked={question.is_pyq}
-                      onCheckedChange={(checked) =>
-                        setQuestion({ ...question, is_pyq: checked })
-                      }
-                    />
-                    <Label htmlFor="is_pyq">Past Year Question</Label>
-                  </div>
-
-                  {question.is_pyq && (
-                    <>
-                      <div>
-                        <Label htmlFor="pyq_year">PYQ Year</Label>
-                        <Input
-                          id="pyq_year"
-                          type="number"
-                          value={question.pyq_year || ""}
-                          onChange={(e) =>
-                            setQuestion({
-                              ...question,
-                              pyq_year: parseInt(e.target.value),
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="month">Month</Label>
-                        <Input
-                          id="month"
-                          value={question.month || ""}
-                          onChange={(e) =>
-                            setQuestion({ ...question, month: e.target.value })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="paper_number">Paper Number</Label>
-                        <Input
-                          id="paper_number"
-                          type="number"
-                          value={question.paper_number || ""}
-                          onChange={(e) =>
-                            setQuestion({
-                              ...question,
-                              paper_number: parseInt(e.target.value),
-                            })
-                          }
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  <div>
-                    <Label htmlFor="tags">Chapter Tags</Label>
-                    <Textarea
-                      id="tags"
-                      value={(() => {
-                        // Handle different tag formats for display in edit mode
-                        if (!question.tags) return "";
-
-                        if (Array.isArray(question.tags)) {
-                          return question.tags.join(", ");
-                        } else if (typeof question.tags === "string") {
-                          // If it's a single string, split it and rejoin for editing
-                          return (question.tags as string)
-                            .split(/[,;|]/)
-                            .map((tag) => tag.trim())
-                            .join(", ");
-                        }
-
-                        return "";
-                      })()}
-                      onChange={(e) =>
-                        setQuestion({
-                          ...question,
-                          tags: e.target.value
-                            .split(",")
-                            .map((tag) => tag.trim())
-                            .filter((tag) => tag.length > 0),
-                        })
-                      }
-                      placeholder="Enter chapter tags separated by commas (e.g., Complex numbers, Polynomials)"
-                      className="min-h-[80px]"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">
-                      Separate multiple chapter tags with commas
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Question Number:</span>
-                    <span className="font-medium">
-                      {question.question_number || "N/A"}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Marks:</span>
-                    <span className="font-medium">{question.total_marks}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Difficulty:</span>
-                    <Badge className="bg-blue-100 text-blue-800">
-                      {question.difficulty}/10
-                    </Badge>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Type:</span>
-                    <span className="font-medium capitalize">
-                      {question.question_type}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Topic:</span>
-                    <span className="font-medium">
-                      {question.topic || "N/A"}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subtopic:</span>
-                    <span className="font-medium">
-                      {question.subtopic || "N/A"}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Past Year Question:</span>
-                    <Badge
-                      className={
-                        question.is_pyq
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }
-                    >
-                      {question.is_pyq ? "Yes" : "No"}
-                    </Badge>
-                  </div>
-
-                  {question.is_pyq && (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">PYQ Year:</span>
-                        <span className="font-medium">{question.pyq_year}</span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Month:</span>
-                        <span className="font-medium">{question.month}</span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Paper:</span>
-                        <span className="font-medium">
-                          {question.paper_number}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Chapter Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {(() => {
-                  // Handle different tag formats from database
-                  let tagsArray: string[] = [];
-
-                  if (question.tags) {
-                    if (Array.isArray(question.tags)) {
-                      // Already an array
-                      tagsArray = question.tags;
-                    } else if (typeof question.tags === "string") {
-                      // Single string - split by common separators
-                      tagsArray = (question.tags as string)
-                        .split(/[,;|]/)
-                        .map((tag) => tag.trim())
-                        .filter((tag) => tag.length > 0);
-                    }
-                  }
-
-                  return tagsArray.length > 0 ? (
-                    tagsArray.map((tag, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="text-sm"
-                      >
-                        {tag}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-gray-500 text-sm">
-                      No chapter tags assigned
-                    </span>
-                  );
-                })()}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Metadata */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Metadata</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subject:</span>
-                <span className="font-medium">{question.subject}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-600">Board:</span>
-                <span className="font-medium">{question.board}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-600">Grade:</span>
-                <span className="font-medium">{question.grade}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-600">Created:</span>
-                <span className="font-medium text-sm">
-                  {new Date(question.created_at).toLocaleDateString()}
-                </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-600">Updated:</span>
-                <span className="font-medium text-sm">
-                  {new Date(question.updated_at).toLocaleDateString()}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
       </div>
 
       {/* QA Management Section */}
-      <div className="mt-8">
+      <div className="bg-white border-t border-gray-200 px-6 py-4">
         <QAManagement
           questionId={questionId}
           onStatusChange={() => {
-            // Refresh question data when QA status changes
             fetchQuestion();
           }}
         />

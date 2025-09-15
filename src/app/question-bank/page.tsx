@@ -87,6 +87,9 @@ export default function QuestionBankPage() {
     topic: "",
     is_pyq: "",
     qa_status: "",
+    pyq_year: "",
+    month: "",
+    paper_number: "",
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -110,6 +113,9 @@ export default function QuestionBankPage() {
         ...(filters.topic && { topic: filters.topic }),
         ...(filters.is_pyq && { is_pyq: filters.is_pyq }),
         ...(filters.qa_status && { qa_status: filters.qa_status }),
+        ...(filters.pyq_year && { pyq_year: filters.pyq_year }),
+        ...(filters.month && { month: filters.month }),
+        ...(filters.paper_number && { paper_number: filters.paper_number }),
       });
 
       const response = await fetch(`/api/question-bank?${params}`);
@@ -155,6 +161,9 @@ export default function QuestionBankPage() {
       topic: "",
       is_pyq: "",
       qa_status: "",
+      pyq_year: "",
+      month: "",
+      paper_number: "",
     });
     setSearchTerm("");
     setPagination((prev) => ({ ...prev, page: 1 }));
@@ -435,6 +444,61 @@ export default function QuestionBankPage() {
             </Select>
           </div>
 
+          {/* Paper Information Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                PYQ Year
+              </Label>
+              <Input
+                placeholder="e.g., 2022"
+                value={filters.pyq_year}
+                onChange={(e) => handleFilterChange("pyq_year", e.target.value)}
+                type="number"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                Month
+              </Label>
+              <Select
+                value={filters.month || undefined}
+                onValueChange={(value) => handleFilterChange("month", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="January">January</SelectItem>
+                  <SelectItem value="February">February</SelectItem>
+                  <SelectItem value="March">March</SelectItem>
+                  <SelectItem value="April">April</SelectItem>
+                  <SelectItem value="May">May</SelectItem>
+                  <SelectItem value="June">June</SelectItem>
+                  <SelectItem value="July">July</SelectItem>
+                  <SelectItem value="August">August</SelectItem>
+                  <SelectItem value="September">September</SelectItem>
+                  <SelectItem value="October">October</SelectItem>
+                  <SelectItem value="November">November</SelectItem>
+                  <SelectItem value="December">December</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                Paper Number
+              </Label>
+              <Input
+                placeholder="e.g., 1, 2, 3"
+                value={filters.paper_number}
+                onChange={(e) => handleFilterChange("paper_number", e.target.value)}
+                type="number"
+              />
+            </div>
+          </div>
+
           {/* Active Filters Display */}
           {hasActiveFilters() && (
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -577,11 +641,14 @@ export default function QuestionBankPage() {
                       {question.total_marks} marks • {question.question_type}
                     </p>
                     {/* Paper Information */}
-                    {(question.pyq_year || question.month || question.paper_number) && (
+                    {(question.pyq_year ||
+                      question.month ||
+                      question.paper_number) && (
                       <p className="text-xs text-gray-500 mt-1">
                         {question.pyq_year && `Year: ${question.pyq_year}`}
                         {question.month && ` • Month: ${question.month}`}
-                        {question.paper_number && ` • Paper: ${question.paper_number}`}
+                        {question.paper_number &&
+                          ` • Paper: ${question.paper_number}`}
                       </p>
                     )}
                     <p className="text-xs text-gray-400 mt-1">
@@ -643,7 +710,7 @@ export default function QuestionBankPage() {
                   <div className="text-xs text-gray-500">
                     {question.is_pyq && (
                       <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                        PYQ {question.pyq_year || question.year || 'N/A'}
+                        PYQ {question.pyq_year || question.year || "N/A"}
                       </span>
                     )}
                     {question.board && (

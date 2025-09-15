@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
     const topic = searchParams.get("topic") || "";
     const is_pyq = searchParams.get("is_pyq") || "";
     const qa_status = searchParams.get("qa_status") || "";
+    const pyq_year = searchParams.get("pyq_year") || "";
+    const month = searchParams.get("month") || "";
+    const paper_number = searchParams.get("paper_number") || "";
 
     // Calculate offset
     const offset = (page - 1) * limit;
@@ -97,20 +100,34 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Apply paper information filters
+    if (pyq_year) {
+      query = query.eq("pyq_year", pyq_year);
+    }
+    if (month) {
+      query = query.eq("month", month);
+    }
+    if (paper_number) {
+      query = query.eq("paper_number", paper_number);
+    }
+
     // Apply search
     if (search) {
       // Check if search term looks like a UUID (8-4-4-4-12 pattern)
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search);
-      
+      const isUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          search
+        );
+
       // Check if search term looks like a human-readable ID pattern
       const isHumanReadableId = /^[A-Z]+_[a-z]+_[a-z]+_\d+$/i.test(search);
-      
+
       if (isUUID) {
         // Search by UUID
-        query = query.eq('id', search);
+        query = query.eq("id", search);
       } else if (isHumanReadableId) {
         // Search by human-readable ID
-        query = query.eq('human_readable_id', search);
+        query = query.eq("human_readable_id", search);
       } else {
         // Regular search in question text, tags, topic, subtopic, and human-readable ID
         query = query.or(

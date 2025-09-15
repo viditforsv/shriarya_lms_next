@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Textarea } from "@/app/components-demo/ui/textarea";
 import {
   Card,
@@ -233,7 +232,6 @@ export default function QAManagement({
     }
   };
 
-
   if (loading) {
     return (
       <Card>
@@ -346,8 +344,6 @@ export default function QAManagement({
               className="mt-2"
             />
           </div>
-
-
 
           {/* Quick Actions */}
           <div className="flex gap-2 pt-4 border-t">

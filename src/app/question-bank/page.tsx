@@ -713,7 +713,7 @@ export default function QuestionBankPage() {
                   <div className="text-xs text-gray-500">
                     {question.is_pyq && (
                       <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                        PYQ {question.pyq_year || question.year || "N/A"}
+                        PYQ {question.pyq_year || "N/A"}
                       </span>
                     )}
                     {question.board && (

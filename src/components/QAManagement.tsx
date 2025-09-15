@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/app/components-demo/ui/select";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Switch } from "@/app/components-demo/ui/switch";
 import {
   QAStatusBadge,
   QAPriorityBadge,
@@ -31,7 +30,6 @@ import {
   Flag,
   MessageSquare,
   History,
-  Star,
   AlertCircle,
 } from "lucide-react";
 
@@ -113,13 +111,6 @@ export default function QAManagement({
   const [commentType, setCommentType] = useState<
     "general" | "content" | "solution" | "formatting" | "difficulty" | "other"
   >("general");
-  const [ratings, setRatings] = useState({
-    content_accuracy: 0,
-    difficulty_appropriateness: 0,
-    clarity_rating: 0,
-    solution_quality: 0,
-  });
-  const [flagReason, setFlagReason] = useState("");
 
   const fetchQAData = useCallback(async () => {
     try {
@@ -133,13 +124,6 @@ export default function QAManagement({
           const record = qaData.qa_records[0];
           setQARecord(record);
           setReviewNotes(record.review_notes || "");
-          setRatings({
-            content_accuracy: record.content_accuracy || 0,
-            difficulty_appropriateness: record.difficulty_appropriateness || 0,
-            clarity_rating: record.clarity_rating || 0,
-            solution_quality: record.solution_quality || 0,
-          });
-          setFlagReason(record.flag_reason || "");
 
           // Fetch comments
           const commentsResponse = await fetch(
@@ -185,7 +169,6 @@ export default function QAManagement({
         qa_status: newStatus,
         review_notes: notes || reviewNotes,
         reviewer_id: "a2b1d35e-453b-4bc6-b68a-d9e370410459", // Current user ID
-        ...(ratings.content_accuracy > 0 && { ratings }),
         ...(newStatus === "in_review" && {
           review_date: new Date().toISOString(),
         }),
@@ -250,33 +233,6 @@ export default function QAManagement({
     }
   };
 
-  const toggleFlag = async () => {
-    if (!qaRecord) return;
-
-    try {
-      setSaving(true);
-
-      const response = await fetch(`/api/qa`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question_id: questionId,
-          is_flagged: !qaRecord.is_flagged,
-          flag_reason: flagReason,
-        }),
-      });
-
-      if (response.ok) {
-        const updatedQA = await response.json();
-        setQARecord(updatedQA.qa_record);
-        await fetchQAData();
-      }
-    } catch (error) {
-      console.error("Error toggling flag:", error);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -332,12 +288,6 @@ export default function QAManagement({
               <Badge variant="destructive" className="flex items-center gap-1">
                 <Flag className="w-3 h-3" />
                 Flagged
-              </Badge>
-            )}
-            {qaRecord.overall_rating && (
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Star className="w-3 h-3" />
-                {qaRecord.overall_rating.toFixed(1)}/5
               </Badge>
             )}
           </div>
@@ -397,100 +347,7 @@ export default function QAManagement({
             />
           </div>
 
-          {/* Quality Ratings */}
-          <div>
-            <Label>Quality Ratings (1-5)</Label>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div>
-                <Label htmlFor="content_accuracy">Content Accuracy</Label>
-                <Input
-                  id="content_accuracy"
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={ratings.content_accuracy || ""}
-                  onChange={(e) =>
-                    setRatings((prev) => ({
-                      ...prev,
-                      content_accuracy: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="difficulty">Difficulty Appropriateness</Label>
-                <Input
-                  id="difficulty"
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={ratings.difficulty_appropriateness || ""}
-                  onChange={(e) =>
-                    setRatings((prev) => ({
-                      ...prev,
-                      difficulty_appropriateness: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="clarity">Clarity</Label>
-                <Input
-                  id="clarity"
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={ratings.clarity_rating || ""}
-                  onChange={(e) =>
-                    setRatings((prev) => ({
-                      ...prev,
-                      clarity_rating: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="solution">Solution Quality</Label>
-                <Input
-                  id="solution"
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={ratings.solution_quality || ""}
-                  onChange={(e) =>
-                    setRatings((prev) => ({
-                      ...prev,
-                      solution_quality: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Flagging */}
-          <div>
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={qaRecord.is_flagged}
-                onCheckedChange={toggleFlag}
-                disabled={saving}
-              />
-              <Label>Flag this question</Label>
-            </div>
-            {qaRecord.is_flagged && (
-              <div className="mt-2">
-                <Label htmlFor="flag_reason">Flag Reason</Label>
-                <Textarea
-                  id="flag_reason"
-                  value={flagReason}
-                  onChange={(e) => setFlagReason(e.target.value)}
-                  placeholder="Reason for flagging..."
-                  className="mt-2"
-                />
-              </div>
-            )}
-          </div>
 
           {/* Quick Actions */}
           <div className="flex gap-2 pt-4 border-t">

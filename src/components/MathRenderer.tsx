@@ -50,42 +50,42 @@ export function renderMixedContent(content: string) {
     if (match.index > lastIndex) {
       parts.push(content.slice(lastIndex, match.index));
     }
-    
+
     // Add the environment
     parts.push({
       type: match[1],
-      content: match[2]
+      content: match[2],
     });
-    
+
     lastIndex = match.index + match[0].length;
   }
-  
+
   // Add remaining text
   if (lastIndex < content.length) {
     parts.push(content.slice(lastIndex));
   }
-  
+
   return parts.map((part, index) => {
-    if (typeof part === 'object') {
+    if (typeof part === "object") {
       // This is an environment
       const { type, content } = part;
-      
+
       switch (type) {
-        case 'enumerate':
+        case "enumerate":
           return <EnumerateRenderer key={index} content={content} />;
-        case 'itemize':
+        case "itemize":
           return <ItemizeRenderer key={index} content={content} />;
-        case 'align':
-        case 'alignat':
-        case 'eqnarray':
+        case "align":
+        case "alignat":
+        case "eqnarray":
           return <AlignRenderer key={index} content={content} />;
-        case 'cases':
+        case "cases":
           return <CasesRenderer key={index} content={content} />;
-        case 'matrix':
-        case 'pmatrix':
-        case 'bmatrix':
-        case 'vmatrix':
-        case 'Vmatrix':
+        case "matrix":
+        case "pmatrix":
+        case "bmatrix":
+        case "vmatrix":
+        case "Vmatrix":
           return <MatrixRenderer key={index} content={content} type={type} />;
         default:
           // For other environments, render as display math
@@ -107,8 +107,14 @@ export function renderMixedContent(content: string) {
 
 // Helper function to render math content within regular text
 function renderMathContent(content: string, baseIndex: number) {
-  const parts = content.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
-  
+  // First, handle LaTeX line breaks
+  const processedContent = content
+    .replace(/\\\\/g, "<br>")
+    .replace(/\\newline/g, "<br>")
+    .replace(/\\par/g, "<br><br>");
+
+  const parts = processedContent.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
+
   return parts.map((part, index) => {
     if (part.startsWith("$$") && part.endsWith("$$")) {
       // Display math
@@ -131,8 +137,13 @@ function renderMathContent(content: string, baseIndex: number) {
         />
       );
     } else {
-      // Regular text
-      return <span key={`${baseIndex}-${index}`}>{part}</span>;
+      // Regular text - handle HTML line breaks
+      return (
+        <span
+          key={`${baseIndex}-${index}`}
+          dangerouslySetInnerHTML={{ __html: part }}
+        />
+      );
     }
   });
 }
@@ -140,8 +151,11 @@ function renderMathContent(content: string, baseIndex: number) {
 // Enumerate environment renderer
 function EnumerateRenderer({ content }: { content: string }) {
   // Split by \item and filter out empty items
-  const items = content.split('\\item').map(item => item.trim()).filter(item => item.length > 0);
-  
+  const items = content
+    .split("\\item")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+
   return (
     <ol className="list-decimal list-inside my-4 space-y-2 ml-4">
       {items.map((item, index) => (
@@ -156,8 +170,11 @@ function EnumerateRenderer({ content }: { content: string }) {
 // Itemize environment renderer
 function ItemizeRenderer({ content }: { content: string }) {
   // Split by \item and filter out empty items
-  const items = content.split('\\item').map(item => item.trim()).filter(item => item.length > 0);
-  
+  const items = content
+    .split("\\item")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+
   return (
     <ul className="list-disc list-inside my-4 space-y-2 ml-4">
       {items.map((item, index) => (

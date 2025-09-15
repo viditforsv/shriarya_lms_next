@@ -26,9 +26,9 @@ interface Question {
   subtopic: string;
   question_type: string;
   is_pyq: boolean;
-  pyq_year: number;
+  pyq_year: number | null;
   month: string;
-  paper_number: number;
+  paper_number: number | null;
   "Time Zone": string;
   explanation: string;
   correct_answer: string;
@@ -239,24 +239,28 @@ export default function QuestionDetailPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                {question.human_readable_id || (() => {
-                  const board =
-                    question.board === "IBDP" ? "IBDP" : question.board;
-                  const subject =
-                    question.subject === "HL"
-                      ? "aahl"
-                      : question.subject.toLowerCase();
-                  const type = question.is_pyq ? "pyq" : "prac";
+                {question.human_readable_id ||
+                  (() => {
+                    const board =
+                      question.board === "IBDP" ? "IBDP" : question.board;
+                    const subject =
+                      question.subject === "HL"
+                        ? "aahl"
+                        : question.subject.toLowerCase();
+                    const type = question.is_pyq ? "pyq" : "prac";
 
-                  let number;
-                  if (question.question_number) {
-                    number = String(question.question_number).padStart(4, "0");
-                  } else {
-                    number = question.id.slice(-4).toUpperCase();
-                  }
+                    let number;
+                    if (question.question_number) {
+                      number = String(question.question_number).padStart(
+                        4,
+                        "0"
+                      );
+                    } else {
+                      number = question.id.slice(-4).toUpperCase();
+                    }
 
-                  return `${board}_${subject}_${type}_${number}`;
-                })()}
+                    return `${board}_${subject}_${type}_${number}`;
+                  })()}
               </h1>
               <p className="text-gray-600 mt-1">
                 {question.total_marks} marks • {question.question_type} •
@@ -315,30 +319,32 @@ export default function QuestionDetailPage() {
           </button>
           <span>/</span>
           <span className="text-gray-900 font-medium">
-            {question.human_readable_id || (() => {
-              const board = question.board === "IBDP" ? "IBDP" : question.board;
-              const subject =
-                question.subject === "HL"
-                  ? "aahl"
-                  : question.subject.toLowerCase();
-              const type = question.is_pyq ? "pyq" : "prac";
+            {question.human_readable_id ||
+              (() => {
+                const board =
+                  question.board === "IBDP" ? "IBDP" : question.board;
+                const subject =
+                  question.subject === "HL"
+                    ? "aahl"
+                    : question.subject.toLowerCase();
+                const type = question.is_pyq ? "pyq" : "prac";
 
-              let number;
-              if (question.question_number) {
-                number = String(question.question_number).padStart(4, "0");
-              } else {
-                number = question.id.slice(-4).toUpperCase();
-              }
+                let number;
+                if (question.question_number) {
+                  number = String(question.question_number).padStart(4, "0");
+                } else {
+                  number = question.id.slice(-4).toUpperCase();
+                }
 
-              return `${board}_${subject}_${type}_${number}`;
-            })()}
+                return `${board}_${subject}_${type}_${number}`;
+              })()}
           </span>
         </nav>
       </div>
 
       {/* Sidebar Content - Moved Above */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Question Details */}
           <div className="space-y-2">
             <h3 className="font-semibold text-gray-900">Question Details</h3>
@@ -576,6 +582,88 @@ export default function QuestionDetailPage() {
                     </span>
                   );
                 })()}
+              </div>
+            )}
+          </div>
+
+          {/* Paper Information */}
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Paper Information</h3>
+            {editMode ? (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="pyq_year" className="text-sm">
+                    PYQ Year
+                  </Label>
+                  <Input
+                    id="pyq_year"
+                    type="number"
+                    value={question.pyq_year || ""}
+                    onChange={(e) =>
+                      setQuestion({
+                        ...question,
+                        pyq_year: e.target.value ? parseInt(e.target.value) : null,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="month" className="text-sm">
+                    Month
+                  </Label>
+                  <Input
+                    id="month"
+                    value={question.month || ""}
+                    onChange={(e) =>
+                      setQuestion({ ...question, month: e.target.value })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="paper_number" className="text-sm">
+                    Paper Number
+                  </Label>
+                  <Input
+                    id="paper_number"
+                    type="number"
+                    value={question.paper_number || ""}
+                    onChange={(e) =>
+                      setQuestion({
+                        ...question,
+                        paper_number: e.target.value ? parseInt(e.target.value) : null,
+                      })
+                    }
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">PYQ Year:</span>
+                  <span className="font-medium">
+                    {question.pyq_year || "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Month:</span>
+                  <span className="font-medium">{question.month || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Paper Number:</span>
+                  <span className="font-medium">
+                    {question.paper_number || "N/A"}
+                  </span>
+                </div>
+                {question.is_pyq && (
+                  <div className="mt-2">
+                    <Badge className="bg-blue-100 text-blue-800 text-xs">
+                      Past Year Question
+                    </Badge>
+                  </div>
+                )}
               </div>
             )}
           </div>

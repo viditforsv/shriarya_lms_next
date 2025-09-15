@@ -69,6 +69,7 @@ interface Question {
 interface QuestionBankResponse {
   questions: Question[];
   total: number;
+  totalQuestions: number;
   page: number;
   limit: number;
   totalPages: number;
@@ -98,6 +99,7 @@ export default function QuestionBankPage() {
     total: 0,
     totalPages: 0,
   });
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -120,7 +122,7 @@ export default function QuestionBankPage() {
       });
 
       const response = await fetch(`/api/question-bank?${params}`);
-      
+
       if (response.ok) {
         const data: QuestionBankResponse = await response.json();
         setQuestions(data.questions);
@@ -130,12 +132,13 @@ export default function QuestionBankPage() {
           total: data.total,
           totalPages: data.totalPages,
         });
+        setTotalQuestions(data.totalQuestions || data.total);
       } else {
         // Check if response is JSON before trying to parse
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let errorData = {};
-        
-        if (contentType && contentType.includes('application/json')) {
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch (e) {
@@ -150,7 +153,7 @@ export default function QuestionBankPage() {
             console.error("Failed to read error response:", e);
           }
         }
-        
+
         console.error(
           "Failed to fetch questions:",
           response.status,
@@ -631,7 +634,12 @@ export default function QuestionBankPage() {
             <div className="text-sm text-gray-500">
               Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
               {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
-              of {pagination.total} questions
+              of {pagination.total} {hasActiveFilters() ? "filtered " : ""}questions
+              {hasActiveFilters() && totalQuestions > pagination.total && (
+                <span className="text-gray-400 ml-1">
+                  (from {totalQuestions} total questions)
+                </span>
+              )}
             </div>
           </div>
         </CardContent>

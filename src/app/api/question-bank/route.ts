@@ -151,11 +151,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get total count of all questions (without filters) for comparison
+    const { count: totalCount } = await supabase
+      .from("question_bank")
+      .select("*", { count: "exact", head: true });
+
     const totalPages = Math.ceil((count || 0) / limit);
 
     return NextResponse.json({
       questions: questions || [],
       total: count || 0,
+      totalQuestions: totalCount || 0,
       page,
       limit,
       totalPages,

@@ -76,10 +76,10 @@ export default function QuestionDetailPage() {
         setQuestion(data);
       } else {
         // Check if response is JSON before trying to parse
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let errorData = {};
-        
-        if (contentType && contentType.includes('application/json')) {
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch (e) {
@@ -94,7 +94,7 @@ export default function QuestionDetailPage() {
             console.error("Failed to read error response:", e);
           }
         }
-        
+
         console.error(
           "Failed to fetch question:",
           response.status,
@@ -133,10 +133,10 @@ export default function QuestionDetailPage() {
         router.push(`/question-bank/${questionId}`);
       } else {
         // Check if response is JSON before trying to parse
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let errorData = {};
-        
-        if (contentType && contentType.includes('application/json')) {
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch (e) {
@@ -151,7 +151,7 @@ export default function QuestionDetailPage() {
             console.error("Failed to read error response:", e);
           }
         }
-        
+
         console.error(
           "Failed to save question:",
           response.status,
@@ -178,10 +178,10 @@ export default function QuestionDetailPage() {
         router.push("/question-bank");
       } else {
         // Check if response is JSON before trying to parse
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let errorData = {};
-        
-        if (contentType && contentType.includes('application/json')) {
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch (e) {
@@ -196,7 +196,7 @@ export default function QuestionDetailPage() {
             console.error("Failed to read error response:", e);
           }
         }
-        
+
         console.error(
           "Failed to delete question:",
           response.status,
@@ -234,10 +234,10 @@ export default function QuestionDetailPage() {
         router.push(`/question-bank/${newQuestion.id}`);
       } else {
         // Check if response is JSON before trying to parse
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get("content-type");
         let errorData = {};
-        
-        if (contentType && contentType.includes('application/json')) {
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch (e) {
@@ -252,7 +252,7 @@ export default function QuestionDetailPage() {
             console.error("Failed to read error response:", e);
           }
         }
-        
+
         console.error(
           "Failed to duplicate question:",
           response.status,
@@ -419,13 +419,13 @@ export default function QuestionDetailPage() {
       </div>
 
       {/* Sidebar Content - Moved Above */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {/* Question Details */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-900">Question Details</h3>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-gray-900">Question Details</h3>
             {editMode ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <Label htmlFor="question_number" className="text-sm">
                     Question Number
@@ -480,7 +480,7 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Question Number:</span>
                   <span className="font-medium">
@@ -500,10 +500,10 @@ export default function QuestionDetailPage() {
           </div>
 
           {/* Subject & Board */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-900">Subject & Board</h3>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-gray-900">Subject & Board</h3>
             {editMode ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <Label htmlFor="subject" className="text-sm">
                     Subject
@@ -532,7 +532,7 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subject:</span>
                   <span className="font-medium">{question.subject}</span>
@@ -546,10 +546,10 @@ export default function QuestionDetailPage() {
           </div>
 
           {/* Grade & Topic */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-900">Grade & Topic</h3>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-gray-900">Grade & Topic</h3>
             {editMode ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <Label htmlFor="grade" className="text-sm">
                     Grade
@@ -578,7 +578,7 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Grade:</span>
                   <span className="font-medium">{question.grade}</span>
@@ -592,8 +592,8 @@ export default function QuestionDetailPage() {
           </div>
 
           {/* Chapter Tags */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-900">Chapter Tags</h3>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-gray-900">Chapter Tags</h3>
             {editMode ? (
               <div>
                 <Label htmlFor="tags" className="text-sm">
@@ -663,10 +663,10 @@ export default function QuestionDetailPage() {
           </div>
 
           {/* Paper Information */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-900">Paper Information</h3>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-gray-900">Paper Information</h3>
             {editMode ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <Label htmlFor="pyq_year" className="text-sm">
                     PYQ Year
@@ -720,7 +720,7 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">PYQ Year:</span>
                   <span className="font-medium">
@@ -754,13 +754,13 @@ export default function QuestionDetailPage() {
       <div className="flex h-screen">
         {/* Left Side - Editing */}
         <div className="flex-1 bg-white border-r border-gray-200 overflow-y-auto">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+          <div className="p-4">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900">
               Edit Question
             </h2>
 
             {/* Question Text */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="question_text" className="text-sm font-medium">
                 Question Text
               </Label>
@@ -833,14 +833,14 @@ export default function QuestionDetailPage() {
 
         {/* Right Side - Rendering */}
         <div className="flex-1 bg-gray-50 overflow-y-auto">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+          <div className="p-4">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900">
               Live Preview
             </h2>
 
             {/* Question Preview */}
-            <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="font-medium mb-3 text-gray-900">Question</h3>
+            <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="font-medium mb-2 text-gray-900">Question</h3>
               <div className="prose max-w-none">
                 {renderMixedContent(question.question_text)}
               </div>
@@ -848,8 +848,8 @@ export default function QuestionDetailPage() {
 
             {/* Solution Preview */}
             {question.explanation && (
-              <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-medium mb-3 text-gray-900">Solution</h3>
+              <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-medium mb-2 text-gray-900">Solution</h3>
                 <div className="prose max-w-none">
                   {renderMixedContent(question.explanation)}
                 </div>
@@ -858,8 +858,8 @@ export default function QuestionDetailPage() {
 
             {/* Solution Steps Preview */}
             {question.solution_steps && question.solution_steps.length > 0 && (
-              <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-medium mb-3 text-gray-900">
+              <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
+                <h3 className="font-medium mb-2 text-gray-900">
                   Solution Steps
                 </h3>
                 <div className="space-y-4">

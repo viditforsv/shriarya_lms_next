@@ -95,9 +95,33 @@ export async function GET(request: NextRequest) {
 
     // Apply search
     if (search) {
-      query = query.or(
-        `question_text.ilike.%${search}%,tags.cs.{${search}},topic.ilike.%${search}%,subtopic.ilike.%${search}%`
-      );
+      // Check if search term looks like a human-readable ID pattern
+      const isHumanReadableId = /^[A-Z]+_[a-z]+_[a-z]+_\d+$/i.test(search);
+      
+      if (isHumanReadableId) {
+        // Parse human-readable ID: BOARD_SUBJECT_TYPE_NUMBER
+        const parts = search.split('_');
+        if (parts.length === 4) {
+          const [board, subject, type, number] = parts;
+          
+          // Map back to database values
+          const boardValue = board.toUpperCase() === 'IBDP' ? 'IBDP' : board;
+          const subjectValue = subject === 'aahl' ? 'HL' : subject.toUpperCase();
+          const isPyqValue = type === 'pyq';
+          const questionNumber = parseInt(number);
+          
+          query = query
+            .eq('board', boardValue)
+            .eq('subject', subjectValue)
+            .eq('is_pyq', isPyqValue)
+            .eq('question_number', questionNumber.toString());
+        }
+      } else {
+        // Regular search in question text, tags, topic, subtopic
+        query = query.or(
+          `question_text.ilike.%${search}%,tags.cs.{${search}},topic.ilike.%${search}%,subtopic.ilike.%${search}%`
+        );
+      }
     }
 
     // Apply pagination and ordering

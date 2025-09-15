@@ -191,6 +191,25 @@ export default function QuestionBankPage() {
     return "bg-red-100 text-red-800";
   };
 
+  // Generate human-readable ID for display
+  const generateHumanReadableId = (question: Question, index?: number) => {
+    const board = question.board === 'IBDP' ? 'IBDP' : question.board;
+    const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
+    const type = question.is_pyq ? 'pyq' : 'prac';
+    
+    // Use question_number if available, otherwise use index or UUID suffix
+    let number;
+    if (question.question_number) {
+      number = String(question.question_number).padStart(4, '0');
+    } else if (index !== undefined) {
+      number = String(index + 1).padStart(4, '0');
+    } else {
+      number = question.id.slice(-4).toUpperCase();
+    }
+    
+    return `${board}_${subject}_${type}_${number}`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
@@ -510,7 +529,7 @@ export default function QuestionBankPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {questions.map((question) => (
+          {questions.map((question, index) => (
             <Card
               key={question.id}
               className="hover:shadow-lg transition-shadow"
@@ -519,10 +538,13 @@ export default function QuestionBankPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
+                      {generateHumanReadableId(question, index)}
                     </CardTitle>
                     <p className="text-sm text-gray-500 mt-1">
                       {question.total_marks} marks • {question.question_type}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      UUID: {question.id.slice(0, 8)}...
                     </p>
                   </div>
                   <Badge className={getDifficultyColor(question.difficulty)}>

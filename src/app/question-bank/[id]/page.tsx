@@ -217,11 +217,27 @@ export default function QuestionDetailPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
+                {(() => {
+                  const board = question.board === 'IBDP' ? 'IBDP' : question.board;
+                  const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
+                  const type = question.is_pyq ? 'pyq' : 'prac';
+                  
+                  let number;
+                  if (question.question_number) {
+                    number = String(question.question_number).padStart(4, '0');
+                  } else {
+                    number = question.id.slice(-4).toUpperCase();
+                  }
+                  
+                  return `${board}_${subject}_${type}_${number}`;
+                })()}
               </h1>
               <p className="text-gray-600 mt-1">
                 {question.total_marks} marks • {question.question_type} •
                 Difficulty: {question.difficulty}/10
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                UUID: {question.id.slice(0, 8)}...
               </p>
             </div>
           </div>
@@ -273,7 +289,20 @@ export default function QuestionDetailPage() {
           </button>
           <span>/</span>
           <span className="text-gray-900 font-medium">
-            Question {question.question_number || `Q${question.id.slice(-6).toUpperCase()}`}
+            {(() => {
+              const board = question.board === 'IBDP' ? 'IBDP' : question.board;
+              const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
+              const type = question.is_pyq ? 'pyq' : 'prac';
+              
+              let number;
+              if (question.question_number) {
+                number = String(question.question_number).padStart(4, '0');
+              } else {
+                number = question.id.slice(-4).toUpperCase();
+              }
+              
+              return `${board}_${subject}_${type}_${number}`;
+            })()}
           </span>
         </nav>
       </div>

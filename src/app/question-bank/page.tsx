@@ -199,7 +199,7 @@ export default function QuestionBankPage() {
     if (question.human_readable_id) {
       return question.human_readable_id;
     }
-    
+
     // Fallback to generation for backward compatibility
     const board = question.board === "IBDP" ? "IBDP" : question.board;
     const subject =
@@ -576,6 +576,14 @@ export default function QuestionBankPage() {
                     <p className="text-sm text-gray-500 mt-1">
                       {question.total_marks} marks • {question.question_type}
                     </p>
+                    {/* Paper Information */}
+                    {(question.pyq_year || question.month || question.paper_number) && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {question.pyq_year && `Year: ${question.pyq_year}`}
+                        {question.month && ` • Month: ${question.month}`}
+                        {question.paper_number && ` • Paper: ${question.paper_number}`}
+                      </p>
+                    )}
                     <p className="text-xs text-gray-400 mt-1">
                       UUID: {question.id.slice(0, 8)}...
                     </p>
@@ -635,7 +643,17 @@ export default function QuestionBankPage() {
                   <div className="text-xs text-gray-500">
                     {question.is_pyq && (
                       <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                        PYQ {question.pyq_year}
+                        PYQ {question.pyq_year || question.year || 'N/A'}
+                      </span>
+                    )}
+                    {question.board && (
+                      <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs ml-2">
+                        {question.board}
+                      </span>
+                    )}
+                    {question.subject && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs ml-2">
+                        {question.subject}
                       </span>
                     )}
                   </div>

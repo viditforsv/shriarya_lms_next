@@ -423,7 +423,9 @@ export default function QuestionDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {/* Question Details */}
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-gray-900">Question Details</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Question Details
+            </h3>
             {editMode ? (
               <div className="space-y-2">
                 <div>
@@ -501,7 +503,9 @@ export default function QuestionDetailPage() {
 
           {/* Subject & Board */}
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-gray-900">Subject & Board</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Subject & Board
+            </h3>
             {editMode ? (
               <div className="space-y-2">
                 <div>
@@ -547,7 +551,9 @@ export default function QuestionDetailPage() {
 
           {/* Grade & Topic */}
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-gray-900">Grade & Topic</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Grade & Topic
+            </h3>
             {editMode ? (
               <div className="space-y-2">
                 <div>
@@ -593,7 +599,9 @@ export default function QuestionDetailPage() {
 
           {/* Chapter Tags */}
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-gray-900">Chapter Tags</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Chapter Tags
+            </h3>
             {editMode ? (
               <div>
                 <Label htmlFor="tags" className="text-sm">
@@ -664,7 +672,9 @@ export default function QuestionDetailPage() {
 
           {/* Paper Information */}
           <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-gray-900">Paper Information</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Paper Information
+            </h3>
             {editMode ? (
               <div className="space-y-2">
                 <div>

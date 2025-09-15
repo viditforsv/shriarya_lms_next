@@ -634,7 +634,8 @@ export default function QuestionBankPage() {
             <div className="text-sm text-gray-500">
               Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
               {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
-              of {pagination.total} {hasActiveFilters() ? "filtered " : ""}questions
+              of {pagination.total} {hasActiveFilters() ? "filtered " : ""}
+              questions
               {hasActiveFilters() && totalQuestions > pagination.total && (
                 <span className="text-gray-400 ml-1">
                   (from {totalQuestions} total questions)

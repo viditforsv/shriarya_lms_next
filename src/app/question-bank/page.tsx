@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Label } from "@/app/components-demo/ui/ui-components/label";
 import {
   Select,
   SelectContent,
@@ -457,7 +458,7 @@ export default function QuestionBankPage() {
                 type="number"
               />
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium text-gray-700 mb-2 block">
                 Month
@@ -485,7 +486,7 @@ export default function QuestionBankPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium text-gray-700 mb-2 block">
                 Paper Number
@@ -493,7 +494,9 @@ export default function QuestionBankPage() {
               <Input
                 placeholder="e.g., 1, 2, 3"
                 value={filters.paper_number}
-                onChange={(e) => handleFilterChange("paper_number", e.target.value)}
+                onChange={(e) =>
+                  handleFilterChange("paper_number", e.target.value)
+                }
                 type="number"
               />
             </div>

@@ -75,7 +75,26 @@ export default function QuestionDetailPage() {
         const data = await response.json();
         setQuestion(data);
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        // Check if response is JSON before trying to parse
+        const contentType = response.headers.get('content-type');
+        let errorData = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            console.error("Failed to parse error response as JSON:", e);
+          }
+        } else {
+          // Response is HTML or other format, get text instead
+          try {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+          } catch (e) {
+            console.error("Failed to read error response:", e);
+          }
+        }
+        
         console.error(
           "Failed to fetch question:",
           response.status,
@@ -113,7 +132,26 @@ export default function QuestionDetailPage() {
         setEditMode(false);
         router.push(`/question-bank/${questionId}`);
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        // Check if response is JSON before trying to parse
+        const contentType = response.headers.get('content-type');
+        let errorData = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            console.error("Failed to parse error response as JSON:", e);
+          }
+        } else {
+          // Response is HTML or other format, get text instead
+          try {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+          } catch (e) {
+            console.error("Failed to read error response:", e);
+          }
+        }
+        
         console.error(
           "Failed to save question:",
           response.status,
@@ -139,7 +177,26 @@ export default function QuestionDetailPage() {
       if (response.ok) {
         router.push("/question-bank");
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        // Check if response is JSON before trying to parse
+        const contentType = response.headers.get('content-type');
+        let errorData = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            console.error("Failed to parse error response as JSON:", e);
+          }
+        } else {
+          // Response is HTML or other format, get text instead
+          try {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+          } catch (e) {
+            console.error("Failed to read error response:", e);
+          }
+        }
+        
         console.error(
           "Failed to delete question:",
           response.status,
@@ -176,7 +233,26 @@ export default function QuestionDetailPage() {
         const newQuestion = await response.json();
         router.push(`/question-bank/${newQuestion.id}`);
       } else {
-        const errorData = await response.json().catch(() => ({}));
+        // Check if response is JSON before trying to parse
+        const contentType = response.headers.get('content-type');
+        let errorData = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            console.error("Failed to parse error response as JSON:", e);
+          }
+        } else {
+          // Response is HTML or other format, get text instead
+          try {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+          } catch (e) {
+            console.error("Failed to read error response:", e);
+          }
+        }
+        
         console.error(
           "Failed to duplicate question:",
           response.status,
@@ -602,7 +678,9 @@ export default function QuestionDetailPage() {
                     onChange={(e) =>
                       setQuestion({
                         ...question,
-                        pyq_year: e.target.value ? parseInt(e.target.value) : null,
+                        pyq_year: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
                       })
                     }
                     className="mt-1"
@@ -632,7 +710,9 @@ export default function QuestionDetailPage() {
                     onChange={(e) =>
                       setQuestion({
                         ...question,
-                        paper_number: e.target.value ? parseInt(e.target.value) : null,
+                        paper_number: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
                       })
                     }
                     className="mt-1"

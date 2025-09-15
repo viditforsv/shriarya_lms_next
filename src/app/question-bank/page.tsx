@@ -120,15 +120,44 @@ export default function QuestionBankPage() {
       });
 
       const response = await fetch(`/api/question-bank?${params}`);
-      const data: QuestionBankResponse = await response.json();
-
-      setQuestions(data.questions);
-      setPagination({
-        page: data.page,
-        limit: data.limit,
-        total: data.total,
-        totalPages: data.totalPages,
-      });
+      
+      if (response.ok) {
+        const data: QuestionBankResponse = await response.json();
+        setQuestions(data.questions);
+        setPagination({
+          page: data.page,
+          limit: data.limit,
+          total: data.total,
+          totalPages: data.totalPages,
+        });
+      } else {
+        // Check if response is JSON before trying to parse
+        const contentType = response.headers.get('content-type');
+        let errorData = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (e) {
+            console.error("Failed to parse error response as JSON:", e);
+          }
+        } else {
+          // Response is HTML or other format, get text instead
+          try {
+            const errorText = await response.text();
+            console.error("Non-JSON error response:", errorText);
+          } catch (e) {
+            console.error("Failed to read error response:", e);
+          }
+        }
+        
+        console.error(
+          "Failed to fetch questions:",
+          response.status,
+          response.statusText,
+          errorData
+        );
+      }
     } catch (error) {
       console.error("Error fetching questions:", error);
     } finally {

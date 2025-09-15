@@ -50,6 +50,8 @@ interface Question {
   month: string;
   paper_number: number;
   created_at: string;
+  human_readable_id?: string;
+  question_display_number?: number;
   // QA fields
   qa_status?:
     | "pending"
@@ -191,22 +193,28 @@ export default function QuestionBankPage() {
     return "bg-red-100 text-red-800";
   };
 
-  // Generate human-readable ID for display
-  const generateHumanReadableId = (question: Question, index?: number) => {
-    const board = question.board === 'IBDP' ? 'IBDP' : question.board;
-    const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
-    const type = question.is_pyq ? 'pyq' : 'prac';
+  // Get human-readable ID for display (use database-stored or fallback to generation)
+  const getHumanReadableId = (question: Question, index?: number) => {
+    // Use database-stored human-readable ID if available
+    if (question.human_readable_id) {
+      return question.human_readable_id;
+    }
     
-    // Use question_number if available, otherwise use index or UUID suffix
+    // Fallback to generation for backward compatibility
+    const board = question.board === "IBDP" ? "IBDP" : question.board;
+    const subject =
+      question.subject === "HL" ? "aahl" : question.subject.toLowerCase();
+    const type = question.is_pyq ? "pyq" : "prac";
+
     let number;
     if (question.question_number) {
-      number = String(question.question_number).padStart(4, '0');
+      number = String(question.question_number).padStart(4, "0");
     } else if (index !== undefined) {
-      number = String(index + 1).padStart(4, '0');
+      number = String(index + 1).padStart(4, "0");
     } else {
       number = question.id.slice(-4).toUpperCase();
     }
-    
+
     return `${board}_${subject}_${type}_${number}`;
   };
 
@@ -249,7 +257,7 @@ export default function QuestionBankPage() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search questions..."
+                placeholder="Search by ID (IBDP_aahl_pyq_0001 or UUID), content, or tags..."
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10"
@@ -336,14 +344,30 @@ export default function QuestionBankPage() {
                 <SelectValue placeholder="Subject" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="IBDP Mathematics AA HL">IBDP Mathematics AA HL</SelectItem>
-                <SelectItem value="IBDP Mathematics AI HL">IBDP Mathematics AI HL</SelectItem>
-                <SelectItem value="IBDP Mathematics AA SL">IBDP Mathematics AA SL</SelectItem>
-                <SelectItem value="IBDP Mathematics AI SL">IBDP Mathematics AI SL</SelectItem>
-                <SelectItem value="CBSE Mathematics">CBSE Mathematics</SelectItem>
-                <SelectItem value="ICSE Mathematics">ICSE Mathematics</SelectItem>
-                <SelectItem value="IGCSE Mathematics">IGCSE Mathematics</SelectItem>
-                <SelectItem value="A-Level Mathematics">A-Level Mathematics</SelectItem>
+                <SelectItem value="IBDP Mathematics AA HL">
+                  IBDP Mathematics AA HL
+                </SelectItem>
+                <SelectItem value="IBDP Mathematics AI HL">
+                  IBDP Mathematics AI HL
+                </SelectItem>
+                <SelectItem value="IBDP Mathematics AA SL">
+                  IBDP Mathematics AA SL
+                </SelectItem>
+                <SelectItem value="IBDP Mathematics AI SL">
+                  IBDP Mathematics AI SL
+                </SelectItem>
+                <SelectItem value="CBSE Mathematics">
+                  CBSE Mathematics
+                </SelectItem>
+                <SelectItem value="ICSE Mathematics">
+                  ICSE Mathematics
+                </SelectItem>
+                <SelectItem value="IGCSE Mathematics">
+                  IGCSE Mathematics
+                </SelectItem>
+                <SelectItem value="A-Level Mathematics">
+                  A-Level Mathematics
+                </SelectItem>
                 <SelectItem value="SAT Mathematics">SAT Mathematics</SelectItem>
                 <SelectItem value="ACT Mathematics">ACT Mathematics</SelectItem>
               </SelectContent>
@@ -382,7 +406,9 @@ export default function QuestionBankPage() {
                 <SelectItem value="Geometry">Geometry</SelectItem>
                 <SelectItem value="Number Theory">Number Theory</SelectItem>
                 <SelectItem value="Complex Numbers">Complex Numbers</SelectItem>
-                <SelectItem value="Sequences and Series">Sequences and Series</SelectItem>
+                <SelectItem value="Sequences and Series">
+                  Sequences and Series
+                </SelectItem>
                 <SelectItem value="Vectors">Vectors</SelectItem>
                 <SelectItem value="Matrices">Matrices</SelectItem>
               </SelectContent>
@@ -429,10 +455,13 @@ export default function QuestionBankPage() {
                   Reset All
                 </Button>
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
                 {searchTerm && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     Search: &quot;{searchTerm}&quot;
                     <X
                       className="w-3 h-3 cursor-pointer hover:text-red-600"
@@ -443,8 +472,12 @@ export default function QuestionBankPage() {
                 {Object.entries(filters).map(([key, value]) => {
                   if (!value || value === "") return null;
                   return (
-                    <Badge key={key} variant="secondary" className="flex items-center gap-1">
-                      {key.replace('_', ' ')}: {value}
+                    <Badge
+                      key={key}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      {key.replace("_", " ")}: {value}
                       <X
                         className="w-3 h-3 cursor-pointer hover:text-red-600"
                         onClick={() => handleFilterChange(key, "")}
@@ -459,8 +492,8 @@ export default function QuestionBankPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               {hasActiveFilters() ? (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
                 >
@@ -538,7 +571,7 @@ export default function QuestionBankPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      {generateHumanReadableId(question, index)}
+                      {getHumanReadableId(question, index)}
                     </CardTitle>
                     <p className="text-sm text-gray-500 mt-1">
                       {question.total_marks} marks • {question.question_type}
@@ -611,7 +644,7 @@ export default function QuestionBankPage() {
                       size="sm"
                       variant="outline"
                       onClick={() =>
-                        window.open(`/question-bank/${question.id}`, '_blank')
+                        window.open(`/question-bank/${question.id}`, "_blank")
                       }
                     >
                       <Eye className="w-4 h-4" />
@@ -620,7 +653,10 @@ export default function QuestionBankPage() {
                       size="sm"
                       variant="outline"
                       onClick={() =>
-                        window.open(`/question-bank/${question.id}/edit`, '_blank')
+                        window.open(
+                          `/question-bank/${question.id}/edit`,
+                          "_blank"
+                        )
                       }
                     >
                       <Edit className="w-4 h-4" />

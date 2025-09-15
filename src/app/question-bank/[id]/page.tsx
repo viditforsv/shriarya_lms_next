@@ -43,6 +43,8 @@ interface Question {
   year: number;
   created_at: string;
   updated_at: string;
+  human_readable_id?: string;
+  question_display_number?: number;
 }
 
 export default function QuestionDetailPage() {
@@ -74,7 +76,12 @@ export default function QuestionDetailPage() {
         setQuestion(data);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to fetch question:", response.status, response.statusText, errorData);
+        console.error(
+          "Failed to fetch question:",
+          response.status,
+          response.statusText,
+          errorData
+        );
       }
     } catch (error) {
       console.error("Error fetching question:", error);
@@ -107,7 +114,12 @@ export default function QuestionDetailPage() {
         router.push(`/question-bank/${questionId}`);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to save question:", response.status, response.statusText, errorData);
+        console.error(
+          "Failed to save question:",
+          response.status,
+          response.statusText,
+          errorData
+        );
       }
     } catch (error) {
       console.error("Error saving question:", error);
@@ -128,7 +140,12 @@ export default function QuestionDetailPage() {
         router.push("/question-bank");
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to delete question:", response.status, response.statusText, errorData);
+        console.error(
+          "Failed to delete question:",
+          response.status,
+          response.statusText,
+          errorData
+        );
       }
     } catch (error) {
       console.error("Error deleting question:", error);
@@ -160,7 +177,12 @@ export default function QuestionDetailPage() {
         router.push(`/question-bank/${newQuestion.id}`);
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to duplicate question:", response.status, response.statusText, errorData);
+        console.error(
+          "Failed to duplicate question:",
+          response.status,
+          response.statusText,
+          errorData
+        );
       }
     } catch (error) {
       console.error("Error duplicating question:", error);
@@ -217,18 +239,22 @@ export default function QuestionDetailPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                {(() => {
-                  const board = question.board === 'IBDP' ? 'IBDP' : question.board;
-                  const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
-                  const type = question.is_pyq ? 'pyq' : 'prac';
-                  
+                {question.human_readable_id || (() => {
+                  const board =
+                    question.board === "IBDP" ? "IBDP" : question.board;
+                  const subject =
+                    question.subject === "HL"
+                      ? "aahl"
+                      : question.subject.toLowerCase();
+                  const type = question.is_pyq ? "pyq" : "prac";
+
                   let number;
                   if (question.question_number) {
-                    number = String(question.question_number).padStart(4, '0');
+                    number = String(question.question_number).padStart(4, "0");
                   } else {
                     number = question.id.slice(-4).toUpperCase();
                   }
-                  
+
                   return `${board}_${subject}_${type}_${number}`;
                 })()}
               </h1>
@@ -289,18 +315,21 @@ export default function QuestionDetailPage() {
           </button>
           <span>/</span>
           <span className="text-gray-900 font-medium">
-            {(() => {
-              const board = question.board === 'IBDP' ? 'IBDP' : question.board;
-              const subject = question.subject === 'HL' ? 'aahl' : question.subject.toLowerCase();
-              const type = question.is_pyq ? 'pyq' : 'prac';
-              
+            {question.human_readable_id || (() => {
+              const board = question.board === "IBDP" ? "IBDP" : question.board;
+              const subject =
+                question.subject === "HL"
+                  ? "aahl"
+                  : question.subject.toLowerCase();
+              const type = question.is_pyq ? "pyq" : "prac";
+
               let number;
               if (question.question_number) {
-                number = String(question.question_number).padStart(4, '0');
+                number = String(question.question_number).padStart(4, "0");
               } else {
                 number = question.id.slice(-4).toUpperCase();
               }
-              
+
               return `${board}_${subject}_${type}_${number}`;
             })()}
           </span>
@@ -316,7 +345,9 @@ export default function QuestionDetailPage() {
             {editMode ? (
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="question_number" className="text-sm">Question Number</Label>
+                  <Label htmlFor="question_number" className="text-sm">
+                    Question Number
+                  </Label>
                   <Input
                     id="question_number"
                     value={question.question_number || ""}
@@ -330,7 +361,9 @@ export default function QuestionDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="total_marks" className="text-sm">Total Marks</Label>
+                  <Label htmlFor="total_marks" className="text-sm">
+                    Total Marks
+                  </Label>
                   <Input
                     id="total_marks"
                     type="number"
@@ -345,7 +378,9 @@ export default function QuestionDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="difficulty" className="text-sm">Difficulty (1-10)</Label>
+                  <Label htmlFor="difficulty" className="text-sm">
+                    Difficulty (1-10)
+                  </Label>
                   <Input
                     id="difficulty"
                     type="number"
@@ -388,7 +423,9 @@ export default function QuestionDetailPage() {
             {editMode ? (
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="subject" className="text-sm">Subject</Label>
+                  <Label htmlFor="subject" className="text-sm">
+                    Subject
+                  </Label>
                   <Input
                     id="subject"
                     value={question.subject || ""}
@@ -399,7 +436,9 @@ export default function QuestionDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="board" className="text-sm">Board</Label>
+                  <Label htmlFor="board" className="text-sm">
+                    Board
+                  </Label>
                   <Input
                     id="board"
                     value={question.board || ""}
@@ -430,7 +469,9 @@ export default function QuestionDetailPage() {
             {editMode ? (
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="grade" className="text-sm">Grade</Label>
+                  <Label htmlFor="grade" className="text-sm">
+                    Grade
+                  </Label>
                   <Input
                     id="grade"
                     value={question.grade || ""}
@@ -441,7 +482,9 @@ export default function QuestionDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="topic" className="text-sm">Topic</Label>
+                  <Label htmlFor="topic" className="text-sm">
+                    Topic
+                  </Label>
                   <Input
                     id="topic"
                     value={question.topic || ""}
@@ -471,14 +514,16 @@ export default function QuestionDetailPage() {
             <h3 className="font-semibold text-gray-900">Chapter Tags</h3>
             {editMode ? (
               <div>
-                <Label htmlFor="tags" className="text-sm">Chapter Tags</Label>
+                <Label htmlFor="tags" className="text-sm">
+                  Chapter Tags
+                </Label>
                 <Textarea
                   id="tags"
                   value={(() => {
                     if (!question.tags) return "";
                     if (Array.isArray(question.tags)) {
                       return question.tags.join(", ");
-                    } else if (typeof question.tags === 'string') {
+                    } else if (typeof question.tags === "string") {
                       return (question.tags as string)
                         .split(/[,;|]/)
                         .map((tag) => tag.trim())
@@ -506,23 +551,29 @@ export default function QuestionDetailPage() {
                   if (question.tags) {
                     if (Array.isArray(question.tags)) {
                       tagsArray = question.tags;
-                    } else if (typeof question.tags === 'string') {
+                    } else if (typeof question.tags === "string") {
                       tagsArray = (question.tags as string)
                         .split(/[,;|]/)
-                        .map(tag => tag.trim())
-                        .filter(tag => tag.length > 0);
+                        .map((tag) => tag.trim())
+                        .filter((tag) => tag.length > 0);
                     }
                   }
                   return tagsArray.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {tagsArray.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
                     </div>
                   ) : (
-                    <span className="text-gray-500 text-xs">No chapter tags assigned</span>
+                    <span className="text-gray-500 text-xs">
+                      No chapter tags assigned
+                    </span>
                   );
                 })()}
               </div>
@@ -536,11 +587,15 @@ export default function QuestionDetailPage() {
         {/* Left Side - Editing */}
         <div className="flex-1 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Edit Question</h2>
-            
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+              Edit Question
+            </h2>
+
             {/* Question Text */}
             <div className="mb-6">
-              <Label htmlFor="question_text" className="text-sm font-medium">Question Text</Label>
+              <Label htmlFor="question_text" className="text-sm font-medium">
+                Question Text
+              </Label>
               <Textarea
                 id="question_text"
                 value={question.question_text || ""}
@@ -555,7 +610,9 @@ export default function QuestionDetailPage() {
             {/* Solution */}
             {question.explanation && (
               <div className="mb-6">
-                <Label htmlFor="explanation" className="text-sm font-medium">Solution</Label>
+                <Label htmlFor="explanation" className="text-sm font-medium">
+                  Solution
+                </Label>
                 <Textarea
                   id="explanation"
                   value={question.explanation || ""}
@@ -574,8 +631,14 @@ export default function QuestionDetailPage() {
                 <Label className="text-sm font-medium">Solution Steps</Label>
                 <div className="mt-2 space-y-3">
                   {question.solution_steps.map((step, index) => (
-                    <div key={index} className="border border-gray-200 rounded p-3">
-                      <Label htmlFor={`step_${index}`} className="text-xs text-gray-600">
+                    <div
+                      key={index}
+                      className="border border-gray-200 rounded p-3"
+                    >
+                      <Label
+                        htmlFor={`step_${index}`}
+                        className="text-xs text-gray-600"
+                      >
                         Step {index + 1}
                       </Label>
                       <Textarea
@@ -584,7 +647,10 @@ export default function QuestionDetailPage() {
                         onChange={(e) => {
                           const newSteps = [...question.solution_steps];
                           newSteps[index] = e.target.value;
-                          setQuestion({ ...question, solution_steps: newSteps });
+                          setQuestion({
+                            ...question,
+                            solution_steps: newSteps,
+                          });
                         }}
                         className="mt-1 min-h-[100px]"
                         placeholder={`Enter step ${index + 1}...`}
@@ -600,8 +666,10 @@ export default function QuestionDetailPage() {
         {/* Right Side - Rendering */}
         <div className="flex-1 bg-gray-50 overflow-y-auto">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Live Preview</h2>
-            
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+              Live Preview
+            </h2>
+
             {/* Question Preview */}
             <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-medium mb-3 text-gray-900">Question</h3>
@@ -623,10 +691,15 @@ export default function QuestionDetailPage() {
             {/* Solution Steps Preview */}
             {question.solution_steps && question.solution_steps.length > 0 && (
               <div className="mb-6 bg-white rounded-lg border border-gray-200 p-4">
-                <h3 className="font-medium mb-3 text-gray-900">Solution Steps</h3>
+                <h3 className="font-medium mb-3 text-gray-900">
+                  Solution Steps
+                </h3>
                 <div className="space-y-4">
                   {question.solution_steps.map((step, index) => (
-                    <div key={index} className="border-l-4 border-blue-200 pl-4">
+                    <div
+                      key={index}
+                      className="border-l-4 border-blue-200 pl-4"
+                    >
                       <div className="prose max-w-none">
                         {renderMixedContent(step)}
                       </div>

@@ -48,6 +48,8 @@ export async function GET(request: NextRequest) {
         "Time Zone",
         created_at,
         updated_at,
+        human_readable_id,
+        question_display_number,
         question_qa!left(
           qa_status,
           priority_level,
@@ -86,7 +88,9 @@ export async function GET(request: NextRequest) {
     if (qa_status) {
       if (qa_status === "pending") {
         // Questions without QA records or with pending status
-        query = query.or(`question_qa.qa_status.eq.pending,question_qa.is.null`);
+        query = query.or(
+          `question_qa.qa_status.eq.pending,question_qa.is.null`
+        );
       } else {
         // Questions with specific QA status
         query = query.eq("question_qa.qa_status", qa_status);
@@ -95,31 +99,22 @@ export async function GET(request: NextRequest) {
 
     // Apply search
     if (search) {
+      // Check if search term looks like a UUID (8-4-4-4-12 pattern)
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search);
+      
       // Check if search term looks like a human-readable ID pattern
       const isHumanReadableId = /^[A-Z]+_[a-z]+_[a-z]+_\d+$/i.test(search);
       
-      if (isHumanReadableId) {
-        // Parse human-readable ID: BOARD_SUBJECT_TYPE_NUMBER
-        const parts = search.split('_');
-        if (parts.length === 4) {
-          const [board, subject, type, number] = parts;
-          
-          // Map back to database values
-          const boardValue = board.toUpperCase() === 'IBDP' ? 'IBDP' : board;
-          const subjectValue = subject === 'aahl' ? 'HL' : subject.toUpperCase();
-          const isPyqValue = type === 'pyq';
-          const questionNumber = parseInt(number);
-          
-          query = query
-            .eq('board', boardValue)
-            .eq('subject', subjectValue)
-            .eq('is_pyq', isPyqValue)
-            .eq('question_number', questionNumber.toString());
-        }
+      if (isUUID) {
+        // Search by UUID
+        query = query.eq('id', search);
+      } else if (isHumanReadableId) {
+        // Search by human-readable ID
+        query = query.eq('human_readable_id', search);
       } else {
-        // Regular search in question text, tags, topic, subtopic
+        // Regular search in question text, tags, topic, subtopic, and human-readable ID
         query = query.or(
-          `question_text.ilike.%${search}%,tags.cs.{${search}},topic.ilike.%${search}%,subtopic.ilike.%${search}%`
+          `question_text.ilike.%${search}%,tags.cs.{${search}},topic.ilike.%${search}%,subtopic.ilike.%${search}%,human_readable_id.ilike.%${search}%`
         );
       }
     }

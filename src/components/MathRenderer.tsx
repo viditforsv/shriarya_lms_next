@@ -78,6 +78,9 @@ export function renderMixedContent(content: string) {
         case "align":
         case "alignat":
         case "eqnarray":
+        case "align*":
+        case "alignat*":
+        case "eqnarray*":
           return <AlignRenderer key={index} content={content} />;
         case "cases":
           return <CasesRenderer key={index} content={content} />;
@@ -188,9 +191,11 @@ function ItemizeRenderer({ content }: { content: string }) {
 
 // Align environment renderer
 function AlignRenderer({ content }: { content: string }) {
+  // The content should already have proper LaTeX formatting
+  // Just pass it through to KaTeX with the correct environment
   return (
     <MathRenderer
-      latex={`\\begin{align}${content}\\end{align}`}
+      latex={`\\begin{align*}${content}\\end{align*}`}
       displayMode={true}
       className="block my-4 text-center"
     />

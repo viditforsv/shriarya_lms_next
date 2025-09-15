@@ -58,8 +58,8 @@ CREATE TABLE public.enrollments (
   is_active boolean DEFAULT true,
   enrolled_at timestamp with time zone DEFAULT now(),
   CONSTRAINT enrollments_pkey PRIMARY KEY (id),
-  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id)
+  CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id),
+  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
 );
 CREATE TABLE public.lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -80,8 +80,33 @@ CREATE TABLE public.lessons (
   unit_name text,
   chapter_name text,
   CONSTRAINT lessons_pkey PRIMARY KEY (id),
-  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
-  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+  CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
+);
+CREATE TABLE public.permission_categories (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  display_name character varying NOT NULL,
+  description text,
+  icon character varying,
+  display_order integer DEFAULT 0,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT permission_categories_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.permissions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  display_name character varying NOT NULL,
+  description text,
+  category character varying NOT NULL,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  created_by uuid,
+  CONSTRAINT permissions_pkey PRIMARY KEY (id),
+  CONSTRAINT permissions_category_fkey FOREIGN KEY (category) REFERENCES public.permission_categories(name),
+  CONSTRAINT permissions_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.profiles (
   id uuid NOT NULL,
@@ -94,6 +119,37 @@ CREATE TABLE public.profiles (
   email text NOT NULL,
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.profiles_role_backup (
+  id uuid,
+  role text,
+  created_at timestamp with time zone
+);
+CREATE TABLE public.qa_comments (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  qa_id uuid NOT NULL,
+  commenter_id uuid NOT NULL,
+  comment_text text NOT NULL,
+  comment_type text DEFAULT 'general'::text CHECK (comment_type = ANY (ARRAY['general'::text, 'content'::text, 'solution'::text, 'formatting'::text, 'difficulty'::text, 'other'::text])),
+  is_resolved boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT qa_comments_pkey PRIMARY KEY (id),
+  CONSTRAINT qa_comments_qa_id_fkey FOREIGN KEY (qa_id) REFERENCES public.question_qa(id),
+  CONSTRAINT qa_comments_commenter_id_fkey FOREIGN KEY (commenter_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.qa_history (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  qa_id uuid NOT NULL,
+  action text NOT NULL CHECK (action = ANY (ARRAY['created'::text, 'status_changed'::text, 'reviewed'::text, 'rated'::text, 'commented'::text, 'flagged'::text, 'unflagged'::text, 'revised'::text, 'archived'::text])),
+  old_value text,
+  new_value text,
+  action_by uuid,
+  action_reason text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT qa_history_pkey PRIMARY KEY (id),
+  CONSTRAINT qa_history_action_by_fkey FOREIGN KEY (action_by) REFERENCES auth.users(id),
+  CONSTRAINT qa_history_qa_id_fkey FOREIGN KEY (qa_id) REFERENCES public.question_qa(id)
 );
 CREATE TABLE public.question_bank (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -129,7 +185,34 @@ CREATE TABLE public.question_bank (
   is_active boolean NOT NULL DEFAULT true,
   year integer,
   options jsonb DEFAULT '[]'::jsonb,
+  human_readable_id character varying UNIQUE,
+  question_display_number integer,
   CONSTRAINT question_bank_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.question_qa (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  question_id uuid NOT NULL,
+  qa_status text NOT NULL DEFAULT 'pending'::text CHECK (qa_status = ANY (ARRAY['pending'::text, 'in_review'::text, 'needs_revision'::text, 'approved'::text, 'rejected'::text, 'archived'::text])),
+  reviewer_id uuid,
+  review_date timestamp with time zone,
+  review_notes text,
+  content_accuracy integer CHECK (content_accuracy >= 1 AND content_accuracy <= 5),
+  difficulty_appropriateness integer CHECK (difficulty_appropriateness >= 1 AND difficulty_appropriateness <= 5),
+  clarity_rating integer CHECK (clarity_rating >= 1 AND clarity_rating <= 5),
+  solution_quality integer CHECK (solution_quality >= 1 AND solution_quality <= 5),
+  overall_rating numeric DEFAULT (((((COALESCE(content_accuracy, 0) + COALESCE(difficulty_appropriateness, 0)) + COALESCE(clarity_rating, 0)) + COALESCE(solution_quality, 0)))::numeric / 4.0),
+  revision_count integer DEFAULT 0,
+  last_revision_date timestamp with time zone,
+  revision_notes text,
+  is_flagged boolean DEFAULT false,
+  flag_reason text,
+  priority_level text DEFAULT 'medium'::text CHECK (priority_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])),
+  qa_tags ARRAY DEFAULT '{}'::text[],
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT question_qa_pkey PRIMARY KEY (id),
+  CONSTRAINT question_qa_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id),
+  CONSTRAINT question_qa_reviewer_id_fkey FOREIGN KEY (reviewer_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.quiz_questions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -138,8 +221,8 @@ CREATE TABLE public.quiz_questions (
   question_order integer NOT NULL,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT quiz_questions_pkey PRIMARY KEY (id),
-  CONSTRAINT quiz_questions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id),
-  CONSTRAINT quiz_questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
+  CONSTRAINT quiz_questions_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
+  CONSTRAINT quiz_questions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id)
 );
 CREATE TABLE public.quizzes (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -150,4 +233,50 @@ CREATE TABLE public.quizzes (
   created_at timestamp without time zone DEFAULT now(),
   CONSTRAINT quizzes_pkey PRIMARY KEY (id),
   CONSTRAINT quizzes_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.lessons(id)
+);
+CREATE TABLE public.role_hierarchy (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  parent_role_id uuid NOT NULL,
+  child_role_id uuid NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT role_hierarchy_pkey PRIMARY KEY (id),
+  CONSTRAINT role_hierarchy_parent_role_id_fkey FOREIGN KEY (parent_role_id) REFERENCES public.roles(id),
+  CONSTRAINT role_hierarchy_child_role_id_fkey FOREIGN KEY (child_role_id) REFERENCES public.roles(id)
+);
+CREATE TABLE public.role_permissions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  role_id uuid NOT NULL,
+  permission_id uuid NOT NULL,
+  granted_at timestamp with time zone DEFAULT now(),
+  granted_by uuid,
+  CONSTRAINT role_permissions_pkey PRIMARY KEY (id),
+  CONSTRAINT role_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES public.permissions(id),
+  CONSTRAINT role_permissions_granted_by_fkey FOREIGN KEY (granted_by) REFERENCES auth.users(id),
+  CONSTRAINT role_permissions_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id)
+);
+CREATE TABLE public.roles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  display_name character varying NOT NULL,
+  description text,
+  is_active boolean DEFAULT true,
+  is_system_role boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  created_by uuid,
+  CONSTRAINT roles_pkey PRIMARY KEY (id),
+  CONSTRAINT roles_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
+);
+CREATE TABLE public.user_roles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  role_id uuid NOT NULL,
+  assigned_at timestamp with time zone DEFAULT now(),
+  assigned_by uuid,
+  expires_at timestamp with time zone,
+  is_active boolean DEFAULT true,
+  CONSTRAINT user_roles_pkey PRIMARY KEY (id),
+  CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT user_roles_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id),
+  CONSTRAINT user_roles_assigned_by_fkey FOREIGN KEY (assigned_by) REFERENCES auth.users(id)
 );

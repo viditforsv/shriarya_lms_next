@@ -1,24 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-// GET /api/rbac/role-permissions - Get role-permission assignments
+// GET /api/rbac/role-permissions - Get role-permission assignments (simplified)
 export async function GET() {
   try {
     const supabase = await createClient();
 
-    const { data: rolePermissions, error } = await supabase.from(
-      "role_permissions"
-    ).select(`
-        role_id,
-        permission_id,
-        roles!inner(id, name, display_name),
-        permissions!inner(id, name, display_name, category)
-      `);
+    // Get roles with their permissions from JSONB field
+    const { data: roles, error: rolesError } = await supabase
+      .from("roles")
+      .select("id, name, display_name, permissions");
 
-    if (error) {
-      console.error("Error fetching role permissions:", error);
+    if (rolesError) {
+      console.error("Error fetching roles:", rolesError);
       return NextResponse.json(
-        { error: "Failed to fetch role permissions" },
+        { error: "Failed to fetch roles" },
+        { status: 500 }
+      );
+    }
+
+    // Get all permissions
+    const { data: permissions, error: permissionsError } = await supabase
+      .from("permissions")
+      .select("id, name, display_name, category");
+
+    if (permissionsError) {
+      console.error("Error fetching permissions:", permissionsError);
+      return NextResponse.json(
+        { error: "Failed to fetch permissions" },
         { status: 500 }
       );
     }
@@ -27,14 +36,14 @@ export async function GET() {
     const matrix: { [permissionId: string]: { [roleId: string]: boolean } } =
       {};
 
-    rolePermissions.forEach((rp) => {
-      const permissionId = rp.permission_id;
-      const roleId = rp.role_id;
-
-      if (!matrix[permissionId]) {
-        matrix[permissionId] = {};
-      }
-      matrix[permissionId][roleId] = true;
+    permissions.forEach((permission) => {
+      matrix[permission.id] = {};
+      roles.forEach((role) => {
+        const rolePermissions = role.permissions || [];
+        matrix[permission.id][role.id] = rolePermissions.includes(
+          permission.name
+        );
+      });
     });
 
     return NextResponse.json({ matrix });
@@ -47,42 +56,70 @@ export async function GET() {
   }
 }
 
-// POST /api/rbac/role-permissions - Update role-permission assignments
+// POST /api/rbac/role-permissions - Update role-permission assignments (simplified)
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const { roleId, permissionId, granted } = await request.json();
 
-    if (granted) {
-      // Grant permission
-      const { error } = await supabase.from("role_permissions").upsert({
-        role_id: roleId,
-        permission_id: permissionId,
-        granted_at: new Date().toISOString(),
-      });
+    // Get current role data
+    const { data: role, error: roleError } = await supabase
+      .from("roles")
+      .select("id, name, permissions")
+      .eq("id", roleId)
+      .single();
 
-      if (error) {
-        console.error("Error granting permission:", error);
-        return NextResponse.json(
-          { error: "Failed to grant permission" },
-          { status: 500 }
-        );
+    if (roleError) {
+      console.error("Error fetching role:", roleError);
+      return NextResponse.json(
+        { error: "Failed to fetch role" },
+        { status: 500 }
+      );
+    }
+
+    // Get permission name
+    const { data: permission, error: permissionError } = await supabase
+      .from("permissions")
+      .select("name")
+      .eq("id", permissionId)
+      .single();
+
+    if (permissionError) {
+      console.error("Error fetching permission:", permissionError);
+      return NextResponse.json(
+        { error: "Failed to fetch permission" },
+        { status: 500 }
+      );
+    }
+
+    // Update permissions array
+    const currentPermissions = role.permissions || [];
+    let newPermissions;
+
+    if (granted) {
+      // Add permission if not already present
+      if (!currentPermissions.includes(permission.name)) {
+        newPermissions = [...currentPermissions, permission.name];
+      } else {
+        newPermissions = currentPermissions; // No change needed
       }
     } else {
-      // Revoke permission
-      const { error } = await supabase
-        .from("role_permissions")
-        .delete()
-        .eq("role_id", roleId)
-        .eq("permission_id", permissionId);
+      // Remove permission
+      newPermissions = currentPermissions.filter((p) => p !== permission.name);
+    }
 
-      if (error) {
-        console.error("Error revoking permission:", error);
-        return NextResponse.json(
-          { error: "Failed to revoke permission" },
-          { status: 500 }
-        );
-      }
+    // Update role with new permissions
+    const { error: updateError } = await supabase
+      .from("roles")
+      .update({ permissions: newPermissions })
+      .eq("id", roleId);
+
+    if (updateError) {
+      console.error("Error updating role permissions:", updateError);
+      return NextResponse.json(
+        { error: "Failed to update role permissions" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 // GET /api/rbac/permissions - Get all permissions grouped by category
@@ -20,9 +20,9 @@ export async function GET() {
           message: "Please fix the RLS circular dependency issue",
           details: tableError.message,
           instructions: [
-            "1. Run: database/fix-rls-only.sql (fixes RLS circular dependency)",
-            "2. Run: database/populate-sample-data.sql (adds sample data if needed)",
-            "3. Run: database/rbac-migration.sql (migrates existing users)",
+            "1. Fix RLS circular dependency in Supabase dashboard",
+            "2. Add sample data if needed through Supabase dashboard",
+            "3. Migrate existing users through Supabase dashboard",
           ],
         },
         { status: 500 }

@@ -258,27 +258,11 @@ export default function RoleAssignmentMatrixPage() {
                       Setup Instructions:
                     </h4>
                     <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>Fix RLS circular dependency in Supabase dashboard</li>
                       <li>
-                        Run:{" "}
-                        <code className="bg-gray-100 px-1 rounded-sm">
-                          database/fix-rls-only.sql
-                        </code>{" "}
-                        (fixes RLS circular dependency)
+                        Add sample data if needed through Supabase dashboard
                       </li>
-                      <li>
-                        Run:{" "}
-                        <code className="bg-gray-100 px-1 rounded-sm">
-                          database/populate-sample-data.sql
-                        </code>{" "}
-                        (adds sample data if needed)
-                      </li>
-                      <li>
-                        Run:{" "}
-                        <code className="bg-gray-100 px-1 rounded-sm">
-                          database/rbac-migration-safe.sql
-                        </code>{" "}
-                        (migrates existing users)
-                      </li>
+                      <li>Migrate existing users through Supabase dashboard</li>
                     </ol>
                   </div>
                 </CardContent>

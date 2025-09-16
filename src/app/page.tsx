@@ -150,14 +150,15 @@ export default function Home() {
             <Button
               size="lg"
               className="bg-accent hover:bg-accent/90"
-              onClick={() => router.push("/auth")}
+              onClick={() => router.push("/auth?tab=signup")}
             >
               Get Started
             </Button>
             <Button
               size="lg"
               variant="outline"
-              onClick={() => router.push("/auth")}
+              className="border-accent text-accent hover:bg-accent hover:text-white"
+              onClick={() => router.push("/auth?tab=signin")}
             >
               Sign In
             </Button>
@@ -259,17 +260,17 @@ export default function Home() {
             <Button
               size="lg"
               variant="secondary"
-              onClick={() => router.push("/auth")}
+              onClick={() => router.push("/auth?tab=signup")}
             >
               Get Started
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-accent-foreground text-accent-foreground hover:bg-accent-foreground hover:text-white"
-              onClick={() => router.push("/auth")}
+              className="border-white text-black hover:bg-white hover:text-accent"
+              onClick={() => router.push("/courses/discover")}
             >
-              Learn More
+              Browse Courses
             </Button>
           </div>
         </div>

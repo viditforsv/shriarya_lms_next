@@ -1,0 +1,127 @@
+import { NextRequest, NextResponse } from "next/server";
+import { PaymentService } from "@/lib/payments";
+import { createClient } from "@/lib/supabase/server";
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { provider, paymentData } = body;
+
+    // Validate required fields
+    if (!provider || !paymentData) {
+      return NextResponse.json(
+        { error: "Missing required fields: provider, paymentData" },
+        { status: 400 }
+      );
+    }
+
+    // Get user from session (optional for testing)
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    // Use test user data if not authenticated (for testing purposes)
+    let userId = "test-user-123";
+    if (user && !authError) {
+      userId = user.id;
+    }
+
+    // Verify payment
+    const verificationResult = await PaymentService.verifyPayment(
+      provider,
+      paymentData
+    );
+
+    if (!verificationResult.success) {
+      return NextResponse.json(
+        { error: verificationResult.error || "Payment verification failed" },
+        { status: 400 }
+      );
+    }
+
+    // Extract course and payment info from payment data
+    let courseId: string;
+    let paymentId: string;
+    let amount: number;
+    let currency: string;
+
+    if (provider === "razorpay") {
+      courseId =
+        paymentData.courseId ||
+        verificationResult.paymentDetails?.notes?.courseId;
+      paymentId = paymentData.razorpayPaymentId;
+      amount = verificationResult.paymentDetails?.amount
+        ? verificationResult.paymentDetails.amount / 100
+        : 0;
+      currency =
+        verificationResult.paymentDetails?.currency?.toUpperCase() || "INR";
+    } else {
+      courseId =
+        paymentData.courseId ||
+        verificationResult.paymentDetails?.metadata?.courseId;
+      paymentId = paymentData.paymentIntentId;
+      amount = verificationResult.paymentDetails?.amount
+        ? verificationResult.paymentDetails.amount / 100
+        : 0;
+      currency =
+        verificationResult.paymentDetails?.currency?.toUpperCase() || "USD";
+    }
+
+    // Create enrollment record (only if user is authenticated)
+    if (user && !authError) {
+      const { error: enrollmentError } = await supabase
+        .from("enrollments")
+        .insert({
+          student_id: user.id,
+          course_id: courseId,
+          is_active: true,
+          enrolled_at: new Date().toISOString(),
+        });
+
+      if (enrollmentError) {
+        console.error("Enrollment creation error:", enrollmentError);
+        return NextResponse.json(
+          { error: "Failed to create enrollment" },
+          { status: 500 }
+        );
+      }
+
+      // Create payment record (you might want to create a payments table)
+      const { error: paymentRecordError } = await supabase
+        .from("payments")
+        .insert({
+          user_id: user.id,
+          course_id: courseId,
+          amount: amount,
+          currency: currency,
+          provider: provider,
+          payment_id: paymentId,
+          status: "completed",
+          created_at: new Date().toISOString(),
+        });
+
+      if (paymentRecordError) {
+        console.error("Payment record creation error:", paymentRecordError);
+        // Don't fail the request if payment record creation fails
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Payment verified successfully",
+      enrollment: {
+        courseId,
+        userId,
+        enrolledAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error("Payment verification error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

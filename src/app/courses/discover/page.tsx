@@ -1,249 +1,337 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { Input } from '@/app/components-demo/ui/ui-components/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components-demo/ui/select'
-import { 
-  Search, 
-  Filter, 
-  BookOpen, 
-  Clock, 
-  Users, 
-  Star, 
+import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components-demo/ui/select";
+import {
+  Search,
+  Filter,
+  BookOpen,
+  Clock,
+  Users,
+  Star,
   Grid3X3,
   List,
   SortAsc,
-  SortDesc
-} from 'lucide-react'
+  SortDesc,
+} from "lucide-react";
+import Image from "next/image";
 // import { getAllCourses } from '@/lib/course-config'
 // import { CourseConfig } from '@/lib/course-config'
 
 // API-based course interface
 interface CourseConfig {
-  id: string
-  slug: string
-  title: string
-  description: string
-  instructor_id?: string
-  created_at: string
-  updated_at: string
-  is_free: boolean
-  status: string
-  price: number
-  profiles?: unknown
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  instructor_id?: string;
+  created_at: string;
+  updated_at: string;
+  is_free: boolean;
+  status: string;
+  price: number;
+  curriculum?: string;
+  subject?: string;
+  grade?: string;
+  level?: string;
+  duration?: string;
+  lessons?: number;
+  thumbnail?: string;
+  features?: string[];
+  prerequisites?: string[];
+  learningOutcomes?: string[];
+  tags?: string[];
+  profiles?: unknown;
 }
 
 interface FilterState {
-  search: string
-  curriculum: string
-  subject: string
-  grade: string
-  level: string
-  priceType: string
-  sortBy: string
-  sortOrder: 'asc' | 'desc'
-  viewMode: 'grid' | 'list'
+  search: string;
+  curriculum: string;
+  subject: string;
+  grade: string;
+  level: string;
+  priceType: string;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+  viewMode: "grid" | "list";
 }
 
 export default function CourseDiscoveryPage() {
   const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    curriculum: 'all',
-    subject: 'all',
-    grade: 'all',
-    level: 'all',
-    priceType: 'all',
-    sortBy: 'popularity',
-    sortOrder: 'desc',
-    viewMode: 'grid'
-  })
+    search: "",
+    curriculum: "all",
+    subject: "all",
+    grade: "all",
+    level: "all",
+    priceType: "all",
+    sortBy: "popularity",
+    sortOrder: "desc",
+    viewMode: "grid",
+  });
 
-  const [showFilters, setShowFilters] = useState(false)
-  const [courses, setCourses] = useState<CourseConfig[]>([])
+  const [showFilters, setShowFilters] = useState(false);
+  const [courses, setCourses] = useState<CourseConfig[]>([]);
 
   // Get all courses from API
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        console.log('Fetching courses from API...')
-        const response = await fetch('/api/courses')
-        console.log('Response status:', response.status)
+        console.log("Fetching courses from API...");
+        const response = await fetch("/api/courses");
+        console.log("Response status:", response.status);
         if (response.ok) {
-          const data = await response.json()
-          console.log('Courses data:', data)
-          setCourses(data.courses || [])
+          const data = await response.json();
+          console.log("Courses data:", data);
+          setCourses(data.courses || []);
         } else {
-          console.error('Failed to fetch courses:', response.statusText)
-          setCourses([])
+          console.error("Failed to fetch courses:", response.statusText);
+          setCourses([]);
         }
       } catch (error) {
-        console.error('Error fetching courses:', error)
-        setCourses([])
+        console.error("Error fetching courses:", error);
+        setCourses([]);
       }
-    }
+    };
 
-    fetchCourses()
-  }, [])
+    fetchCourses();
+  }, []);
 
   // Get unique values for filter options
   const filterOptions = useMemo(() => {
-    // Extract curriculum and subject from title/slug for now
-    const curricula = [...new Set(courses.map(c => {
-      if (c.slug.includes('cbse')) return 'CBSE'
-      if (c.slug.includes('ibdp')) return 'IBDP'
-      return 'Other'
-    }))]
-    const subjects = [...new Set(courses.map(c => {
-      if (c.title.toLowerCase().includes('mathematics')) return 'Mathematics'
-      if (c.title.toLowerCase().includes('physics')) return 'Physics'
-      if (c.title.toLowerCase().includes('chemistry')) return 'Chemistry'
-      return 'Other'
-    }))]
-    const grades = [...new Set(courses.map(c => {
-      if (c.slug.includes('class-10')) return 'Class 10'
-      if (c.slug.includes('class-11')) return 'Class 11'
-      if (c.slug.includes('class-12')) return 'Class 12'
-      if (c.slug.includes('hl')) return 'Higher Level'
-      return 'Other'
-    }))]
-    const levels = [...new Set(courses.map(c => {
-      if (c.slug.includes('hl')) return 'Higher Level'
-      if (c.slug.includes('sl')) return 'Standard Level'
-      return 'Standard'
-    }))]
-    
-    return { curricula, subjects, grades, levels }
-  }, [courses])
+    // Use actual database fields, with fallback to hardcoded logic for backward compatibility
+    const curricula = [
+      ...new Set(
+        courses
+          .map((c) => {
+            if (c.curriculum) return c.curriculum;
+            // Fallback to slug-based detection
+            if (c.slug.includes("cbse")) return "CBSE";
+            if (c.slug.includes("ibdp")) return "IBDP";
+            return "Other";
+          })
+          .filter(Boolean)
+      ),
+    ];
+
+    const subjects = [
+      ...new Set(
+        courses
+          .map((c) => {
+            if (c.subject) return c.subject;
+            // Fallback to title-based detection
+            if (c.title.toLowerCase().includes("mathematics"))
+              return "Mathematics";
+            if (c.title.toLowerCase().includes("physics")) return "Physics";
+            if (c.title.toLowerCase().includes("chemistry")) return "Chemistry";
+            return "Other";
+          })
+          .filter(Boolean)
+      ),
+    ];
+
+    const grades = [
+      ...new Set(
+        courses
+          .map((c) => {
+            if (c.grade) return c.grade;
+            // Fallback to slug-based detection
+            if (c.slug.includes("class-10")) return "Class 10";
+            if (c.slug.includes("class-11")) return "Class 11";
+            if (c.slug.includes("class-12")) return "Class 12";
+            if (c.slug.includes("hl")) return "Higher Level";
+            return "Other";
+          })
+          .filter(Boolean)
+      ),
+    ];
+
+    const levels = [
+      ...new Set(
+        courses
+          .map((c) => {
+            if (c.level) return c.level;
+            // Fallback to slug-based detection
+            if (c.slug.includes("hl")) return "Higher Level";
+            if (c.slug.includes("sl")) return "Standard Level";
+            return "Standard";
+          })
+          .filter(Boolean)
+      ),
+    ];
+
+    return { curricula, subjects, grades, levels };
+  }, [courses]);
 
   // Filter and sort courses
   const filteredCourses = useMemo(() => {
-    const filtered = courses.filter(course => {
+    const filtered = courses.filter((course) => {
       // Only show published courses
-      if (course.status !== 'published') {
-        return false
+      if (course.status !== "published") {
+        return false;
       }
 
       // Search filter
       if (filters.search) {
-        const searchTerm = filters.search.toLowerCase()
-        const matchesSearch = 
+        const searchTerm = filters.search.toLowerCase();
+        const matchesSearch =
           course.title.toLowerCase().includes(searchTerm) ||
           course.description.toLowerCase().includes(searchTerm) ||
-          course.slug.toLowerCase().includes(searchTerm)
-        if (!matchesSearch) return false
+          course.slug.toLowerCase().includes(searchTerm);
+        if (!matchesSearch) return false;
       }
 
       // Curriculum filter
-      if (filters.curriculum !== 'all') {
-        const courseCurriculum = course.slug.includes('cbse') ? 'CBSE' : 
-                                course.slug.includes('ibdp') ? 'IBDP' : 'Other'
+      if (filters.curriculum !== "all") {
+        const courseCurriculum =
+          course.curriculum ||
+          (course.slug.includes("cbse")
+            ? "CBSE"
+            : course.slug.includes("ibdp")
+            ? "IBDP"
+            : "Other");
         if (courseCurriculum !== filters.curriculum) {
-          return false
+          return false;
         }
       }
 
       // Subject filter
-      if (filters.subject !== 'all') {
-        const courseSubject = course.title.toLowerCase().includes('mathematics') ? 'Mathematics' :
-                             course.title.toLowerCase().includes('physics') ? 'Physics' :
-                             course.title.toLowerCase().includes('chemistry') ? 'Chemistry' : 'Other'
+      if (filters.subject !== "all") {
+        const courseSubject =
+          course.subject ||
+          (course.title.toLowerCase().includes("mathematics")
+            ? "Mathematics"
+            : course.title.toLowerCase().includes("physics")
+            ? "Physics"
+            : course.title.toLowerCase().includes("chemistry")
+            ? "Chemistry"
+            : "Other");
         if (courseSubject !== filters.subject) {
-          return false
+          return false;
         }
       }
 
       // Grade filter
-      if (filters.grade !== 'all') {
-        const courseGrade = course.slug.includes('class-10') ? 'Class 10' :
-                           course.slug.includes('class-11') ? 'Class 11' :
-                           course.slug.includes('class-12') ? 'Class 12' :
-                           course.slug.includes('hl') ? 'Higher Level' : 'Other'
+      if (filters.grade !== "all") {
+        const courseGrade =
+          course.grade ||
+          (course.slug.includes("class-10")
+            ? "Class 10"
+            : course.slug.includes("class-11")
+            ? "Class 11"
+            : course.slug.includes("class-12")
+            ? "Class 12"
+            : course.slug.includes("hl")
+            ? "Higher Level"
+            : "Other");
         if (courseGrade !== filters.grade) {
-          return false
+          return false;
         }
       }
 
       // Level filter
-      if (filters.level !== 'all') {
-        const courseLevel = course.slug.includes('hl') ? 'Higher Level' :
-                           course.slug.includes('sl') ? 'Standard Level' : 'Standard'
+      if (filters.level !== "all") {
+        const courseLevel =
+          course.level ||
+          (course.slug.includes("hl")
+            ? "Higher Level"
+            : course.slug.includes("sl")
+            ? "Standard Level"
+            : "Standard");
         if (courseLevel !== filters.level) {
-          return false
+          return false;
         }
       }
 
       // Price filter
-      if (filters.priceType === 'free' && !course.is_free) {
-        return false
+      if (filters.priceType === "free" && !course.is_free) {
+        return false;
       }
-      if (filters.priceType === 'paid' && course.is_free) {
-        return false
+      if (filters.priceType === "paid" && course.is_free) {
+        return false;
       }
 
-      return true
-    })
+      return true;
+    });
 
     // Sort courses
     filtered.sort((a, b) => {
-      let comparison = 0
-      
+      let comparison = 0;
+
       switch (filters.sortBy) {
-        case 'title':
-          comparison = a.title.localeCompare(b.title)
-          break
-        case 'price':
-          comparison = a.price - b.price
-          break
-        case 'duration':
+        case "title":
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case "price":
+          comparison = a.price - b.price;
+          break;
+        case "duration":
           // API doesn't have duration, use created_at as fallback
-          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-          break
-        case 'popularity':
+          comparison =
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+        case "popularity":
           // API doesn't have enrollment count, use created_at as fallback
-          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          break
-        case 'rating':
+          comparison =
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          break;
+        case "rating":
           // API doesn't have rating, use created_at as fallback
-          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          break
-        case 'newest':
-          comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          break
+          comparison =
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          break;
+        case "newest":
+          comparison =
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          break;
         default:
-          comparison = 0
+          comparison = 0;
       }
 
-      return filters.sortOrder === 'asc' ? comparison : -comparison
-    })
+      return filters.sortOrder === "asc" ? comparison : -comparison;
+    });
 
-    return filtered
-  }, [courses, filters])
+    return filtered;
+  }, [courses, filters]);
 
   const updateFilter = (key: keyof FilterState, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
-  }
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
   const clearFilters = () => {
     setFilters({
-      search: '',
-      curriculum: 'all',
-      subject: 'all',
-      grade: 'all',
-      level: 'all',
-      priceType: 'all',
-      sortBy: 'popularity',
-      sortOrder: 'desc',
-      viewMode: 'grid'
-    })
-  }
+      search: "",
+      curriculum: "all",
+      subject: "all",
+      grade: "all",
+      level: "all",
+      priceType: "all",
+      sortBy: "popularity",
+      sortOrder: "desc",
+      viewMode: "grid",
+    });
+  };
 
-  const activeFiltersCount = Object.values(filters).filter(value => 
-    value !== 'all' && value !== 'desc' && value !== 'grid' && value !== ''
-  ).length
+  const activeFiltersCount = Object.values(filters).filter(
+    (value) =>
+      value !== "all" && value !== "desc" && value !== "grid" && value !== ""
+  ).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -275,16 +363,16 @@ export default function CourseDiscoveryPage() {
               </Button>
               <div className="flex items-center border rounded-md">
                 <Button
-                  variant={filters.viewMode === 'grid' ? 'primary' : 'outline'}
+                  variant={filters.viewMode === "grid" ? "primary" : "outline"}
                   size="sm"
-                  onClick={() => updateFilter('viewMode', 'grid')}
+                  onClick={() => updateFilter("viewMode", "grid")}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={filters.viewMode === 'list' ? 'primary' : 'outline'}
+                  variant={filters.viewMode === "list" ? "primary" : "outline"}
                   size="sm"
-                  onClick={() => updateFilter('viewMode', 'list')}
+                  onClick={() => updateFilter("viewMode", "list")}
                 >
                   <List className="w-4 h-4" />
                 </Button>
@@ -298,8 +386,8 @@ export default function CourseDiscoveryPage() {
             <Input
               placeholder="Search courses by title, subject, or keywords..."
               value={filters.search}
-              onChange={(e) => updateFilter('search', e.target.value)}
-              className="pl-10"
+              onChange={(e) => updateFilter("search", e.target.value)}
+              className="pl-10 bg-white border-gray-200 shadow-sm focus:border-accent focus:ring-accent"
             />
           </div>
         </div>
@@ -308,7 +396,7 @@ export default function CourseDiscoveryPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex gap-8">
           {/* Filters Sidebar */}
-          <div className={`w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className={`w-80 ${showFilters ? "block" : "hidden lg:block"}`}>
             <Card className="sticky top-8">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -321,14 +409,19 @@ export default function CourseDiscoveryPage() {
               <CardContent className="space-y-6">
                 {/* Curriculum Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Curriculum</label>
-                  <Select value={filters.curriculum} onValueChange={(value) => updateFilter('curriculum', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Curriculum
+                  </label>
+                  <Select
+                    value={filters.curriculum}
+                    onValueChange={(value) => updateFilter("curriculum", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Curricula</SelectItem>
-                      {filterOptions.curricula.map(curriculum => (
+                      {filterOptions.curricula.map((curriculum) => (
                         <SelectItem key={curriculum} value={curriculum}>
                           {curriculum}
                         </SelectItem>
@@ -339,14 +432,19 @@ export default function CourseDiscoveryPage() {
 
                 {/* Subject Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Subject</label>
-                  <Select value={filters.subject} onValueChange={(value) => updateFilter('subject', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Subject
+                  </label>
+                  <Select
+                    value={filters.subject}
+                    onValueChange={(value) => updateFilter("subject", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Subjects</SelectItem>
-                      {filterOptions.subjects.map(subject => (
+                      {filterOptions.subjects.map((subject) => (
                         <SelectItem key={subject} value={subject}>
                           {subject}
                         </SelectItem>
@@ -357,15 +455,20 @@ export default function CourseDiscoveryPage() {
 
                 {/* Grade Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Grade</label>
-                  <Select value={filters.grade} onValueChange={(value) => updateFilter('grade', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Grade
+                  </label>
+                  <Select
+                    value={filters.grade}
+                    onValueChange={(value) => updateFilter("grade", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Grades</SelectItem>
-                      {filterOptions.grades.map(grade => (
-                        <SelectItem key={grade} value={grade || ''}>
+                      {filterOptions.grades.map((grade) => (
+                        <SelectItem key={grade} value={grade || ""}>
                           {grade}
                         </SelectItem>
                       ))}
@@ -375,15 +478,20 @@ export default function CourseDiscoveryPage() {
 
                 {/* Level Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Level</label>
-                  <Select value={filters.level} onValueChange={(value) => updateFilter('level', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Level
+                  </label>
+                  <Select
+                    value={filters.level}
+                    onValueChange={(value) => updateFilter("level", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Levels</SelectItem>
-                      {filterOptions.levels.map(level => (
-                        <SelectItem key={level} value={level || ''}>
+                      {filterOptions.levels.map((level) => (
+                        <SelectItem key={level} value={level || ""}>
                           {level}
                         </SelectItem>
                       ))}
@@ -393,8 +501,13 @@ export default function CourseDiscoveryPage() {
 
                 {/* Price Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Price</label>
-                  <Select value={filters.priceType} onValueChange={(value) => updateFilter('priceType', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Price
+                  </label>
+                  <Select
+                    value={filters.priceType}
+                    onValueChange={(value) => updateFilter("priceType", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -408,8 +521,13 @@ export default function CourseDiscoveryPage() {
 
                 {/* Sort Options */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Sort By</label>
-                  <Select value={filters.sortBy} onValueChange={(value) => updateFilter('sortBy', value)}>
+                  <label className="text-sm font-medium mb-2 block">
+                    Sort By
+                  </label>
+                  <Select
+                    value={filters.sortBy}
+                    onValueChange={(value) => updateFilter("sortBy", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -427,11 +545,20 @@ export default function CourseDiscoveryPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => updateFilter('sortOrder', filters.sortOrder === 'asc' ? 'desc' : 'asc')}
+                  onClick={() =>
+                    updateFilter(
+                      "sortOrder",
+                      filters.sortOrder === "asc" ? "desc" : "asc"
+                    )
+                  }
                   className="w-full"
                 >
-                  {filters.sortOrder === 'asc' ? <SortAsc className="w-4 h-4 mr-2" /> : <SortDesc className="w-4 h-4 mr-2" />}
-                  {filters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                  {filters.sortOrder === "asc" ? (
+                    <SortAsc className="w-4 h-4 mr-2" />
+                  ) : (
+                    <SortDesc className="w-4 h-4 mr-2" />
+                  )}
+                  {filters.sortOrder === "asc" ? "Ascending" : "Descending"}
                 </Button>
               </CardContent>
             </Card>
@@ -443,7 +570,8 @@ export default function CourseDiscoveryPage() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl font-semibold">
-                  {filteredCourses.length} Course{filteredCourses.length !== 1 ? 's' : ''} Found
+                  {filteredCourses.length} Course
+                  {filteredCourses.length !== 1 ? "s" : ""} Found
                 </h2>
                 {activeFiltersCount > 0 && (
                   <p className="text-sm text-muted-foreground">
@@ -458,7 +586,9 @@ export default function CourseDiscoveryPage() {
               <Card className="p-12 text-center">
                 <div className="max-w-md mx-auto">
                   <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No courses found</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    No courses found
+                  </h3>
                   <p className="text-muted-foreground mb-4">
                     Try adjusting your filters or search terms
                   </p>
@@ -466,12 +596,19 @@ export default function CourseDiscoveryPage() {
                 </div>
               </Card>
             ) : (
-              <div className={filters.viewMode === 'grid' 
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
-                : 'space-y-4'
-              }>
+              <div
+                className={
+                  filters.viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    : "space-y-4"
+                }
+              >
                 {filteredCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} viewMode={filters.viewMode} />
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    viewMode={filters.viewMode}
+                  />
                 ))}
               </div>
             )}
@@ -479,32 +616,93 @@ export default function CourseDiscoveryPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface CourseCardProps {
-  course: CourseConfig
-  viewMode: 'grid' | 'list'
+  course: CourseConfig;
+  viewMode: "grid" | "list";
+}
+
+// Helper function to get thumbnail URL with fallback
+function getThumbnailUrl(course: CourseConfig): string {
+  // If course has a thumbnail, use it
+  if (course.thumbnail && course.thumbnail !== "/images/courses/default.jpg") {
+    return course.thumbnail;
+  }
+
+  // Generate thumbnail based on curriculum and subject
+  const curriculum =
+    course.curriculum ||
+    (course.slug.includes("cbse")
+      ? "CBSE"
+      : course.slug.includes("ibdp")
+      ? "IBDP"
+      : "OTHER");
+  const subject =
+    course.subject ||
+    (course.title.toLowerCase().includes("mathematics")
+      ? "MATHEMATICS"
+      : "OTHER");
+
+  // Return a placeholder gradient for now - you can replace these with actual thumbnail URLs
+  return `data:image/svg+xml;base64,${Buffer.from(
+    `
+    <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#e27447;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#d1653a;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="300" fill="url(#grad)" />
+      <text x="200" y="150" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" dominant-baseline="middle">${curriculum} ${subject}</text>
+    </svg>
+  `
+  ).toString("base64")}`;
 }
 
 function CourseCard({ course, viewMode }: CourseCardProps) {
-  if (viewMode === 'list') {
+  const thumbnailUrl = getThumbnailUrl(course);
+
+  if (viewMode === "list") {
     return (
       <Card className="hover:shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex gap-6">
-            <div className="w-32 h-24 bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center flex-shrink-0">
-              <BookOpen className="w-8 h-8 text-white" />
+            <div className="w-32 h-24 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <Image
+                src={thumbnailUrl}
+                alt={`${course.title} thumbnail`}
+                width={128}
+                height={96}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to gradient if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+              />
+              <div
+                className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center"
+                style={{ display: "none" }}
+              >
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
             </div>
             <div className="flex-1">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">{course.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {course.description}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
-                  <Badge variant={course.is_free ? 'secondary' : 'default'}>
-                    {course.is_free ? 'Free' : `$${course.price}`}
+                  <Badge variant={course.is_free ? "secondary" : "default"}>
+                    {course.is_free ? "Free" : `$${course.price}`}
                   </Badge>
                 </div>
               </div>
@@ -512,7 +710,10 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+                    <span>
+                      Created:{" "}
+                      {new Date(course.created_at).toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
@@ -521,19 +722,31 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="w-4 h-4" />
-                  <span>{course.is_free ? 'Free Course' : `Paid Course - $${course.price}`}</span>
+                  <span>
+                    {course.is_free
+                      ? "Free Course"
+                      : `Paid Course - $${course.price}`}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                   <Badge variant="outline" className="text-xs">
-                    {course.slug.includes('cbse') ? 'CBSE' : course.slug.includes('ibdp') ? 'IBDP' : 'Other'}
+                    {course.curriculum ||
+                      (course.slug.includes("cbse")
+                        ? "CBSE"
+                        : course.slug.includes("ibdp")
+                        ? "IBDP"
+                        : "Other")}
                   </Badge>
                   <Badge variant="outline" className="text-xs">
-                    {course.title.toLowerCase().includes('mathematics') ? 'Mathematics' : 'Other'}
+                    {course.subject ||
+                      (course.title.toLowerCase().includes("mathematics")
+                        ? "Mathematics"
+                        : "Other")}
                   </Badge>
                   <Badge variant="outline" className="text-xs">
-                    {course.is_free ? 'Free' : 'Paid'}
+                    {course.is_free ? "Free" : "Paid"}
                   </Badge>
                 </div>
                 <Link href={`/courses/${course.slug}`}>
@@ -544,21 +757,40 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card className="hover:shadow-md transition-shadow group">
       <CardHeader className="pb-4">
-        <div className="w-full h-32 bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center mb-4">
-          <BookOpen className="w-12 h-12 text-white" />
+        <div className="w-full h-32 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
+          <Image
+            src={thumbnailUrl}
+            alt={`${course.title} thumbnail`}
+            width={400}
+            height={128}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to gradient if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = "none";
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = "flex";
+            }}
+          />
+          <div
+            className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center absolute inset-0"
+            style={{ display: "none" }}
+          >
+            <BookOpen className="w-12 h-12 text-white" />
+          </div>
         </div>
         <div className="flex items-start justify-between mb-2">
           <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
             {course.title}
           </CardTitle>
-          <Badge variant={course.is_free ? 'secondary' : 'default'}>
-            {course.is_free ? 'Free' : `$${course.price}`}
+          <Badge variant={course.is_free ? "secondary" : "default"}>
+            {course.is_free ? "Free" : `$${course.price}`}
           </Badge>
         </div>
         <CardDescription className="line-clamp-3">
@@ -572,7 +804,9 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
-                <span>Created: {new Date(course.created_at).toLocaleDateString()}</span>
+                <span>
+                  Created: {new Date(course.created_at).toLocaleDateString()}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4" />
@@ -581,13 +815,16 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Star className="w-4 h-4" />
-              <span>{course.is_free ? 'Free Course' : `Paid Course - $${course.price}`}</span>
+              <span>
+                {course.is_free
+                  ? "Free Course"
+                  : `Paid Course - $${course.price}`}
+              </span>
             </div>
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-          </div>
+          <div className="flex flex-wrap gap-2"></div>
 
           {/* Action Button */}
           <Link href={`/courses/${course.slug}`} className="block">
@@ -598,6 +835,5 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

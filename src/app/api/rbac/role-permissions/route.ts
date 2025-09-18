@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Remove permission
-      newPermissions = currentPermissions.filter((p) => p !== permission.name);
+      newPermissions = currentPermissions.filter((p: string) => p !== permission.name);
     }
 
     // Update role with new permissions

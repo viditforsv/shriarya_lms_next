@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user from session (optional for testing)
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -50,23 +50,23 @@ export async function POST(request: NextRequest) {
     if (provider === "razorpay") {
       courseId =
         paymentData.courseId ||
-        verificationResult.paymentDetails?.notes?.courseId;
+        (verificationResult.paymentDetails?.notes as Record<string, unknown>)?.courseId as string;
       paymentId = paymentData.razorpayPaymentId;
       amount = verificationResult.paymentDetails?.amount
-        ? verificationResult.paymentDetails.amount / 100
+        ? (verificationResult.paymentDetails.amount as number) / 100
         : 0;
       currency =
-        verificationResult.paymentDetails?.currency?.toUpperCase() || "INR";
+        (verificationResult.paymentDetails?.currency as string)?.toUpperCase() || "INR";
     } else {
       courseId =
         paymentData.courseId ||
-        verificationResult.paymentDetails?.metadata?.courseId;
+        (verificationResult.paymentDetails?.metadata as Record<string, unknown>)?.courseId as string;
       paymentId = paymentData.paymentIntentId;
       amount = verificationResult.paymentDetails?.amount
-        ? verificationResult.paymentDetails.amount / 100
+        ? (verificationResult.paymentDetails.amount as number) / 100
         : 0;
       currency =
-        verificationResult.paymentDetails?.currency?.toUpperCase() || "USD";
+        (verificationResult.paymentDetails?.currency as string)?.toUpperCase() || "USD";
     }
 
     // Create enrollment record (only if user is authenticated)

@@ -127,7 +127,7 @@ export default function CoursePaymentPage() {
         currency={course.currency || "INR"}
         courseId={course.id}
         courseTitle={course.title}
-        userCountry={profile?.country}
+        userCountry={undefined}
         userEmail={user.email!}
         userName={
           profile ? `${profile.first_name} ${profile.last_name}` : user.email!

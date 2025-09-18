@@ -365,6 +365,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           canAccessAnalytics: true,
           canCreateContent: true,
         },
+        instructor: {
+          canViewAllUsers: false,
+          canManageCourses: true,
+          canManageUsers: false,
+          canAccessAnalytics: false,
+          canCreateContent: true,
+        },
       };
 
       return permissions[profile.role]?.[permission] || false;

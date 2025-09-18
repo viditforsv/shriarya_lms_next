@@ -87,10 +87,7 @@ export interface PaymentResponse {
 }
 
 // Utility function to determine payment provider based on user location and currency
-export function getRecommendedPaymentProvider(
-  userCountry?: string,
-  currency: string = "INR"
-): PaymentProvider {
+export function getRecommendedPaymentProvider(): PaymentProvider {
   return "razorpay";
 }
 

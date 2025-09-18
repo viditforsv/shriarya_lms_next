@@ -3,7 +3,7 @@
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
-import { OnboardingStepProps } from "../OnboardingFlow";
+import { OnboardingStepProps } from "../../OnboardingFlow";
 
 export function WelcomeStep({ onNext }: OnboardingStepProps) {
   const features = [

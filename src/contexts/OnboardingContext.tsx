@@ -8,13 +8,12 @@ import {
   useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { createClient } from "@/lib/supabase/client";
 
 export interface OnboardingStep {
   id: string;
   title: string;
   description: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType<Record<string, unknown>>;
   isRequired: boolean;
   isCompleted: boolean;
 }
@@ -79,7 +78,7 @@ export function OnboardingProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [data, setData] = useState<OnboardingData>(defaultData);
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);

@@ -232,7 +232,7 @@ export function OnboardingFlow() {
 
             <div className="flex items-center space-x-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => {
                   localStorage.removeItem("shriarya-onboarding");
@@ -243,7 +243,7 @@ export function OnboardingFlow() {
                 Reset
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={handleExit}
                 className="text-muted-foreground hover:text-foreground"
@@ -319,7 +319,7 @@ export function OnboardingFlow() {
             <div className="flex items-center space-x-2">
               {!currentStep.isRequired && (
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={handleSkip}
                   className="text-muted-foreground hover:text-foreground"
                 >

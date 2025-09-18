@@ -7,7 +7,7 @@ export async function GET() {
     const supabase = await createClient();
 
     // First check if the tables exist
-    const { data: tableCheck, error: tableError } = await supabase
+    const { error: tableError } = await supabase
       .from("permissions")
       .select("id")
       .limit(1);
@@ -60,8 +60,8 @@ export async function GET() {
     }
 
     // Group permissions by category
-    const groupedPermissions = permissions.reduce((acc, permission) => {
-      const category = permission.permission_categories;
+    const groupedPermissions = permissions.reduce((acc: Record<string, any>, permission) => {
+      const category = permission.permission_categories[0]; // Get first category
       if (!acc[category.name]) {
         acc[category.name] = {
           id: category.name,

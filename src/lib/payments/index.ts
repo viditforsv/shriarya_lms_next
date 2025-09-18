@@ -7,6 +7,18 @@ import {
   getAvailablePaymentMethods,
 } from "./config";
 
+interface RazorpayPaymentData {
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature: string;
+}
+
+interface PaymentVerificationResult {
+  success: boolean;
+  error?: string;
+  paymentDetails?: Record<string, unknown>;
+}
+
 export class PaymentService {
   /**
    * Create payment based on provider
@@ -17,11 +29,7 @@ export class PaymentService {
   ): Promise<PaymentResponse> {
     // Determine provider if not specified
     const selectedProvider =
-      provider ||
-      getRecommendedPaymentProvider(
-        paymentRequest.userCountry,
-        paymentRequest.currency
-      );
+      provider || getRecommendedPaymentProvider();
 
     // Validate provider availability
     const availableMethods = getAvailablePaymentMethods(
@@ -70,8 +78,8 @@ export class PaymentService {
    */
   static async verifyPayment(
     provider: PaymentProvider,
-    paymentData: any
-  ): Promise<{ success: boolean; error?: string; paymentDetails?: any }> {
+    paymentData: RazorpayPaymentData
+  ): Promise<PaymentVerificationResult> {
     try {
       switch (provider) {
         case "razorpay":
@@ -90,8 +98,8 @@ export class PaymentService {
             return {
               success: true,
               paymentDetails: paymentDetails.success
-                ? paymentDetails.payment
-                : null,
+                ? (paymentDetails.payment as unknown as Record<string, unknown>)
+                : undefined,
             };
           } else {
             return {
@@ -126,7 +134,7 @@ export class PaymentService {
     paymentId: string,
     amount?: number,
     reason?: string
-  ): Promise<{ success: boolean; error?: string; refundDetails?: any }> {
+  ): Promise<{ success: boolean; error?: string; refundDetails?: Record<string, unknown> }> {
     try {
       switch (provider) {
         case "razorpay":
@@ -167,6 +175,6 @@ export class PaymentService {
     userCountry?: string,
     currency: string = "INR"
   ): PaymentProvider {
-    return getRecommendedPaymentProvider(userCountry, currency);
+    return getRecommendedPaymentProvider();
   }
 }

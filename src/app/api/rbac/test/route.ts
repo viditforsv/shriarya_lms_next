@@ -7,7 +7,7 @@ export async function GET() {
     const supabase = await createClient();
 
     // Test basic connection
-    const { data: testData, error: testError } = await supabase
+    const { error: testError } = await supabase
       .from("profiles")
       .select("id")
       .limit(1);
@@ -32,7 +32,7 @@ export async function GET() {
       "permission_categories",
     ];
 
-    const tableStatus = {};
+    const tableStatus: Record<string, any> = {};
 
     for (const tableName of tablesToCheck) {
       try {

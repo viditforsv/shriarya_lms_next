@@ -1,5 +1,6 @@
+import crypto from "crypto";
 import { getRazorpayInstance } from "./config";
-import { PaymentRequest, PaymentResponse, PaymentAmount } from "./config";
+import { PaymentRequest, PaymentResponse } from "./config";
 
 export class RazorpayService {
   /**
@@ -60,7 +61,6 @@ export class RazorpayService {
     razorpaySignature: string
   ): boolean {
     try {
-      const crypto = require("crypto");
       const hmac = crypto.createHmac(
         "sha256",
         process.env.RAZORPAY_KEY_SECRET!
@@ -107,7 +107,7 @@ export class RazorpayService {
     notes?: string
   ) {
     try {
-      const refundOptions: any = {
+      const refundOptions: Record<string, unknown> = {
         payment_id: paymentId,
       };
 

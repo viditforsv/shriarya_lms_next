@@ -8,9 +8,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/card";
-import { Button } from "@/app/components-demo/ui/button";
-import { Badge } from "@/app/components-demo/ui/badge";
+} from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
 import {
   Calendar,
   Clock,

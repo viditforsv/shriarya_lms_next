@@ -41,20 +41,20 @@ interface Assignment {
 }
 
 export function MyAssignments() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMyAssignments = async () => {
-      if (!user) return;
+      if (!user || !session) return;
 
       try {
         const response = await fetch(
           "/api/question-assignments?assigned_to=me",
           {
             headers: {
-              Authorization: `Bearer ${user.access_token}`,
+              Authorization: `Bearer ${session.access_token}`,
               "Content-Type": "application/json",
             },
           }
@@ -71,7 +71,7 @@ export function MyAssignments() {
     };
 
     fetchMyAssignments();
-  }, [user]);
+  }, [user, session]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

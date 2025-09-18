@@ -6,8 +6,19 @@ import { UserRole } from "@/types/auth";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+  const { pathname } = req.nextUrl;
 
-  // Create a Supabase client configured to use cookies
+  // Skip auth checks for static assets and public routes
+  if (
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/public/") ||
+    pathname === "/favicon.ico"
+  ) {
+    return res;
+  }
+
+  // Create a Supabase client configured to use cookies (using Supabase's built-in SSR support)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -16,6 +27,8 @@ export async function middleware(req: NextRequest) {
         flowType: "pkce",
         persistSession: true,
         autoRefreshToken: true,
+        // Use Supabase's built-in session management
+        detectSessionInUrl: true,
       },
       cookies: {
         getAll() {
@@ -24,7 +37,7 @@ export async function middleware(req: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set(name, value);
-            // Enhanced cookie options for persistence
+            // Use Supabase's recommended cookie settings
             const enhancedOptions = {
               ...options,
               maxAge: options?.maxAge || 30 * 24 * 60 * 60, // 30 days
@@ -42,8 +55,6 @@ export async function middleware(req: NextRequest) {
       },
     }
   );
-
-  const { pathname } = req.nextUrl;
 
   // Get user (more secure than getSession)
   const {

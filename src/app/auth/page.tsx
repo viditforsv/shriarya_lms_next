@@ -15,6 +15,7 @@ import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Prevent static generation
 noStore();
@@ -23,6 +24,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("signin");
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user, loading } = useAuth();
   const code = searchParams.get("code");
   const next = searchParams.get("next");
   const error = searchParams.get("error");
@@ -34,6 +36,13 @@ export default function AuthPage() {
       setActiveTab(tab);
     }
   }, [tab]);
+
+  // Redirect authenticated users to enrolled courses
+  useEffect(() => {
+    if (!loading && user) {
+      router.push(next || "/courses/enrolled");
+    }
+  }, [user, loading, router, next]);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -53,9 +62,9 @@ export default function AuthPage() {
 
           console.log(
             "Auth page - OAuth success, redirecting to:",
-            next || "/dashboard"
+            next || "/courses/enrolled"
           );
-          router.push(next || "/dashboard");
+          router.push(next || "/courses/enrolled");
         } catch (err) {
           console.error("Auth page - OAuth callback exception:", err);
           router.push("/auth?error=Authentication failed");
@@ -65,6 +74,18 @@ export default function AuthPage() {
       handleOAuthCallback();
     }
   }, [code, next, router]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">

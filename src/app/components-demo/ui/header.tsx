@@ -161,7 +161,11 @@ export function Header() {
                   <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
                     <User className="w-4 h-4 text-accent" />
                   </div>
-                  <span className="hidden md:block">{user.email}</span>
+                  <span className="hidden md:block">
+                    {profile?.first_name && profile?.last_name
+                      ? `${profile.first_name} ${profile.last_name}`
+                      : user.email}
+                  </span>
                   <ChevronDown
                     className={`w-4 h-4 transition-transform ${
                       isUserDropdownOpen ? "rotate-180" : ""
@@ -175,10 +179,19 @@ export function Header() {
                     <div className="py-2">
                       <div className="px-4 py-2 border-b border-[#feefea]">
                         <p className="text-sm font-medium text-[#1e293b]">
-                          {user.email}
+                          {profile?.first_name && profile?.last_name
+                            ? `${profile.first_name} ${profile.last_name}`
+                            : user.email}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Signed in
+                          {profile?.role === "admin"
+                            ? "Administrator"
+                            : profile?.role === "instructor"
+                            ? "Instructor"
+                            : "Student"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {user.email}
                         </p>
                       </div>
 

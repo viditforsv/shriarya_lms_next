@@ -23,9 +23,11 @@ export function SignInForm() {
   const { signIn, signInWithGoogle, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  // Redirect when user becomes authenticated
+  // Redirect when user becomes authenticated - with better logging
   useEffect(() => {
+    console.log("🔄 SignInForm - Auth state:", { user: user?.email, authLoading });
     if (user && !authLoading) {
+      console.log("✅ SignInForm - Redirecting to /courses/enrolled");
       router.push("/courses/enrolled");
     }
   }, [user, authLoading, router]);
@@ -35,9 +37,12 @@ export function SignInForm() {
     setError("");
 
     try {
+      console.log("🔐 SignInForm - Attempting login for:", email);
       await signIn(email, password);
+      console.log("✅ SignInForm - Login successful, waiting for auth state change");
       // Loading state is managed by AuthContext
     } catch (err) {
+      console.error("❌ SignInForm - Login failed:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     }
   };

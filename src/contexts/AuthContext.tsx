@@ -488,96 +488,77 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       getSession();
 
-      // Listen for auth changes
+      // Listen for auth changes - simplified approach
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (event, session) => {
-        try {
-          console.log(
-            "Auth state change:",
-            event,
-            session ? "session exists" : "no session"
-          );
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        console.log("🔐 Auth state change:", event, session ? "session exists" : "no session");
 
-          // Set loading to true during state changes
-          setLoading(true);
+        // Update state immediately (synchronous)
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-          setSession(session);
-          setUser(session?.user ?? null);
+        // Handle session persistence
+        if (session) {
+          SessionStorage.saveSession(session);
+          SessionStorage.saveUser(session.user);
+          console.log("✅ Session saved to persistent storage");
+        } else {
+          SessionStorage.clearSession();
+          console.log("✅ Session cleared from persistent storage");
+        }
 
-          // Enhanced session persistence
-          if (session) {
-            SessionStorage.saveSession(session);
-            SessionStorage.saveUser(session.user);
-            console.log("Session saved to persistent storage");
-          } else {
-            SessionStorage.clearSession();
-            console.log("Session cleared from persistent storage");
+        // Handle specific events
+        if (event === "SIGNED_OUT") {
+          console.log("🚪 User signed out, clearing state and redirecting");
+          
+          // Clear all auth state
+          setProfile(null);
+          setUser(null);
+          setSession(null);
+
+          // Clear profile from localStorage
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("shriarya-profile");
+            console.log("✅ Cleared profile from localStorage");
           }
 
-          // Handle signout event - redirect to login page
-          if (event === "SIGNED_OUT") {
-            console.log(
-              "User signed out, clearing state and redirecting to login page"
-            );
+          // Clear any existing timeout
+          if (logoutTimeoutRef.current) {
+            clearTimeout(logoutTimeoutRef.current);
+          }
 
-            // Clear all auth state
-            SessionStorage.clearSession();
-            setProfile(null);
-            setUser(null);
-            setSession(null);
-
-            // Clear profile from localStorage
+          // Redirect after a small delay
+          logoutTimeoutRef.current = setTimeout(() => {
             if (typeof window !== "undefined") {
-              localStorage.removeItem("shriarya-profile");
-              console.log("Cleared profile from localStorage");
+              console.log("🔄 Redirecting to /auth");
+              window.location.replace("/auth");
             }
+          }, 100);
+          return;
+        }
 
-            // Clear any existing timeout
-            if (logoutTimeoutRef.current) {
-              clearTimeout(logoutTimeoutRef.current);
-            }
+        if (event === "TOKEN_REFRESHED" && session) {
+          console.log("🔄 Token refreshed");
+          SessionStorage.saveSession(session);
+          SessionStorage.saveUser(session.user);
+          return;
+        }
 
-            // Small delay to ensure state is cleared before redirect
-            logoutTimeoutRef.current = setTimeout(() => {
-              if (typeof window !== "undefined") {
-                window.location.replace("/auth");
-              }
-            }, 100);
-            setLoading(false);
-            return;
-          }
-
-          // Handle token refresh
-          if (event === "TOKEN_REFRESHED" && session) {
-            console.log("Token refreshed, updating persistent storage");
-            SessionStorage.saveSession(session);
-            SessionStorage.saveUser(session.user);
-            setLoading(false);
-            return;
-          }
-
-          // Fetch profile if user exists
-          if (session?.user) {
-            try {
-              console.log("Fetching profile for user:", session.user.id);
-              const userProfile = await fetchProfile(session.user.id);
+        // Fetch profile in background for SIGNED_IN events
+        if (event === "SIGNED_IN" && session?.user) {
+          console.log("👤 Fetching profile for user:", session.user.id);
+          fetchProfile(session.user.id)
+            .then((userProfile) => {
               setProfile(userProfile);
-              console.log("Profile loaded successfully:", userProfile);
-            } catch (error) {
-              console.error(
-                "Error fetching profile during auth state change:",
-                error
-              );
-              // Continue without crashing
-            }
-          } else {
-            setProfile(null);
-          }
-        } catch (error) {
-          console.error("Error in auth state change:", error);
-        } finally {
-          setLoading(false);
+              console.log("✅ Profile loaded successfully:", userProfile);
+            })
+            .catch((error) => {
+              console.error("❌ Error fetching profile:", error);
+            });
+        } else if (!session?.user) {
+          setProfile(null);
         }
       });
 

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 // GET /api/rbac/permissions - Get all permissions grouped by category
 export async function GET() {
   try {
-    const supabase = await createClient();
+    // Use service role key to bypass RLS
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // First check if the tables exist
     const { error: tableError } = await supabase
@@ -29,60 +33,66 @@ export async function GET() {
       );
     }
 
-    const { data: permissions, error } = await supabase
+    // Get permissions and categories separately, then group them
+    const { data: permissions, error: permissionsError } = await supabase
       .from("permissions")
-      .select(
-        `
-        id,
-        name,
-        display_name,
-        description,
-        category,
-        permission_categories!inner(
-          name,
-          display_name,
-          description,
-          icon,
-          display_order
-        )
-      `
-      )
+      .select("id, name, display_name, description, category")
       .eq("is_active", true)
-      .order("permission_categories(display_order)")
       .order("display_name");
 
-    if (error) {
-      console.error("Error fetching permissions:", error);
+    if (permissionsError) {
+      console.error("Error fetching permissions:", permissionsError);
       return NextResponse.json(
         { error: "Failed to fetch permissions" },
         { status: 500 }
       );
     }
 
+    const { data: categories, error: categoriesError } = await supabase
+      .from("permission_categories")
+      .select("name, display_name, description, icon, display_order")
+      .eq("is_active", true)
+      .order("display_order");
+
+    if (categoriesError) {
+      console.error("Error fetching categories:", categoriesError);
+      return NextResponse.json(
+        { error: "Failed to fetch categories" },
+        { status: 500 }
+      );
+    }
+
     // Group permissions by category
-    const groupedPermissions = permissions.reduce((acc: Record<string, any>, permission) => {
-      const category = permission.permission_categories[0]; // Get first category
-      if (!acc[category.name]) {
-        acc[category.name] = {
-          id: category.name,
-          name: category.display_name,
-          icon: category.icon,
-          description: category.description,
-          displayOrder: category.display_order,
-          tasks: [],
-        };
-      }
-      acc[category.name].tasks.push({
-        id: permission.id,
-        name: permission.name,
-        displayName: permission.display_name,
-        description: permission.description,
-      });
-      return acc;
-    }, {});
+    const groupedPermissions = permissions.reduce(
+      (acc: Record<string, any>, permission) => {
+        const categoryName = permission.category;
+        const category = categories.find((cat) => cat.name === categoryName);
+
+        if (!acc[categoryName]) {
+          acc[categoryName] = {
+            id: categoryName,
+            name: category?.display_name || categoryName,
+            icon: category?.icon || "📋",
+            description: category?.description || `${categoryName} permissions`,
+            displayOrder: category?.display_order || 999,
+            tasks: [],
+          };
+        }
+        acc[categoryName].tasks.push({
+          id: permission.id,
+          name: permission.name,
+          displayName: permission.display_name,
+          description: permission.description,
+        });
+        return acc;
+      },
+      {}
+    );
 
     return NextResponse.json({
-      permissions: Object.values(groupedPermissions),
+      permissions: Object.values(groupedPermissions).sort(
+        (a: any, b: any) => a.displayOrder - b.displayOrder
+      ),
     });
   } catch (error) {
     console.error("Error in permissions API:", error);

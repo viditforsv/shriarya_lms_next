@@ -1,74 +1,35 @@
-import { Session, User } from "@supabase/supabase-js";
+import { UserProfile } from "@/types/auth";
 
 export class SessionStorage {
-  private static readonly SESSION_KEY = "shriarya-session";
-  private static readonly USER_KEY = "shriarya-user";
   private static readonly PROFILE_KEY = "shriarya-profile";
 
-  static saveSession(session: Session): void {
+  static saveProfile(profile: UserProfile): void {
     if (typeof window === "undefined") return;
     try {
-      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
-      console.log("Session saved to localStorage");
+      localStorage.setItem(this.PROFILE_KEY, JSON.stringify(profile));
     } catch (error) {
-      console.error("Error saving session:", error);
+      console.error("Error saving profile:", error);
     }
   }
 
-  static getSession(): Session | null {
+  static getProfile(): UserProfile | null {
     if (typeof window === "undefined") return null;
     try {
-      const sessionData = localStorage.getItem(this.SESSION_KEY);
-      if (!sessionData) return null;
-      return JSON.parse(sessionData) as Session;
+      const profileData = localStorage.getItem(this.PROFILE_KEY);
+      return profileData ? (JSON.parse(profileData) as UserProfile) : null;
     } catch (error) {
-      console.error("Error parsing session:", error);
-      this.clearSession();
+      console.error("Error parsing profile:", error);
+      this.clearProfile();
       return null;
     }
   }
 
-  static saveUser(user: User): void {
+  static clearProfile(): void {
     if (typeof window === "undefined") return;
     try {
-      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-      console.log("User saved to localStorage");
-    } catch (error) {
-      console.error("Error saving user:", error);
-    }
-  }
-
-  static getUser(): User | null {
-    if (typeof window === "undefined") return null;
-    try {
-      const userData = localStorage.getItem(this.USER_KEY);
-      if (!userData) return null;
-      return JSON.parse(userData) as User;
-    } catch (error) {
-      console.error("Error parsing user:", error);
-      this.clearSession();
-      return null;
-    }
-  }
-
-  static clearSession(): void {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.removeItem(this.SESSION_KEY);
-      localStorage.removeItem(this.USER_KEY);
       localStorage.removeItem(this.PROFILE_KEY);
-      console.log("Session cleared from localStorage");
     } catch (error) {
-      console.error("Error clearing session:", error);
+      console.error("Error clearing profile:", error);
     }
-  }
-
-  static isSessionExpired(maxAge: number = 30 * 24 * 60 * 60 * 1000): boolean {
-    const session = this.getSession();
-    if (!session) return true;
-
-    const now = Date.now();
-    const sessionTime = new Date(session.expires_at!).getTime();
-    return now > sessionTime || now > sessionTime + maxAge;
   }
 }

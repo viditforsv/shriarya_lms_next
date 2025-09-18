@@ -23,6 +23,14 @@ export function Header() {
   const profile = authContext?.profile;
   const signOut = authContext?.signOut;
 
+  // Debug logging for signOut function availability
+  useEffect(() => {
+    if (isMounted && process.env.NODE_ENV === "development") {
+      console.log("Header - signOut function available:", !!signOut);
+      console.log("Header - authContext available:", !!authContext);
+    }
+  }, [isMounted, signOut, authContext]);
+
   // Debug logging - only log when values actually change
   useEffect(() => {
     if (isMounted && process.env.NODE_ENV === "development") {
@@ -186,8 +194,8 @@ export function Header() {
                         <p className="text-xs text-muted-foreground">
                           {profile?.role === "admin"
                             ? "Administrator"
-                            : profile?.role === "instructor"
-                            ? "Instructor"
+                            : profile?.role === "content_manager"
+                            ? "Content Manager"
                             : "Student"}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -239,9 +247,22 @@ export function Header() {
                             e.preventDefault();
                             e.stopPropagation();
                             console.log("Sign out button clicked");
+                            console.log(
+                              "signOut function available:",
+                              !!signOut
+                            );
+
+                            if (!signOut) {
+                              console.error(
+                                "signOut function is not available!"
+                              );
+                              return;
+                            }
+
                             try {
                               setIsUserDropdownOpen(false);
-                              await signOut?.();
+                              console.log("Calling signOut function...");
+                              await signOut();
                               console.log("Sign out completed successfully");
                             } catch (error) {
                               console.error("Sign out error:", error);

@@ -5,29 +5,20 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-              auth: {
-                // Use Supabase's built-in session management
-                persistSession: true,
-                storageKey: "shriarya-lms-session",
-                autoRefreshToken: true,
-                detectSessionInUrl: true,
-                flowType: "pkce",
-                debug: process.env.NODE_ENV === "development",
-                // Leverage Supabase's built-in storage
-                storage:
-                  typeof window !== "undefined" ? window.localStorage : undefined,
-              },
-      // Use Supabase's built-in realtime optimizations
-      realtime: {
-        params: {
-          eventsPerSecond: 2,
-        },
+      auth: {
+        persistSession: true,
+        storageKey: "shriarya-lms-session", // keep consistent
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: "pkce",
+        debug: process.env.NODE_ENV === "development",
+        // Let Supabase handle storage automatically
       },
-      // Enable Supabase's built-in global configuration
+      realtime: {
+        params: { eventsPerSecond: 2 },
+      },
       global: {
-        headers: {
-          "X-Client-Info": "shriarya-lms-nextjs",
-        },
+        headers: { "X-Client-Info": "shriarya-lms-nextjs" },
       },
     }
   );

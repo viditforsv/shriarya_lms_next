@@ -8,17 +8,15 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const { pathname } = req.nextUrl;
 
-  // Skip auth checks for static assets and public routes
+  // Skip static assets and public routes
   if (
     pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
     pathname.startsWith("/public/") ||
     pathname === "/favicon.ico"
   ) {
     return res;
   }
 
-  // Create a Supabase client configured to use cookies (using Supabase's built-in SSR support)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -27,7 +25,6 @@ export async function middleware(req: NextRequest) {
         flowType: "pkce",
         persistSession: true,
         autoRefreshToken: true,
-        // Use Supabase's built-in session management
         detectSessionInUrl: true,
       },
       cookies: {
@@ -36,20 +33,11 @@ export async function middleware(req: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            req.cookies.set(name, value);
-            // Use Supabase's recommended cookie settings
-            const enhancedOptions = {
+            res.cookies.set(name, value, {
               ...options,
-              maxAge: options?.maxAge || 30 * 24 * 60 * 60, // 30 days
               secure: process.env.NODE_ENV === "production",
-              sameSite: "lax" as const,
-              httpOnly: true,
-              domain:
-                process.env.NODE_ENV === "production"
-                  ? ".shrividhya.in"
-                  : undefined,
-            };
-            res.cookies.set(name, value, enhancedOptions);
+              sameSite: "lax",
+            });
           });
         },
       },
@@ -61,50 +49,19 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Check if user can access this route
   const isAuthenticated = !!user;
-  let userRole: UserRole | undefined;
+  let userRole: UserRole | undefined = user?.user_metadata?.role;
 
-  if (user) {
-    // Try cache first (user metadata)
-    userRole = user.user_metadata?.role as UserRole;
-
-    // Fallback to DB if missing from cache
-    if (!userRole) {
-      try {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-        userRole = profile?.role as UserRole;
-
-        // Cache the role in session metadata for future requests
-        if (userRole) {
-          await supabase.auth.updateUser({
-            data: { role: userRole },
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-      }
-    }
-  }
-
-  // Check onboarding status for authenticated users (MOCK VERSION)
-  if (
-    isAuthenticated &&
-    user &&
-    !pathname.startsWith("/onboarding") &&
-    !pathname.startsWith("/auth")
-  ) {
-    // MOCK VERSION - Check localStorage instead of database
+  if (!userRole && user) {
     try {
-      // In a real implementation, we'd check the database
-      // For now, we'll let the onboarding flow handle the redirect logic
-      console.log("MOCK MODE: Skipping database onboarding check");
-    } catch {
-      console.log("MOCK MODE: No onboarding check performed");
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      userRole = profile?.role as UserRole;
+    } catch (error) {
+      console.error("Error fetching user role:", error);
     }
   }
 
@@ -125,15 +82,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     * - api routes (API routes)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public/|api/).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|public/).*)"],
 };

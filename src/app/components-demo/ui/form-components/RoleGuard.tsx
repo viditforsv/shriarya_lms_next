@@ -1,60 +1,66 @@
-'use client'
+"use client";
 
-import { ReactNode } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { UserRole } from '@/types/auth'
+import { ReactNode } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types/auth";
 
 interface RoleGuardProps {
-  children: ReactNode
-  allowedRoles?: UserRole[]
-  requiredPermission?: keyof import('@/types/auth').RolePermissions
-  fallback?: ReactNode
-  showForPublic?: boolean // Allow public users (not logged in) to see content
+  children: ReactNode;
+  allowedRoles?: UserRole[];
+  requiredPermission?: keyof import("@/types/auth").RolePermissions;
+  fallback?: ReactNode;
+  showForPublic?: boolean; // Allow public users (not logged in) to see content
 }
 
-export function RoleGuard({ 
-  children, 
-  allowedRoles, 
-  requiredPermission, 
+export function RoleGuard({
+  children,
+  allowedRoles,
+  requiredPermission,
   fallback = null,
-  showForPublic = false 
+  showForPublic = false,
 }: RoleGuardProps) {
-  const { user, profile, loading, hasPermission } = useAuth()
+  const { user, profile, loading, hasPermission } = useAuth();
 
   // Show loading state
   if (loading) {
-    return null
+    return null;
   }
 
   // Handle public access
   if (showForPublic && !user) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   // Require authentication
   if (!user || !profile) {
-    return <>{fallback}</>
+    return <>{fallback}</>;
   }
 
   // Check role-based access
   if (allowedRoles && !allowedRoles.includes(profile.role)) {
-    return <>{fallback}</>
+    return <>{fallback}</>;
   }
 
   // Check permission-based access
   if (requiredPermission) {
     if (!hasPermission(requiredPermission)) {
-      return <>{fallback}</>
+      return <>{fallback}</>;
     }
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 // Convenience components for common use cases
-export function AdminOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const { loading, user, profile } = useAuth()
-  
+export function AdminOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  const { loading, user, profile } = useAuth();
+
   // Show loading state
   if (loading) {
     return (
@@ -64,45 +70,71 @@ export function AdminOnly({ children, fallback }: { children: ReactNode; fallbac
           <p className="text-muted-foreground">Loading admin panel...</p>
         </div>
       </div>
-    )
+    );
   }
-  
+
   // Show fallback if not admin
-  if (!user || !profile || profile.role !== 'admin') {
-    return fallback || (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-4">You don&apos;t have admin privileges to access this page.</p>
-          <a href="/dashboard" className="text-[#e27447] hover:underline">Return to Dashboard</a>
+  if (!user || !profile || profile.role !== "admin") {
+    return (
+      fallback || (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Access Denied
+            </h1>
+            <p className="text-muted-foreground mb-4">
+              You don&apos;t have admin privileges to access this page.
+            </p>
+            <a href="/dashboard" className="text-[#e27447] hover:underline">
+              Return to Dashboard
+            </a>
+          </div>
         </div>
-      </div>
-    )
+      )
+    );
   }
-  
-  return <>{children}</>
+
+  return <>{children}</>;
 }
 
-export function StudentOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
+export function StudentOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
   return (
-    <RoleGuard allowedRoles={['student']} fallback={fallback}>
+    <RoleGuard allowedRoles={["student"]} fallback={fallback}>
       {children}
     </RoleGuard>
-  )
+  );
 }
 
-export function AuthenticatedOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
+export function ContentManagerOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
   return (
-    <RoleGuard fallback={fallback}>
+    <RoleGuard allowedRoles={["content_manager"]} fallback={fallback}>
       {children}
     </RoleGuard>
-  )
+  );
+}
+
+export function AuthenticatedOnly({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+}) {
+  return <RoleGuard fallback={fallback}>{children}</RoleGuard>;
 }
 
 export function PublicOrAuthenticated({ children }: { children: ReactNode }) {
-  return (
-    <RoleGuard showForPublic={true}>
-      {children}
-    </RoleGuard>
-  )
+  return <RoleGuard showForPublic={true}>{children}</RoleGuard>;
 }

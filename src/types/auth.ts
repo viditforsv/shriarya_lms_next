@@ -1,6 +1,6 @@
 // Type definitions for authentication and roles
 
-export type UserRole = 'student' | 'admin' | 'instructor';
+export type UserRole = "student" | "admin" | "content_manager";
 
 export interface UserProfile {
   id: string;
@@ -29,6 +29,13 @@ export interface RolePermissions {
   canManageUsers: boolean;
   canAccessAnalytics: boolean;
   canCreateContent: boolean;
+
+  // Question bank permissions
+  canCreateQuestions: boolean;
+  canEditQuestions: boolean;
+  canReviewQuestions: boolean;
+  canPublishQuestions: boolean;
+  canManageQuestionBank: boolean;
 }
 
 // Role-based permission mapping
@@ -39,6 +46,11 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: false,
     canAccessAnalytics: false,
     canCreateContent: false,
+    canCreateQuestions: false,
+    canEditQuestions: false,
+    canReviewQuestions: false,
+    canPublishQuestions: false,
+    canManageQuestionBank: false,
   },
   admin: {
     canViewAllUsers: true,
@@ -46,12 +58,22 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: true,
     canAccessAnalytics: true,
     canCreateContent: true,
+    canCreateQuestions: true,
+    canEditQuestions: true,
+    canReviewQuestions: true,
+    canPublishQuestions: true,
+    canManageQuestionBank: true,
   },
-  instructor: {
+  content_manager: {
     canViewAllUsers: false,
     canManageCourses: true,
     canManageUsers: false,
     canAccessAnalytics: false,
     canCreateContent: true,
+    canCreateQuestions: true,
+    canEditQuestions: true,
+    canReviewQuestions: true,
+    canPublishQuestions: true,
+    canManageQuestionBank: true,
   },
 };

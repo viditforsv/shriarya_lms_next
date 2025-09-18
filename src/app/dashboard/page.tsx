@@ -4,7 +4,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   AdminOnly,
   StudentOnly,
+  ContentManagerOnly,
 } from "@/app/components-demo/ui/form-components/RoleGuard";
+import { MyAssignments } from "@/components/MyAssignments";
 import {
   Card,
   CardContent,
@@ -193,6 +195,11 @@ export default function DashboardPage() {
             </Card>
           </>
         </StudentOnly>
+
+        {/* Content Manager Dashboard Content */}
+        <ContentManagerOnly>
+          <MyAssignments />
+        </ContentManagerOnly>
 
         {/* Admin Dashboard Content */}
         <AdminOnly>

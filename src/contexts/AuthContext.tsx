@@ -7,12 +7,16 @@ import {
   useState,
   useCallback,
   useMemo,
-  useRef,
 } from "react";
+import { useRouter } from "next/navigation";
 import { User, Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
-import { UserProfile, UserRole } from "@/types/auth";
-import { SessionStorage } from "@/lib/session-storage";
+import {
+  UserProfile,
+  UserRole,
+  RolePermissions,
+  ROLE_PERMISSIONS,
+} from "@/types/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -35,14 +39,6 @@ interface AuthContextType {
   hasPermission: (permission: keyof RolePermissions) => boolean;
 }
 
-interface RolePermissions {
-  canViewAllUsers: boolean;
-  canManageCourses: boolean;
-  canManageUsers: boolean;
-  canAccessAnalytics: boolean;
-  canCreateContent: boolean;
-}
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -54,27 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     new Map()
   );
   const [isInitialized, setIsInitialized] = useState(false);
-  const logoutTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const router = useRouter();
 
   // Create a single Supabase client instance using useMemo to prevent recreation
   const supabase = useMemo(() => createClient(), []);
 
-  // Load profile from localStorage on mount only (Supabase handles session persistence)
-  useEffect(() => {
-    if (typeof window !== "undefined" && !profile && !loading) {
-      const savedProfile = localStorage.getItem("shriarya-profile");
-      if (savedProfile) {
-        try {
-          const parsedProfile = JSON.parse(savedProfile);
-          setProfile(parsedProfile);
-          console.log("Loaded profile from localStorage:", parsedProfile);
-        } catch (error) {
-          console.error("Error parsing saved profile:", error);
-          localStorage.removeItem("shriarya-profile");
-        }
-      }
-    }
-  }, [loading, profile]);
+  // Profile will be loaded from database when user signs in
+  // No need to load from localStorage as it can cause stale data issues
 
   // Persist profile in localStorage when it changes
   useEffect(() => {
@@ -349,32 +332,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const hasPermission = useCallback(
     (permission: keyof RolePermissions): boolean => {
       if (!profile) return false;
-
-      const permissions: Record<UserRole, RolePermissions> = {
-        student: {
-          canViewAllUsers: false,
-          canManageCourses: false,
-          canManageUsers: false,
-          canAccessAnalytics: false,
-          canCreateContent: false,
-        },
-        admin: {
-          canViewAllUsers: true,
-          canManageCourses: true,
-          canManageUsers: true,
-          canAccessAnalytics: true,
-          canCreateContent: true,
-        },
-        instructor: {
-          canViewAllUsers: false,
-          canManageCourses: true,
-          canManageUsers: false,
-          canAccessAnalytics: false,
-          canCreateContent: true,
-        },
-      };
-
-      return permissions[profile.role]?.[permission] || false;
+      return ROLE_PERMISSIONS[profile.role][permission];
     },
     [profile]
   );
@@ -492,27 +450,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
-        console.log("🔐 Auth state change:", event, session ? "session exists" : "no session");
+        console.log(
+          "🔐 Auth state change:",
+          event,
+          session ? "session exists" : "no session",
+          session?.user?.email || "no user"
+        );
 
         // Update state immediately (synchronous)
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Handle session persistence
-        if (session) {
-          SessionStorage.saveSession(session);
-          SessionStorage.saveUser(session.user);
-          console.log("✅ Session saved to persistent storage");
-        } else {
-          SessionStorage.clearSession();
-          console.log("✅ Session cleared from persistent storage");
-        }
+        // Supabase handles session persistence automatically
+        // No need for custom session management
 
         // Handle specific events
         if (event === "SIGNED_OUT") {
           console.log("🚪 User signed out, clearing state and redirecting");
-          
+
+          // Reset signing out flag
+          setIsSigningOut(false);
+
           // Clear all auth state
           setProfile(null);
           setUser(null);
@@ -521,33 +480,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Clear profile from localStorage
           if (typeof window !== "undefined") {
             localStorage.removeItem("shriarya-profile");
-            console.log("✅ Cleared profile from localStorage");
+            // Also clear Supabase session storage
+            localStorage.removeItem("shriarya-lms-session");
+            console.log("✅ Cleared profile and session from localStorage");
           }
 
-          // Clear any existing timeout
-          if (logoutTimeoutRef.current) {
-            clearTimeout(logoutTimeoutRef.current);
-          }
-
-          // Redirect after a small delay
-          logoutTimeoutRef.current = setTimeout(() => {
-            if (typeof window !== "undefined") {
-              console.log("🔄 Redirecting to /auth");
-              window.location.replace("/auth");
-            }
-          }, 100);
+          // Use client-side navigation instead of hard reload
+          console.log("🔄 Redirecting to /auth");
+          router.push("/auth");
           return;
         }
 
         if (event === "TOKEN_REFRESHED" && session) {
           console.log("🔄 Token refreshed");
-          SessionStorage.saveSession(session);
-          SessionStorage.saveUser(session.user);
+          // Supabase handles token refresh automatically
           return;
         }
 
         // Fetch profile in background for SIGNED_IN events
-        if (event === "SIGNED_IN" && session?.user) {
+        if (event === "SIGNED_IN" && session?.user && !isSigningOut) {
           console.log("👤 Fetching profile for user:", session.user.id);
           fetchProfile(session.user.id)
             .then((userProfile) => {
@@ -564,15 +515,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return () => {
         subscription.unsubscribe();
-        // Clear any pending logout timeout
-        if (logoutTimeoutRef.current) {
-          clearTimeout(logoutTimeoutRef.current);
-        }
       };
     } else {
       setLoading(false);
     }
-  }, [supabase.auth, fetchProfile, isInitialized]);
+  }, [supabase.auth, fetchProfile, isInitialized, isSigningOut, router]);
 
   const signIn = useCallback(
     async (email: string, password: string) => {
@@ -610,22 +557,72 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     console.log("SignOut function called");
     try {
+      // Set signing out flag to prevent automatic session restoration
+      setIsSigningOut(true);
+
       // Clear profile cache first
       setProfileCache(new Map());
       console.log("Cleared profile cache");
 
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("SignOut error:", error);
-        throw error;
+      // Check if there's an active session before trying to sign out
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      console.log(
+        "Current session before signOut:",
+        session ? "exists" : "none"
+      );
+
+      if (session) {
+        // Sign out from Supabase - let the auth state change handler manage state clearing
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("SignOut error:", error);
+          setIsSigningOut(false); // Reset flag on error
+          throw error;
+        }
+        console.log("SignOut successful");
+      } else {
+        console.log("No active session found, proceeding with local cleanup");
+        // No session to sign out from, just clear local state
+        setProfile(null);
+        setUser(null);
+        setSession(null);
+
+        // Clear profile from localStorage
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("shriarya-profile");
+          // Also clear Supabase session storage as fallback
+          localStorage.removeItem("shriarya-lms-session");
+          console.log("✅ Cleared profile and session from localStorage");
+        }
+
+        // Use client-side navigation instead of hard reload
+        console.log("🔄 Redirecting to /auth");
+        router.push("/auth");
       }
-      console.log("SignOut successful");
+
       // State clearing and redirect will be handled by auth state change handler
     } catch (error) {
       console.error("SignOut failed:", error);
-      throw error;
+      setIsSigningOut(false); // Reset flag on error
+
+      // Even if signOut fails, clear local state and redirect
+      setProfile(null);
+      setUser(null);
+      setSession(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("shriarya-profile");
+        // Also clear Supabase session storage directly as fallback
+        localStorage.removeItem("shriarya-lms-session");
+        console.log("✅ Cleared Supabase session storage as fallback");
+      }
+
+      // Use client-side navigation instead of hard reload
+      console.log("🔄 Redirecting to /auth (fallback)");
+      router.push("/auth");
     }
-  }, [supabase, setProfileCache]);
+  }, [supabase, setProfileCache, router]);
 
   const signInWithGoogle = useCallback(async () => {
     // Automatically detect environment and use appropriate URL
@@ -686,8 +683,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [supabase]
   );
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const contextValue = {
       user,
       session,
       profile,
@@ -701,23 +698,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       updateUserRole,
       refreshProfile,
       hasPermission,
-    }),
-    [
-      user,
-      session,
-      profile,
-      loading,
-      signIn,
-      signUp,
-      signOut,
-      signInWithGoogle,
-      resetPassword,
-      updatePassword,
-      updateUserRole,
-      refreshProfile,
-      hasPermission,
-    ]
-  );
+    };
+
+    // Debug logging in development
+    if (process.env.NODE_ENV === "development") {
+      console.log("AuthContext value updated:", {
+        user: !!user,
+        session: !!session,
+        profile: !!profile,
+        loading,
+        signOut: !!signOut,
+      });
+    }
+
+    return contextValue;
+  }, [
+    user,
+    session,
+    profile,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    signInWithGoogle,
+    resetPassword,
+    updatePassword,
+    updateUserRole,
+    refreshProfile,
+    hasPermission,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

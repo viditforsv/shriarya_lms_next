@@ -1,194 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
-export async function GET() {
+// GET /api/user-profiles - Get all user profiles
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Get the current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Get user profile
-    const { data: profile, error } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      return NextResponse.json(
-        { error: "Failed to fetch profile data" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ data: profile || null });
-  } catch (error) {
-    console.error("Error in user profiles API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-  }
-}
 
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createClient();
+    const { searchParams } = new URL(request.url);
+    const role = searchParams.get("role");
 
-    // Get the current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    let query = supabase.from("profiles").select("id, email, role, created_at");
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (role) {
+      query = query.eq("role", role);
     }
 
-    const body = await request.json();
-    const {
-      first_name,
-      last_name,
-      date_of_birth,
-      country,
-      city,
-      bio,
-      phone_number,
-      avatar_url,
-    } = body;
-
-    // Validate required fields
-    if (!first_name || !last_name) {
-      return NextResponse.json(
-        { error: "First name and last name are required" },
-        { status: 400 }
-      );
-    }
-
-    // Upsert profile data
-    const { data, error } = await supabase
-      .from("user_profiles")
-      .upsert({
-        user_id: user.id,
-        first_name,
-        last_name,
-        date_of_birth: date_of_birth || null,
-        country: country || null,
-        city: city || null,
-        bio: bio || null,
-        phone_number: phone_number || null,
-        avatar_url: avatar_url || null,
-        updated_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
+    const { data: users, error } = await query.order("email");
 
     if (error) {
-      console.error("Error saving profile:", error);
+      console.error("Error fetching user profiles:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: "Failed to save profile data" },
+        { error: "Failed to fetch user profiles", details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ data });
+    return NextResponse.json({ users: users || [] });
   } catch (error) {
-    console.error("Error in user profiles API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(request: NextRequest) {
-  try {
-    const supabase = await createClient();
-
-    // Get the current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const updates = { ...body, updated_at: new Date().toISOString() };
-
-    // Remove undefined values
-    Object.keys(updates).forEach((key) => {
-      if (updates[key] === undefined) {
-        delete updates[key];
-      }
-    });
-
-    // Update profile data
-    const { data, error } = await supabase
-      .from("user_profiles")
-      .update(updates)
-      .eq("user_id", user.id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error updating profile:", error);
-      return NextResponse.json(
-        { error: "Failed to update profile data" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ data });
-  } catch (error) {
-    console.error("Error in user profiles API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE() {
-  try {
-    const supabase = await createClient();
-
-    // Get the current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Delete profile data
-    const { error } = await supabase
-      .from("user_profiles")
-      .delete()
-      .eq("user_id", user.id);
-
-    if (error) {
-      return NextResponse.json(
-        { error: "Failed to delete profile data" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error in user profiles API:", error);
+    console.error("Error in GET /api/user-profiles:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

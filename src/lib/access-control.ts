@@ -96,6 +96,48 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: "/analytics", accessLevel: "admin", requiredRole: "admin" },
   { path: "/helpdesk", accessLevel: "admin", requiredRole: "admin" },
 
+  // Question Bank Routes (Content Manager + Admin)
+  {
+    path: "/question-bank",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+  {
+    path: "/question-bank/new",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+  {
+    path: "/question-bank/[id]",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+  {
+    path: "/question-bank/[id]/edit",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+
+  // Question Assignment Routes (Content Manager + Admin)
+  {
+    path: "/admin/question-assignments",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+
+  // Admin-only Question Bank Routes
+  { path: "/question-bank/admin", accessLevel: "admin", requiredRole: "admin" },
+  {
+    path: "/question-bank/analytics",
+    accessLevel: "admin",
+    requiredRole: "admin",
+  },
+  {
+    path: "/question-bank/settings",
+    accessLevel: "admin",
+    requiredRole: "admin",
+  },
+
   // Development/Test routes (admin only)
   { path: "/components-demo", accessLevel: "admin", requiredRole: "admin" },
   { path: "/components-test", accessLevel: "admin", requiredRole: "admin" },

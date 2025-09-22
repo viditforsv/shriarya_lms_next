@@ -10,6 +10,7 @@ import {
   LogOut,
   Settings,
   BookOpen,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -229,6 +230,18 @@ export function Header() {
                         >
                           <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
                           Site Administration
+                        </Link>
+                      )}
+
+                      {(profile?.role === "admin" ||
+                        profile?.role === "content_manager") && (
+                        <Link
+                          href="/question-bank"
+                          className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <FileText className="w-4 h-4 mr-3 text-[#e27447]" />
+                          Question Bank
                         </Link>
                       )}
 

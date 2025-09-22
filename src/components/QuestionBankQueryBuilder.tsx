@@ -1,0 +1,404 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { QueryBuilder, formatQuery } from "react-querybuilder";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+
+// Field definitions for question bank
+const fields = [
+  { name: "difficulty", label: "Difficulty", type: "number" },
+  {
+    name: "boards",
+    label: "Boards",
+    type: "multiselect",
+    values: ["IBDP", "CBSE", "ICSE", "IGCSE", "A-Levels", "SAT", "ACT"],
+  },
+  {
+    name: "course_types",
+    label: "Course Types",
+    type: "multiselect",
+    values: ["AA", "AI"],
+  },
+  {
+    name: "levels",
+    label: "Levels",
+    type: "multiselect",
+    values: ["SL", "HL"],
+  },
+  {
+    name: "relevance",
+    label: "Relevance",
+    type: "multiselect",
+    values: [
+      "Practice",
+      "Exam Style",
+      "Homework",
+      "Quiz",
+      "Assessment",
+      "Review",
+      "Challenge",
+    ],
+  },
+  { name: "tags", label: "Tags", type: "text" },
+  {
+    name: "subject",
+    label: "Subject",
+    type: "select",
+    values: ["Mathematics", "mathematics"],
+  },
+  {
+    name: "question_type",
+    label: "Question Type",
+    type: "select",
+    values: ["mcq", "subjective", "true_false", "fill_blank"],
+  },
+  { name: "is_pyq", label: "Is PYQ", type: "boolean" },
+  { name: "pyq_year", label: "PYQ Year", type: "number" },
+  { name: "total_marks", label: "Total Marks", type: "number" },
+  {
+    name: "qa_status",
+    label: "QA Status",
+    type: "select",
+    values: [
+      "pending",
+      "in_review",
+      "needs_revision",
+      "approved",
+      "rejected",
+      "archived",
+    ],
+  },
+  {
+    name: "priority_level",
+    label: "Priority Level",
+    type: "select",
+    values: ["low", "medium", "high", "urgent"],
+  },
+  { name: "is_flagged", label: "Is Flagged", type: "boolean" },
+];
+
+// Operators
+const operators = [
+  { name: "=", label: "Equals" },
+  { name: "!=", label: "Not Equals" },
+  { name: ">", label: "Greater Than" },
+  { name: "<", label: "Less Than" },
+  { name: ">=", label: "Greater Than or Equal" },
+  { name: "<=", label: "Less Than or Equal" },
+  { name: "between", label: "Between" },
+  { name: "notBetween", label: "Not Between" },
+  { name: "contains", label: "Contains" },
+  { name: "notContains", label: "Not Contains" },
+  { name: "in", label: "In" },
+  { name: "notIn", label: "Not In" },
+  { name: "isNull", label: "Is Null" },
+  { name: "isNotNull", label: "Is Not Null" },
+  { name: "beginsWith", label: "Begins With" },
+  { name: "endsWith", label: "Ends With" },
+];
+
+// Combinators (logical operators)
+const combinators = [
+  { name: "and", label: "AND" },
+  { name: "or", label: "OR" },
+];
+
+interface QuestionBankQueryBuilderProps {
+  onQueryChange: (query: any) => void;
+  initialQuery?: any;
+}
+
+export default function QuestionBankQueryBuilder({
+  onQueryChange,
+  initialQuery,
+}: QuestionBankQueryBuilderProps) {
+  const [query, setQuery] = useState(
+    initialQuery || {
+      combinator: "and",
+      rules: [
+        {
+          field: "difficulty",
+          operator: ">=",
+          value: 1,
+        },
+      ],
+    }
+  );
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure component only renders on client side to avoid hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const handleQueryChange = (newQuery: any) => {
+    setQuery(newQuery);
+    onQueryChange(newQuery);
+  };
+
+  // Convert React Query Builder query to API parameters
+  const convertQueryToApiParams = (query: any): Record<string, string> => {
+    const params: Record<string, string> = {};
+
+    try {
+      params.advanced_filters = JSON.stringify(query);
+      return params;
+    } catch (error) {
+      console.error("Error converting query:", error);
+      return {};
+    }
+  };
+
+  const formatOutput = (format: string) => {
+    try {
+      switch (format) {
+        case "sql":
+          return formatQuery(query, "sql");
+        case "parameterized":
+          return formatQuery(query, "parameterized");
+        case "json":
+          return formatQuery(query, "json");
+        case "mongodb":
+          return formatQuery(query, "mongodb");
+        default:
+          return JSON.stringify(query, null, 2);
+      }
+    } catch (error) {
+      return `Error formatting query: ${error}`;
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Advanced Query Builder</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {!isClient ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mb-2"></div>
+                <p className="text-gray-600">Loading Query Builder...</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <QueryBuilder
+                fields={fields}
+                operators={operators}
+                combinators={combinators}
+                query={query}
+                onQueryChange={handleQueryChange}
+                showCombinatorsBetweenRules={false}
+                showNotToggle={false}
+                showCloneButtons={false}
+                showLockButtons={false}
+                addRuleToNewGroups={false}
+                enableDragAndDrop={false}
+                resetOnFieldChange={false}
+                resetOnOperatorChange={false}
+                autoSelectField={true}
+                autoSelectOperator={true}
+                controlClassnames={{
+                  queryBuilder: "queryBuilder-custom",
+                  ruleGroup: "ruleGroup-custom",
+                  rule: "rule-custom",
+                  field: "field-custom",
+                  operator: "operator-custom",
+                  value: "value-custom",
+                  addRule: "addRule-custom",
+                  addGroup: "addGroup-custom",
+                  removeGroup: "removeGroup-custom",
+                  removeRule: "removeRule-custom",
+                  cloneRule: "cloneRule-custom",
+                  lockRule: "lockRule-custom",
+                  notToggle: "notToggle-custom",
+                  combinators: "combinators-custom",
+                }}
+                getOperators={(field) => {
+                  // Customize operators based on field type
+                  const fieldConfig = fields.find((f) => f.name === field);
+                  if (fieldConfig?.type === "number") {
+                    return operators.filter((op) =>
+                      [
+                        "=",
+                        "!=",
+                        ">",
+                        "<",
+                        ">=",
+                        "<=",
+                        "between",
+                        "notBetween",
+                        "isNull",
+                        "isNotNull",
+                      ].includes(op.name)
+                    );
+                  }
+                  if (fieldConfig?.type === "boolean") {
+                    return operators.filter((op) =>
+                      ["=", "!=", "isNull", "isNotNull"].includes(op.name)
+                    );
+                  }
+                  if (fieldConfig?.type === "multiselect") {
+                    return operators.filter((op) =>
+                      [
+                        "contains",
+                        "notContains",
+                        "in",
+                        "notIn",
+                        "isNull",
+                        "isNotNull",
+                      ].includes(op.name)
+                    );
+                  }
+                  return operators;
+                }}
+                getValues={(field, operator) => {
+                  // Provide values for select/multiselect fields
+                  const fieldConfig = fields.find((f) => f.name === field);
+                  return fieldConfig?.values || [];
+                }}
+              />
+
+              {/* Custom Control Buttons - More Intuitive */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <div className="flex flex-wrap gap-2 items-center">
+                  <span className="text-sm font-medium text-gray-700 mr-2">
+                    Add:
+                  </span>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newQuery = {
+                        ...query,
+                        rules: [
+                          ...query.rules,
+                          {
+                            field: "difficulty",
+                            operator: ">=",
+                            value: 1,
+                          },
+                        ],
+                      };
+                      handleQueryChange(newQuery);
+                    }}
+                    className="text-gray-700 border-gray-300 hover:bg-gray-50"
+                  >
+                    + Rule
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newQuery = {
+                        ...query,
+                        rules: [
+                          ...query.rules,
+                          {
+                            combinator: "and",
+                            rules: [
+                              {
+                                field: "difficulty",
+                                operator: ">=",
+                                value: 1,
+                              },
+                            ],
+                          },
+                        ],
+                      };
+                      handleQueryChange(newQuery);
+                    }}
+                    className="text-orange-700 border-orange-300 hover:bg-orange-50"
+                  >
+                    + Group
+                  </Button>
+
+                  <div className="flex items-center gap-2 ml-4">
+                    <span className="text-sm font-medium text-gray-700">
+                      Logic:
+                    </span>
+                    <select
+                      value={query.combinator}
+                      onChange={(e) => {
+                        const newQuery = {
+                          ...query,
+                          combinator: e.target.value,
+                        };
+                        handleQueryChange(newQuery);
+                      }}
+                      className="px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white"
+                    >
+                      <option value="and">AND</option>
+                      <option value="or">OR</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-2 ml-4">
+                    <span className="text-sm font-medium text-gray-700">
+                      Negate:
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newQuery = {
+                          ...query,
+                          not: !query.not,
+                        };
+                        handleQueryChange(newQuery);
+                      }}
+                      className={`${
+                        query.not
+                          ? "bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
+                          : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                      }`}
+                    >
+                      {query.not ? "NOT" : "Normal"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const clearedQuery = { combinator: "and", rules: [] };
+                    handleQueryChange(clearedQuery);
+                  }}
+                >
+                  Clear Query
+                </Button>
+              </div>
+
+              {/* Query Preview */}
+              <div className="mt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Query Preview:
+                </h4>
+                <div className="bg-gray-100 p-3 rounded-sm">
+                  <pre className="text-xs overflow-auto">
+                    {formatOutput("sql")}
+                  </pre>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

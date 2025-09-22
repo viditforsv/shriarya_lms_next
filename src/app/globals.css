@@ -1,6 +1,98 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "katex/dist/katex.min.css";
+@import "react-querybuilder/dist/query-builder.css";
+
+/* Custom Query Builder Styles - Minimal and Intuitive */
+.queryBuilder-custom {
+  @apply bg-white border border-gray-200 rounded-sm p-4;
+}
+
+.ruleGroup-custom {
+  @apply bg-gray-50 border border-gray-200 rounded-sm p-4 mb-3;
+}
+
+.rule-custom {
+  @apply bg-white border border-gray-200 rounded-sm p-3 mb-2 flex items-center gap-3;
+}
+
+.field-custom,
+.operator-custom,
+.value-custom {
+  @apply px-3 py-2 border border-gray-300 rounded-sm bg-white text-sm;
+}
+
+.field-custom:focus,
+.operator-custom:focus,
+.value-custom:focus {
+  @apply outline-none ring-2 ring-orange-200 border-orange-300;
+}
+
+.addRule-custom,
+.addGroup-custom,
+.removeGroup-custom,
+.removeRule-custom {
+  @apply px-3 py-1.5 text-sm font-medium rounded-sm border transition-colors;
+}
+
+.addRule-custom {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300;
+}
+
+.addGroup-custom {
+  @apply bg-orange-100 hover:bg-orange-200 text-orange-700 border-orange-300;
+}
+
+.removeGroup-custom,
+.removeRule-custom {
+  @apply bg-red-100 hover:bg-red-200 text-red-700 border-red-300;
+}
+
+.combinators-custom {
+  @apply px-3 py-2 border border-gray-300 rounded-sm bg-gray-100 text-sm font-medium;
+}
+
+.combinators-custom:focus {
+  @apply outline-none ring-2 ring-orange-200 border-orange-300;
+}
+
+/* Hide default blue styling and make buttons more prominent */
+.queryBuilder-custom .ruleGroup-header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.queryBuilder-custom .ruleGroup-body {
+  @apply space-y-2;
+}
+
+.queryBuilder-custom .rule {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
+.queryBuilder-custom .rule-fields {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+.queryBuilder-custom .rule-operators {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+.queryBuilder-custom .rule-value {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+/* Custom button styling */
+.queryBuilder-custom button {
+  @apply transition-all duration-150 ease-in-out;
+}
+
+.queryBuilder-custom button:hover {
+  @apply transform scale-105;
+}
+
+.queryBuilder-custom button:active {
+  @apply transform scale-95;
+}
 
 @theme inline {
   --color-background: var(--background);

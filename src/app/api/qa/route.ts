@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    let query = supabase.from("question_qa").select(
+    let query = supabase.from("qa_questions").select(
       `
         *,
         question_bank!inner(
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     // Check if QA record already exists
     const { data: existingQA, error: checkError } = await supabase
-      .from("question_qa")
+      .from("qa_questions")
       .select("id")
       .eq("question_id", question_id)
       .single();
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     if (existingQA) {
       // Update existing record
       const { data, error } = await supabase
-        .from("question_qa")
+        .from("qa_questions")
         .update(qaData)
         .eq("id", existingQA.id)
         .select()
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Create new record
       const { data, error } = await supabase
-        .from("question_qa")
+        .from("qa_questions")
         .insert(qaData)
         .select()
         .single();

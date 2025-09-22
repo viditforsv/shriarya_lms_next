@@ -29,42 +29,38 @@ export async function GET(request: NextRequest) {
     // Calculate offset
     const offset = (page - 1) * limit;
 
-    // Build the query - only select necessary fields for listing
+    // Build the base query with select
+    const baseSelect = `
+      id,
+      question_text,
+      difficulty,
+      question_type,
+      subject,
+      boards,
+      course_types,
+      levels,
+      relevance,
+      grade,
+      topic,
+      tags,
+      is_pyq,
+      total_marks,
+      pyq_year,
+      month,
+      paper_number,
+      "Time Zone",
+      created_at,
+      updated_at,
+      human_readable_id,
+      question_display_number,
+      qa_questions!left(qa_status, priority_level, is_flagged)
+    `;
+
     let query = supabase
       .from("question_bank")
-      .select(
-        `
-        id,
-        question_text,
-        difficulty,
-        question_type,
-        subject,
-        board,
-        grade,
-        topic,
-        tags,
-        is_pyq,
-        total_marks,
-        pyq_year,
-        month,
-        paper_number,
-        "Time Zone",
-        created_at,
-        updated_at,
-        human_readable_id,
-        question_display_number,
-        question_qa!left(
-          qa_status,
-          priority_level,
-          is_flagged,
-          overall_rating
-        )
-      `,
-        { count: "exact" }
-      )
-      .eq("is_active", true);
+      .select(baseSelect, { count: "exact" });
 
-    // Apply filters
+    // Apply basic filters
     if (subject) {
       query = query.eq("subject", subject);
     }
@@ -75,7 +71,7 @@ export async function GET(request: NextRequest) {
       query = query.eq("question_type", question_type);
     }
     if (board) {
-      query = query.eq("board", board);
+      query = query.contains("boards", [board]);
     }
     if (grade) {
       query = query.eq("grade", grade);
@@ -87,16 +83,85 @@ export async function GET(request: NextRequest) {
       query = query.eq("is_pyq", is_pyq === "true");
     }
 
-    // Apply QA status filter
-    if (qa_status) {
+    // Apply QA status filter - use efficient approach
+    if (qa_status && qa_status !== "any") {
+      console.log("Applying QA status filter:", qa_status);
+
       if (qa_status === "pending") {
-        // Questions without QA records or with pending status
-        query = query.or(
-          `question_qa.qa_status.eq.pending,question_qa.is.null`
+        // For pending, get questions that either have pending status OR no QA record
+        // Use a more efficient approach by limiting the dataset first
+        const { data: pendingQA } = await supabase
+          .from("qa_questions")
+          .select("question_id")
+          .eq("qa_status", "pending")
+          .limit(500); // Limit to prevent URL overflow
+
+        const pendingIds = pendingQA?.map((qa) => qa.question_id) || [];
+
+        // Get questions without QA records (limit to prevent overflow)
+        const { data: questionsWithoutQA } = await supabase
+          .from("question_bank")
+          .select("id")
+          .eq("is_active", true)
+          .limit(500);
+
+        const { data: allQA } = await supabase
+          .from("qa_questions")
+          .select("question_id")
+          .limit(1000);
+
+        const allQAIds = new Set(allQA?.map((qa) => qa.question_id) || []);
+        const questionsWithoutQAIds =
+          questionsWithoutQA
+            ?.filter((q) => !allQAIds.has(q.id))
+            .map((q) => q.id) || [];
+
+        const qaFilteredQuestionIds = [...pendingIds, ...questionsWithoutQAIds];
+        console.log(
+          `Found ${qaFilteredQuestionIds.length} pending questions (${pendingIds.length} with pending status, ${questionsWithoutQAIds.length} without QA records)`
         );
+
+        // If no questions match, return empty results
+        if (qaFilteredQuestionIds.length === 0) {
+          return NextResponse.json({
+            questions: [],
+            total: 0,
+            totalQuestions: 0,
+            page,
+            limit,
+            totalPages: 0,
+          });
+        }
+
+        // Apply the QA filter to the main query
+        query = query.in("id", qaFilteredQuestionIds);
       } else {
-        // Questions with specific QA status
-        query = query.eq("question_qa.qa_status", qa_status);
+        // For other QA statuses, get the question IDs first (with limit)
+        const { data: qaData } = await supabase
+          .from("qa_questions")
+          .select("question_id")
+          .eq("qa_status", qa_status)
+          .limit(500); // Limit to prevent URL overflow
+
+        const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
+        console.log(
+          `Found ${qaFilteredQuestionIds.length} questions with status: ${qa_status}`
+        );
+
+        // If no questions match, return empty results
+        if (qaFilteredQuestionIds.length === 0) {
+          return NextResponse.json({
+            questions: [],
+            total: 0,
+            totalQuestions: 0,
+            page,
+            limit,
+            totalPages: 0,
+          });
+        }
+
+        // Apply the QA filter to the main query
+        query = query.in("id", qaFilteredQuestionIds);
       }
     }
 

@@ -9,8 +9,9 @@ import { Badge } from "@/app/components-demo/ui/ui-components/badge";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
 import { ArrowLeft, Save, Edit, Trash2, Copy } from "lucide-react";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
-import { renderMixedContent } from "@/components/MathRenderer";
+import { renderMultiPartQuestion } from "@/components/MathRenderer";
 import QAManagement from "@/components/QAManagement";
+import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
 
 interface Question {
   id: string;
@@ -45,6 +46,16 @@ interface Question {
   updated_at: string;
   human_readable_id?: string;
   question_display_number?: number;
+  // QA fields
+  qa_status?:
+    | "pending"
+    | "in_review"
+    | "needs_revision"
+    | "approved"
+    | "rejected"
+    | "archived";
+  qa_priority?: "low" | "medium" | "high" | "urgent";
+  qa_flagged?: boolean;
 }
 
 export default function QuestionDetailPage() {
@@ -70,9 +81,27 @@ export default function QuestionDetailPage() {
 
     setLoading(true);
     try {
+      // Fetch question data
       const response = await fetch(`/api/question-bank/${questionId}`);
       if (response.ok) {
         const data = await response.json();
+
+        // Fetch QA data
+        try {
+          const qaResponse = await fetch(`/api/qa?question_id=${questionId}`);
+          if (qaResponse.ok) {
+            const qaData = await qaResponse.json();
+            if (qaData.qa_records && qaData.qa_records.length > 0) {
+              const qaRecord = qaData.qa_records[0];
+              data.qa_status = qaRecord.qa_status;
+              data.qa_priority = qaRecord.priority_level;
+              data.qa_flagged = qaRecord.is_flagged;
+            }
+          }
+        } catch (qaError) {
+          console.error("Error fetching QA data:", qaError);
+        }
+
         setQuestion(data);
       } else {
         // Check if response is JSON before trying to parse
@@ -120,12 +149,15 @@ export default function QuestionDetailPage() {
 
     setSaving(true);
     try {
+      // Remove QA fields before sending to question-bank API
+      const { qa_status, qa_priority, qa_flagged, ...questionData } = question;
+
       const response = await fetch(`/api/question-bank/${questionId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(question),
+        body: JSON.stringify(questionData),
       });
 
       if (response.ok) {
@@ -342,6 +374,19 @@ export default function QuestionDetailPage() {
                 {question.total_marks} marks • {question.question_type} •
                 Difficulty: {question.difficulty}/10
               </p>
+              <div className="flex items-center gap-2 mt-2">
+                {question.qa_status && (
+                  <QAStatusBadge status={question.qa_status} size="sm" />
+                )}
+                {question.qa_priority && (
+                  <QAPriorityBadge priority={question.qa_priority} size="sm" />
+                )}
+                {question.qa_flagged && (
+                  <Badge variant="destructive" className="text-xs">
+                    Flagged
+                  </Badge>
+                )}
+              </div>
               <p className="text-sm text-gray-400 mt-1">
                 UUID: {question.id.slice(0, 8)}...
               </p>
@@ -852,7 +897,7 @@ export default function QuestionDetailPage() {
             <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-medium mb-2 text-gray-900">Question</h3>
               <div className="prose max-w-none">
-                {renderMixedContent(question.question_text)}
+                {renderMultiPartQuestion(question.question_text)}
               </div>
             </div>
 
@@ -861,7 +906,7 @@ export default function QuestionDetailPage() {
               <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
                 <h3 className="font-medium mb-2 text-gray-900">Solution</h3>
                 <div className="prose max-w-none">
-                  {renderMixedContent(question.explanation)}
+                  {renderMultiPartQuestion(question.explanation)}
                 </div>
               </div>
             )}
@@ -879,7 +924,7 @@ export default function QuestionDetailPage() {
                       className="border-l-4 border-blue-200 pl-4"
                     >
                       <div className="prose max-w-none">
-                        {renderMixedContent(step)}
+                        {renderMultiPartQuestion(step)}
                       </div>
                     </div>
                   ))}

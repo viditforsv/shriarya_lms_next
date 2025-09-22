@@ -7,10 +7,15 @@ A modern, feature-rich Learning Management System built with Next.js 15, shadcn/
 - **Modern UI/UX**: Built with shadcn/ui components and Tailwind CSS
 - **Real-time Database**: Powered by Supabase for scalable data management
 - **Authentication**: Secure user authentication with email/password and Google OAuth
+- **Role-Based Access Control**: Student, Content Manager, and Admin roles with granular permissions
+- **Question Assignment System**: Complete workflow for assigning questions to content managers
 - **Protected Routes**: Middleware-based route protection and automatic redirects
+- **API Security**: Service role protection and route-level security
+- **Database Security**: Row-level security (RLS) policies protecting sensitive data
 - **Responsive Design**: Mobile-first approach with beautiful responsive layouts
 - **Type Safety**: Full TypeScript support for better development experience
 - **Course Management**: Create, manage, and track courses and lessons
+- **Question Bank**: Full CRUD operations with assignment capabilities
 - **Progress Tracking**: Monitor student progress and achievements
 - **Dashboard**: Personalized dashboard for authenticated users
 
@@ -70,8 +75,8 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  full_name TEXT,
-  role TEXT DEFAULT 'student' CHECK (role IN ('student', 'instructor', 'admin')),
+  email TEXT,
+  role TEXT DEFAULT 'student' CHECK (role IN ('student', 'content_manager', 'admin')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -130,6 +135,32 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## 👥 Team Collaboration
+
+This project is set up for safe multi-engineer collaboration:
+
+- **Role-Based Access Control**: Student, Content Manager, Admin roles
+- **Question Assignment System**: Assign questions to content managers
+- **API Security**: Service role protection and route-level security
+- **Database Security**: Row-level security (RLS) policies
+- **Development Workflow**: Feature branches → `dev` → `main`
+- **Code Quality**: ESLint + TypeScript strict mode
+
+### For New Developers
+
+See [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) for complete onboarding instructions.
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Check code quality
+- `npm run lint:fix` - Fix linting issues
+- `npm run type-check` - Check TypeScript types
+- `npm run audit` - Check for security vulnerabilities
+- `npm run clean` - Clean build artifacts
+- `npm run setup` - Full setup for new developers
+
 ## 🔐 Authentication Features
 
 The LMS includes a complete authentication system:
@@ -139,3 +170,4 @@ The LMS includes a complete authentication system:
 - **Protected Routes**: Automatic redirects for unauthenticated users
 - **Session Management**: Persistent sessions with automatic refresh
 - **User Profiles**: Extended user data beyond basic auth
+- **Role-Based Access**: Granular permissions based on user roles

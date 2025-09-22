@@ -36,6 +36,102 @@ export function MathRenderer({
   return <span ref={mathRef} className={className} />;
 }
 
+// Helper function to parse and render multi-part questions
+export function renderMultiPartQuestion(content: string) {
+  // Check if this looks like a multi-part question
+  const hasParts =
+    content.includes("**Part (") ||
+    content.includes("Part (a)") ||
+    content.includes("Part (b)");
+
+  if (!hasParts) {
+    return renderMixedContent(content);
+  }
+
+  // Split content into main question and parts
+  const parts = [];
+  const partRegex = /\*\*Part \([a-e]\) \[\d+ marks\]\*\*/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = partRegex.exec(content)) !== null) {
+    // Add content before this part
+    if (match.index > lastIndex) {
+      const beforePart = content.slice(lastIndex, match.index).trim();
+      if (beforePart) {
+        parts.push({
+          type: "main",
+          content: beforePart,
+        });
+      }
+    }
+
+    // Extract part details
+    const partMatch = match[0].match(
+      /\*\*Part \(([a-e])\) \[(\d+) marks\]\*\*/
+    );
+    if (partMatch) {
+      const partLetter = partMatch[1];
+      const marks = parseInt(partMatch[2]);
+
+      // Find the content of this part (until next part or end)
+      const nextPartIndex = content.indexOf(
+        "**Part (",
+        match.index + match[0].length
+      );
+      const partContent =
+        nextPartIndex === -1
+          ? content.slice(match.index + match[0].length).trim()
+          : content.slice(match.index + match[0].length, nextPartIndex).trim();
+
+      parts.push({
+        type: "part",
+        letter: partLetter,
+        marks: marks,
+        content: partContent,
+      });
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // If no parts were found, fall back to regular rendering
+  if (parts.length === 0) {
+    return renderMixedContent(content);
+  }
+
+  return (
+    <div className="space-y-6">
+      {parts.map((part, index) => {
+        if (part.type === "main") {
+          return (
+            <div key={index} className="prose max-w-none">
+              {renderMixedContent(part.content)}
+            </div>
+          );
+        } else if (part.type === "part") {
+          return (
+            <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-semibold text-blue-700">
+                  Part ({part.letter})
+                </span>
+                <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                  {part.marks} marks
+                </span>
+              </div>
+              <div className="prose max-w-none">
+                {renderMixedContent(part.content)}
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+}
+
 // Helper function to render LaTeX strings with mixed content and environments
 export function renderMixedContent(content: string) {
   // First, handle LaTeX environments (enumerate, itemize, align, etc.)

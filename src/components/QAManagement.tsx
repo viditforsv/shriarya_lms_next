@@ -23,14 +23,7 @@ import {
   QAPriorityBadge,
   QAStatusSelector,
 } from "@/components/QAComponents";
-import {
-  CheckCircle,
-  Edit,
-  Flag,
-  MessageSquare,
-  History,
-  AlertCircle,
-} from "lucide-react";
+import { CheckCircle, Edit, Flag, History, AlertCircle } from "lucide-react";
 
 interface QARecord {
   id: string;
@@ -61,22 +54,7 @@ interface QARecord {
   updated_at: string;
 }
 
-interface QAComment {
-  id: string;
-  qa_id: string;
-  commenter_id: string;
-  comment_text: string;
-  comment_type:
-    | "general"
-    | "content"
-    | "solution"
-    | "formatting"
-    | "difficulty"
-    | "other";
-  is_resolved: boolean;
-  created_at: string;
-  updated_at: string;
-}
+// QAComment interface removed - comments functionality disabled
 
 interface QAHistory {
   id: string;
@@ -99,17 +77,12 @@ export default function QAManagement({
   onStatusChange,
 }: QAManagementProps) {
   const [qaRecord, setQARecord] = useState<QARecord | null>(null);
-  const [comments, setComments] = useState<QAComment[]>([]);
   const [history, setHistory] = useState<QAHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Form states
   const [reviewNotes, setReviewNotes] = useState("");
-  const [newComment, setNewComment] = useState("");
-  const [commentType, setCommentType] = useState<
-    "general" | "content" | "solution" | "formatting" | "difficulty" | "other"
-  >("general");
 
   const fetchQAData = useCallback(async () => {
     try {
@@ -123,15 +96,6 @@ export default function QAManagement({
           const record = qaData.qa_records[0];
           setQARecord(record);
           setReviewNotes(record.review_notes || "");
-
-          // Fetch comments
-          const commentsResponse = await fetch(
-            `/api/qa/comments?qa_id=${record.id}`
-          );
-          if (commentsResponse.ok) {
-            const commentsData = await commentsResponse.json();
-            setComments(commentsData.comments || []);
-          }
 
           // Fetch history
           const historyResponse = await fetch(
@@ -167,7 +131,6 @@ export default function QAManagement({
       const updateData = {
         qa_status: newStatus,
         review_notes: notes || reviewNotes,
-        reviewer_id: "a2b1d35e-453b-4bc6-b68a-d9e370410459", // Current user ID
         ...(newStatus === "in_review" && {
           review_date: new Date().toISOString(),
         }),
@@ -204,33 +167,7 @@ export default function QAManagement({
     }
   };
 
-  const addComment = async () => {
-    if (!qaRecord || !newComment.trim()) return;
-
-    try {
-      setSaving(true);
-
-      const response = await fetch("/api/qa/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          qa_id: qaRecord.id,
-          commenter_id: "a2b1d35e-453b-4bc6-b68a-d9e370410459", // Current user ID
-          comment_text: newComment,
-          comment_type: commentType,
-        }),
-      });
-
-      if (response.ok) {
-        setNewComment("");
-        await fetchQAData(); // Refresh comments
-      }
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    } finally {
-      setSaving(false);
-    }
-  };
+  // Comments functionality removed - qa_comments table deleted
 
   if (loading) {
     return (
@@ -252,6 +189,37 @@ export default function QAManagement({
     );
   }
 
+  const createQARecord = async (status: "pending" | "approved" = "pending") => {
+    try {
+      setSaving(true);
+
+      const response = await fetch(`/api/qa`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question_id: questionId,
+          qa_status: status,
+          priority_level: "medium",
+          review_notes: status === "approved" ? "Pre-approved" : undefined,
+          ...(status === "approved" && {
+            review_date: new Date().toISOString(),
+          }),
+        }),
+      });
+
+      if (response.ok) {
+        const newQA = await response.json();
+        setQARecord(newQA.qa_record);
+        await fetchQAData(); // Refresh all data
+        onStatusChange?.(status);
+      }
+    } catch (error) {
+      console.error("Error creating QA record:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!qaRecord) {
     return (
       <Card>
@@ -261,8 +229,27 @@ export default function QAManagement({
             Quality Assurance
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-gray-500">No QA record found for this question.</p>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => createQARecord("pending")}
+              disabled={saving}
+              className="flex items-center gap-2"
+            >
+              <Flag className="w-4 h-4" />
+              {saving ? "Creating..." : "Mark for QA"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => createQARecord("approved")}
+              disabled={saving}
+              className="flex items-center gap-2"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {saving ? "Creating..." : "Mark as Approved"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -379,78 +366,7 @@ export default function QAManagement({
         </CardContent>
       </Card>
 
-      {/* Comments */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Comments & Feedback
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Add Comment */}
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <Select
-                value={commentType}
-                onValueChange={(
-                  value:
-                    | "general"
-                    | "content"
-                    | "solution"
-                    | "formatting"
-                    | "difficulty"
-                    | "other"
-                ) => setCommentType(value)}
-              >
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">General</SelectItem>
-                  <SelectItem value="content">Content</SelectItem>
-                  <SelectItem value="solution">Solution</SelectItem>
-                  <SelectItem value="formatting">Formatting</SelectItem>
-                  <SelectItem value="difficulty">Difficulty</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              <Textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Add a comment..."
-                className="flex-1"
-              />
-              <Button
-                onClick={addComment}
-                disabled={saving || !newComment.trim()}
-              >
-                Add
-              </Button>
-            </div>
-          </div>
-
-          {/* Comments List */}
-          <div className="space-y-3">
-            {comments.map((comment) => (
-              <div key={comment.id} className="border rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline" className="text-xs">
-                    {comment.comment_type}
-                  </Badge>
-                  <span className="text-xs text-gray-500">
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="text-sm">{comment.comment_text}</p>
-              </div>
-            ))}
-            {comments.length === 0 && (
-              <p className="text-gray-500 text-sm">No comments yet.</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Comments section removed - qa_comments table deleted */}
 
       {/* History */}
       <Card>

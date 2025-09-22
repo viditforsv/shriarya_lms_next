@@ -20,6 +20,13 @@ import {
   SelectValue,
 } from "@/app/components-demo/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/app/components-demo/ui/dialog";
+import {
   ChevronLeft,
   ChevronRight,
   Search,
@@ -32,6 +39,7 @@ import {
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
+import QuestionBankQueryBuilder from "@/components/QuestionBankQueryBuilder";
 
 interface Question {
   id: string;
@@ -41,7 +49,10 @@ interface Question {
   difficulty: number;
   tags: string[];
   subject: string;
-  board: string;
+  boards: string[]; // Changed from board (string) to boards (array)
+  course_types: string[]; // Added
+  levels: string[]; // Added
+  relevance: string[]; // Added
   grade: string;
   topic: string;
   subtopic: string;
@@ -54,16 +65,18 @@ interface Question {
   human_readable_id?: string;
   question_display_number?: number;
   // QA fields
-  qa_status?:
-    | "pending"
-    | "in_review"
-    | "needs_revision"
-    | "approved"
-    | "rejected"
-    | "archived";
-  qa_priority?: "low" | "medium" | "high" | "urgent";
-  qa_flagged?: boolean;
-  qa_overall_rating?: number;
+  qa_questions?: {
+    qa_status?:
+      | "pending"
+      | "in_review"
+      | "needs_revision"
+      | "approved"
+      | "rejected"
+      | "archived";
+    priority_level?: "low" | "medium" | "high" | "urgent";
+    is_flagged?: boolean;
+    overall_rating?: number;
+  }[];
 }
 
 interface QuestionBankResponse {
@@ -80,19 +93,6 @@ export default function QuestionBankPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({
-    subject: "",
-    difficulty: "",
-    question_type: "",
-    board: "",
-    grade: "",
-    topic: "",
-    is_pyq: "",
-    qa_status: "",
-    pyq_year: "",
-    month: "",
-    paper_number: "",
-  });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -100,6 +100,21 @@ export default function QuestionBankPage() {
     totalPages: 0,
   });
   const [totalQuestions, setTotalQuestions] = useState(0);
+  const [advancedQuery, setAdvancedQuery] = useState<any>(null);
+
+  // Simple filters state
+  const [simpleFilters, setSimpleFilters] = useState({
+    difficulty: "any",
+    boards: "any",
+    course_types: "any",
+    levels: "any",
+    question_type: "any",
+    is_pyq: "any",
+    subject: "any",
+    qa_status: "any",
+    priority_level: "any",
+    is_flagged: "any",
+  });
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -108,18 +123,19 @@ export default function QuestionBankPage() {
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
         ...(searchTerm && { search: searchTerm }),
-        ...(filters.subject && { subject: filters.subject }),
-        ...(filters.difficulty && { difficulty: filters.difficulty }),
-        ...(filters.question_type && { question_type: filters.question_type }),
-        ...(filters.board && { board: filters.board }),
-        ...(filters.grade && { grade: filters.grade }),
-        ...(filters.topic && { topic: filters.topic }),
-        ...(filters.is_pyq && { is_pyq: filters.is_pyq }),
-        ...(filters.qa_status && { qa_status: filters.qa_status }),
-        ...(filters.pyq_year && { pyq_year: filters.pyq_year }),
-        ...(filters.month && { month: filters.month }),
-        ...(filters.paper_number && { paper_number: filters.paper_number }),
       });
+
+      // Add simple filters
+      Object.entries(simpleFilters).forEach(([key, value]) => {
+        if (value && value !== "any") {
+          params.append(key, value);
+        }
+      });
+
+      // Add advanced query if available
+      if (advancedQuery) {
+        params.append("advanced_filters", JSON.stringify(advancedQuery));
+      }
 
       const response = await fetch(`/api/question-bank?${params}`);
 
@@ -166,58 +182,55 @@ export default function QuestionBankPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, searchTerm, filters]);
+  }, [
+    pagination.page,
+    pagination.limit,
+    searchTerm,
+    simpleFilters,
+    advancedQuery,
+  ]);
 
   useEffect(() => {
     fetchQuestions();
-  }, [pagination.page, pagination.limit, searchTerm, filters, fetchQuestions]);
+  }, [fetchQuestions]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    // If the value is empty or undefined, clear the filter
-    const filterValue = value && value !== "" ? value : "";
-    setFilters((prev) => ({ ...prev, [key]: filterValue }));
+  const handleSimpleFilterChange = (key: string, value: string) => {
+    setSimpleFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const clearFilters = () => {
-    setFilters({
-      subject: "",
-      difficulty: "",
-      question_type: "",
-      board: "",
-      grade: "",
-      topic: "",
-      is_pyq: "",
-      qa_status: "",
-      pyq_year: "",
-      month: "",
-      paper_number: "",
+  const clearAllFilters = () => {
+    setSimpleFilters({
+      difficulty: "any",
+      boards: "any",
+      course_types: "any",
+      levels: "any",
+      question_type: "any",
+      is_pyq: "any",
+      subject: "any",
+      qa_status: "any",
+      priority_level: "any",
+      is_flagged: "any",
     });
+    setAdvancedQuery(null);
     setSearchTerm("");
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
   // Check if any filters are active
   const hasActiveFilters = () => {
-    return (
-      searchTerm ||
-      Object.values(filters).some((value) => value && value !== "")
+    const hasSimpleFilters = Object.values(simpleFilters).some(
+      (value) => value !== "any"
     );
-  };
-
-  // Get count of active filters
-  const getActiveFilterCount = () => {
-    let count = 0;
-    if (searchTerm) count++;
-    Object.values(filters).forEach((value) => {
-      if (value && value !== "") count++;
-    });
-    return count;
+    return searchTerm || hasSimpleFilters || advancedQuery;
   };
 
   const goToPage = (page: number) => {
@@ -243,13 +256,21 @@ export default function QuestionBankPage() {
     }
 
     // Fallback to generation for backward compatibility
-    const board = question.board === "IBDP" ? "IBDP" : question.board;
-    const subject =
-      question.subject === "HL" ? "aahl" : question.subject.toLowerCase();
+    const board =
+      question.boards && question.boards.length > 0
+        ? question.boards[0]
+        : "IBDP";
+    const courseType =
+      question.course_types && question.course_types.length > 0
+        ? question.course_types[0]
+        : "AA";
+    const level =
+      question.levels && question.levels.length > 0 ? question.levels[0] : "HL";
+    const subject = question.subject?.toLowerCase() || "mathematics";
     const type = question.is_pyq ? "pyq" : "prac";
 
     let number;
-    if (question.question_number) {
+    if (question.question_number && question.question_number !== "na") {
       number = String(question.question_number).padStart(4, "0");
     } else if (index !== undefined) {
       number = String(index + 1).padStart(4, "0");
@@ -257,354 +278,370 @@ export default function QuestionBankPage() {
       number = question.id.slice(-4).toUpperCase();
     }
 
-    return `${board}_${subject}_${type}_${number}`;
+    return `${board}_${courseType.toLowerCase()}_${level.toLowerCase()}_${type}_${number}`;
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Question Bank</h1>
-            <p className="text-gray-600 mt-2">
-              Manage and browse {pagination.total} IBDP Mathematics AA HL
-              questions
-            </p>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Question Bank
+              </h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Manage and browse {pagination.total} Mathematics questions
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push("/question-bank/new")}
+              className="bg-orange-600 hover:bg-orange-700 text-white rounded-sm"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Question
+            </Button>
           </div>
-          <Button onClick={() => router.push("/question-bank/new")}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Question
-          </Button>
         </div>
-
-        {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500">
-          <span>Dashboard</span>
-          <span>/</span>
-          <span className="text-gray-900 font-medium">Question Bank</span>
-        </nav>
       </div>
 
-      {/* Search and Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Filter className="w-5 h-5 mr-2" />
-            Search & Filters
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search by ID (IBDP_aahl_pyq_0001 or UUID), content, or tags..."
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            <Select
-              value={filters.difficulty || undefined}
-              onValueChange={(value) => handleFilterChange("difficulty", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1 - Very Easy</SelectItem>
-                <SelectItem value="2">2 - Easy</SelectItem>
-                <SelectItem value="3">3 - Easy-Medium</SelectItem>
-                <SelectItem value="4">4 - Medium</SelectItem>
-                <SelectItem value="5">5 - Medium-Hard</SelectItem>
-                <SelectItem value="6">6 - Hard</SelectItem>
-                <SelectItem value="7">7 - Very Hard</SelectItem>
-                <SelectItem value="8">8 - Expert</SelectItem>
-                <SelectItem value="9">9 - Master</SelectItem>
-                <SelectItem value="10">10 - Legendary</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.question_type || undefined}
-              onValueChange={(value) =>
-                handleFilterChange("question_type", value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Question Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="mcq">Multiple Choice</SelectItem>
-                <SelectItem value="subjective">Subjective</SelectItem>
-                <SelectItem value="true_false">True/False</SelectItem>
-                <SelectItem value="fill_blank">Fill in the Blank</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.is_pyq || undefined}
-              onValueChange={(value) => handleFilterChange("is_pyq", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Question Source" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Past Year Questions</SelectItem>
-                <SelectItem value="false">Practice Questions</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Additional Filters Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <Select
-              value={filters.board || undefined}
-              onValueChange={(value) => handleFilterChange("board", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Board" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="IBDP">IBDP</SelectItem>
-                <SelectItem value="CBSE">CBSE</SelectItem>
-                <SelectItem value="ICSE">ICSE</SelectItem>
-                <SelectItem value="IGCSE">IGCSE</SelectItem>
-                <SelectItem value="A-Levels">A-Levels</SelectItem>
-                <SelectItem value="SAT">SAT</SelectItem>
-                <SelectItem value="ACT">ACT</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.subject || undefined}
-              onValueChange={(value) => handleFilterChange("subject", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Subject" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="IBDP Mathematics AA HL">
-                  IBDP Mathematics AA HL
-                </SelectItem>
-                <SelectItem value="IBDP Mathematics AI HL">
-                  IBDP Mathematics AI HL
-                </SelectItem>
-                <SelectItem value="IBDP Mathematics AA SL">
-                  IBDP Mathematics AA SL
-                </SelectItem>
-                <SelectItem value="IBDP Mathematics AI SL">
-                  IBDP Mathematics AI SL
-                </SelectItem>
-                <SelectItem value="CBSE Mathematics">
-                  CBSE Mathematics
-                </SelectItem>
-                <SelectItem value="ICSE Mathematics">
-                  ICSE Mathematics
-                </SelectItem>
-                <SelectItem value="IGCSE Mathematics">
-                  IGCSE Mathematics
-                </SelectItem>
-                <SelectItem value="A-Level Mathematics">
-                  A-Level Mathematics
-                </SelectItem>
-                <SelectItem value="SAT Mathematics">SAT Mathematics</SelectItem>
-                <SelectItem value="ACT Mathematics">ACT Mathematics</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.grade || undefined}
-              onValueChange={(value) => handleFilterChange("grade", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Grade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="9">Grade 9</SelectItem>
-                <SelectItem value="10">Grade 10</SelectItem>
-                <SelectItem value="11">Grade 11</SelectItem>
-                <SelectItem value="12">Grade 12</SelectItem>
-                <SelectItem value="13">Grade 13</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filters.topic || undefined}
-              onValueChange={(value) => handleFilterChange("topic", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Topic" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Algebra">Algebra</SelectItem>
-                <SelectItem value="Functions">Functions</SelectItem>
-                <SelectItem value="Trigonometry">Trigonometry</SelectItem>
-                <SelectItem value="Statistics">Statistics</SelectItem>
-                <SelectItem value="Probability">Probability</SelectItem>
-                <SelectItem value="Calculus">Calculus</SelectItem>
-                <SelectItem value="Geometry">Geometry</SelectItem>
-                <SelectItem value="Number Theory">Number Theory</SelectItem>
-                <SelectItem value="Complex Numbers">Complex Numbers</SelectItem>
-                <SelectItem value="Sequences and Series">
-                  Sequences and Series
-                </SelectItem>
-                <SelectItem value="Vectors">Vectors</SelectItem>
-                <SelectItem value="Matrices">Matrices</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* QA Status Filter */}
-          <div className="mb-4">
-            <Select
-              value={filters.qa_status || undefined}
-              onValueChange={(value) => handleFilterChange("qa_status", value)}
-            >
-              <SelectTrigger className="w-full md:w-64">
-                <SelectValue placeholder="QA Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">Pending Review</SelectItem>
-                <SelectItem value="in_review">In Review</SelectItem>
-                <SelectItem value="needs_revision">Needs Revision</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Paper Information Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="flex">
+        {/* Filter Sidebar */}
+        <div className="w-80 bg-white border-r border-gray-200 p-4">
+          <div className="space-y-4">
+            {/* Search */}
             <div>
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                PYQ Year
-              </Label>
-              <Input
-                placeholder="e.g., 2022"
-                value={filters.pyq_year}
-                onChange={(e) => handleFilterChange("pyq_year", e.target.value)}
-                type="number"
-              />
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                Month
-              </Label>
-              <Select
-                value={filters.month || undefined}
-                onValueChange={(value) => handleFilterChange("month", value)}
+              <Label
+                htmlFor="search"
+                className="text-sm font-medium text-gray-700"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Month" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="January">January</SelectItem>
-                  <SelectItem value="February">February</SelectItem>
-                  <SelectItem value="March">March</SelectItem>
-                  <SelectItem value="April">April</SelectItem>
-                  <SelectItem value="May">May</SelectItem>
-                  <SelectItem value="June">June</SelectItem>
-                  <SelectItem value="July">July</SelectItem>
-                  <SelectItem value="August">August</SelectItem>
-                  <SelectItem value="September">September</SelectItem>
-                  <SelectItem value="October">October</SelectItem>
-                  <SelectItem value="November">November</SelectItem>
-                  <SelectItem value="December">December</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                Paper Number
+                Search Questions
               </Label>
-              <Input
-                placeholder="e.g., 1, 2, 3"
-                value={filters.paper_number}
-                onChange={(e) =>
-                  handleFilterChange("paper_number", e.target.value)
-                }
-                type="number"
-              />
+              <div className="relative mt-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  id="search"
+                  type="text"
+                  placeholder="Search by question text..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10 rounded-sm"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Active Filters Display */}
-          {hasActiveFilters() && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
-                    Active Filters ({getActiveFilterCount()})
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="text-blue-600 border-blue-300 hover:bg-blue-100"
+            {/* Simple Filters */}
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
+                Quick Filters
+              </h3>
+
+              {/* Difficulty */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Difficulty</Label>
+                <Select
+                  value={simpleFilters.difficulty}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("difficulty", value)
+                  }
                 >
-                  <RotateCcw className="w-3 h-3 mr-1" />
-                  Reset All
-                </Button>
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any difficulty</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="6">6</SelectItem>
+                    <SelectItem value="7">7</SelectItem>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="9">9</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              {/* Boards */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Board</Label>
+                <Select
+                  value={simpleFilters.boards}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("boards", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any board" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any board</SelectItem>
+                    <SelectItem value="IBDP">IBDP</SelectItem>
+                    <SelectItem value="CBSE">CBSE</SelectItem>
+                    <SelectItem value="ICSE">ICSE</SelectItem>
+                    <SelectItem value="IGCSE">IGCSE</SelectItem>
+                    <SelectItem value="A-Levels">A-Levels</SelectItem>
+                    <SelectItem value="SAT">SAT</SelectItem>
+                    <SelectItem value="ACT">ACT</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Course Types */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Course Type</Label>
+                <Select
+                  value={simpleFilters.course_types}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("course_types", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any course type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any course type</SelectItem>
+                    <SelectItem value="AA">AA</SelectItem>
+                    <SelectItem value="AI">AI</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Levels */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Level</Label>
+                <Select
+                  value={simpleFilters.levels}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("levels", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any level</SelectItem>
+                    <SelectItem value="SL">SL</SelectItem>
+                    <SelectItem value="HL">HL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Question Type */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Question Type</Label>
+                <Select
+                  value={simpleFilters.question_type}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("question_type", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any type</SelectItem>
+                    <SelectItem value="mcq">MCQ</SelectItem>
+                    <SelectItem value="subjective">Subjective</SelectItem>
+                    <SelectItem value="true_false">True/False</SelectItem>
+                    <SelectItem value="fill_blank">
+                      Fill in the Blank
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* PYQ Filter */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">
+                  Previous Year Question
+                </Label>
+                <Select
+                  value={simpleFilters.is_pyq}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("is_pyq", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="true">PYQ Only</SelectItem>
+                    <SelectItem value="false">Practice Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* QA Status Filters */}
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">
+                Quality Assurance
+              </h3>
+
+              {/* QA Status */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">QA Status</Label>
+                <Select
+                  value={simpleFilters.qa_status}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("qa_status", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="in_review">In Review</SelectItem>
+                    <SelectItem value="needs_revision">
+                      Needs Revision
+                    </SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Priority Level */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Priority Level</Label>
+                <Select
+                  value={simpleFilters.priority_level}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("priority_level", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any priority</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Flagged Status */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Flagged Status</Label>
+                <Select
+                  value={simpleFilters.is_flagged}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("is_flagged", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="true">Flagged Only</SelectItem>
+                    <SelectItem value="false">Not Flagged</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Advanced Query Builder Modal */}
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full rounded-sm">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Advanced Filters
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Advanced Query Builder</DialogTitle>
+                  </DialogHeader>
+                  <QuestionBankQueryBuilder
+                    onQueryChange={(query) => {
+                      setAdvancedQuery(query);
+                      setPagination((prev) => ({ ...prev, page: 1 }));
+                    }}
+                    initialQuery={advancedQuery}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Clear Filters */}
+            {hasActiveFilters() && (
+              <div>
+                <Button
+                  variant="outline"
+                  onClick={clearAllFilters}
+                  className="w-full rounded-sm text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear All Filters
+                </Button>
+              </div>
+            )}
+
+            {/* Active Filters Summary */}
+            {hasActiveFilters() && (
+              <div className="text-sm text-gray-600">
+                <div className="font-medium mb-1">Active Filters:</div>
                 {searchTerm && (
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center gap-1"
-                  >
-                    Search: &quot;{searchTerm}&quot;
-                    <X
-                      className="w-3 h-3 cursor-pointer hover:text-red-600"
-                      onClick={() => setSearchTerm("")}
-                    />
-                  </Badge>
+                  <div className="text-xs">• Search: "{searchTerm}"</div>
                 )}
-                {Object.entries(filters).map(([key, value]) => {
-                  if (!value || value === "") return null;
-                  return (
-                    <Badge
-                      key={key}
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
-                      {key.replace("_", " ")}: {value}
-                      <X
-                        className="w-3 h-3 cursor-pointer hover:text-red-600"
-                        onClick={() => handleFilterChange(key, "")}
-                      />
-                    </Badge>
-                  );
-                })}
+                {Object.entries(simpleFilters).map(
+                  ([key, value]) =>
+                    value &&
+                    value !== "any" && (
+                      <div key={key} className="text-xs">
+                        • {key.replace("_", " ")}: {value}
+                      </div>
+                    )
+                )}
+                {advancedQuery && (
+                  <div className="text-xs">• Advanced Query Active</div>
+                )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
 
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              {hasActiveFilters() ? (
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Reset Filters
-                </Button>
-              ) : (
-                <div className="text-sm text-gray-500 flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  No filters applied
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Breadcrumb */}
+            <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+              <span>Dashboard</span>
+              <span>/</span>
+              <span className="text-gray-900 font-medium">Question Bank</span>
+            </nav>
+
+            {/* Results Summary */}
+            <div className="mb-6 flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-gray-600">
+                  Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+                  {Math.min(
+                    pagination.page * pagination.limit,
+                    pagination.total
+                  )}{" "}
+                  of {pagination.total} {hasActiveFilters() ? "filtered " : ""}
+                  questions
+                  {hasActiveFilters() && totalQuestions > pagination.total && (
+                    <span className="text-gray-400 ml-1">
+                      (from {totalQuestions} total questions)
+                    </span>
+                  )}
                 </div>
-              )}
+              </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Show:</span>
@@ -618,7 +655,7 @@ export default function QuestionBankPage() {
                     }));
                   }}
                 >
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-20 rounded-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -631,253 +668,278 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
-            <div className="text-sm text-gray-500">
-              Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-              {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
-              of {pagination.total} {hasActiveFilters() ? "filtered " : ""}
-              questions
-              {hasActiveFilters() && totalQuestions > pagination.total && (
-                <span className="text-gray-400 ml-1">
-                  (from {totalQuestions} total questions)
-                </span>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Questions Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-20 w-full mb-4" />
-                <div className="flex space-x-2">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-6 w-20" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {questions.map((question, index) => (
-            <Card
-              key={question.id}
-              className="hover:shadow-lg transition-shadow"
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">
-                      {getHumanReadableId(question, index)}
-                    </CardTitle>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {question.total_marks} marks • {question.question_type}
-                    </p>
-                    {/* Paper Information */}
-                    {(question.pyq_year ||
-                      question.month ||
-                      question.paper_number) && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {question.pyq_year && `Year: ${question.pyq_year}`}
-                        {question.month && ` • Month: ${question.month}`}
-                        {question.paper_number &&
-                          ` • Paper: ${question.paper_number}`}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-1">
-                      UUID: {question.id.slice(0, 8)}...
-                    </p>
-                  </div>
-                  <Badge className={getDifficultyColor(question.difficulty)}>
-                    {question.difficulty}/10
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    {truncateText(question.question_text)}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {(question.tags || []).slice(0, 3).map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {(question.tags || []).length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{(question.tags || []).length - 3} more
-                    </Badge>
-                  )}
-                </div>
-
-                {/* QA Status Display */}
-                <div className="flex items-center gap-2 mb-4">
-                  {question.qa_status && (
-                    <QAStatusBadge status={question.qa_status} size="sm" />
-                  )}
-                  {question.qa_priority && (
-                    <QAPriorityBadge
-                      priority={question.qa_priority}
-                      size="sm"
-                    />
-                  )}
-                  {question.qa_flagged && (
-                    <Badge
-                      variant="destructive"
-                      className="text-xs bg-red-100 text-red-800"
-                    >
-                      ⚠️ Flagged
-                    </Badge>
-                  )}
-                  {question.qa_overall_rating && (
-                    <Badge variant="outline" className="text-xs">
-                      ⭐ {question.qa_overall_rating.toFixed(1)}
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-gray-500">
-                    {question.is_pyq && (
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                        PYQ {question.pyq_year || "N/A"}
-                      </span>
-                    )}
-                    {question.board && (
-                      <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs ml-2">
-                        {question.board}
-                      </span>
-                    )}
-                    {question.subject && (
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs ml-2">
-                        {question.subject}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        window.open(`/question-bank/${question.id}`, "_blank")
-                      }
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        window.open(
-                          `/question-bank/${question.id}/edit`,
-                          "_blank"
-                        )
-                      }
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center space-x-2 mt-8">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => goToPage(pagination.page - 1)}
-            disabled={pagination.page === 1}
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Previous
-          </Button>
-
-          <div className="flex items-center space-x-1">
-            {(() => {
-              const totalPages = pagination.totalPages;
-              const currentPage = pagination.page;
-              const pages = [];
-
-              // Always show first page
-              if (totalPages > 0) {
-                pages.push(1);
-              }
-
-              // Show pages around current page
-              const start = Math.max(2, currentPage - 1);
-              const end = Math.min(totalPages - 1, currentPage + 1);
-
-              // Add ellipsis if there's a gap
-              if (start > 2) {
-                pages.push("...");
-              }
-
-              // Add pages around current page
-              for (let i = start; i <= end; i++) {
-                if (i !== 1 && i !== totalPages) {
-                  pages.push(i);
-                }
-              }
-
-              // Add ellipsis if there's a gap
-              if (end < totalPages - 1) {
-                pages.push("...");
-              }
-
-              // Always show last page (if more than 1 page)
-              if (totalPages > 1) {
-                pages.push(totalPages);
-              }
-
-              return pages.map((page, index) =>
-                page === "..." ? (
-                  <span
-                    key={`ellipsis-${index}`}
-                    className="px-2 text-gray-500"
+            {/* Questions Grid */}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-20 w-full mb-4" />
+                      <div className="flex space-x-2">
+                        <Skeleton className="h-6 w-16" />
+                        <Skeleton className="h-6 w-20" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {questions.map((question, index) => (
+                  <Card
+                    key={question.id}
+                    className="hover:shadow-lg transition-shadow"
                   >
-                    ...
-                  </span>
-                ) : (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "primary" : "outline"}
-                    size="sm"
-                    onClick={() => goToPage(page as number)}
-                  >
-                    {page}
-                  </Button>
-                )
-              );
-            })()}
-          </div>
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">
+                            {getHumanReadableId(question, index)}
+                          </CardTitle>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {question.total_marks} marks •{" "}
+                            {question.question_type}
+                          </p>
+                          {/* Paper Information */}
+                          {(question.pyq_year ||
+                            question.month ||
+                            question.paper_number) && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {question.pyq_year &&
+                                `Year: ${question.pyq_year}`}
+                              {question.month && ` • Month: ${question.month}`}
+                              {question.paper_number &&
+                                ` • Paper: ${question.paper_number}`}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-400 mt-1">
+                            UUID: {question.id.slice(0, 8)}...
+                          </p>
+                        </div>
+                        <Badge
+                          className={getDifficultyColor(question.difficulty)}
+                        >
+                          {question.difficulty}/10
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="mb-4">
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {truncateText(question.question_text)}
+                        </p>
+                      </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => goToPage(pagination.page + 1)}
-            disabled={pagination.page === pagination.totalPages}
-          >
-            Next
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {(question.tags || []).slice(0, 3).map((tag, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                        {(question.tags || []).length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{(question.tags || []).length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* QA Status Display */}
+                      <div className="flex items-center gap-2 mb-4">
+                        {question.qa_questions &&
+                          question.qa_questions.length > 0 && (
+                            <>
+                              <QAStatusBadge
+                                status={
+                                  question.qa_questions[0].qa_status ||
+                                  "pending"
+                                }
+                                size="sm"
+                              />
+                              {question.qa_questions[0].priority_level && (
+                                <QAPriorityBadge
+                                  priority={
+                                    question.qa_questions[0].priority_level
+                                  }
+                                  size="sm"
+                                />
+                              )}
+                              {question.qa_questions[0].is_flagged && (
+                                <Badge
+                                  variant="destructive"
+                                  className="text-xs bg-red-100 text-red-800"
+                                >
+                                  ⚠️ Flagged
+                                </Badge>
+                              )}
+                              {question.qa_questions[0].overall_rating && (
+                                <Badge variant="outline" className="text-xs">
+                                  ⭐{" "}
+                                  {question.qa_questions[0].overall_rating.toFixed(
+                                    1
+                                  )}
+                                </Badge>
+                              )}
+                            </>
+                          )}
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap gap-1">
+                          {question.is_pyq && (
+                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                              PYQ {question.pyq_year || "N/A"}
+                            </span>
+                          )}
+                          {question.boards && question.boards.length > 0 && (
+                            <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
+                              {question.boards.join(", ")}
+                            </span>
+                          )}
+                          {question.course_types &&
+                            question.course_types.length > 0 && (
+                              <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                                {question.course_types.join(", ")}
+                              </span>
+                            )}
+                          {question.levels && question.levels.length > 0 && (
+                            <span className="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs">
+                              {question.levels.join(", ")}
+                            </span>
+                          )}
+                          {question.relevance &&
+                            question.relevance.length > 0 && (
+                              <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs">
+                                {question.relevance.join(", ")}
+                              </span>
+                            )}
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              window.open(
+                                `/question-bank/${question.id}`,
+                                "_blank"
+                              )
+                            }
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              window.open(
+                                `/question-bank/${question.id}/edit`,
+                                "_blank"
+                              )
+                            }
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="flex items-center justify-center space-x-2 mt-8">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </Button>
+
+                <div className="flex items-center space-x-1">
+                  {(() => {
+                    const totalPages = pagination.totalPages;
+                    const currentPage = pagination.page;
+                    const pages = [];
+
+                    // Always show first page
+                    if (totalPages > 0) {
+                      pages.push(1);
+                    }
+
+                    // Show pages around current page
+                    const start = Math.max(2, currentPage - 1);
+                    const end = Math.min(totalPages - 1, currentPage + 1);
+
+                    // Add ellipsis if there's a gap
+                    if (start > 2) {
+                      pages.push("...");
+                    }
+
+                    // Add pages around current page
+                    for (let i = start; i <= end; i++) {
+                      if (i !== 1 && i !== totalPages) {
+                        pages.push(i);
+                      }
+                    }
+
+                    // Add ellipsis if there's a gap
+                    if (end < totalPages - 1) {
+                      pages.push("...");
+                    }
+
+                    // Always show last page (if more than 1 page)
+                    if (totalPages > 1) {
+                      pages.push(totalPages);
+                    }
+
+                    return pages.map((page, index) =>
+                      page === "..." ? (
+                        <span
+                          key={`ellipsis-${index}`}
+                          className="px-2 text-gray-500"
+                        >
+                          ...
+                        </span>
+                      ) : (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? "primary" : "outline"}
+                          size="sm"
+                          onClick={() => goToPage(page as number)}
+                        >
+                          {page}
+                        </Button>
+                      )
+                    );
+                  })()}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => goToPage(pagination.page + 1)}
+                  disabled={pagination.page === pagination.totalPages}
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

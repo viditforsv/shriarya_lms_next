@@ -324,11 +324,17 @@ export const NAVIGATION_MENU = {
   admin: [
     { label: "My Courses", href: "/courses/enrolled" },
     { label: "Site Administration", href: "/admin/site-administration" },
+    { label: "Question Bank", href: "/question-bank" },
     { label: "Users", href: "/admin/users" },
     { label: "Courses", href: "/admin/courses" },
     { label: "Analytics", href: "/admin/analytics" },
     { label: "Templates", href: "/templates" },
     { label: "Helpdesk", href: "/helpdesk" },
+    { label: "Profile", href: "/profile" },
+  ],
+  content_manager: [
+    { label: "My Courses", href: "/courses/enrolled" },
+    { label: "Question Bank", href: "/question-bank" },
     { label: "Profile", href: "/profile" },
   ],
 };

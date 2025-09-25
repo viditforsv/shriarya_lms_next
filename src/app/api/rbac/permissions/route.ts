@@ -64,7 +64,15 @@ export async function GET() {
 
     // Group permissions by category
     const groupedPermissions = permissions.reduce(
-      (acc: Record<string, { id: string; name: string; permissions: unknown[] }>, permission) => {
+      (acc: Record<string, { 
+        id: string; 
+        name: string; 
+        permissions: unknown[];
+        icon: string;
+        description: string;
+        displayOrder: number;
+        tasks: unknown[];
+      }>, permission) => {
         const categoryName = permission.category;
         const category = categories.find((cat) => cat.name === categoryName);
 

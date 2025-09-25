@@ -148,60 +148,33 @@ export function CoursePageClient({
         "circles-practice-problems": 52,
 
         // Unit 5: Trigonometry - Introduction to Trigonometry
-        "introduction-to-trigonometry": 53,
-        "trigonometric-ratios-of-acute-angles": 54,
-        "proof-of-existence-of-trigonometric-ratios": 55,
-        "trigonometric-ratios-at-0-and-90": 56,
-        "values-of-trigonometric-ratios-30-45-60": 57,
-        "relationships-between-trigonometric-ratios": 58,
+        "trigonometric-ratios": 54,
+        "values-30-45-60": 57,
+        "relationships-ratios": 58,
         "trigonometric-ratios-practice": 59,
 
         // Unit 5: Trigonometry - Trigonometric Identities
-        "introduction-to-trigonometric-identities": 60,
-        "proof-of-sin2a-cos2a-1": 61,
-        "applications-of-sin2a-cos2a-1": 62,
-        "other-simple-trigonometric-identities": 63,
+        "proof-application-sin2-cos2": 61,
         "trigonometric-identities-practice": 64,
 
         // Unit 5: Trigonometry - Heights and Distances
-        "introduction-to-heights-and-distances": 65,
-        "angle-of-elevation": 66,
-        "angle-of-depression": 67,
-        "simple-problems-on-heights-and-distances": 68,
-        "problems-with-angles-30-45-60": 69,
-        "real-life-applications-of-heights-and-distances": 70,
-        "heights-and-distances-practice": 71,
+        "angles-elevation-depression": 66,
 
         // Unit 6: Mensuration - Areas Related to Circles
-        "introduction-to-areas-related-to-circles": 72,
-        "area-of-sectors-of-a-circle": 73,
-        "area-of-segments-of-a-circle": 74,
-        "problems-with-central-angles-60-90-120": 75,
-        "areas-related-to-circles-practice": 76,
+        "areas-sectors-segments": 73,
+        "perimeter-circumference": 75,
 
         // Unit 6: Mensuration - Surface Areas and Volumes
-        "introduction-to-surface-areas-and-volumes": 77,
-        "combinations-of-cubes-and-cuboids": 78,
-        "combinations-of-spheres-and-hemispheres": 79,
-        "combinations-of-cylinders-and-cones": 80,
-        "surface-areas-and-volumes-practice": 81,
+        "combinations-cubes-cuboids": 78,
+        "combinations-spheres-hemispheres": 79,
+        "combinations-cylinders-cones": 80,
 
         // Unit 7: Statistics & Probability - Statistics
-        "introduction-to-statistics": 82,
-        "mean-of-grouped-data": 83,
-        "direct-method-for-mean": 84,
-        "assumed-mean-method": 85,
-        "step-deviation-method": 86,
-        "median-of-grouped-data-algebraic-method": 87,
-        "mode-of-grouped-data-algebraic-method": 88,
-        "statistics-practice-problems": 89,
+        "mean-median-mode": 83,
 
         // Unit 7: Statistics & Probability - Probability
-        "introduction-to-probability": 90,
-        "classical-definition-of-probability": 91,
-        "simple-problems-on-probability": 92,
-        "real-life-applications-of-probability": 93,
-        "probability-practice-problems": 94,
+        "classical-definition": 91,
+        "simple-problems": 92,
       };
 
       const lessonOrder = subsectionToOrderMap[firstSubsection.slug];

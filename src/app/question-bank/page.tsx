@@ -34,7 +34,6 @@ import {
   Eye,
   Edit,
   Plus,
-  RotateCcw,
   X,
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
@@ -270,7 +269,6 @@ export default function QuestionBankPage() {
         : "AA";
     const level =
       question.levels && question.levels.length > 0 ? question.levels[0] : "HL";
-    const subject = question.subject?.toLowerCase() || "mathematics";
     const type = question.is_pyq ? "pyq" : "prac";
 
     let number;
@@ -660,7 +658,7 @@ export default function QuestionBankPage() {
               <div className="text-sm text-gray-600">
                 <div className="font-medium mb-1">Active Filters:</div>
                 {searchTerm && (
-                  <div className="text-xs">• Search: "{searchTerm}"</div>
+                  <div className="text-xs">• Search: &quot;{searchTerm}&quot;</div>
                 )}
                 {Object.entries(simpleFilters).map(
                   ([key, value]) =>

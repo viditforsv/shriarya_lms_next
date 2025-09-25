@@ -100,7 +100,7 @@ export default function CourseTemplatesPage() {
           <div className="space-y-2">
             <Button onClick={fetchTemplates}>Try Again</Button>
             <div className="text-sm text-muted-foreground">
-              <p>If you're seeing this page, you may need to:</p>
+              <p>If you&apos;re seeing this page, you may need to:</p>
               <ul className="list-disc list-inside mt-2 space-y-1">
                 <li>Log in with an admin account</li>
                 <li>Check your user permissions</li>

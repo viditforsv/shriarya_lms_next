@@ -64,7 +64,7 @@ export async function GET() {
 
     // Group permissions by category
     const groupedPermissions = permissions.reduce(
-      (acc: Record<string, any>, permission) => {
+      (acc: Record<string, { id: string; name: string; permissions: unknown[] }>, permission) => {
         const categoryName = permission.category;
         const category = categories.find((cat) => cat.name === categoryName);
 
@@ -91,7 +91,7 @@ export async function GET() {
 
     return NextResponse.json({
       permissions: Object.values(groupedPermissions).sort(
-        (a: any, b: any) => a.displayOrder - b.displayOrder
+        (a: { displayOrder: number }, b: { displayOrder: number }) => a.displayOrder - b.displayOrder
       ),
     });
   } catch (error) {

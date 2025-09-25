@@ -150,7 +150,7 @@ export default function QuestionDetailPage() {
     setSaving(true);
     try {
       // Remove QA fields before sending to question-bank API
-      const { qa_status, qa_priority, qa_flagged, ...questionData } = question;
+      const { qa_status: _, qa_priority: __, qa_flagged: ___, ...questionData } = question;
 
       const response = await fetch(`/api/question-bank/${questionId}`, {
         method: "PUT",

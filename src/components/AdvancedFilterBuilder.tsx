@@ -18,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
 import { Plus, Trash2, Filter, X, RotateCcw, Save } from "lucide-react";
 
 // Types for advanced filtering

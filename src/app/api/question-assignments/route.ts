@@ -210,7 +210,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const updateData: any = { status };
+    const updateData: { status: string; notes?: string } = { status };
     if (notes) {
       updateData.notes = notes;
     }

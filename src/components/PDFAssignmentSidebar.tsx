@@ -14,10 +14,7 @@ import {
   FileText,
   CheckCircle,
   Clock,
-  Eye,
-  Lock,
   Play,
-  Upload,
   Download,
 } from "lucide-react";
 

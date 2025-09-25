@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const testType = searchParams.get("test") || "example";
 
-    let exampleFilters: any[] = [];
+    let exampleFilters: Record<string, unknown>[] = [];
 
     switch (testType) {
       case "difficulty-or-not":

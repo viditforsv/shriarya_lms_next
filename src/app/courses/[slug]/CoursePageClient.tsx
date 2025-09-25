@@ -213,8 +213,9 @@ export function CoursePageClient({
         );
 
         if (targetLesson) {
-          // Navigate to the actual lesson from database
-          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
+          // Navigate to the actual lesson from database with prefixed slug
+          const prefixedSlug = `lesson-${targetLesson.order}-${targetLesson.slug}`;
+          window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
           return;
         }
       }
@@ -229,7 +230,9 @@ export function CoursePageClient({
       );
 
       if (fallbackLesson) {
-        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
+        // Navigate with prefixed slug
+        const prefixedSlug = `lesson-${fallbackLesson.order}-${fallbackLesson.slug}`;
+        window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
         return;
       }
 
@@ -314,8 +317,9 @@ export function CoursePageClient({
         );
 
         if (targetLesson) {
-          // Navigate to the actual lesson from database
-          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
+          // Navigate to the actual lesson from database with prefixed slug
+          const prefixedSlug = `lesson-${targetLesson.order}-${targetLesson.slug}`;
+          window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
           return;
         }
       }
@@ -330,7 +334,9 @@ export function CoursePageClient({
       );
 
       if (fallbackLesson) {
-        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
+        // Navigate with prefixed slug
+        const prefixedSlug = `lesson-${fallbackLesson.order}-${fallbackLesson.slug}`;
+        window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
         return;
       }
 
@@ -340,7 +346,7 @@ export function CoursePageClient({
       );
       alert("Lesson not found. Please try again.");
     } else {
-      // For other courses, use the subsection slug directly
+      // For other courses, use the subsection slug directly (already prefixed)
       window.location.href = `/courses/${courseParams.slug}/lesson/${firstSubsection.slug}`;
     }
   };
@@ -351,6 +357,10 @@ export function CoursePageClient({
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
+  const [lastLesson, setLastLesson] = useState<{
+    slug: string;
+    lesson_order: number;
+  } | null>(null);
 
   useEffect(() => {
     const loadCourse = async () => {
@@ -371,18 +381,15 @@ export function CoursePageClient({
           setCourse(data.rendered);
           setTemplate(data.template);
 
-          // Fetch complete course content using RPC function
+          // Fetch lessons using the working lessons API
           try {
-            const courseContentResponse = await fetch(
-              `/api/course-content?course_slug=${courseParams.slug}`
+            const lessonsResponse = await fetch(
+              `/api/lessons?course_slug=${courseParams.slug}`
             );
-            if (courseContentResponse.ok) {
-              const courseContentData = await courseContentResponse.json();
-              setCourse(courseContentData.course);
-              setTemplate(courseContentData.course.template_data || {});
-
-              // Convert lessons to LessonConfig format
-              const convertedLessons = courseContentData.lessons.map(
+            if (lessonsResponse.ok) {
+              const lessonsData = await lessonsResponse.json();
+              // Convert database lessons to LessonConfig format
+              const convertedLessons = lessonsData.lessons.map(
                 (lesson: Record<string, unknown>) => ({
                   id: lesson.id,
                   slug: lesson.slug,
@@ -392,7 +399,7 @@ export function CoursePageClient({
                   type: "video",
                   isPreview: lesson.is_preview || false,
                   order: lesson.lesson_order,
-                  resources: [], // Will be populated from video_url, pdf_url etc.
+                  resources: lesson.resources || [],
                 })
               );
               setLessons(convertedLessons);
@@ -402,7 +409,7 @@ export function CoursePageClient({
               setLessons(lessonsData);
             }
           } catch (error) {
-            console.error("Error fetching course content:", error);
+            console.error("Error fetching lessons:", error);
             // Fallback to old system
             const lessonsData = getLessonsByCourseSlugSync(courseParams.slug);
             setLessons(lessonsData);
@@ -410,6 +417,20 @@ export function CoursePageClient({
 
           // For free courses, user is automatically "enrolled"
           setIsEnrolled(data.rendered.isFree || false);
+
+          // Fetch last accessed lesson for continue learning
+          try {
+            const lastLessonResponse = await fetch(
+              `/api/user-progress/last-lesson?course_slug=${courseParams.slug}`
+            );
+            if (lastLessonResponse.ok) {
+              const lastLessonData = await lastLessonResponse.json();
+              setLastLesson(lastLessonData.lastLesson);
+            }
+          } catch (error) {
+            console.error("Error fetching last lesson:", error);
+            // Continue without last lesson data
+          }
         } else {
           // Fallback to old system
           const courseData = getCourseBySlug(courseParams.slug);
@@ -497,6 +518,20 @@ export function CoursePageClient({
 
           // For free courses, user is automatically "enrolled"
           setIsEnrolled(courseData.isFree || false);
+
+          // Fetch last accessed lesson for continue learning
+          try {
+            const lastLessonResponse = await fetch(
+              `/api/user-progress/last-lesson?course_slug=${courseParams.slug}`
+            );
+            if (lastLessonResponse.ok) {
+              const lastLessonData = await lastLessonResponse.json();
+              setLastLesson(lastLessonData.lastLesson);
+            }
+          } catch (error) {
+            console.error("Error fetching last lesson:", error);
+            // Continue without last lesson data
+          }
         }
       } catch (err) {
         console.error("Error loading course:", err);
@@ -657,7 +692,11 @@ export function CoursePageClient({
               ) : (
                 <Link
                   href={`/courses/${courseParams?.slug}/lesson/${
-                    lessons[0]?.slug || "introduction"
+                    lastLesson
+                      ? `lesson-${lastLesson.lesson_order}-${lastLesson.slug}`
+                      : lessons[0]
+                      ? `lesson-${lessons[0].order}-${lessons[0].slug}`
+                      : "introduction"
                   }`}
                 >
                   <Button className="bg-[#e27447] hover:bg-[#d1653a]">

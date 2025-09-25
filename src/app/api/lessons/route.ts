@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
 
     let query = supabase
-      .from("lessons")
+      .from("courses_lessons")
       .select("*")
       .order("lesson_order", { ascending: true });
 
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
     }
 
     const { data: lesson, error } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .insert(validatedData)
       .select("*")
       .single();
@@ -194,7 +194,7 @@ export async function PUT(request: Request) {
     const supabase = await createClient();
 
     const { data: lesson, error } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .update(validatedData)
       .eq("id", id)
       .select("*")
@@ -242,13 +242,16 @@ export async function DELETE(request: Request) {
 
     // Get lesson to find course_id
     const { data: lesson } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .select("course_id")
       .eq("id", id)
       .single();
 
     // Delete the lesson
-    const { error } = await supabase.from("lessons").delete().eq("id", id);
+    const { error } = await supabase
+      .from("courses_lessons")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

@@ -27,10 +27,21 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
+    // Handle slug mismatch - strip lesson prefix if present
+    let actualLessonSlug = lessonSlug;
+    if (lessonSlug.startsWith("lesson-")) {
+      // Extract the actual slug after "lesson-X-" prefix
+      const parts = lessonSlug.split("-");
+      if (parts.length >= 3) {
+        actualLessonSlug = parts.slice(2).join("-");
+      }
+    }
+
     // Fetch full lesson content
     const { data: lesson, error } = await supabase
-      .from("lessons")
-      .select(`
+      .from("courses_lessons")
+      .select(
+        `
         id,
         title,
         slug,
@@ -44,8 +55,9 @@ export async function GET(request: Request) {
         key_points,
         notes,
         course_id
-      `)
-      .eq("slug", lessonSlug)
+      `
+      )
+      .eq("slug", actualLessonSlug)
       .eq("course_id", course.id)
       .single();
 
@@ -61,27 +73,30 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      lesson: {
-        id: lesson.id,
-        title: lesson.title,
-        slug: lesson.slug,
-        lesson_order: lesson.lesson_order,
-        is_preview: lesson.is_preview,
-        content_html: lesson.content_html,
-        content: lesson.content,
-        video_url: lesson.video_url,
-        video_thumbnail: lesson.video_thumbnail,
-        pdf_url: lesson.pdf_url,
-        key_points: lesson.key_points,
-        notes: lesson.notes,
-        course_id: lesson.course_id
+    return NextResponse.json(
+      {
+        lesson: {
+          id: lesson.id,
+          title: lesson.title,
+          slug: lesson.slug,
+          lesson_order: lesson.lesson_order,
+          is_preview: lesson.is_preview,
+          content_html: lesson.content_html,
+          content: lesson.content,
+          video_url: lesson.video_url,
+          video_thumbnail: lesson.video_thumbnail,
+          pdf_url: lesson.pdf_url,
+          key_points: lesson.key_points,
+          notes: lesson.notes,
+          course_id: lesson.course_id,
+        },
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, stale-while-revalidate=120", // 1min cache, 2min stale
+        },
       }
-    }, {
-      headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=120', // 1min cache, 2min stale
-      }
-    });
+    );
   } catch (error) {
     console.error("Error in lesson content API:", error);
     return NextResponse.json(

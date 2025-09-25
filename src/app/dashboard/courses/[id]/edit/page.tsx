@@ -66,7 +66,7 @@ export default function CourseBuilder({
 
       // Load lessons
       const { data: lessonsData, error: lessonsError } = await supabase
-        .from("lessons")
+        .from("courses_lessons")
         .select("*")
         .eq("course_id", resolvedParams.id)
         .order("lesson_order");
@@ -171,7 +171,7 @@ export default function CourseBuilder({
   const updateLesson = async (lessonId: string, updates: Partial<Lesson>) => {
     try {
       const { error } = await supabase
-        .from("lessons")
+        .from("courses_lessons")
         .update(updates)
         .eq("id", lessonId);
 

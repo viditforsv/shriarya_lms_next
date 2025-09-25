@@ -279,9 +279,9 @@ export async function DELETE(request: Request) {
     }
     console.log("✅ Deleted enrollments");
 
-    // 3. Get all lessons for this course to delete their resources and sections
+    // 3. Get all lessons for this course to delete them
     const { data: lessons, error: lessonsFetchError } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .select("id")
       .eq("course_id", id);
 
@@ -292,43 +292,9 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // 4. Delete resources for each lesson
-    if (lessons && lessons.length > 0) {
-      const lessonIds = lessons.map((lesson) => lesson.id);
-
-      const { error: resourcesError } = await supabase
-        .from("resources")
-        .delete()
-        .in("lesson_id", lessonIds);
-
-      if (resourcesError) {
-        return NextResponse.json(
-          { error: `Failed to delete resources: ${resourcesError.message}` },
-          { status: 500 }
-        );
-      }
-      console.log("✅ Deleted resources");
-
-      // 5. Delete lesson sections
-      const { error: sectionsError } = await supabase
-        .from("lesson_sections")
-        .delete()
-        .in("lesson_id", lessonIds);
-
-      if (sectionsError) {
-        return NextResponse.json(
-          {
-            error: `Failed to delete lesson sections: ${sectionsError.message}`,
-          },
-          { status: 500 }
-        );
-      }
-      console.log("✅ Deleted lesson sections");
-    }
-
-    // 6. Delete lessons
+    // 4. Delete lessons
     const { error: lessonsError } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .delete()
       .eq("course_id", id);
 
@@ -340,7 +306,7 @@ export async function DELETE(request: Request) {
     }
     console.log("✅ Deleted lessons");
 
-    // 7. Finally delete the course
+    // 5. Finally delete the course
     const { error: courseError } = await supabase
       .from("courses")
       .delete()
@@ -358,8 +324,6 @@ export async function DELETE(request: Request) {
       message: "Course and all related data deleted successfully",
       deletedItems: {
         enrollments: true,
-        resources: lessons?.length || 0,
-        lessonSections: true,
         lessons: lessons?.length || 0,
         course: true,
       },

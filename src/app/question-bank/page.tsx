@@ -104,13 +104,15 @@ export default function QuestionBankPage() {
 
   // Simple filters state
   const [simpleFilters, setSimpleFilters] = useState({
-    difficulty: "any",
     boards: "any",
     course_types: "any",
     levels: "any",
+    subject: "any",
+    topic: "",
+    tags: "",
+    difficulty: "any",
     question_type: "any",
     is_pyq: "any",
-    subject: "any",
     qa_status: "any",
     priority_level: "any",
     is_flagged: "any",
@@ -337,35 +339,7 @@ export default function QuestionBankPage() {
                 Quick Filters
               </h3>
 
-              {/* Difficulty */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Difficulty</Label>
-                <Select
-                  value={simpleFilters.difficulty}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("difficulty", value)
-                  }
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any difficulty</SelectItem>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="6">6</SelectItem>
-                    <SelectItem value="7">7</SelectItem>
-                    <SelectItem value="8">8</SelectItem>
-                    <SelectItem value="9">9</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Boards */}
+              {/* 1. Board */}
               <div className="mb-3">
                 <Label className="text-xs text-gray-600">Board</Label>
                 <Select
@@ -390,7 +364,7 @@ export default function QuestionBankPage() {
                 </Select>
               </div>
 
-              {/* Course Types */}
+              {/* 2. Course Type */}
               <div className="mb-3">
                 <Label className="text-xs text-gray-600">Course Type</Label>
                 <Select
@@ -410,7 +384,7 @@ export default function QuestionBankPage() {
                 </Select>
               </div>
 
-              {/* Levels */}
+              {/* 3. Level */}
               <div className="mb-3">
                 <Label className="text-xs text-gray-600">Level</Label>
                 <Select
@@ -426,6 +400,92 @@ export default function QuestionBankPage() {
                     <SelectItem value="any">Any level</SelectItem>
                     <SelectItem value="SL">SL</SelectItem>
                     <SelectItem value="HL">HL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 4. Section */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Section</Label>
+                <Select
+                  value={simpleFilters.subject}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("subject", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any section" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any section</SelectItem>
+                    <SelectItem value="mathematics">Mathematics</SelectItem>
+                    <SelectItem value="physics">Physics</SelectItem>
+                    <SelectItem value="chemistry">Chemistry</SelectItem>
+                    <SelectItem value="biology">Biology</SelectItem>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="history">History</SelectItem>
+                    <SelectItem value="geography">Geography</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 5. Topic */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Topic</Label>
+                <Input
+                  placeholder="Enter topic..."
+                  value={simpleFilters.topic || ""}
+                  onChange={(e) =>
+                    handleSimpleFilterChange("topic", e.target.value)
+                  }
+                  className="h-8 rounded-sm"
+                />
+              </div>
+
+              {/* 6. Tags */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Tags</Label>
+                <Input
+                  placeholder="Enter tags (comma-separated)..."
+                  value={simpleFilters.tags || ""}
+                  onChange={(e) =>
+                    handleSimpleFilterChange("tags", e.target.value)
+                  }
+                  className="h-8 rounded-sm"
+                />
+              </div>
+
+              {/* Other Filters */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <h4 className="text-xs font-medium text-gray-600 mb-3">
+                  Other Filters
+                </h4>
+              </div>
+
+              {/* Difficulty */}
+              <div className="mb-3">
+                <Label className="text-xs text-gray-600">Difficulty</Label>
+                <Select
+                  value={simpleFilters.difficulty}
+                  onValueChange={(value) =>
+                    handleSimpleFilterChange("difficulty", value)
+                  }
+                >
+                  <SelectTrigger className="h-8 rounded-sm">
+                    <SelectValue placeholder="Any difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any difficulty</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="6">6</SelectItem>
+                    <SelectItem value="7">7</SelectItem>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="9">9</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

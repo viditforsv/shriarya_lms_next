@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 
     // Fetch only navigation data (no heavy content)
     const { data: lessons, error } = await supabase
-      .from("lessons")
+      .from("courses_lessons")
       .select(
         `
         id,

@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const board = searchParams.get("board") || "";
     const grade = searchParams.get("grade") || "";
     const topic = searchParams.get("topic") || "";
+    const tags = searchParams.get("tags") || "";
     const is_pyq = searchParams.get("is_pyq") || "";
     const qa_status = searchParams.get("qa_status") || "";
     const pyq_year = searchParams.get("pyq_year") || "";
@@ -79,6 +80,16 @@ export async function GET(request: NextRequest) {
     if (topic) {
       query = query.ilike("topic", `%${topic}%`);
     }
+    if (tags) {
+      // Split tags by comma and search for any matching tag
+      const tagArray = tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag);
+      if (tagArray.length > 0) {
+        query = query.overlaps("tags", tagArray);
+      }
+    }
     if (is_pyq) {
       query = query.eq("is_pyq", is_pyq === "true");
     }
@@ -88,41 +99,21 @@ export async function GET(request: NextRequest) {
       console.log("Applying QA status filter:", qa_status);
 
       if (qa_status === "pending") {
-        // For pending, get questions that either have pending status OR no QA record
-        // Use a more efficient approach by limiting the dataset first
+        // For pending, use a simpler approach - just get questions with pending status
+        // This avoids the complexity of finding questions without QA records
         const { data: pendingQA } = await supabase
           .from("qa_questions")
           .select("question_id")
           .eq("qa_status", "pending")
-          .limit(500); // Limit to prevent URL overflow
+          .limit(100); // Smaller limit to prevent URL overflow
 
         const pendingIds = pendingQA?.map((qa) => qa.question_id) || [];
-
-        // Get questions without QA records (limit to prevent overflow)
-        const { data: questionsWithoutQA } = await supabase
-          .from("question_bank")
-          .select("id")
-          .eq("is_active", true)
-          .limit(500);
-
-        const { data: allQA } = await supabase
-          .from("qa_questions")
-          .select("question_id")
-          .limit(1000);
-
-        const allQAIds = new Set(allQA?.map((qa) => qa.question_id) || []);
-        const questionsWithoutQAIds =
-          questionsWithoutQA
-            ?.filter((q) => !allQAIds.has(q.id))
-            .map((q) => q.id) || [];
-
-        const qaFilteredQuestionIds = [...pendingIds, ...questionsWithoutQAIds];
         console.log(
-          `Found ${qaFilteredQuestionIds.length} pending questions (${pendingIds.length} with pending status, ${questionsWithoutQAIds.length} without QA records)`
+          `Found ${pendingIds.length} questions with pending QA status`
         );
 
         // If no questions match, return empty results
-        if (qaFilteredQuestionIds.length === 0) {
+        if (pendingIds.length === 0) {
           return NextResponse.json({
             questions: [],
             total: 0,
@@ -134,7 +125,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Apply the QA filter to the main query
-        query = query.in("id", qaFilteredQuestionIds);
+        query = query.in("id", pendingIds);
       } else {
         // For other QA statuses, get the question IDs first (with limit)
         const { data: qaData } = await supabase

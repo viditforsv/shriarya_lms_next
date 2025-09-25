@@ -224,6 +224,12 @@ export default function SiteAdministrationPage() {
           icon: Settings,
           description: "Platform maintenance controls",
         },
+        {
+          name: "Math Renderer Training",
+          href: "/math-test",
+          icon: FileText,
+          description: "Test and train math content rendering",
+        },
       ],
     },
   ];

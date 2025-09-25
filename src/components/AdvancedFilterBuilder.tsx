@@ -288,7 +288,7 @@ export default function AdvancedFilterBuilder({
               Create complex filter conditions with logical operators
             </CardDescription>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button variant="outline" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -389,7 +389,7 @@ export default function AdvancedFilterBuilder({
                       </div>
 
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => removeCondition(index)}
                         className="text-red-600 hover:text-red-700"

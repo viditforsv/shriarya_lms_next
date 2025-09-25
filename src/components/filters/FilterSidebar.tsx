@@ -176,7 +176,8 @@ export default function FilterSidebar({
                         variant="secondary"
                         className="flex items-center gap-1 w-fit"
                       >
-                        {condition.field} {operatorInfo[condition.operator]}{" "}
+                        {condition.field}{" "}
+                        {(operatorInfo as any)[condition.operator]}{" "}
                         {condition.value}
                         <X
                           className="w-3 h-3 cursor-pointer hover:text-red-600"

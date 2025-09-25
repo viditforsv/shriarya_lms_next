@@ -348,6 +348,14 @@ export function CoursePageClient({
         );
         console.log("Response status:", response.status);
 
+        if (!response.ok) {
+          console.error(
+            "API response not OK:",
+            response.status,
+            response.statusText
+          );
+        }
+
         if (response.ok) {
           const data = await response.json();
           console.log("Course data received:", data);
@@ -406,9 +414,20 @@ export function CoursePageClient({
           }
         } else {
           // Fallback to old system
+          console.log(
+            "API failed, trying fallback system for:",
+            courseParams.slug
+          );
           const courseData = getCourseBySlug(courseParams.slug);
           if (!courseData) {
-            throw new Error("Course not found");
+            console.error(
+              "Course not found in both API and fallback system:",
+              courseParams.slug
+            );
+            setError(
+              `Course "${courseParams.slug}" not found. Please check the URL or contact support.`
+            );
+            return;
           }
 
           // For IBDP courses, add default template data

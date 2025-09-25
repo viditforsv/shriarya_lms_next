@@ -8,19 +8,10 @@ const CourseSchema = z.object({
   description: z.string().optional(),
   is_free: z.boolean().default(false),
   slug: z.string().min(1, "Slug is required"),
-  curriculum: z.enum(["CBSE", "ICSE", "IBDP", "IGCSE"]).optional(),
-  subject: z.string().optional(),
-  grade: z.string().optional(),
-  level: z.string().optional(),
+  template_id: z.string().optional(),
+  template_data: z.any().optional(),
   price: z.number().optional(),
   status: z.enum(["published", "draft", "archived"]).default("draft"),
-  duration: z.string().optional(),
-  lessons: z.number().default(0),
-  thumbnail: z.string().optional(),
-  features: z.array(z.string()).default([]),
-  prerequisites: z.array(z.string()).default([]),
-  learningOutcomes: z.array(z.string()).default([]),
-  tags: z.array(z.string()).default([]),
 });
 
 // Unused schemas removed to fix linting errors

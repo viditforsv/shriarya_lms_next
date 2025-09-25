@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
-import QuestionBankQueryBuilder from "@/components/QuestionBankQueryBuilder";
+// import QuestionBankQueryBuilder from "@/components/QuestionBankQueryBuilder";
 
 interface Question {
   id: string;
@@ -218,6 +218,8 @@ export default function QuestionBankPage() {
       question_type: "any",
       is_pyq: "any",
       subject: "any",
+      topic: "",
+      tags: "",
       qa_status: "any",
       priority_level: "any",
       is_flagged: "any",
@@ -625,13 +627,16 @@ export default function QuestionBankPage() {
                   <DialogHeader>
                     <DialogTitle>Advanced Query Builder</DialogTitle>
                   </DialogHeader>
-                  <QuestionBankQueryBuilder
+                  {/* <QuestionBankQueryBuilder
                     onQueryChange={(query) => {
                       setAdvancedQuery(query);
                       setPagination((prev) => ({ ...prev, page: 1 }));
                     }}
                     initialQuery={advancedQuery}
-                  />
+                  /> */}
+                  <div className="p-8 text-center text-muted-foreground">
+                    Query Builder temporarily disabled due to build issues
+                  </div>
                 </DialogContent>
               </Dialog>
             </div>

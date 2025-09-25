@@ -307,7 +307,8 @@ export function FilterPluginUI({
                         variant="secondary"
                         className="flex items-center gap-1"
                       >
-                        {condition.field} {operatorInfo[condition.operator]}{" "}
+                        {condition.field}{" "}
+                        {(operatorInfo as any)[condition.operator]}{" "}
                         {condition.value}
                         <X
                           className="w-3 h-3 cursor-pointer hover:text-red-600"
@@ -383,6 +384,7 @@ export function createFilterConfig(
     showLegacyFilters: true,
     showActiveFilters: true,
     enablePreview: false,
+    apiEndpoint: config.apiEndpoint || "/api/question-bank",
     buildRequestParams: (advancedFilters, legacyFilters) => ({
       ...(advancedFilters.length > 0 && {
         advanced_filters: JSON.stringify(advancedFilters),

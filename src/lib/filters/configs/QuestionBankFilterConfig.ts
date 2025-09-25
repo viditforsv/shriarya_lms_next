@@ -20,25 +20,25 @@ export const questionBankFilterConfig: FilterPluginConfig = {
     {
       value: "boards",
       label: "Boards",
-      type: "multiselect",
+      type: "select",
       options: ["IBDP", "CBSE", "ICSE", "IGCSE", "A-Levels", "SAT", "ACT"],
     },
     {
       value: "course_types",
       label: "Course Types",
-      type: "multiselect",
+      type: "select",
       options: ["AA", "AI"],
     },
     {
       value: "levels",
       label: "Levels",
-      type: "multiselect",
+      type: "select",
       options: ["SL", "HL"],
     },
     {
       value: "relevance",
       label: "Relevance",
-      type: "multiselect",
+      type: "select",
       options: [
         "Practice",
         "Exam Style",

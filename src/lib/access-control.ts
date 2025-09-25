@@ -79,6 +79,11 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   },
   { path: "/admin/users", accessLevel: "admin", requiredRole: "admin" },
   { path: "/admin/courses", accessLevel: "admin", requiredRole: "admin" },
+  {
+    path: "/admin/course-templates",
+    accessLevel: "admin",
+    requiredRole: "admin",
+  },
   { path: "/admin/analytics", accessLevel: "admin", requiredRole: "admin" },
   { path: "/courses/manage", accessLevel: "admin", requiredRole: "admin" },
   { path: "/admin-panel", accessLevel: "admin", requiredRole: "admin" },

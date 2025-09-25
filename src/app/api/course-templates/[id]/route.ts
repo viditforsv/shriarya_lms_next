@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 // GET /api/course-templates/[id] - Get specific course template
 export async function GET(
@@ -7,28 +7,34 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
-    const supabase = await createClient()
-    
+    const { id } = await params;
+    const supabase = await createClient();
+
     const { data: template, error } = await supabase
-      .from('course_templates')
-      .select('*')
-      .eq('id', id)
-      .single()
-    
+      .from("courses_templates")
+      .select("*")
+      .eq("id", id)
+      .single();
+
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    
+
     if (!template) {
-      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: "Template not found" },
+        { status: 404 }
+      );
     }
-    
-    return NextResponse.json({ template })
+
+    return NextResponse.json({ template });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch template' },
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to fetch template",
+      },
       { status: 500 }
-    )
+    );
   }
 }

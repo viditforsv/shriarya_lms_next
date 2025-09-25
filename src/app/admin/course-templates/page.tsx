@@ -1,63 +1,84 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye,
-  BookOpen,
-  Settings
-} from 'lucide-react'
-import { CourseTemplate } from '@/types/course-templates'
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Plus, Edit, Trash2, Eye, BookOpen, Settings } from "lucide-react";
+import { CourseTemplate } from "@/types/course-templates";
 
 export default function CourseTemplatesPage() {
-  const [templates, setTemplates] = useState<CourseTemplate[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [templates, setTemplates] = useState<CourseTemplate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTemplates()
-  }, [])
+    fetchTemplates();
+  }, []);
 
   const fetchTemplates = async () => {
     try {
-      setIsLoading(true)
-      const response = await fetch('/api/course-templates')
+      setIsLoading(true);
+      console.log("Fetching templates...");
+      const response = await fetch("/api/course-templates");
+      console.log("Response status:", response.status);
+
       if (response.ok) {
-        const data = await response.json()
-        setTemplates(data.templates || [])
+        const data = await response.json();
+        console.log("Templates data:", data);
+        setTemplates(data.templates || []);
       } else {
-        setError('Failed to fetch templates')
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        setError(`Failed to fetch templates: ${response.status}`);
       }
-    } catch {
-      setError('Error fetching templates')
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("Error fetching templates");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+
+  const handleCreateTemplate = () => {
+    // TODO: Implement create template modal/page
+    alert("Create template functionality coming soon!");
+  };
+
+  const handleViewTemplate = (templateId: string) => {
+    // TODO: Implement view template modal/page
+    alert(`View template ${templateId} functionality coming soon!`);
+  };
+
+  const handleEditTemplate = (templateId: string) => {
+    // TODO: Implement edit template modal/page
+    alert(`Edit template ${templateId} functionality coming soon!`);
+  };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    if (!confirm('Are you sure you want to delete this template?')) return
+    if (!confirm("Are you sure you want to delete this template?")) return;
 
     try {
       const response = await fetch(`/api/course-templates?id=${templateId}`, {
-        method: 'DELETE'
-      })
-      
+        method: "DELETE",
+      });
+
       if (response.ok) {
-        setTemplates(templates.filter(t => t.id !== templateId))
+        setTemplates(templates.filter((t) => t.id !== templateId));
       } else {
-        const error = await response.json()
-        alert(error.error || 'Failed to delete template')
+        const error = await response.json();
+        alert(error.error || "Failed to delete template");
       }
     } catch {
-      alert('Error deleting template')
+      alert("Error deleting template");
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -67,7 +88,7 @@ export default function CourseTemplatesPage() {
           <p className="text-muted-foreground">Loading templates...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -76,10 +97,20 @@ export default function CourseTemplatesPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Error</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <Button onClick={fetchTemplates}>Try Again</Button>
+          <div className="space-y-2">
+            <Button onClick={fetchTemplates}>Try Again</Button>
+            <div className="text-sm text-muted-foreground">
+              <p>If you're seeing this page, you may need to:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Log in with an admin account</li>
+                <li>Check your user permissions</li>
+                <li>Contact your administrator</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -96,7 +127,10 @@ export default function CourseTemplatesPage() {
                 Manage course templates for dynamic course creation
               </p>
             </div>
-            <Button className="bg-[#e27447] hover:bg-[#d1653a]">
+            <Button
+              className="bg-[#e27447] hover:bg-[#d1653a]"
+              onClick={handleCreateTemplate}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Create Template
             </Button>
@@ -112,7 +146,10 @@ export default function CourseTemplatesPage() {
               <p className="text-muted-foreground mb-4">
                 Create your first course template to get started
               </p>
-              <Button className="bg-[#e27447] hover:bg-[#d1653a]">
+              <Button
+                className="bg-[#e27447] hover:bg-[#d1653a]"
+                onClick={handleCreateTemplate}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Template
               </Button>
@@ -121,18 +158,23 @@ export default function CourseTemplatesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {templates.map((template) => (
-              <Card key={template.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={template.id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <CardTitle className="text-lg line-clamp-2">
                       {template.name}
                     </CardTitle>
-                    <Badge variant={template.is_active ? "default" : "secondary"}>
-                      {template.is_active ? 'Active' : 'Inactive'}
+                    <Badge
+                      variant={template.is_active ? "default" : "secondary"}
+                    >
+                      {template.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-3">
-                    {template.description || 'No description available'}
+                    {template.description || "No description available"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -153,11 +195,15 @@ export default function CourseTemplatesPage() {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="text-muted-foreground">Fields:</span>
-                        <span className="font-medium ml-1">{template.fields?.length || 0}</span>
+                        <span className="font-medium ml-1">
+                          {template.fields?.length || 0}
+                        </span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Sections:</span>
-                        <span className="font-medium ml-1">{template.structure?.sections?.length || 0}</span>
+                        <span className="font-medium ml-1">
+                          {template.structure?.sections?.length || 0}
+                        </span>
                       </div>
                     </div>
 
@@ -178,16 +224,26 @@ export default function CourseTemplatesPage() {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleViewTemplate(template.id)}
+                      >
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleEditTemplate(template.id)}
+                      >
                         <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleDeleteTemplate(template.id)}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -203,5 +259,5 @@ export default function CourseTemplatesPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

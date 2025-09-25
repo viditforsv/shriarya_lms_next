@@ -77,7 +77,7 @@ export default function LegacyFilterForm({
               />
             </SelectTrigger>
             <SelectContent>
-              {field.options?.map((option) => (
+              {field.options?.map((option: any) => (
                 <SelectItem key={option} value={option}>
                   {option}
                 </SelectItem>

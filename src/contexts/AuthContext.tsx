@@ -252,6 +252,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (error) {
           console.error("Error fetching profile:", error);
 
+          // Handle RLS policy errors (empty error object)
+          if (!error.code && !error.message) {
+            console.log(
+              "RLS policy error detected, creating fallback profile for user:",
+              userId
+            );
+            const fallbackProfile = await createFallbackProfile(userId);
+            if (fallbackProfile) {
+              setProfileCache((prev) =>
+                new Map(prev).set(userId, fallbackProfile)
+              );
+            }
+            return fallbackProfile;
+          }
+
           // If profile doesn't exist, create it
           if (error.code === "PGRST116") {
             console.log(

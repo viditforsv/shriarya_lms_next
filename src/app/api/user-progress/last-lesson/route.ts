@@ -69,17 +69,17 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!lastProgress) {
+    if (!lastProgress || !lastProgress.courses_lessons) {
       // No progress found, return null (will use first lesson)
       return NextResponse.json({ lastLesson: null });
     }
 
     return NextResponse.json({
       lastLesson: {
-        id: lastProgress.courses_lessons.id,
-        title: lastProgress.courses_lessons.title,
-        slug: lastProgress.courses_lessons.slug,
-        lesson_order: lastProgress.courses_lessons.lesson_order,
+        id: (lastProgress.courses_lessons as any).id,
+        title: (lastProgress.courses_lessons as any).title,
+        slug: (lastProgress.courses_lessons as any).slug,
+        lesson_order: (lastProgress.courses_lessons as any).lesson_order,
         last_accessed_at: lastProgress.last_accessed_at,
       },
     });

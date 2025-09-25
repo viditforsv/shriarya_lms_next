@@ -18,6 +18,7 @@ export {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "./collapsible";
+export { Alert, AlertDescription } from "./alert";
 
 // Future UI components can be added here:
 // export { Select } from './select'

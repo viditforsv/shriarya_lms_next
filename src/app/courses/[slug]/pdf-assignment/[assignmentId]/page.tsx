@@ -2,10 +2,10 @@ import { SeparatePDFLessonPage } from "@/components/SeparatePDFLessonPage";
 import { notFound } from "next/navigation";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
     assignmentId: string;
-  };
+  }>;
 }
 
 export default async function PDFAssignmentPage({ params }: PageProps) {

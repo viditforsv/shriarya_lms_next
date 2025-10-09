@@ -1823,23 +1823,309 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
     },
   ],
   "cbse-mathematics-class-9": [
+    // Number Systems
     {
-      id: "number-systems",
-      slug: "number-systems",
-      title: "Number Systems",
+      id: "real-numbers",
+      slug: "real-numbers",
+      title: "Real Numbers",
       description:
-        "Introduction to different types of numbers and their properties.",
+        "Understanding real numbers, irrational numbers, and their properties.",
       duration: "40 minutes",
       type: "video",
       isPreview: true,
       order: 1,
       resources: [
         {
-          id: "number-systems-video",
+          id: "real-numbers-video",
           type: "video",
-          url: "/videos/number-systems.mp4",
-          title: "Number Systems Video",
+          url: "/videos/real-numbers.mp4",
+          title: "Real Numbers Video",
           duration: 1600,
+        },
+      ],
+    },
+    // Polynomials
+    {
+      id: "polynomials-intro",
+      slug: "polynomials-intro",
+      title: "Polynomials in One Variable",
+      description:
+        "Introduction to polynomials, their types, and basic operations.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 2,
+      resources: [
+        {
+          id: "polynomials-video",
+          type: "video",
+          url: "/videos/polynomials.mp4",
+          title: "Polynomials Video",
+          duration: 1800,
+        },
+      ],
+    },
+    // Coordinate Geometry
+    {
+      id: "cartesian-system",
+      slug: "cartesian-system",
+      title: "Cartesian System",
+      description: "Understanding coordinate plane, axes, and plotting points.",
+      duration: "35 minutes",
+      type: "video",
+      isPreview: false,
+      order: 3,
+      resources: [
+        {
+          id: "cartesian-system-video",
+          type: "video",
+          url: "/videos/cartesian-system.mp4",
+          title: "Cartesian System Video",
+          duration: 1400,
+        },
+      ],
+    },
+    // Linear Equations
+    {
+      id: "linear-equations-intro",
+      slug: "linear-equations-intro",
+      title: "Linear Equations in Two Variables",
+      description:
+        "Understanding linear equations and their graphical representation.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 4,
+      resources: [
+        {
+          id: "linear-equations-video",
+          type: "video",
+          url: "/videos/linear-equations.mp4",
+          title: "Linear Equations Video",
+          duration: 2000,
+        },
+      ],
+    },
+    // Euclid's Geometry
+    {
+      id: "euclid-definitions",
+      slug: "euclid-definitions",
+      title: "Euclid's Definitions, Axioms and Postulates",
+      description:
+        "Introduction to Euclidean geometry and its fundamental concepts.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 5,
+      resources: [
+        {
+          id: "euclid-geometry-video",
+          type: "video",
+          url: "/videos/euclid-geometry.mp4",
+          title: "Euclid's Geometry Video",
+          duration: 1800,
+        },
+      ],
+    },
+    // Lines and Angles
+    {
+      id: "lines-angles-basic",
+      slug: "lines-angles-basic",
+      title: "Basic Terms and Definitions",
+      description: "Understanding types of angles and their properties.",
+      duration: "40 minutes",
+      type: "video",
+      isPreview: false,
+      order: 6,
+      resources: [
+        {
+          id: "lines-angles-video",
+          type: "video",
+          url: "/videos/lines-angles.mp4",
+          title: "Lines and Angles Video",
+          duration: 1600,
+        },
+      ],
+    },
+    // Triangles
+    {
+      id: "triangles-congruence",
+      slug: "triangles-congruence",
+      title: "Congruence of Triangles",
+      description: "Understanding triangle congruence and its criteria.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 7,
+      resources: [
+        {
+          id: "triangles-video",
+          type: "video",
+          url: "/videos/triangles.mp4",
+          title: "Triangles Video",
+          duration: 2000,
+        },
+      ],
+    },
+    // Quadrilaterals
+    {
+      id: "quadrilaterals-properties",
+      slug: "quadrilaterals-properties",
+      title: "Properties of Quadrilaterals",
+      description:
+        "Understanding different types of quadrilaterals and their properties.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 8,
+      resources: [
+        {
+          id: "quadrilaterals-video",
+          type: "video",
+          url: "/videos/quadrilaterals.mp4",
+          title: "Quadrilaterals Video",
+          duration: 1800,
+        },
+      ],
+    },
+    // Areas of Parallelograms and Triangles
+    {
+      id: "areas-basic",
+      slug: "areas-basic",
+      title: "Areas of Parallelograms and Triangles",
+      description: "Calculating areas of parallelograms and triangles.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 9,
+      resources: [
+        {
+          id: "areas-video",
+          type: "video",
+          url: "/videos/areas.mp4",
+          title: "Areas Video",
+          duration: 2000,
+        },
+      ],
+    },
+    // Circles
+    {
+      id: "circles-basic",
+      slug: "circles-basic",
+      title: "Circles and its Related Terms",
+      description:
+        "Understanding circles, chords, and related geometric properties.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 10,
+      resources: [
+        {
+          id: "circles-video",
+          type: "video",
+          url: "/videos/circles.mp4",
+          title: "Circles Video",
+          duration: 1800,
+        },
+      ],
+    },
+    // Constructions
+    {
+      id: "basic-constructions",
+      slug: "basic-constructions",
+      title: "Basic Constructions",
+      description: "Learning geometric constructions using compass and ruler.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 11,
+      resources: [
+        {
+          id: "constructions-video",
+          type: "video",
+          url: "/videos/constructions.mp4",
+          title: "Constructions Video",
+          duration: 2000,
+        },
+      ],
+    },
+    // Heron's Formula
+    {
+      id: "heron-formula-area",
+      slug: "heron-formula-area",
+      title: "Area of Triangle using Heron's Formula",
+      description: "Calculating triangle area using Heron's formula.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 12,
+      resources: [
+        {
+          id: "heron-formula-video",
+          type: "video",
+          url: "/videos/heron-formula.mp4",
+          title: "Heron's Formula Video",
+          duration: 1800,
+        },
+      ],
+    },
+    // Surface Areas and Volumes
+    {
+      id: "surface-areas-volumes-basic",
+      slug: "surface-areas-volumes-basic",
+      title: "Surface Areas and Volumes",
+      description: "Calculating surface areas and volumes of 3D shapes.",
+      duration: "60 minutes",
+      type: "video",
+      isPreview: false,
+      order: 13,
+      resources: [
+        {
+          id: "surface-areas-volumes-video",
+          type: "video",
+          url: "/videos/surface-areas-volumes.mp4",
+          title: "Surface Areas and Volumes Video",
+          duration: 2400,
+        },
+      ],
+    },
+    // Statistics
+    {
+      id: "statistics-basic",
+      slug: "statistics-basic",
+      title: "Collection and Presentation of Data",
+      description: "Understanding data collection, presentation, and analysis.",
+      duration: "50 minutes",
+      type: "video",
+      isPreview: false,
+      order: 14,
+      resources: [
+        {
+          id: "statistics-video",
+          type: "video",
+          url: "/videos/statistics.mp4",
+          title: "Statistics Video",
+          duration: 2000,
+        },
+      ],
+    },
+    // Probability
+    {
+      id: "probability-basic",
+      slug: "probability-basic",
+      title: "Probability",
+      description: "Understanding probability concepts and applications.",
+      duration: "45 minutes",
+      type: "video",
+      isPreview: false,
+      order: 15,
+      resources: [
+        {
+          id: "probability-video",
+          type: "video",
+          url: "/videos/probability.mp4",
+          title: "Probability Video",
+          duration: 1800,
         },
       ],
     },
@@ -2909,6 +3195,76 @@ export const LESSON_DATABASE: Record<string, LessonConfig[]> = {
 
 // Syllabus to Lesson Mapping
 export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
+  // CBSE Class 9 Mathematics
+  "real-numbers": "real-numbers",
+  "polynomials-intro": "polynomials-intro",
+  "cartesian-system": "cartesian-system",
+  "linear-equations-intro": "linear-equations-intro",
+  "euclid-definitions": "euclid-definitions",
+  "lines-angles-basic": "lines-angles-basic",
+  "triangles-congruence": "triangles-congruence",
+  "quadrilaterals-properties": "quadrilaterals-properties",
+  "areas-basic": "areas-basic",
+  "circles-basic": "circles-basic",
+  "basic-constructions": "basic-constructions",
+  "heron-formula-area": "heron-formula-area",
+  "surface-areas-volumes-basic": "surface-areas-volumes-basic",
+  "statistics-basic": "statistics-basic",
+  "probability-basic": "probability-basic",
+
+  // CBSE Class 9 subsections mapping to main lessons
+  "irrational-numbers": "real-numbers",
+  "real-numbers-properties": "real-numbers",
+  "laws-exponents": "real-numbers",
+  "polynomials-definition": "polynomials-intro",
+  "zeros-polynomials": "polynomials-intro",
+  "remainder-theorem": "polynomials-intro",
+  "factor-theorem": "polynomials-intro",
+  "coordinate-plane": "cartesian-system",
+  "plotting-points": "cartesian-system",
+  "linear-equations-definition": "linear-equations-intro",
+  "graph-linear-equations": "linear-equations-intro",
+  "equations-parallel-perpendicular": "linear-equations-intro",
+  "euclid-axioms": "euclid-definitions",
+  "euclid-postulates": "euclid-definitions",
+  "equivalent-versions": "euclid-definitions",
+  "types-angles": "lines-angles-basic",
+  "parallel-lines-transversal": "lines-angles-basic",
+  "angle-sum-property": "lines-angles-basic",
+  "congruence-criteria": "triangles-congruence",
+  "properties-triangles": "triangles-congruence",
+  "inequalities-triangles": "triangles-congruence",
+  "angle-sum-property-quadrilateral": "quadrilaterals-properties",
+  "types-quadrilaterals": "quadrilaterals-properties",
+  "properties-parallelogram": "quadrilaterals-properties",
+  "area-parallelogram": "areas-basic",
+  "area-triangle": "areas-basic",
+  "figures-same-base-parallel": "areas-basic",
+  "circles-definitions": "circles-basic",
+  "angle-subtended-chord": "circles-basic",
+  "perpendicular-chord": "circles-basic",
+  "circle-through-three-points": "circles-basic",
+  "construction-angles": "basic-constructions",
+  "construction-triangles": "basic-constructions",
+  "construction-bisectors": "basic-constructions",
+  "heron-formula-derivation": "heron-formula-area",
+  "application-heron-formula": "heron-formula-area",
+  "surface-area-cuboid-cube": "surface-areas-volumes-basic",
+  "surface-area-right-circular-cylinder": "surface-areas-volumes-basic",
+  "surface-area-right-circular-cone": "surface-areas-volumes-basic",
+  "surface-area-sphere": "surface-areas-volumes-basic",
+  "volume-cuboid-cube": "surface-areas-volumes-basic",
+  "volume-right-circular-cylinder": "surface-areas-volumes-basic",
+  "volume-right-circular-cone": "surface-areas-volumes-basic",
+  "volume-sphere": "surface-areas-volumes-basic",
+  "collection-data": "statistics-basic",
+  "presentation-data": "statistics-basic",
+  "graphical-representation": "statistics-basic",
+  "measures-central-tendency": "statistics-basic",
+  "probability-definition": "probability-basic",
+  "probability-experimental": "probability-basic",
+  "probability-applications": "probability-basic",
+
   // IBDP Mathematics AA HL - Number and Algebra
   "arithmetic-sequences": "arithmetic-sequences",
   "geometric-sequences": "geometric-sequences",
@@ -2933,7 +3289,6 @@ export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
   "composite-functions": "composite-functions",
   "inverse-functions": "inverse-functions",
   "polynomial-properties": "polynomial-properties",
-  "factor-theorem": "factor-theorem",
   "exponential-models": "exponential-models",
 
   // IBDP Mathematics AA HL - Geometry and Trigonometry
@@ -2950,7 +3305,6 @@ export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
   "descriptive-statistics": "descriptive-statistics",
   "probability-distributions": "probability-distributions",
   "hypothesis-testing": "hypothesis-testing",
-  "measures-central-tendency": "measures-central-tendency",
   "measures-dispersion": "measures-dispersion",
   "normal-distribution": "normal-distribution",
   "conditional-probability": "conditional-probability",
@@ -3006,7 +3360,7 @@ export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
   "concepts-coordinate-geometry": "coordinate-intro",
   "distance-formula": "distance-formula",
   "section-formula": "coordinate-practice",
-  "area-triangle": "coordinate-practice",
+  "area-triangle-coordinate": "coordinate-practice",
 
   // Trigonometry subsections
   "introduction-trigonometry": "trigonometry-intro",
@@ -3026,7 +3380,7 @@ export const SYLLABUS_LESSON_MAPPING: Record<string, string> = {
   angles: "circles-practice",
 
   // Constructions subsections
-  "basic-constructions": "constructions-intro",
+  "basic-constructions-class10": "constructions-intro",
   "advanced-constructions": "constructions-practice",
 
   // Areas Related to Circles subsections

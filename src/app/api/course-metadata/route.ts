@@ -18,7 +18,8 @@ export async function GET(request: Request) {
     // Fetch only essential course metadata
     const { data: course, error } = await supabase
       .from("courses")
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
@@ -26,8 +27,10 @@ export async function GET(request: Request) {
         is_free,
         price,
         status,
-        template_data
-      `)
+        template_data,
+        template_id
+      `
+      )
       .eq("slug", courseSlug)
       .single();
 
@@ -43,22 +46,26 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      course: {
-        id: course.id,
-        title: course.title,
-        description: course.description,
-        slug: course.slug,
-        is_free: course.is_free,
-        price: course.price,
-        status: course.status,
-        template_data: course.template_data || {}
+    return NextResponse.json(
+      {
+        course: {
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          slug: course.slug,
+          is_free: course.is_free,
+          price: course.price,
+          status: course.status,
+          template_data: course.template_data || {},
+          template_id: course.template_id,
+        },
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=300, stale-while-revalidate=600", // 5min cache, 10min stale
+        },
       }
-    }, {
-      headers: {
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600', // 5min cache, 10min stale
-      }
-    });
+    );
   } catch (error) {
     console.error("Error in course metadata API:", error);
     return NextResponse.json(

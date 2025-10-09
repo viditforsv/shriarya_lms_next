@@ -28,7 +28,10 @@ import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { Chapter } from "@/lib/cbse-syllabus";
-import { CBSE_CLASS_10_MATHEMATICS_SYLLABUS } from "@/lib/cbse-syllabus";
+import {
+  CBSE_CLASS_10_MATHEMATICS_SYLLABUS,
+  CBSE_CLASS_9_MATHEMATICS_SYLLABUS,
+} from "@/lib/cbse-syllabus";
 import { syllabus as ibdpSyllabus } from "@/lib/courses/ibdp-mathematics-aa-hl/syllabus";
 
 export function CoursePageClient({
@@ -46,6 +49,9 @@ export function CoursePageClient({
   const getUnitsForCourse = () => {
     if (courseParams.slug === "cbse-mathematics-class-10") {
       return CBSE_CLASS_10_MATHEMATICS_SYLLABUS;
+    }
+    if (courseParams.slug === "cbse-mathematics-class-9") {
+      return CBSE_CLASS_9_MATHEMATICS_SYLLABUS;
     }
     if (isIBDPCourse) {
       return ibdpSyllabus;
@@ -186,9 +192,8 @@ export function CoursePageClient({
         );
 
         if (targetLesson) {
-          // Navigate to the actual lesson from database with prefixed slug
-          const prefixedSlug = `lesson-${targetLesson.order}-${targetLesson.slug}`;
-          window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
+          // Navigate to the actual lesson from database using its slug directly
+          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
           return;
         }
       }
@@ -203,9 +208,8 @@ export function CoursePageClient({
       );
 
       if (fallbackLesson) {
-        // Navigate with prefixed slug
-        const prefixedSlug = `lesson-${fallbackLesson.order}-${fallbackLesson.slug}`;
-        window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
+        // Navigate using the lesson slug directly
+        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
         return;
       }
 
@@ -213,6 +217,53 @@ export function CoursePageClient({
         "Could not find lesson for subsection:",
         firstSubsection.slug
       );
+      alert("Lesson not found. Please try again.");
+    } else if (courseParams.slug === "cbse-mathematics-class-9") {
+      // For CBSE Class 9, match by chapter name to lesson title
+      // The syllabus chapters map to actual lessons in database
+      const chapterNameToLessonMap: Record<string, string> = {
+        "real-numbers": "cbse9-number-systems",
+        "polynomials-intro": "cbse9-polynomials",
+        "cartesian-system": "cbse9-coordinate-geometry",
+        "linear-equations-intro": "cbse9-linear-equations-in-two-variables",
+        "euclid-definitions": "cbse9-introduction-to-euclids-geometry",
+        "lines-angles-basic": "cbse9-lines-and-angles",
+        "triangles-congruence": "cbse9-triangles",
+        "quadrilaterals-properties": "cbse9-quadrilaterals",
+        "areas-basic": "cbse9-quadrilaterals", // Areas chapter maps to quadrilaterals lessons
+        "circles-basic": "cbse9-circles",
+        "basic-constructions": "cbse9-triangles", // Constructions maps to triangles
+        "heron-formula-area": "cbse9-herons-formula",
+        "surface-areas-volumes-basic": "cbse9-surface-areas-and-volumes",
+        "statistics-basic": "cbse9-statistics",
+        "probability-basic": "cbse9-samples-tests",
+      };
+
+      const targetSlug = chapterNameToLessonMap[chapter.slug];
+
+      if (targetSlug) {
+        const targetLesson = lessons.find(
+          (lesson) => lesson.slug === targetSlug
+        );
+        if (targetLesson) {
+          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
+          return;
+        }
+      }
+
+      // Fallback: try to find by title matching
+      const fallbackLesson = lessons.find((lesson) =>
+        lesson.title
+          .toLowerCase()
+          .includes(chapter.title.toLowerCase().split(" ")[0])
+      );
+
+      if (fallbackLesson) {
+        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
+        return;
+      }
+
+      console.error("Could not find lesson for chapter:", chapter.slug);
       alert("Lesson not found. Please try again.");
     } else if (isIBDPCourse) {
       // Map IBDP subsection to lesson order based on IBDP syllabus structure
@@ -290,9 +341,8 @@ export function CoursePageClient({
         );
 
         if (targetLesson) {
-          // Navigate to the actual lesson from database with prefixed slug
-          const prefixedSlug = `lesson-${targetLesson.order}-${targetLesson.slug}`;
-          window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
+          // Navigate to the actual lesson from database using its slug directly
+          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
           return;
         }
       }
@@ -307,9 +357,8 @@ export function CoursePageClient({
       );
 
       if (fallbackLesson) {
-        // Navigate with prefixed slug
-        const prefixedSlug = `lesson-${fallbackLesson.order}-${fallbackLesson.slug}`;
-        window.location.href = `/courses/${courseParams.slug}/lesson/${prefixedSlug}`;
+        // Navigate using the lesson slug directly
+        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
         return;
       }
 
@@ -655,11 +704,21 @@ export function CoursePageClient({
                     .filter((tag) => {
                       // Filter out tags that are already shown as individual badges
                       const lowerTag = tag.toLowerCase();
+                      const unwantedTags = [
+                        "board preparation",
+                        "geometric constructions",
+                        "algebra",
+                        "geometry",
+                        "statistics",
+                        "probability",
+                      ];
+
                       return !(
                         lowerTag === course.curriculum?.toLowerCase() ||
                         lowerTag === course.subject?.toLowerCase() ||
                         lowerTag === course.grade?.toLowerCase() ||
-                        lowerTag === course.level?.toLowerCase()
+                        lowerTag === course.level?.toLowerCase() ||
+                        unwantedTags.includes(lowerTag)
                       );
                     })
                     .map((tag, index) => (
@@ -685,9 +744,9 @@ export function CoursePageClient({
                 <Link
                   href={`/courses/${courseParams?.slug}/lesson/${
                     lastLesson
-                      ? `lesson-${lastLesson.lesson_order}-${lastLesson.slug}`
+                      ? lastLesson.slug
                       : lessons[0]
-                      ? `lesson-${lessons[0].order}-${lessons[0].slug}`
+                      ? lessons[0].slug
                       : "introduction"
                   }`}
                 >
@@ -705,7 +764,7 @@ export function CoursePageClient({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="overview" className="w-full">
+            <Tabs defaultValue="content" className="w-full">
               <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1">
                 <TabsTrigger
                   value="overview"

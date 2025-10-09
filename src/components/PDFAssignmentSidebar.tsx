@@ -79,25 +79,34 @@ export function PDFAssignmentSidebar({
 
   // Map assignment to section and chapter based on CBSE Class 9 syllabus
   const getSectionAndChapter = (assignmentId: string) => {
-    const assignmentMap: Record<string, { section: string; chapter: string }> = {
-      "assignment-1": { section: "Unit 1", chapter: "Number Systems" },
-      "assignment-2": { section: "Unit 2", chapter: "Polynomials" },
-      "assignment-3": { section: "Unit 3", chapter: "Coordinate Geometry" },
-      "assignment-4": { section: "Unit 4", chapter: "Linear Equations" },
-      "assignment-5": { section: "Unit 5", chapter: "Euclid's Geometry" },
-      "assignment-6": { section: "Unit 6", chapter: "Lines and Angles" },
-      "assignment-7": { section: "Unit 7", chapter: "Triangles" },
-      "assignment-8": { section: "Unit 8", chapter: "Quadrilaterals" },
-      "assignment-9": { section: "Unit 9", chapter: "Areas" },
-      "assignment-10": { section: "Unit 10", chapter: "Circles" },
-      "assignment-11": { section: "Unit 11", chapter: "Constructions" },
-      "assignment-12": { section: "Unit 12", chapter: "Heron's Formula" },
-      "assignment-13": { section: "Unit 13", chapter: "Surface Areas" },
-      "assignment-14": { section: "Unit 14", chapter: "Statistics" },
-      "assignment-15": { section: "Unit 15", chapter: "Probability" },
-    };
-    
-    return assignmentMap[assignmentId] || { section: "General", chapter: "Assignment" };
+    const assignmentMap: Record<string, { section: string; chapter: string }> =
+      {
+        "assignment-1": { section: "Unit 1", chapter: "Number Systems" },
+        "assignment-2": { section: "Unit 2", chapter: "Polynomials" },
+        "assignment-3": { section: "Unit 3", chapter: "Coordinate Geometry" },
+        "assignment-4": { section: "Unit 4", chapter: "Linear Equations" },
+        "assignment-5": { section: "Unit 5", chapter: "Euclid's Geometry" },
+        "assignment-6": { section: "Unit 6", chapter: "Lines and Angles" },
+        "assignment-7": { section: "Unit 7", chapter: "Triangles" },
+        "assignment-8": { section: "Unit 8", chapter: "Quadrilaterals" },
+        "assignment-9": { section: "Unit 9", chapter: "Areas" },
+        "assignment-10": { section: "Unit 10", chapter: "Circles" },
+        "assignment-11": { section: "Unit 11", chapter: "Constructions" },
+        "assignment-12": { section: "Unit 12", chapter: "Heron's Formula" },
+        "assignment-13": { section: "Unit 13", chapter: "Surface Areas" },
+        "assignment-14": { section: "Unit 14", chapter: "Data Analysis" },
+        "assignment-15": {
+          section: "Unit 15",
+          chapter: "Chance and Likelihood",
+        },
+      };
+
+    return (
+      assignmentMap[assignmentId] || {
+        section: "General",
+        chapter: "Assignment",
+      }
+    );
   };
 
   // Group assignments by section and chapter
@@ -199,7 +208,7 @@ export function PDFAssignmentSidebar({
     }
   };
 
-  const completedAssignments = assignments.filter(a => a.isCompleted).length;
+  const completedAssignments = assignments.filter((a) => a.isCompleted).length;
   const totalAssignments = assignments.length;
 
   if (isSidebarCollapsed) {
@@ -257,7 +266,9 @@ export function PDFAssignmentSidebar({
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Assignment Progress</span>
-            <span className="font-medium text-[#1e293b]">{overallProgress}%</span>
+            <span className="font-medium text-[#1e293b]">
+              {overallProgress}%
+            </span>
           </div>
           <Progress value={overallProgress} className="h-2" />
           <div className="text-xs text-gray-500">
@@ -343,7 +354,8 @@ export function PDFAssignmentSidebar({
                         <div className="bg-gray-50/50">
                           {chapterAssignments.map((assignment) => {
                             const status = getAssignmentStatus(assignment);
-                            const isCurrent = assignment.id === currentAssignmentId;
+                            const isCurrent =
+                              assignment.id === currentAssignmentId;
 
                             return (
                               <Link
@@ -388,7 +400,7 @@ export function PDFAssignmentSidebar({
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
-                                      window.open(assignment.pdfUrl, '_blank');
+                                      window.open(assignment.pdfUrl, "_blank");
                                     }}
                                     title="Download PDF"
                                   >

@@ -43,6 +43,7 @@ interface Course {
   is_free: boolean;
   created_at: string;
   template_data?: Record<string, unknown>;
+  template_id?: string;
   profiles?: {
     first_name: string;
     last_name: string;
@@ -78,7 +79,7 @@ export default function DynamicLessonPage({
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "video" | "notes" | "keypoints" | "quiz"
+    "video" | "notes" | "keypoints" | "quiz" | "pdf"
   >("video");
   const [resolvedParams, setResolvedParams] = useState<{
     slug: string;
@@ -136,6 +137,7 @@ export default function DynamicLessonPage({
             is_free: courseData.course.is_free || false,
             created_at: new Date().toISOString(),
             template_data: courseData.course.template_data || {},
+            template_id: courseData.course.template_id,
             profiles: {
               first_name: "System",
               last_name: "Admin",
@@ -143,6 +145,14 @@ export default function DynamicLessonPage({
           };
           setCourse(course);
           setIsEnrolled(course.is_free || false);
+
+          // Set default tab based on template type
+          const isPDFTemplate =
+            course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+          if (isPDFTemplate) {
+            setActiveTab("pdf");
+          }
+
           console.log("Course metadata loaded:", course.title);
         }
 
@@ -414,36 +424,51 @@ export default function DynamicLessonPage({
               onValueChange={handleTabChange}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
-                <TabsTrigger
-                  value="video"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Video
-                </TabsTrigger>
-                <TabsTrigger
-                  value="notes"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Notes
-                </TabsTrigger>
-                <TabsTrigger
-                  value="keypoints"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-                >
-                  <Bookmark className="w-4 h-4 mr-2" />
-                  Key Points
-                </TabsTrigger>
-                <TabsTrigger
-                  value="quiz"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-                >
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Quiz
-                </TabsTrigger>
-              </TabsList>
+              {course?.template_id ===
+              "addffa2b-d88c-484e-9637-1f7fbe42e29c" ? (
+                // PDF-only template - Single tab
+                <TabsList className="grid w-full grid-cols-1 rounded-sm bg-white p-1 shadow-sm">
+                  <TabsTrigger
+                    value="pdf"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    PDF Assignment
+                  </TabsTrigger>
+                </TabsList>
+              ) : (
+                // Default template - Multiple tabs
+                <TabsList className="grid w-full grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
+                  <TabsTrigger
+                    value="video"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Video
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="notes"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Notes
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="keypoints"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <Bookmark className="w-4 h-4 mr-2" />
+                    Key Points
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="quiz"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Quiz
+                  </TabsTrigger>
+                </TabsList>
+              )}
 
               {/* Video Tab */}
               <TabsContent value="video" className="mt-6">
@@ -743,6 +768,67 @@ export default function DynamicLessonPage({
                         Submit Answers
                       </Button>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* PDF Tab - For PDF-based courses */}
+              <TabsContent value="pdf" className="mt-6">
+                <Card className="rounded-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <FileText className="w-5 h-5 text-[#e27447]" />
+                      <span>PDF Assignment</span>
+                    </CardTitle>
+                    <CardDescription>
+                      View and complete the assignment PDF
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {lesson.pdf_url ? (
+                      <div className="space-y-4">
+                        {/* Adobe PDF Embedder via iframe */}
+                        <div className="w-full h-[800px] border border-[#feefea] rounded-sm overflow-hidden">
+                          <iframe
+                            src={lesson.pdf_url}
+                            className="w-full h-full"
+                            title={`${lesson.title} - PDF Assignment`}
+                            allow="autoplay"
+                          />
+                        </div>
+
+                        {/* PDF Actions */}
+                        <div className="flex items-center justify-between">
+                          <Button
+                            variant="outline"
+                            className="rounded-sm"
+                            onClick={() =>
+                              window.open(lesson.pdf_url, "_blank")
+                            }
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Open in New Tab
+                          </Button>
+                          <Button
+                            className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                            onClick={handleMarkComplete}
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Mark as Complete
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg mb-2">
+                          PDF assignment not available
+                        </p>
+                        <p className="text-sm">
+                          The PDF for this lesson will be available soon
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>

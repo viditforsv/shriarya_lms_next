@@ -460,11 +460,21 @@ function renderBadgesSection(section: TemplateSection, course: RenderedCourse) {
       ?.filter((tag) => {
         // Filter out tags that are already shown as individual badges
         const lowerTag = tag.toLowerCase();
+        const unwantedTags = [
+          "board preparation",
+          "geometric constructions",
+          "algebra",
+          "geometry",
+          "statistics",
+          "probability",
+        ];
+
         return !(
           lowerTag === course.curriculum?.toLowerCase() ||
           lowerTag === course.subject?.toLowerCase() ||
           lowerTag === course.grade?.toLowerCase() ||
-          lowerTag === course.level?.toLowerCase()
+          lowerTag === course.level?.toLowerCase() ||
+          unwantedTags.includes(lowerTag)
         );
       })
       .map((tag) => ({

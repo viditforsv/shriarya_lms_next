@@ -394,7 +394,7 @@ export function PDFAssignmentSidebar({
                                 </div>
                                 <div className="flex items-center space-x-1">
                                   <Button
-                                    variant="ghost"
+                                    variant="outline"
                                     size="sm"
                                     className="p-1 h-6 w-6"
                                     onClick={(e) => {

@@ -12,83 +12,64 @@ import {
 
 // Field definitions for question bank
 const fields = [
-  { name: "difficulty", label: "Difficulty", value: "difficulty", type: "number" },
+  {
+    name: "difficulty",
+    label: "Difficulty",
+    value: "difficulty",
+  },
   {
     name: "boards",
     label: "Boards",
     value: "boards",
-    type: "multiselect",
-    values: ["IBDP", "CBSE", "ICSE", "IGCSE", "A-Levels", "SAT", "ACT"],
   },
   {
     name: "course_types",
     label: "Course Types",
     value: "course_types",
-    type: "multiselect",
-    values: ["AA", "AI"],
   },
   {
     name: "levels",
     label: "Levels",
     value: "levels",
-    type: "multiselect",
-    values: ["SL", "HL"],
   },
   {
     name: "relevance",
     label: "Relevance",
     value: "relevance",
-    type: "multiselect",
-    values: [
-      "Practice",
-      "Exam Style",
-      "Homework",
-      "Quiz",
-      "Assessment",
-      "Review",
-      "Challenge",
-    ],
   },
-  { name: "tags", label: "Tags", value: "tags", type: "text" },
+  { name: "tags", label: "Tags", value: "tags" },
   {
     name: "subject",
     label: "Subject",
     value: "subject",
-    type: "select",
-    values: ["Mathematics", "mathematics"],
   },
   {
     name: "question_type",
     label: "Question Type",
     value: "question_type",
-    type: "select",
-    values: ["mcq", "subjective", "true_false", "fill_blank"],
   },
-  { name: "is_pyq", label: "Is PYQ", value: "is_pyq", type: "boolean" },
-  { name: "pyq_year", label: "PYQ Year", value: "pyq_year", type: "number" },
-  { name: "total_marks", label: "Total Marks", value: "total_marks", type: "number" },
+  { name: "is_pyq", label: "Is PYQ", value: "is_pyq" },
+  { name: "pyq_year", label: "PYQ Year", value: "pyq_year" },
+  {
+    name: "total_marks",
+    label: "Total Marks",
+    value: "total_marks",
+  },
   {
     name: "qa_status",
     label: "QA Status",
     value: "qa_status",
-    type: "select",
-    values: [
-      "pending",
-      "in_review",
-      "needs_revision",
-      "approved",
-      "rejected",
-      "archived",
-    ],
   },
   {
     name: "priority_level",
     label: "Priority Level",
     value: "priority_level",
-    type: "select",
-    values: ["low", "medium", "high", "urgent"],
   },
-  { name: "is_flagged", label: "Is Flagged", value: "is_flagged", type: "boolean" },
+  {
+    name: "is_flagged",
+    label: "Is Flagged",
+    value: "is_flagged",
+  },
 ];
 
 // Operators
@@ -167,9 +148,9 @@ export default function QuestionBankQueryBuilder({
     try {
       switch (format) {
         case "sql":
-          return formatQuery(query, "sql");
+          return String(formatQuery(query, "sql"));
         case "parameterized":
-          return formatQuery(query, "parameterized");
+          return JSON.stringify(formatQuery(query, "parameterized"), null, 2);
         case "json":
           return formatQuery(query, "json");
         case "mongodb":
@@ -218,8 +199,8 @@ export default function QuestionBankQueryBuilder({
                   queryBuilder: "queryBuilder-custom",
                   ruleGroup: "ruleGroup-custom",
                   rule: "rule-custom",
-                  field: "field-custom",
-                  operator: "operator-custom",
+                  fields: "fields-custom",
+                  operators: "operators-custom",
                   value: "value-custom",
                   addRule: "addRule-custom",
                   addGroup: "addGroup-custom",
@@ -230,48 +211,13 @@ export default function QuestionBankQueryBuilder({
                   notToggle: "notToggle-custom",
                   combinators: "combinators-custom",
                 }}
-                getOperators={(field) => {
-                  // Customize operators based on field type
-                  const fieldConfig = fields.find((f) => f.name === field);
-                  if (fieldConfig?.type === "number") {
-                    return operators.filter((op) =>
-                      [
-                        "=",
-                        "!=",
-                        ">",
-                        "<",
-                        ">=",
-                        "<=",
-                        "between",
-                        "notBetween",
-                        "isNull",
-                        "isNotNull",
-                      ].includes(op.name)
-                    );
-                  }
-                  if (fieldConfig?.type === "boolean") {
-                    return operators.filter((op) =>
-                      ["=", "!=", "isNull", "isNotNull"].includes(op.name)
-                    );
-                  }
-                  if (fieldConfig?.type === "multiselect") {
-                    return operators.filter((op) =>
-                      [
-                        "contains",
-                        "notContains",
-                        "in",
-                        "notIn",
-                        "isNull",
-                        "isNotNull",
-                      ].includes(op.name)
-                    );
-                  }
+                getOperators={() => {
+                  // Return all operators for all fields
                   return operators;
                 }}
-                getValues={(field, operator) => {
-                  // Provide values for select/multiselect fields
-                  const fieldConfig = fields.find((f) => f.name === field);
-                  return fieldConfig?.values || [];
+                getValues={() => {
+                  // Return empty array for all fields
+                  return [];
                 }}
               />
 

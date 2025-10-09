@@ -12,28 +12,32 @@ import {
 
 // Field definitions for question bank
 const fields = [
-  { name: "difficulty", label: "Difficulty", type: "number" },
+  { name: "difficulty", label: "Difficulty", value: "difficulty", type: "number" },
   {
     name: "boards",
     label: "Boards",
+    value: "boards",
     type: "multiselect",
     values: ["IBDP", "CBSE", "ICSE", "IGCSE", "A-Levels", "SAT", "ACT"],
   },
   {
     name: "course_types",
     label: "Course Types",
+    value: "course_types",
     type: "multiselect",
     values: ["AA", "AI"],
   },
   {
     name: "levels",
     label: "Levels",
+    value: "levels",
     type: "multiselect",
     values: ["SL", "HL"],
   },
   {
     name: "relevance",
     label: "Relevance",
+    value: "relevance",
     type: "multiselect",
     values: [
       "Practice",
@@ -45,25 +49,28 @@ const fields = [
       "Challenge",
     ],
   },
-  { name: "tags", label: "Tags", type: "text" },
+  { name: "tags", label: "Tags", value: "tags", type: "text" },
   {
     name: "subject",
     label: "Subject",
+    value: "subject",
     type: "select",
     values: ["Mathematics", "mathematics"],
   },
   {
     name: "question_type",
     label: "Question Type",
+    value: "question_type",
     type: "select",
     values: ["mcq", "subjective", "true_false", "fill_blank"],
   },
-  { name: "is_pyq", label: "Is PYQ", type: "boolean" },
-  { name: "pyq_year", label: "PYQ Year", type: "number" },
-  { name: "total_marks", label: "Total Marks", type: "number" },
+  { name: "is_pyq", label: "Is PYQ", value: "is_pyq", type: "boolean" },
+  { name: "pyq_year", label: "PYQ Year", value: "pyq_year", type: "number" },
+  { name: "total_marks", label: "Total Marks", value: "total_marks", type: "number" },
   {
     name: "qa_status",
     label: "QA Status",
+    value: "qa_status",
     type: "select",
     values: [
       "pending",
@@ -77,10 +84,11 @@ const fields = [
   {
     name: "priority_level",
     label: "Priority Level",
+    value: "priority_level",
     type: "select",
     values: ["low", "medium", "high", "urgent"],
   },
-  { name: "is_flagged", label: "Is Flagged", type: "boolean" },
+  { name: "is_flagged", label: "Is Flagged", value: "is_flagged", type: "boolean" },
 ];
 
 // Operators

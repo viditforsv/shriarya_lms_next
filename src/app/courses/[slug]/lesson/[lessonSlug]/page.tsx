@@ -149,8 +149,14 @@ export default function DynamicLessonPage({
           // Set default tab based on template type
           const isPDFTemplate =
             course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+          console.log("Template check:", {
+            template_id: course.template_id,
+            isPDFTemplate,
+            expectedTemplateId: "addffa2b-d88c-484e-9637-1f7fbe42e29c"
+          });
           if (isPDFTemplate) {
             setActiveTab("pdf");
+            console.log("Set active tab to PDF");
           }
 
           console.log("Course metadata loaded:", course.title);
@@ -424,8 +430,15 @@ export default function DynamicLessonPage({
               onValueChange={handleTabChange}
               className="w-full"
             >
-              {course?.template_id ===
-              "addffa2b-d88c-484e-9637-1f7fbe42e29c" ? (
+              {(() => {
+                const isPDFTemplate = course?.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+                console.log("Rendering TabsList:", {
+                  courseTemplateId: course?.template_id,
+                  isPDFTemplate,
+                  activeTab
+                });
+                return isPDFTemplate;
+              })() ? (
                 // PDF-only template - Single tab
                 <TabsList className="grid w-full grid-cols-1 rounded-sm bg-white p-1 shadow-sm">
                   <TabsTrigger

@@ -200,6 +200,22 @@ export default function DynamicLessonPage({
     loadLesson();
   }, [resolvedParams]);
 
+  // Set active tab based on template when course loads
+  useEffect(() => {
+    if (course?.template_id) {
+      const isPDFTemplate = course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+      console.log("Course loaded, checking template:", {
+        template_id: course.template_id,
+        isPDFTemplate,
+        currentActiveTab: activeTab
+      });
+      if (isPDFTemplate && activeTab !== "pdf") {
+        setActiveTab("pdf");
+        console.log("Updated active tab to PDF");
+      }
+    }
+  }, [course?.template_id, activeTab]);
+
   const hasAccess = () => {
     return lesson?.is_preview || isEnrolled || course?.is_free;
   };

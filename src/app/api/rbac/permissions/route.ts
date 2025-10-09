@@ -86,6 +86,7 @@ export async function GET() {
           acc[categoryName] = {
             id: categoryName,
             name: category?.display_name || categoryName,
+            permissions: [],
             icon: category?.icon || "📋",
             description: category?.description || `${categoryName} permissions`,
             displayOrder: category?.display_order || 999,

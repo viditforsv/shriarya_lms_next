@@ -67,8 +67,17 @@ interface Lesson {
   video_thumbnail?: string;
   pdf_url?: string;
   quiz_id?: string;
-  unit_name?: string;
-  chapter_name?: string;
+  chapter_id?: string;
+  chapter?: {
+    id: string;
+    chapter_name: string;
+    chapter_order: number;
+    unit: {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+    };
+  };
 }
 
 export default function DynamicLessonPage({
@@ -109,117 +118,122 @@ export default function DynamicLessonPage({
         setIsLoading(true);
         setError(null);
 
-        // 🚀 OPTIMIZED: Load data in parallel for better performance
-        const [
-          courseMetadataResponse,
-          lessonNavigationResponse,
-          lessonContentResponse,
-        ] = await Promise.all([
-          // 1. Load lightweight course metadata
-          fetch(`/api/course-metadata?slug=${resolvedParams.slug}`),
-          // 2. Load lesson navigation (titles, slugs, order only)
-          fetch(`/api/lesson-navigation?course_slug=${resolvedParams.slug}`),
-          // 3. Load specific lesson content
-          fetch(
-            `/api/lesson-content?lesson_slug=${resolvedParams.lessonSlug}&course_slug=${resolvedParams.slug}`
-          ),
-        ]);
+        const supabase = createClient();
 
-        console.log("API responses received:", {
-          courseMetadata: courseMetadataResponse.status,
-          lessonNavigation: lessonNavigationResponse.status,
-          lessonContent: lessonContentResponse.status,
-        });
+        // 1. Get course by slug
+        const { data: courseData, error: courseError } = await supabase
+          .from("courses")
+          .select("*")
+          .eq("slug", resolvedParams.slug)
+          .single();
 
-        // Process course metadata
-        if (courseMetadataResponse.ok) {
-          const courseData = await courseMetadataResponse.json();
-          const course: Course = {
-            id: courseData.course.id,
-            title: courseData.course.title,
-            description: courseData.course.description,
-            slug: courseData.course.slug,
-            is_free: courseData.course.is_free || false,
-            created_at: new Date().toISOString(),
-            template_data: courseData.course.template_data || {},
-            template_id: courseData.course.template_id,
-            profiles: {
-              first_name: "System",
-              last_name: "Admin",
-            },
-          };
-          setCourse(course);
-
-          // Check actual enrollment status from database
-          if (user) {
-            const supabase = createClient();
-            const { data: enrollmentData } = await supabase
-              .from("courses_enrollments")
-              .select("*")
-              .eq("student_id", user.id)
-              .eq("course_id", course.id)
-              .eq("is_active", true)
-              .maybeSingle();
-
-            setIsEnrolled(!!enrollmentData || course.is_free);
-            console.log("Enrollment check:", {
-              userId: user.id,
-              courseId: course.id,
-              enrolled: !!enrollmentData,
-              isFree: course.is_free,
-              finalIsEnrolled: !!enrollmentData || course.is_free,
-            });
-          } else {
-            setIsEnrolled(course.is_free);
-          }
-
-          // Set default tab based on template type
-          const isPDFTemplate =
-            course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
-          console.log("Template check:", {
-            template_id: course.template_id,
-            isPDFTemplate,
-            expectedTemplateId: "addffa2b-d88c-484e-9637-1f7fbe42e29c",
-          });
-          if (isPDFTemplate) {
-            setActiveTab("pdf");
-            console.log("Set active tab to PDF");
-          }
-
-          console.log("Course metadata loaded:", course.title);
+        if (courseError || !courseData) {
+          throw new Error("Course not found");
         }
 
-        // Process lesson navigation
-        if (lessonNavigationResponse.ok) {
-          const navigationData = await lessonNavigationResponse.json();
-          setAllLessons(navigationData.lessons || []);
-          console.log(
-            "Lesson navigation loaded:",
-            navigationData.lessons?.length,
-            "lessons"
-          );
-        }
+        const course: Course = {
+          id: courseData.id,
+          title: courseData.title,
+          description: courseData.description,
+          slug: courseData.slug,
+          is_free: courseData.is_free || false,
+          created_at: courseData.created_at,
+          template_data: courseData.template_data || {},
+          template_id: courseData.template_id,
+          profiles: {
+            first_name: "System",
+            last_name: "Admin",
+          },
+        };
+        setCourse(course);
 
-        // Process specific lesson content
-        if (lessonContentResponse.ok) {
-          const lessonData = await lessonContentResponse.json();
-          setLesson(lessonData.lesson);
-          console.log("Lesson content loaded:", lessonData.lesson.title);
+        // 2. Check enrollment status
+        if (user) {
+          const { data: enrollmentData } = await supabase
+            .from("courses_enrollments")
+            .select("*")
+            .eq("student_id", user.id)
+            .eq("course_id", course.id)
+            .eq("is_active", true)
+            .maybeSingle();
+
+          setIsEnrolled(!!enrollmentData || course.is_free);
         } else {
-          const errorText = await lessonContentResponse.text();
-          console.error("Failed to fetch lesson content:", errorText);
-          throw new Error("Failed to fetch lesson content from database");
+          setIsEnrolled(course.is_free);
         }
+
+        // 3. Set default tab based on template
+        const isPDFTemplate =
+          course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+        if (isPDFTemplate) {
+          setActiveTab("pdf");
+        }
+
+        // 4. Fetch all lessons with unit/chapter structure
+        const { data: lessonsData, error: lessonsError } = await supabase
+          .from("courses_lessons")
+          .select(
+            `
+            id,
+            title,
+            slug,
+            lesson_order,
+            is_preview,
+            video_thumbnail,
+            chapter_id,
+            chapter:courses_chapters(
+              id,
+              chapter_name,
+              chapter_order,
+              unit:courses_units(
+                id,
+                unit_name,
+                unit_order
+              )
+            )
+          `
+          )
+          .eq("course_id", course.id)
+          .order("lesson_order");
+
+        if (lessonsError) {
+          console.error("Error fetching lessons:", lessonsError);
+        } else {
+          setAllLessons((lessonsData as unknown as Lesson[]) || []);
+        }
+
+        // 5. Fetch current lesson content
+        const { data: lessonData, error: lessonError } = await supabase
+          .from("courses_lessons")
+          .select(
+            `
+            *,
+            chapter:courses_chapters(
+              id,
+              chapter_name,
+              chapter_order,
+              unit:courses_units(
+                id,
+                unit_name,
+                unit_order
+              )
+            )
+          `
+          )
+          .eq("slug", resolvedParams.lessonSlug)
+          .eq("course_id", course.id)
+          .single();
+
+        if (lessonError || !lessonData) {
+          throw new Error("Lesson not found");
+        }
+
+        setLesson(lessonData as unknown as Lesson);
+        console.log("Lesson loaded:", lessonData.title);
       } catch (err) {
         console.error("Error loading lesson:", err);
-        console.error("Error details:", {
-          message: err instanceof Error ? err.message : "Unknown error",
-          stack: err instanceof Error ? err.stack : undefined,
-          params: resolvedParams,
-        });
         setError(err instanceof Error ? err.message : "Lesson not found");
       } finally {
-        console.log("Setting loading to false");
         setIsLoading(false);
       }
     };

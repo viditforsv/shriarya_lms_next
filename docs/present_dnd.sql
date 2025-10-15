@@ -39,6 +39,17 @@ CREATE TABLE public.courses (
   CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id),
   CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.courses_templates(id)
 );
+CREATE TABLE public.courses_chapters (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  unit_id uuid NOT NULL,
+  chapter_name text NOT NULL,
+  chapter_order integer NOT NULL,
+  description text,
+  is_locked boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT courses_chapters_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_chapters_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.courses_units(id)
+);
 CREATE TABLE public.courses_enrollments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   student_id uuid,
@@ -65,11 +76,11 @@ CREATE TABLE public.courses_lessons (
   video_thumbnail text,
   pdf_url text,
   key_points jsonb,
-  unit_name text,
-  chapter_name text,
+  chapter_id uuid,
   CONSTRAINT courses_lessons_pkey PRIMARY KEY (id),
   CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id)
+  CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
+  CONSTRAINT courses_lessons_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.courses_chapters(id)
 );
 CREATE TABLE public.courses_templates (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -89,6 +100,17 @@ CREATE TABLE public.courses_templates (
   created_by uuid,
   CONSTRAINT courses_templates_pkey PRIMARY KEY (id),
   CONSTRAINT course_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
+);
+CREATE TABLE public.courses_units (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  course_id uuid NOT NULL,
+  unit_name text NOT NULL,
+  unit_order integer NOT NULL,
+  description text,
+  is_locked boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT courses_units_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_units_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
 );
 CREATE TABLE public.payments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -291,6 +313,22 @@ CREATE TABLE public.user_onboarding_progress (
   CONSTRAINT user_onboarding_progress_pkey PRIMARY KEY (id),
   CONSTRAINT user_onboarding_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
+CREATE TABLE public.user_profiles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL UNIQUE,
+  first_name text,
+  last_name text,
+  date_of_birth date,
+  country text,
+  city text,
+  bio text,
+  phone_number text,
+  avatar_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT user_profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 CREATE TABLE public.user_progress (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
@@ -308,24 +346,7 @@ CREATE TABLE public.user_progress (
   CONSTRAINT user_progress_pkey PRIMARY KEY (id),
   CONSTRAINT user_progress_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
   CONSTRAINT user_progress_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT user_progress_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id),
-  CONSTRAINT user_progress_unique_user_lesson UNIQUE (user_id, lesson_id)
-);
-CREATE TABLE public.user_profiles (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL UNIQUE,
-  first_name text,
-  last_name text,
-  date_of_birth date,
-  country text,
-  city text,
-  bio text,
-  phone_number text,
-  avatar_url text,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT user_profiles_pkey PRIMARY KEY (id),
-  CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+  CONSTRAINT user_progress_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
 );
 CREATE TABLE public.user_role_assignments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

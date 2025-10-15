@@ -20,34 +20,47 @@ import {
 } from "@/app/components-demo/ui/tabs";
 import { Play, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import {
-  getCourseBySlug,
-  getLessonsByCourseSlugSync,
-  LessonConfig,
-} from "@/lib/course-config";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
-import { Chapter } from "@/lib/cbse-syllabus";
+import { createClient } from "@/lib/supabase/client";
+
+// Simplified LessonConfig interface
+interface LessonConfig {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  duration: string;
+  type: string;
+  isPreview: boolean;
+  order: number;
+  resources: unknown[];
+  chapter?: {
+    id: string;
+    chapter_name: string;
+    chapter_order: number;
+    unit: {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+    };
+  };
+}
 
 // Extended RenderedCourse with template_data fields
 interface ExtendedCourse extends RenderedCourse {
   template_data?: {
-    units?: any[];
+    units?: unknown[];
     tags?: string[];
     learningOutcomes?: string[];
     prerequisites?: string[];
     examBoard?: string;
     academicYear?: string;
     textbookName?: string;
+    duration?: string;
   };
 }
-import {
-  CBSE_CLASS_10_MATHEMATICS_SYLLABUS,
-  CBSE_CLASS_9_MATHEMATICS_SYLLABUS,
-} from "@/lib/cbse-syllabus";
-import { syllabus as ibdpSyllabus } from "@/lib/courses/ibdp-mathematics-aa-hl/syllabus";
-import { createClient } from "@/lib/supabase/client";
 
 export function CoursePageClient({
   courseParams,
@@ -56,22 +69,23 @@ export function CoursePageClient({
 }) {
   const { user } = useAuth();
 
+  // State
+  const [course, setCourse] = useState<ExtendedCourse | null>(null);
+  const [template, setTemplate] = useState<CourseTemplate | null>(null);
+  const [lessons, setLessons] = useState<LessonConfig[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
+  const [lastLesson, setLastLesson] = useState<{
+    slug: string;
+    lesson_order: number;
+  } | null>(null);
+  const [unitCount, setUnitCount] = useState<number>(0);
+  const [chapterCount, setChapterCount] = useState<number>(0);
+
   // Check if this is an IBDP course
   const isIBDPCourse = courseParams.slug === "ibdp-mathematics-aa-hl";
-
-  // Simple function to get units for courses
-  const getUnitsForCourse = () => {
-    if (courseParams.slug === "cbse-mathematics-class-10") {
-      return CBSE_CLASS_10_MATHEMATICS_SYLLABUS;
-    }
-    if (courseParams.slug === "cbse-mathematics-class-9") {
-      return CBSE_CLASS_9_MATHEMATICS_SYLLABUS;
-    }
-    if (isIBDPCourse) {
-      return ibdpSyllabus;
-    }
-    return [];
-  };
 
   // Toggle unit expansion
   const toggleUnit = (unitId: string) => {
@@ -86,554 +100,143 @@ export function CoursePageClient({
     });
   };
 
-  // Handle chapter click - navigate to first lesson of that chapter
-  const handleChapterClick = (chapter: Chapter) => {
-    if (!chapter.subsections || chapter.subsections.length === 0) {
-      console.log("No subsections found for chapter:", chapter.title);
-      return;
-    }
-
-    // Find the first subsection (lesson) for this chapter
-    const firstSubsection = chapter.subsections[0];
-
-    // For CBSE course, find the actual lesson from database based on lesson order
-    if (courseParams.slug === "cbse-mathematics-class-10") {
-      // Map subsection to lesson order based on CBSE syllabus structure
-      const subsectionToOrderMap: Record<string, number> = {
-        // Unit 1: Number Systems - Real Numbers
-        "introduction-to-real-numbers": 1,
-        "fundamental-theorem-arithmetic": 2,
-        "proofs-irrationality": 3,
-        "advanced-irrationality-proofs": 4,
-        "real-numbers-practice-problems": 5,
-
-        // Unit 2: Algebra - Polynomials
-        "introduction-to-polynomials": 7,
-        "zeros-of-a-polynomial": 8,
-        "relationship-between-zeros-and-coefficients": 9,
-        "graphical-and-algebraic-methods": 10,
-        "polynomials-practice-problems": 11,
-
-        // Unit 2: Algebra - Pair of Linear Equations
-        "introduction-to-pair-of-linear-equations": 12,
-        "graphical-method-and-consistency": 13,
-        "algebraic-conditions-for-number-of-solutions": 14,
-        "solution-by-substitution-method": 15,
-        "solution-by-elimination-method": 16,
-        "simple-situational-problems": 17,
-        "linear-equations-practice-problems": 18,
-
-        // Unit 2: Algebra - Quadratic Equations
-        "introduction-to-quadratic-equations": 19,
-        "standard-form-of-quadratic-equation": 20,
-        "solution-by-factorization-method": 21,
-        "quadratic-formula": 22,
-        "discriminant-and-nature-of-roots": 23,
-        "situational-problems-based-on-quadratic-equations": 24,
-        "quadratic-equations-practice-problems": 25,
-
-        // Unit 2: Algebra - Arithmetic Progressions
-        "introduction-to-arithmetic-progressions": 26,
-        "motivation-for-studying-arithmetic-progression": 27,
-        "derivation-of-nth-term-of-ap": 28,
-        "derivation-of-sum-of-first-n-terms-of-ap": 29,
-        "application-of-ap-in-daily-life-problems": 30,
-        "ap-practice-problems": 31,
-
-        // Unit 3: Coordinate Geometry
-        "introduction-to-coordinate-geometry": 32,
-        "review-of-concepts-of-coordinate-geometry": 33,
-        "distance-formula": 34,
-        "section-formula-internal-division": 35,
-        "applications-of-distance-and-section-formulas": 36,
-        "coordinate-geometry-practice-problems": 37,
-
-        // Unit 4: Geometry - Triangles
-        "introduction-to-similar-triangles": 38,
-        "definitions-examples-and-counter-examples": 39,
-        "basic-proportionality-theorem-proof": 40,
-        "converse-of-basic-proportionality-theorem": 41,
-        "aaa-similarity-criterion": 42,
-        "sss-similarity-criterion": 43,
-        "sas-similarity-criterion": 44,
-        "applications-of-similarity-criteria": 45,
-        "triangles-practice-problems": 46,
-
-        // Unit 4: Geometry - Circles
-        "introduction-to-circles": 47,
-        "tangent-to-a-circle-at-point-of-contact": 48,
-        "tangent-perpendicular-to-radius-theorem-proof": 49,
-        "equal-tangents-from-external-point-theorem-proof": 50,
-        "applications-of-tangent-properties": 51,
-        "circles-practice-problems": 52,
-
-        // Unit 5: Trigonometry - Introduction to Trigonometry
-        "trigonometric-ratios": 54,
-        "values-30-45-60": 57,
-        "relationships-ratios": 58,
-        "trigonometric-ratios-practice": 59,
-
-        // Unit 5: Trigonometry - Trigonometric Identities
-        "proof-application-sin2-cos2": 61,
-        "trigonometric-identities-practice": 64,
-
-        // Unit 5: Trigonometry - Heights and Distances
-        "angles-elevation-depression": 66,
-
-        // Unit 6: Mensuration - Areas Related to Circles
-        "areas-sectors-segments": 73,
-        "perimeter-circumference": 75,
-
-        // Unit 6: Mensuration - Surface Areas and Volumes
-        "combinations-cubes-cuboids": 78,
-        "combinations-spheres-hemispheres": 79,
-        "combinations-cylinders-cones": 80,
-
-        // Unit 7: Statistics & Probability - Statistics
-        "mean-median-mode": 83,
-
-        // Unit 7: Statistics & Probability - Probability
-        "classical-definition": 91,
-        "simple-problems": 92,
-      };
-
-      const lessonOrder = subsectionToOrderMap[firstSubsection.slug];
-
-      if (lessonOrder && lessons.length > 0) {
-        // Find the lesson with matching order
-        const targetLesson = lessons.find(
-          (lesson) => lesson.order === lessonOrder
-        );
-
-        if (targetLesson) {
-          // Navigate to the actual lesson from database using its slug directly
-          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
-          return;
-        }
-      }
-
-      // Fallback: try to find lesson by slug
-      const fallbackLesson = lessons.find(
-        (lesson) =>
-          lesson.slug === firstSubsection.slug ||
-          lesson.title
-            .toLowerCase()
-            .includes(firstSubsection.title.toLowerCase())
-      );
-
-      if (fallbackLesson) {
-        // Navigate using the lesson slug directly
-        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
-        return;
-      }
-
-      console.error(
-        "Could not find lesson for subsection:",
-        firstSubsection.slug
-      );
-      alert("Lesson not found. Please try again.");
-    } else if (courseParams.slug === "cbse-mathematics-class-9") {
-      // For CBSE Class 9, match by chapter name to lesson title
-      // The syllabus chapters map to actual lessons in database
-      const chapterNameToLessonMap: Record<string, string> = {
-        "real-numbers": "cbse9-number-systems",
-        "polynomials-intro": "cbse9-polynomials",
-        "cartesian-system": "cbse9-coordinate-geometry",
-        "linear-equations-intro": "cbse9-linear-equations-in-two-variables",
-        "euclid-definitions": "cbse9-introduction-to-euclids-geometry",
-        "lines-angles-basic": "cbse9-lines-and-angles",
-        "triangles-congruence": "cbse9-triangles",
-        "quadrilaterals-properties": "cbse9-quadrilaterals",
-        "areas-basic": "cbse9-areas-parallelograms-triangles",
-        "circles-basic": "cbse9-circles",
-        "basic-constructions": "cbse9-constructions",
-        "heron-formula-area": "cbse9-herons-formula",
-        "surface-areas-volumes-basic": "cbse9-surface-areas-and-volumes",
-        "statistics-basic": "cbse9-statistics",
-        "probability-basic": "cbse9-probability",
-      };
-
-      const targetSlug = chapterNameToLessonMap[chapter.slug];
-
-      if (targetSlug) {
-        const targetLesson = lessons.find(
-          (lesson) => lesson.slug === targetSlug
-        );
-        if (targetLesson) {
-          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
-          return;
-        }
-      }
-
-      // Fallback: try to find by title matching
-      const fallbackLesson = lessons.find((lesson) =>
-        lesson.title
-          .toLowerCase()
-          .includes(chapter.title.toLowerCase().split(" ")[0])
-      );
-
-      if (fallbackLesson) {
-        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
-        return;
-      }
-
-      console.error("Could not find lesson for chapter:", chapter.slug);
-      alert("Lesson not found. Please try again.");
-    } else if (isIBDPCourse) {
-      // Map IBDP subsection to lesson order based on IBDP syllabus structure
-      const ibdpSubsectionToOrderMap: Record<string, number> = {
-        // Number and Algebra - Sequences and Series
-        "arithmetic-sequences": 1,
-        "geometric-sequences": 2,
-        "infinite-series": 3,
-
-        // Number and Algebra - Binomial Theorem
-        "binomial-expansion": 4,
-        "binomial-coefficients": 5,
-
-        // Number and Algebra - Complex Numbers
-        "complex-arithmetic": 6,
-        "polar-form": 7,
-        "complex-roots": 8,
-
-        // Functions - Function Concepts
-        "domain-range": 9,
-        "composite-functions": 10,
-        "inverse-functions": 11,
-
-        // Functions - Polynomial Functions
-        "polynomial-properties": 12,
-        "factor-theorem": 13,
-
-        // Functions - Exponential and Logarithmic Functions
-        "exponential-functions": 14,
-        "logarithmic-functions": 15,
-        "exponential-models": 16,
-
-        // Geometry and Trigonometry - Trigonometric Functions
-        "unit-circle": 17,
-        "trigonometric-identities": 18,
-        "trigonometric-equations": 19,
-
-        // Geometry and Trigonometry - Vectors
-        "vector-operations": 20,
-        "scalar-product": 21,
-        "vector-product": 22,
-
-        // Statistics and Probability - Descriptive Statistics
-        "measures-central-tendency": 23,
-        "measures-dispersion": 24,
-        "normal-distribution": 25,
-
-        // Statistics and Probability - Probability
-        "conditional-probability": 26,
-        "bayes-theorem": 27,
-        "discrete-random-variables": 28,
-
-        // Calculus - Limits and Continuity
-        "limit-concepts": 29,
-        continuity: 30,
-
-        // Calculus - Differentiation
-        "derivative-rules": 31,
-        "chain-rule": 32,
-        "implicit-differentiation": 33,
-        "applications-derivatives": 34,
-
-        // Calculus - Integration
-        "integration-techniques": 35,
-        "integration-by-parts": 36,
-        "applications-integration": 37,
-      };
-
-      const lessonOrder = ibdpSubsectionToOrderMap[firstSubsection.slug];
-
-      if (lessonOrder && lessons.length > 0) {
-        // Find the lesson with matching order
-        const targetLesson = lessons.find(
-          (lesson) => lesson.order === lessonOrder
-        );
-
-        if (targetLesson) {
-          // Navigate to the actual lesson from database using its slug directly
-          window.location.href = `/courses/${courseParams.slug}/lesson/${targetLesson.slug}`;
-          return;
-        }
-      }
-
-      // Fallback: try to find lesson by slug
-      const fallbackLesson = lessons.find(
-        (lesson) =>
-          lesson.slug === firstSubsection.slug ||
-          lesson.title
-            .toLowerCase()
-            .includes(firstSubsection.title.toLowerCase())
-      );
-
-      if (fallbackLesson) {
-        // Navigate using the lesson slug directly
-        window.location.href = `/courses/${courseParams.slug}/lesson/${fallbackLesson.slug}`;
-        return;
-      }
-
-      console.error(
-        "Could not find lesson for subsection:",
-        firstSubsection.slug
-      );
-      alert("Lesson not found. Please try again.");
-    } else {
-      // For other courses, use the subsection slug directly (already prefixed)
-      window.location.href = `/courses/${courseParams.slug}/lesson/${firstSubsection.slug}`;
-    }
-  };
-  const [course, setCourse] = useState<ExtendedCourse | null>(null);
-  const [template, setTemplate] = useState<CourseTemplate | null>(null);
-  const [lessons, setLessons] = useState<LessonConfig[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isEnrolled, setIsEnrolled] = useState(false);
-  const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
-  const [lastLesson, setLastLesson] = useState<{
-    slug: string;
-    lesson_order: number;
-  } | null>(null);
-
+  // Load course data
   useEffect(() => {
     const loadCourse = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        // Try to fetch course with template first
-        console.log("Fetching course:", courseParams.slug);
+        // Fetch course with template
         const response = await fetch(
           `/api/courses/${courseParams.slug}/with-template`
         );
-        console.log("Response status:", response.status);
 
         if (!response.ok) {
-          console.error(
-            "API response not OK:",
-            response.status,
-            response.statusText
-          );
+          setError("Course not found");
+          return;
         }
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Course data received:", data);
-          setCourse(data.rendered);
-          setTemplate(data.template);
+        const data = await response.json();
+        setCourse(data.rendered);
+        setTemplate(data.template);
 
-          // Check enrollment status if user is logged in
-          if (user && data.rendered?.id) {
-            const supabase = createClient();
-            const { data: enrollment } = await supabase
-              .from("courses_enrollments")
-              .select("*")
-              .eq("student_id", user.id)
+        // Check enrollment status
+        if (user && data.rendered?.id) {
+          const supabase = createClient();
+          const { data: enrollment } = await supabase
+            .from("courses_enrollments")
+            .select("*")
+            .eq("student_id", user.id)
+            .eq("course_id", data.rendered.id)
+            .eq("is_active", true)
+            .maybeSingle();
+
+          if (enrollment) {
+            setIsEnrolled(true);
+
+            // Get last accessed lesson
+            const { data: progressData } = await supabase
+              .from("user_progress")
+              .select("lesson_slug, lesson_order")
+              .eq("user_id", user.id)
               .eq("course_id", data.rendered.id)
-              .eq("is_active", true)
+              .order("last_accessed_at", { ascending: false })
+              .limit(1)
               .maybeSingle();
 
-            if (enrollment) {
-              setIsEnrolled(true);
-
-              // Also check last accessed lesson
-              const { data: progressData } = await supabase
-                .from("user_progress")
-                .select("lesson_slug, lesson_order")
-                .eq("user_id", user.id)
-                .eq("course_id", data.rendered.id)
-                .order("last_accessed_at", { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-              if (progressData) {
-                setLastLesson({
-                  slug: progressData.lesson_slug,
-                  lesson_order: progressData.lesson_order,
-                });
-              }
+            if (progressData) {
+              setLastLesson({
+                slug: progressData.lesson_slug,
+                lesson_order: progressData.lesson_order,
+              });
             }
           }
+        }
 
-          // Fetch lessons using the working lessons API
-          try {
-            const lessonsResponse = await fetch(
-              `/api/lessons?course_slug=${courseParams.slug}`
-            );
-            if (lessonsResponse.ok) {
-              const lessonsData = await lessonsResponse.json();
-              // Convert database lessons to LessonConfig format
-              const convertedLessons = lessonsData.lessons.map(
-                (lesson: Record<string, unknown>) => ({
-                  id: lesson.id,
-                  slug: lesson.slug,
-                  title: lesson.title,
-                  description: lesson.content_html || lesson.content || "",
-                  duration: "45 minutes", // Default duration
-                  type: "video",
-                  isPreview: lesson.is_preview || false,
-                  order: lesson.lesson_order,
-                  resources: lesson.resources || [],
-                })
-              );
-              setLessons(convertedLessons);
-            } else {
-              // Fallback to old system if API fails
-              const lessonsData = getLessonsByCourseSlugSync(courseParams.slug);
-              setLessons(lessonsData);
-            }
-          } catch (error) {
-            console.error("Error fetching lessons:", error);
-            // Fallback to old system
-            const lessonsData = getLessonsByCourseSlugSync(courseParams.slug);
-            setLessons(lessonsData);
-          }
+        // Fetch lessons with unit/chapter structure
+        const supabase = createClient();
+        const { data: lessonsData, error: lessonsError } = await supabase
+          .from("courses_lessons")
+          .select(
+            `
+            id,
+            slug,
+            title,
+            content_html,
+            content,
+            lesson_order,
+            is_preview,
+            chapter_id,
+            chapter:courses_chapters(
+              id,
+              chapter_name,
+              chapter_order,
+              unit:courses_units(
+                id,
+                unit_name,
+                unit_order
+              )
+            )
+          `
+          )
+          .eq("course_id", data.rendered.id)
+          .order("lesson_order");
 
-          // Don't override enrollment status - keep the database check result
-          // Free courses still need proper enrollment detection
+        if (!lessonsError && lessonsData) {
+          const convertedLessons: LessonConfig[] = (
+            lessonsData as Record<string, unknown>[]
+          ).map((lesson) => ({
+            id: lesson.id as string,
+            slug: lesson.slug as string,
+            title: lesson.title as string,
+            description: (lesson.content_html ||
+              lesson.content ||
+              "") as string,
+            duration: "45 minutes",
+            type: "video",
+            isPreview: Boolean(lesson.is_preview),
+            order: lesson.lesson_order as number,
+            resources: [],
+            chapter: lesson.chapter as LessonConfig["chapter"],
+          }));
+          setLessons(convertedLessons);
 
-          // Fetch last accessed lesson for continue learning
-          try {
-            const lastLessonResponse = await fetch(
-              `/api/user-progress/last-lesson?course_slug=${courseParams.slug}`
-            );
-            if (lastLessonResponse.ok) {
-              const lastLessonData = await lastLessonResponse.json();
-              setLastLesson(lastLessonData.lastLesson);
-            }
-          } catch (error) {
-            console.error("Error fetching last lesson:", error);
-            // Continue without last lesson data
-          }
-        } else {
-          // Fallback to old system
-          console.log(
-            "API failed, trying fallback system for:",
-            courseParams.slug
+          // Calculate unique units and chapters
+          const uniqueUnits = new Set(
+            convertedLessons
+              .map((l) => l.chapter?.unit?.unit_name)
+              .filter(Boolean)
           );
-          const courseData = getCourseBySlug(courseParams.slug);
-          if (!courseData) {
-            console.error(
-              "Course not found in both API and fallback system:",
-              courseParams.slug
-            );
-            setError(
-              `Course "${courseParams.slug}" not found. Please check the URL or contact support.`
-            );
-            return;
-          }
+          const uniqueChapters = new Set(
+            convertedLessons.map((l) => l.chapter?.chapter_name).filter(Boolean)
+          );
+          setUnitCount(uniqueUnits.size);
+          setChapterCount(uniqueChapters.size);
+        }
 
-          // For IBDP courses, add default template data
-          if (isIBDPCourse) {
-            const ibdpCourseData = {
-              ...courseData,
-              template_data: {
-                curriculum: "IBDP",
-                subject: "Mathematics",
-                grade: "Higher Level",
-                level: "Analysis & Approaches HL",
-                duration: "250 hours",
-                lessons: 45,
-                features: [
-                  "Complete IBDP AA HL syllabus coverage",
-                  "Exam-focused preparation",
-                  "Step-by-step problem solving",
-                  "Practice tests and mock exams",
-                  "Internal Assessment support",
-                ],
-                prerequisites: [
-                  "Strong foundation in IGCSE/GCSE Mathematics",
-                  "Basic understanding of algebra and geometry",
-                ],
-                learningOutcomes: [
-                  "Master all IBDP AA HL Mathematics concepts",
-                  "Solve complex problems with confidence",
-                  "Excel in IBDP examinations",
-                  "Develop strong mathematical reasoning",
-                ],
-                tags: [
-                  "IBDP",
-                  "Mathematics",
-                  "Analysis & Approaches",
-                  "HL",
-                  "International",
-                  "University Prep",
-                ],
-              },
-            };
-            setCourse(ibdpCourseData as unknown as RenderedCourse);
-          } else {
-            setCourse(courseData as unknown as RenderedCourse);
+        // Fetch last accessed lesson
+        try {
+          const lastLessonResponse = await fetch(
+            `/api/user-progress/last-lesson?course_slug=${courseParams.slug}`
+          );
+          if (lastLessonResponse.ok) {
+            const lastLessonData = await lastLessonResponse.json();
+            setLastLesson(lastLessonData.lastLesson);
           }
-          setTemplate(null);
-
-          // Fetch lessons for this course from database
-          try {
-            const lessonsResponse = await fetch(
-              `/api/lessons?course_slug=${courseParams.slug}`
-            );
-            if (lessonsResponse.ok) {
-              const lessonsData = await lessonsResponse.json();
-              // Convert database lessons to LessonConfig format
-              const convertedLessons = lessonsData.lessons.map(
-                (lesson: Record<string, unknown>) => ({
-                  id: lesson.id,
-                  slug: lesson.slug,
-                  title: lesson.title,
-                  description: lesson.content_html || lesson.content || "",
-                  duration: "45 minutes", // Default duration
-                  type: "video",
-                  isPreview: lesson.is_preview || false,
-                  order: lesson.lesson_order,
-                  resources: lesson.resources || [],
-                })
-              );
-              setLessons(convertedLessons);
-            } else {
-              // Fallback to old system if API fails
-              const lessonsData = getLessonsByCourseSlugSync(courseParams.slug);
-              setLessons(lessonsData);
-            }
-          } catch (error) {
-            console.error("Error fetching lessons:", error);
-            // Fallback to old system
-            const lessonsData = getLessonsByCourseSlugSync(courseParams.slug);
-            setLessons(lessonsData);
-          }
-
-          // Don't override enrollment status - keep the database check result
-          // Free courses still need proper enrollment detection
-
-          // Fetch last accessed lesson for continue learning
-          try {
-            const lastLessonResponse = await fetch(
-              `/api/user-progress/last-lesson?course_slug=${courseParams.slug}`
-            );
-            if (lastLessonResponse.ok) {
-              const lastLessonData = await lastLessonResponse.json();
-              setLastLesson(lastLessonData.lastLesson);
-            }
-          } catch (error) {
-            console.error("Error fetching last lesson:", error);
-            // Continue without last lesson data
-          }
+        } catch (error) {
+          console.error("Error fetching last lesson:", error);
         }
       } catch (err) {
         console.error("Error loading course:", err);
-        console.error("Error details:", err);
         setError("Course not found");
       } finally {
-        console.log("Setting isLoading to false");
         setIsLoading(false);
       }
     };
 
-    console.log("Calling loadCourse with courseParams:", courseParams);
     loadCourse();
-  }, [courseParams.slug, courseParams, isIBDPCourse]);
+  }, [courseParams.slug, user]);
 
   const handleEnroll = async () => {
     if (!user) {
@@ -648,8 +251,6 @@ export function CoursePageClient({
 
     try {
       const supabase = createClient();
-
-      // Create enrollment
       const { error: enrollError } = await supabase
         .from("courses_enrollments")
         .insert({
@@ -678,12 +279,6 @@ export function CoursePageClient({
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading course...</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Debug: courseParams = {JSON.stringify(courseParams)}
-          </p>
-          <p className="text-sm text-gray-500">
-            Debug: isLoading = {isLoading.toString()}
-          </p>
         </div>
       </div>
     );
@@ -728,7 +323,6 @@ export function CoursePageClient({
                   </Badge>
                 )}
 
-                {/* Smart Badge Display - Avoid Duplicates */}
                 {course.curriculum && (
                   <Badge
                     variant="outline"
@@ -762,10 +356,8 @@ export function CoursePageClient({
                   </Badge>
                 )}
 
-                {/* Additional Tags - Only show tags that aren't already displayed above */}
                 {(course.template_data?.tags || course.tags || [])
                   .filter((tag) => {
-                    // Filter out tags that are already shown as individual badges
                     const lowerTag = tag.toLowerCase();
                     const unwantedTags = [
                       "board preparation",
@@ -913,81 +505,6 @@ export function CoursePageClient({
                         </div>
                       )}
 
-                      {/* Complete CBSE Syllabus */}
-                      <div className="mb-6">
-                        <h4 className="font-semibold mb-4 text-[#1e293b]">
-                          Complete CBSE Class 10 Mathematics Syllabus
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div className="space-y-3">
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit I: Number Systems
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Real Numbers (Fundamental Theorem of Arithmetic,
-                                proofs of irrationality for √2, √3, √5)
-                              </p>
-                            </div>
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit II: Algebra
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Polynomials, Pair of Linear Equations, Quadratic
-                                Equations, Arithmetic Progressions
-                              </p>
-                            </div>
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit III: Coordinate Geometry
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Distance Formula and Section (Internal Division)
-                                Formula
-                              </p>
-                            </div>
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit IV: Geometry
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Triangles (similarity), Circles (tangent
-                                properties)
-                              </p>
-                            </div>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit V: Trigonometry
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Trigonometric ratios, Identities, Heights and
-                                Distances
-                              </p>
-                            </div>
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit VI: Mensuration
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Areas Related to Circles, Surface Areas and
-                                Volumes
-                              </p>
-                            </div>
-                            <div className="border-l-4 border-[#e27447] pl-3">
-                              <h5 className="font-medium text-[#1e293b]">
-                                Unit VII: Statistics & Probability
-                              </h5>
-                              <p className="text-muted-foreground">
-                                Mean, Median, Mode of grouped data, Probability
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <h4 className="font-semibold mb-2">
@@ -1032,36 +549,71 @@ export function CoursePageClient({
                 <Card>
                   <CardHeader>
                     <CardTitle>Course Content</CardTitle>
-                    <CardDescription>{course.lessons} lessons</CardDescription>
+                    <CardDescription>{lessons.length} lessons</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {isIBDPCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
-                    ) : courseParams.slug === "cbse-mathematics-class-9" ||
-                      courseParams.slug === "cbse-mathematics-class-10" ? (
-                      // Use database-driven structure for CBSE courses
+                    ) : lessons.length > 0 ? (
                       <div className="space-y-2">
                         {(() => {
                           // Group lessons by unit and chapter from database
                           const groupedLessons = lessons.reduce(
-                            (acc, lesson: any) => {
-                              const unitName = lesson.unit_name || "Other";
+                            (acc, lesson) => {
+                              const unitName =
+                                lesson.chapter?.unit?.unit_name ||
+                                "Uncategorized";
                               const chapterName =
-                                lesson.chapter_name || "Miscellaneous";
+                                lesson.chapter?.chapter_name || "Other";
+                              const unitOrder =
+                                lesson.chapter?.unit?.unit_order || 999;
+                              const chapterOrder =
+                                lesson.chapter?.chapter_order || 999;
 
-                              if (!acc[unitName]) acc[unitName] = {};
-                              if (!acc[unitName][chapterName])
-                                acc[unitName][chapterName] = [];
-                              acc[unitName][chapterName].push(lesson);
+                              if (!acc[unitName]) {
+                                acc[unitName] = {
+                                  order: unitOrder,
+                                  chapters: {},
+                                };
+                              }
+                              if (!acc[unitName].chapters[chapterName]) {
+                                acc[unitName].chapters[chapterName] = {
+                                  order: chapterOrder,
+                                  lessons: [],
+                                };
+                              }
+                              acc[unitName].chapters[chapterName].lessons.push(
+                                lesson
+                              );
                               return acc;
                             },
-                            {} as Record<string, Record<string, any[]>>
+                            {} as Record<
+                              string,
+                              {
+                                order: number;
+                                chapters: Record<
+                                  string,
+                                  { order: number; lessons: LessonConfig[] }
+                                >;
+                              }
+                            >
                           );
 
-                          return Object.entries(groupedLessons).map(
-                            ([unitName, chapters], unitIndex) => {
+                          // Sort units by order
+                          const sortedUnits = Object.entries(
+                            groupedLessons
+                          ).sort(([, a], [, b]) => a.order - b.order);
+
+                          return sortedUnits.map(
+                            ([unitName, unitData], unitIndex) => {
                               const unitId = `unit-${unitIndex}`;
                               const isExpanded = expandedUnits.has(unitId);
+
+                              // Sort chapters by order
+                              const sortedChapters = Object.entries(
+                                unitData.chapters
+                              ).sort(([, a], [, b]) => a.order - b.order);
+
                               return (
                                 <div key={unitId} className="border rounded-sm">
                                   {/* Unit Header */}
@@ -1074,8 +626,8 @@ export function CoursePageClient({
                                         {unitIndex + 1}. {unitName}
                                       </span>
                                       <span className="text-sm text-muted-foreground ml-2">
-                                        ({Object.keys(chapters).length}{" "}
-                                        {Object.keys(chapters).length === 1
+                                        ({sortedChapters.length}{" "}
+                                        {sortedChapters.length === 1
                                           ? "chapter"
                                           : "chapters"}
                                         )
@@ -1091,9 +643,9 @@ export function CoursePageClient({
                                   {/* Chapters List */}
                                   {isExpanded && (
                                     <div className="border-t">
-                                      {Object.entries(chapters).map(
+                                      {sortedChapters.map(
                                         (
-                                          [chapterName, chapterLessons],
+                                          [chapterName, chapterData],
                                           chapterIndex
                                         ) => (
                                           <div
@@ -1104,8 +656,8 @@ export function CoursePageClient({
                                               {chapterName}
                                             </div>
                                             <div className="text-sm text-muted-foreground mt-1">
-                                              {chapterLessons.length}{" "}
-                                              {chapterLessons.length === 1
+                                              {chapterData.lessons.length}{" "}
+                                              {chapterData.lessons.length === 1
                                                 ? "lesson"
                                                 : "lessons"}
                                             </div>
@@ -1121,74 +673,11 @@ export function CoursePageClient({
                         })()}
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        {/* Display units with chapters in accordion */}
-                        {getUnitsForCourse().map((unit, index) => {
-                          const isExpanded = expandedUnits.has(unit.id);
-                          return (
-                            <div key={unit.id} className="border rounded-sm">
-                              {/* Unit Header */}
-                              <div
-                                className="flex items-center space-x-3 p-4 hover:bg-gray-50 cursor-pointer"
-                                onClick={() => toggleUnit(unit.id)}
-                              >
-                                <div className="w-10 h-10 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium">
-                                  {index + 1}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center space-x-2">
-                                    <h4 className="font-medium text-lg">
-                                      {unit.title}
-                                    </h4>
-                                  </div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {unit.chapters?.length || 0} chapters
-                                  </p>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <ChevronRight
-                                    className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-                                      isExpanded ? "rotate-90" : ""
-                                    }`}
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Chapters (Expanded Content) */}
-                              {isExpanded && unit.chapters && (
-                                <div className="border-t bg-gray-50/50">
-                                  <div className="p-4 space-y-2">
-                                    {unit.chapters.map(
-                                      (chapter, chapterIndex) => (
-                                        <div
-                                          key={chapter.id}
-                                          className="flex items-center space-x-3 p-3 rounded-sm bg-white border hover:bg-gray-50 cursor-pointer"
-                                          onClick={() =>
-                                            handleChapterClick(chapter)
-                                          }
-                                        >
-                                          <div className="w-8 h-8 bg-gray-200 text-gray-700 rounded-sm flex items-center justify-center text-xs font-medium">
-                                            {chapterIndex + 1}
-                                          </div>
-                                          <div className="flex-1">
-                                            <h5 className="font-medium text-gray-800">
-                                              {chapter.title}
-                                            </h5>
-                                            <p className="text-xs text-gray-500">
-                                              {chapter.subsections?.length || 0}{" "}
-                                              topics
-                                            </p>
-                                          </div>
-                                          <ChevronRight className="w-4 h-4 text-gray-400" />
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                      <div className="text-center py-8 text-muted-foreground">
+                        <p>
+                          No lessons available yet. Please use the admin panel
+                          to set up units and chapters.
+                        </p>
                       </div>
                     )}
                   </CardContent>
@@ -1208,9 +697,12 @@ export function CoursePageClient({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Units</span>
                   <span className="font-medium">
-                    {course.template_data?.units?.length ||
-                      getUnitsForCourse().length}
+                    {unitCount || course.template_data?.units?.length || "—"}
                   </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Total Chapters</span>
+                  <span className="font-medium">{chapterCount || "—"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Lessons</span>
@@ -1257,42 +749,72 @@ export function CoursePageClient({
               </CardContent>
             </Card>
 
-            {/* Chapter Overview */}
+            {/* Unit Overview */}
             <Card>
               <CardHeader>
                 <CardTitle>Unit Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  {getUnitsForCourse().length > 0 ? (
-                    getUnitsForCourse().map((unit, index) => {
-                      // Calculate number of lessons/chapters for each unit
-                      const chapterCount = unit.chapters?.length || 0;
-                      const lessonCount =
-                        unit.chapters?.reduce(
-                          (sum: number, ch: any) =>
-                            sum + (ch.subsections?.length || 0),
-                          0
-                        ) || 0;
+                  {lessons.length > 0 ? (
+                    (() => {
+                      // Group lessons by unit to calculate chapters per unit
+                      const unitChapterMap = lessons.reduce(
+                        (
+                          acc: Record<
+                            string,
+                            { chapters: Set<string>; order: number }
+                          >,
+                          lesson
+                        ) => {
+                          const unitName = lesson.chapter?.unit?.unit_name;
+                          const unitOrder =
+                            lesson.chapter?.unit?.unit_order || 999;
+                          const chapterName = lesson.chapter?.chapter_name;
 
-                      return (
-                        <div
-                          key={unit.id || index}
-                          className="flex justify-between"
-                        >
-                          <span className="text-muted-foreground">
-                            {index + 1}. {unit.title}
-                          </span>
-                          <span className="font-medium">
-                            {chapterCount}{" "}
-                            {chapterCount === 1 ? "chapter" : "chapters"}
-                          </span>
+                          if (unitName && chapterName) {
+                            if (!acc[unitName]) {
+                              acc[unitName] = {
+                                chapters: new Set(),
+                                order: unitOrder,
+                              };
+                            }
+                            acc[unitName].chapters.add(chapterName);
+                          }
+                          return acc;
+                        },
+                        {}
+                      );
+
+                      // Sort units by order
+                      const sortedUnits = Object.entries(unitChapterMap).sort(
+                        ([, a], [, b]) => a.order - b.order
+                      );
+
+                      return sortedUnits.length > 0 ? (
+                        sortedUnits.map(([unitName, data], index) => {
+                          const chapterCount = data.chapters.size;
+                          return (
+                            <div key={index} className="flex justify-between">
+                              <span className="text-muted-foreground">
+                                {index + 1}. {unitName}
+                              </span>
+                              <span className="font-medium">
+                                {chapterCount}{" "}
+                                {chapterCount === 1 ? "chapter" : "chapters"}
+                              </span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-muted-foreground text-center py-4">
+                          No units available
                         </div>
                       );
-                    })
+                    })()
                   ) : (
                     <div className="text-muted-foreground text-center py-4">
-                      No units available
+                      Loading units...
                     </div>
                   )}
                 </div>

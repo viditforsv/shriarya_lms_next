@@ -24,10 +24,17 @@ interface Lesson {
   slug: string;
   lesson_order: number;
   is_preview: boolean;
-  section?: string;
-  chapter?: string;
-  unit_name?: string;
-  chapter_name?: string;
+  chapter_id?: string;
+  chapter?: {
+    id: string;
+    chapter_name: string;
+    chapter_order: number;
+    unit: {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+    };
+  };
 }
 
 interface CollapsibleSidebarProps {
@@ -72,158 +79,67 @@ export function CollapsibleSidebar({
     return new Set();
   });
 
-  // Map lesson order to section and chapter based on course slug
-  const getSectionAndChapter = (lessonOrder: number) => {
-    // CBSE Class 9 Mapping - Based on actual database lesson orders
-    if (courseSlug === "cbse-mathematics-class-9") {
-      // Lesson 1: Real Numbers
-      if (lessonOrder === 1) {
-        return { section: "Number Systems", chapter: "Real Numbers" };
-      }
-      // Lesson 2: Polynomials
-      else if (lessonOrder === 2) {
-        return { section: "Algebra", chapter: "Polynomials" };
-      }
-      // Lesson 3: Coordinate Geometry
-      else if (lessonOrder === 3) {
-        return {
-          section: "Coordinate Geometry",
-          chapter: "Coordinate Geometry",
-        };
-      }
-      // Lesson 4: Linear Equations
-      else if (lessonOrder === 4) {
-        return {
-          section: "Algebra",
-          chapter: "Linear Equations in Two Variables",
-        };
-      }
-      // Lesson 5: Euclid's Geometry
-      else if (lessonOrder === 5) {
-        return {
-          section: "Geometry",
-          chapter: "Introduction to Euclid Geometry",
-        };
-      }
-      // Lesson 6: Lines and Angles
-      else if (lessonOrder === 6) {
-        return { section: "Geometry", chapter: "Lines and Angles" };
-      }
-      // Lesson 7: Triangles
-      else if (lessonOrder === 7) {
-        return { section: "Geometry", chapter: "Triangles" };
-      }
-      // Lesson 8: Quadrilaterals
-      else if (lessonOrder === 8) {
-        return { section: "Geometry", chapter: "Quadrilaterals" };
-      }
-      // Lesson 9: Areas (not in comm_dnd.md structure, but exists in DB)
-      else if (lessonOrder === 9) {
-        return {
-          section: "Geometry",
-          chapter: "Areas of Parallelograms and Triangles",
-        };
-      }
-      // Lesson 10: Circles
-      else if (lessonOrder === 10) {
-        return { section: "Geometry", chapter: "Circles" };
-      }
-      // Lesson 11: Constructions (not in comm_dnd.md structure, but exists in DB)
-      else if (lessonOrder === 11) {
-        return { section: "Geometry", chapter: "Constructions" };
-      }
-      // Lesson 12: Heron's Formula
-      else if (lessonOrder === 12) {
-        return {
-          section: "Mensuration",
-          chapter: "Areas of a triangle using Heron's Formula",
-        };
-      }
-      // Lesson 13: Surface Areas and Volumes
-      else if (lessonOrder === 13) {
-        return { section: "Mensuration", chapter: "Surface Areas and Volumes" };
-      }
-      // Lesson 14: Statistics
-      else if (lessonOrder === 14) {
-        return { section: "Statistics", chapter: "Statistics" };
-      }
-      // Lesson 15: Probability (not in comm_dnd.md structure, but exists in DB)
-      else if (lessonOrder === 15) {
-        return { section: "Statistics", chapter: "Probability" };
-      }
-      return { section: "General", chapter: "Other Topics" };
-    }
-
-    // CBSE Class 10 Mapping (original)
-    if (lessonOrder >= 1 && lessonOrder <= 6) {
-      return { section: "Number Systems", chapter: "Real Numbers" };
-    } else if (lessonOrder >= 7 && lessonOrder <= 11) {
-      return { section: "Algebra", chapter: "Polynomials" };
-    } else if (lessonOrder >= 12 && lessonOrder <= 18) {
-      return { section: "Algebra", chapter: "Pair of Linear Equations" };
-    } else if (lessonOrder >= 19 && lessonOrder <= 25) {
-      return { section: "Algebra", chapter: "Quadratic Equations" };
-    } else if (lessonOrder >= 26 && lessonOrder <= 31) {
-      return { section: "Algebra", chapter: "Arithmetic Progressions" };
-    } else if (lessonOrder >= 32 && lessonOrder <= 37) {
-      return { section: "Coordinate Geometry", chapter: "Coordinate Geometry" };
-    } else if (lessonOrder >= 38 && lessonOrder <= 46) {
-      return { section: "Geometry", chapter: "Triangles" };
-    } else if (lessonOrder >= 47 && lessonOrder <= 52) {
-      return { section: "Geometry", chapter: "Circles" };
-    } else if (lessonOrder >= 53 && lessonOrder <= 59) {
-      return {
-        section: "Trigonometry",
-        chapter: "Introduction to Trigonometry",
-      };
-    } else if (lessonOrder >= 60 && lessonOrder <= 64) {
-      return { section: "Trigonometry", chapter: "Trigonometric Identities" };
-    } else if (lessonOrder >= 65 && lessonOrder <= 71) {
-      return { section: "Trigonometry", chapter: "Heights and Distances" };
-    } else if (lessonOrder >= 72 && lessonOrder <= 76) {
-      return { section: "Mensuration", chapter: "Areas Related to Circles" };
-    } else if (lessonOrder >= 77 && lessonOrder <= 81) {
-      return { section: "Mensuration", chapter: "Surface Areas and Volumes" };
-    } else if (lessonOrder >= 82 && lessonOrder <= 89) {
-      return { section: "Statistics & Probability", chapter: "Statistics" };
-    } else if (lessonOrder >= 90 && lessonOrder <= 94) {
-      return { section: "Statistics & Probability", chapter: "Probability" };
-    }
-    return { section: "General", chapter: "Chapter 1" };
-  };
-
-  // Group lessons by section and chapter dynamically
+  // Group lessons by unit and chapter from database
   const groupedLessons = lessons.reduce((acc, lesson) => {
-    // Use database values if available, otherwise fall back to mapping function
-    const section =
-      (lesson as any).unit_name ||
-      getSectionAndChapter(lesson.lesson_order).section;
-    const chapter =
-      (lesson as any).chapter_name ||
-      getSectionAndChapter(lesson.lesson_order).chapter;
+    // Use database structure (chapter.unit.unit_name and chapter.chapter_name)
+    const unit = lesson.chapter?.unit?.unit_name || "Uncategorized";
+    const chapter = lesson.chapter?.chapter_name || "Other";
 
-    if (!acc[section]) acc[section] = {};
-    if (!acc[section][chapter]) acc[section][chapter] = [];
-    acc[section][chapter].push(lesson);
+    if (!acc[unit]) acc[unit] = {};
+    if (!acc[unit][chapter]) acc[unit][chapter] = [];
+    acc[unit][chapter].push(lesson);
     return acc;
   }, {} as Record<string, Record<string, Lesson[]>>);
 
-  // Auto-expand sections and chapters containing the current lesson
+  // Sort units and chapters by their order
+  const sortedGroupedLessons = Object.keys(groupedLessons)
+    .sort((a, b) => {
+      const lessonA = lessons.find((l) => l.chapter?.unit?.unit_name === a);
+      const lessonB = lessons.find((l) => l.chapter?.unit?.unit_name === b);
+      return (
+        (lessonA?.chapter?.unit?.unit_order || 999) -
+        (lessonB?.chapter?.unit?.unit_order || 999)
+      );
+    })
+    .reduce((acc, unitKey) => {
+      const chapters = groupedLessons[unitKey];
+      const sortedChapters = Object.keys(chapters)
+        .sort((a, b) => {
+          const lessonA = lessons.find(
+            (l) =>
+              l.chapter?.chapter_name === a &&
+              l.chapter?.unit?.unit_name === unitKey
+          );
+          const lessonB = lessons.find(
+            (l) =>
+              l.chapter?.chapter_name === b &&
+              l.chapter?.unit?.unit_name === unitKey
+          );
+          return (
+            (lessonA?.chapter?.chapter_order || 999) -
+            (lessonB?.chapter?.chapter_order || 999)
+          );
+        })
+        .reduce((chapterAcc, chapterKey) => {
+          chapterAcc[chapterKey] = chapters[chapterKey];
+          return chapterAcc;
+        }, {} as Record<string, Lesson[]>);
+
+      acc[unitKey] = sortedChapters;
+      return acc;
+    }, {} as Record<string, Record<string, Lesson[]>>);
+
+  // Auto-expand units and chapters containing the current lesson
   useEffect(() => {
     if (currentLessonSlug && lessons.length > 0) {
       const currentLesson = lessons.find(
         (lesson) => lesson.slug === currentLessonSlug
       );
-      if (currentLesson) {
-        // Use database values if available, otherwise fall back to mapping function
-        const section =
-          (currentLesson as any).unit_name ||
-          getSectionAndChapter(currentLesson.lesson_order).section;
-        const chapter =
-          (currentLesson as any).chapter_name ||
-          getSectionAndChapter(currentLesson.lesson_order).chapter;
+      if (currentLesson && currentLesson.chapter) {
+        const unit = currentLesson.chapter.unit.unit_name;
+        const chapter = currentLesson.chapter.chapter_name;
 
-        setExpandedSections((prev) => new Set([...prev, section]));
+        setExpandedSections((prev) => new Set([...prev, unit]));
         setExpandedChapters((prev) => new Set([...prev, chapter]));
       }
     }
@@ -268,7 +184,7 @@ export function CollapsibleSidebar({
   };
 
   const toggleAllSections = () => {
-    const allSections = Object.keys(groupedLessons);
+    const allSections = Object.keys(sortedGroupedLessons);
     if (expandedSections.size === allSections.length) {
       setExpandedSections(new Set());
     } else {
@@ -363,7 +279,8 @@ export function CollapsibleSidebar({
           onClick={toggleAllSections}
           className="w-full rounded-sm"
         >
-          {expandedSections.size === Object.keys(groupedLessons).length ? (
+          {expandedSections.size ===
+          Object.keys(sortedGroupedLessons).length ? (
             <>
               <ChevronUp className="w-4 h-4 mr-2" />
               Collapse All
@@ -379,7 +296,7 @@ export function CollapsibleSidebar({
 
       {/* Course Content Section */}
       <div className="space-y-4 flex-1 overflow-y-auto">
-        {Object.entries(groupedLessons).map(([sectionKey, chapters]) => (
+        {Object.entries(sortedGroupedLessons).map(([sectionKey, chapters]) => (
           <div
             key={sectionKey}
             className="border-b border-[#feefea] last:border-b-0"

@@ -397,21 +397,20 @@ export default function CourseBuilder({
                       id="price"
                       type="number"
                       value={course?.price || 0}
-                        onChange={(e) =>
-                          setCourse((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  price: parseFloat(e.target.value) || 0,
-                                }
-                              : null
-                          )
-                        }
-                        placeholder="0"
-                        className="mt-2"
-                      />
-                    </div>
-                  )}
+                      onChange={(e) =>
+                        setCourse((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                price: parseFloat(e.target.value) || 0,
+                              }
+                            : null
+                        )
+                      }
+                      placeholder="0"
+                      className="mt-2"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             )}

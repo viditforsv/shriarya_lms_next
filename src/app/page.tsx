@@ -9,9 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
-import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
+import { BookOpen, Award, Clock, ArrowRight, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Home() {
   const router = useRouter();
@@ -20,6 +22,61 @@ export default function Home() {
   const authContext = useAuth();
   const user = authContext?.user;
   const loading = authContext?.loading;
+
+  // Stats state
+  const [stats, setStats] = useState({
+    enrolledCourses: 0,
+    completedCourses: 0,
+    totalProgress: 0,
+    loading: true,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user) return;
+
+      try {
+        const supabase = createClient();
+
+        // Get enrolled courses count
+        const { count: enrolledCount } = await supabase
+          .from("courses_enrollments")
+          .select("*", { count: "exact", head: true })
+          .eq("student_id", user.id)
+          .eq("is_active", true);
+
+        // Get user progress data
+        const { data: progressData } = await supabase
+          .from("user_progress")
+          .select("is_completed, completion_percentage")
+          .eq("user_id", user.id);
+
+        const completedCount =
+          progressData?.filter((p) => p.is_completed).length || 0;
+        const avgProgress =
+          progressData && progressData.length > 0
+            ? Math.round(
+                progressData.reduce(
+                  (acc, p) => acc + (p.completion_percentage || 0),
+                  0
+                ) / progressData.length
+              )
+            : 0;
+
+        setStats({
+          enrolledCourses: enrolledCount || 0,
+          completedCourses: completedCount,
+          totalProgress: avgProgress,
+          loading: false,
+        });
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        setStats((prev) => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchStats();
+  }, [user]);
 
   // Show loading while auth is being determined (with a timeout)
   if (loading) {
@@ -73,58 +130,86 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center text-foreground mb-12">
               Your Learning Progress
             </h2>
-            <div className="grid md:grid-cols-4 gap-6">
-              <Card className="text-center">
-                <CardHeader>
-                  <BookOpen className="w-12 h-12 text-accent mx-auto mb-4" />
-                  <CardTitle>Enrolled Courses</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    <span className="text-2xl font-bold text-accent">8</span>
-                  </CardDescription>
-                </CardContent>
-              </Card>
+            {stats.loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading your stats...</p>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="text-center hover:shadow-lg transition-shadow rounded-sm">
+                  <CardHeader>
+                    <BookOpen className="w-12 h-12 text-[#e27447] mx-auto mb-4" />
+                    <CardTitle>Enrolled Courses</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      <span className="text-3xl font-bold text-[#e27447]">
+                        {stats.enrolledCourses}
+                      </span>
+                    </CardDescription>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Active enrollments
+                    </p>
+                  </CardContent>
+                </Card>
 
-              <Card className="text-center">
-                <CardHeader>
-                  <Award className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <CardTitle>Completed</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    <span className="text-2xl font-bold text-green-600">3</span>
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                <Card className="text-center hover:shadow-lg transition-shadow rounded-sm">
+                  <CardHeader>
+                    <Award className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                    <CardTitle>Lessons Completed</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      <span className="text-3xl font-bold text-green-600">
+                        {stats.completedCourses}
+                      </span>
+                    </CardDescription>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Keep learning!
+                    </p>
+                  </CardContent>
+                </Card>
 
-              <Card className="text-center">
-                <CardHeader>
-                  <Clock className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-                  <CardTitle>Study Hours</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    <span className="text-2xl font-bold text-purple-600">
-                      24
-                    </span>
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                <Card className="text-center hover:shadow-lg transition-shadow rounded-sm">
+                  <CardHeader>
+                    <TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                    <CardTitle>Average Progress</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      <span className="text-3xl font-bold text-purple-600">
+                        {stats.totalProgress}%
+                      </span>
+                    </CardDescription>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Overall completion
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
-              <Card className="text-center">
-                <CardHeader>
-                  <Users className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-                  <CardTitle>Study Groups</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    <span className="text-2xl font-bold text-orange-600">
-                      2
-                    </span>
-                  </CardDescription>
-                </CardContent>
-              </Card>
+            {/* Quick Actions */}
+            <div className="mt-12 grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full rounded-sm"
+                onClick={() => router.push("/courses/enrolled")}
+              >
+                <BookOpen className="w-5 h-5 mr-2" />
+                View My Courses
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full rounded-sm"
+                onClick={() => router.push("/courses/discover")}
+              >
+                <Clock className="w-5 h-5 mr-2" />
+                Discover New Courses
+              </Button>
             </div>
           </div>
         </section>

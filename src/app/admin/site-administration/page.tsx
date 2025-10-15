@@ -14,24 +14,40 @@ import { Badge } from "@/app/components-demo/ui/ui-components/badge";
 import {
   Users,
   BookOpen,
-  BarChart3,
-  Settings,
   Shield,
   FileText,
   Layout,
   Palette,
-  Database,
-  Mail,
-  Lock,
-  Zap,
-  HelpCircle,
-  Download,
   Plus,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function SiteAdministrationPage() {
   const { profile } = useAuth();
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeCourses: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/admin/stats");
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const adminSections = [
     {
@@ -41,28 +57,10 @@ export default function SiteAdministrationPage() {
       iconColor: "text-blue-600",
       items: [
         {
-          name: "User Management",
-          href: "/admin/users",
-          icon: Users,
-          description: "Manage students and administrators",
-        },
-        {
           name: "Role Assignment Matrix",
           href: "/admin/role-assignment-matrix",
           icon: Shield,
           description: "Configure user roles and permissions",
-        },
-        {
-          name: "Authentication",
-          href: "/admin/auth",
-          icon: Lock,
-          description: "Manage login methods and security",
-        },
-        {
-          name: "User Import/Export",
-          href: "/admin/users/import",
-          icon: Download,
-          description: "Bulk user operations",
         },
       ],
     },
@@ -80,9 +78,15 @@ export default function SiteAdministrationPage() {
         },
         {
           name: "Course Templates",
-          href: "/templates/course-templates",
+          href: "/admin/course-templates",
           icon: FileText,
           description: "Course design templates",
+        },
+        {
+          name: "Lesson Mapper",
+          href: "/admin/lesson-mapper",
+          icon: Layout,
+          description: "Map and organize course lessons",
         },
         {
           name: "Enrollment Management",
@@ -90,139 +94,39 @@ export default function SiteAdministrationPage() {
           icon: Users,
           description: "Manage student enrollments",
         },
-        {
-          name: "Course Categories",
-          href: "/admin/categories",
-          icon: Layout,
-          description: "Organize course structure",
-        },
       ],
     },
     {
-      title: "Analytics & Reports",
-      icon: BarChart3,
+      title: "Content Management",
+      icon: FileText,
       color: "bg-purple-50 border-purple-200",
       iconColor: "text-purple-600",
       items: [
         {
-          name: "Analytics Dashboard",
-          href: "/admin/analytics",
-          icon: BarChart3,
-          description: "Platform performance metrics",
+          name: "Question Bank",
+          href: "/question-bank",
+          icon: FileText,
+          description: "Manage question bank and questions",
         },
         {
-          name: "User Reports",
-          href: "/admin/reports/users",
-          icon: Users,
-          description: "Student and admin activity reports",
-        },
-        {
-          name: "Course Reports",
-          href: "/admin/reports/courses",
-          icon: BookOpen,
-          description: "Course performance analytics",
-        },
-        {
-          name: "Revenue Analytics",
-          href: "/admin/reports/revenue",
-          icon: BarChart3,
-          description: "Financial performance tracking",
+          name: "Question Assignments",
+          href: "/admin/question-assignments",
+          icon: Shield,
+          description: "Assign questions to content managers",
         },
       ],
     },
     {
-      title: "Templates & Design",
+      title: "Development & Testing",
       icon: Palette,
       color: "bg-orange-50 border-orange-200",
       iconColor: "text-orange-600",
       items: [
         {
-          name: "Page Templates",
-          href: "/templates/page-templates",
-          icon: Layout,
-          description: "Landing page and UI templates",
-        },
-        {
-          name: "Dashboard Templates",
-          href: "/templates/dashboard-templates",
-          icon: BarChart3,
-          description: "Admin and user dashboard designs",
-        },
-        {
-          name: "Course Templates",
-          href: "/templates/course-templates",
-          icon: BookOpen,
-          description: "Course structure templates",
-        },
-        {
           name: "Component Library",
           href: "/components-demo",
           icon: Palette,
           description: "UI component showcase",
-        },
-      ],
-    },
-    {
-      title: "System Settings",
-      icon: Settings,
-      color: "bg-gray-50 border-gray-200",
-      iconColor: "text-gray-600",
-      items: [
-        {
-          name: "General Settings",
-          href: "/admin/settings/general",
-          icon: Settings,
-          description: "Platform configuration",
-        },
-        {
-          name: "Email Settings",
-          href: "/admin/settings/email",
-          icon: Mail,
-          description: "Email notifications and templates",
-        },
-        {
-          name: "Security Settings",
-          href: "/admin/settings/security",
-          icon: Shield,
-          description: "Security and privacy settings",
-        },
-        {
-          name: "Backup & Restore",
-          href: "/admin/settings/backup",
-          icon: Database,
-          description: "Data backup and recovery",
-        },
-      ],
-    },
-    {
-      title: "Support & Maintenance",
-      icon: HelpCircle,
-      color: "bg-red-50 border-red-200",
-      iconColor: "text-red-600",
-      items: [
-        {
-          name: "Helpdesk",
-          href: "/helpdesk",
-          icon: HelpCircle,
-          description: "Support ticket management",
-        },
-        {
-          name: "System Health",
-          href: "/admin/health",
-          icon: Zap,
-          description: "Platform health monitoring",
-        },
-        {
-          name: "Logs & Debugging",
-          href: "/admin/logs",
-          icon: FileText,
-          description: "System logs and debugging",
-        },
-        {
-          name: "Maintenance Mode",
-          href: "/admin/maintenance",
-          icon: Settings,
-          description: "Platform maintenance controls",
         },
         {
           name: "Math Renderer Training",
@@ -257,14 +161,16 @@ export default function SiteAdministrationPage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
-                  <Users className="w-8 h-8 text-blue-600" />
+                  <Users className="w-8 h-8 text-orange-600" />
                   <div>
                     <p className="text-sm text-muted-foreground">Total Users</p>
-                    <p className="text-2xl font-bold">1,247</p>
+                    <p className="text-2xl font-bold">
+                      {loading ? "..." : stats.totalUsers.toLocaleString()}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -272,36 +178,14 @@ export default function SiteAdministrationPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
-                  <BookOpen className="w-8 h-8 text-green-600" />
+                  <BookOpen className="w-8 h-8 text-orange-600" />
                   <div>
                     <p className="text-sm text-muted-foreground">
                       Active Courses
                     </p>
-                    <p className="text-2xl font-bold">89</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <BarChart3 className="w-8 h-8 text-purple-600" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Revenue</p>
-                    <p className="text-2xl font-bold">$45.2K</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <Zap className="w-8 h-8 text-orange-600" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      System Health
+                    <p className="text-2xl font-bold">
+                      {loading ? "..." : stats.activeCourses.toLocaleString()}
                     </p>
-                    <p className="text-2xl font-bold text-green-600">98%</p>
                   </div>
                 </div>
               </CardContent>
@@ -342,42 +226,6 @@ export default function SiteAdministrationPage() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Frequently used administrative tasks
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add New User
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    Create Course
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Data
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Settings className="w-4 h-4 mr-2" />
-                    System Settings
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <HelpCircle className="w-4 h-4 mr-2" />
-                    Support Tickets
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

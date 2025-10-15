@@ -7,6 +7,7 @@ import { Button } from "@/app/components-demo/ui/ui-components/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
@@ -25,12 +26,25 @@ import {
   AlertDescription,
 } from "@/app/components-demo/ui/ui-components/alert";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
-import { Users, BookOpen, Plus, Trash2, Search } from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/app/components-demo/ui/dialog";
+import {
+  Users,
+  BookOpen,
+  Plus,
+  Trash2,
+  Search,
+  UserPlus,
+  TrendingUp,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 interface User {
   id: string;
@@ -70,6 +84,12 @@ export default function UserEnrollmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "active" | "inactive"
+  >("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   useEffect(() => {
     // Only load data if user is admin
@@ -103,53 +123,46 @@ export default function UserEnrollmentsPage() {
     try {
       const supabase = createClient();
 
-      console.log("Loading data...");
-
       // Load users
-      console.log("Loading users...");
       const { data: usersData, error: usersError } = await supabase
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (usersError) {
-        console.error("Users error:", usersError);
-        throw usersError;
-      }
-      console.log("Users loaded:", usersData?.length || 0);
+      if (usersError) throw usersError;
       setUsers(usersData || []);
 
       // Load courses
-      console.log("Loading courses...");
       const { data: coursesData, error: coursesError } = await supabase
         .from("courses")
         .select("id, title, slug, price, status")
         .order("title");
 
-      if (coursesError) {
-        console.error("Courses error:", coursesError);
-        throw coursesError;
-      }
-      console.log("Courses loaded:", coursesData?.length || 0);
+      if (coursesError) throw coursesError;
       setCourses(coursesData || []);
 
-      // Load enrollments with user and course details
-      console.log("Loading enrollments...");
-
-      // First try simple query
+      // Load enrollments
       const { data: enrollmentsData, error: enrollmentsError } = await supabase
         .from("courses_enrollments")
-        .select("*")
+        .select(
+          `
+          *,
+          user:student_id (id, email, first_name, last_name, role, created_at),
+          course:course_id (id, title, slug, price, status)
+        `
+        )
         .order("enrolled_at", { ascending: false });
 
-      if (enrollmentsError) {
-        console.error("Enrollments error:", enrollmentsError);
-        throw enrollmentsError;
-      }
-      console.log("Enrollments loaded:", enrollmentsData?.length || 0);
-      setEnrollments(enrollmentsData || []);
+      if (enrollmentsError) throw enrollmentsError;
 
-      console.log("Data loading completed successfully");
+      // Transform the data to match our interface
+      const transformedEnrollments = (enrollmentsData || []).map((e: any) => ({
+        ...e,
+        user: Array.isArray(e.user) ? e.user[0] : e.user,
+        course: Array.isArray(e.course) ? e.course[0] : e.course,
+      }));
+
+      setEnrollments(transformedEnrollments);
     } catch (err) {
       console.error("Error loading data:", err);
       setError(err instanceof Error ? err.message : "Failed to load data");
@@ -192,6 +205,7 @@ export default function UserEnrollmentsPage() {
       setSuccess("User enrolled successfully!");
       setSelectedUserId("");
       setSelectedCourseId("");
+      setIsDialogOpen(false);
       loadData(); // Refresh data
 
       setTimeout(() => setSuccess(null), 3000);
@@ -202,6 +216,8 @@ export default function UserEnrollmentsPage() {
   };
 
   const handleUnenrollUser = async (enrollmentId: string) => {
+    if (!confirm("Are you sure you want to unenroll this user?")) return;
+
     try {
       const supabase = createClient();
 
@@ -230,12 +246,41 @@ export default function UserEnrollmentsPage() {
     const userEmail = enrollment.user?.email?.toLowerCase() || "";
     const courseTitle = enrollment.course?.title?.toLowerCase() || "";
 
-    return (
+    const matchesSearch =
       userName.includes(searchLower) ||
       userEmail.includes(searchLower) ||
-      courseTitle.includes(searchLower)
-    );
+      courseTitle.includes(searchLower);
+
+    const matchesStatus =
+      filterStatus === "all" ||
+      (filterStatus === "active" && enrollment.is_active) ||
+      (filterStatus === "inactive" && !enrollment.is_active);
+
+    return matchesSearch && matchesStatus;
   });
+
+  // Calculate stats
+  const stats = {
+    total: enrollments.length,
+    active: enrollments.filter((e) => e.is_active).length,
+    inactive: enrollments.filter((e) => !e.is_active).length,
+    thisMonth: enrollments.filter(
+      (e) =>
+        new Date(e.enrolled_at).getMonth() === new Date().getMonth() &&
+        new Date(e.enrolled_at).getFullYear() === new Date().getFullYear()
+    ).length,
+  };
+
+  // Pagination
+  const totalPages = Math.ceil(filteredEnrollments.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedEnrollments = filteredEnrollments.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
 
   if (isLoading) {
     return (
@@ -251,147 +296,35 @@ export default function UserEnrollmentsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            User Enrollment Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage user enrollments and course access
-          </p>
-        </div>
-
-        {error && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">
-              <strong>Error:</strong> {error}
-              <br />
-              <small className="text-red-600">
-                Check the browser console for more details.
-              </small>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {success && (
-          <Alert className="mb-6 border-green-200 bg-green-50">
-            <AlertDescription className="text-green-800">
-              {success}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <Tabs defaultValue="enrollments" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="enrollments">All Enrollments</TabsTrigger>
-            <TabsTrigger value="enroll">Enroll User</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="enrollments" className="space-y-6">
-            <div className="flex items-center space-x-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Search enrollments..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 rounded-sm"
-                />
-              </div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+                Enrollment Management
+              </h1>
+              <p className="text-muted-foreground">
+                Manage user enrollments and course access
+              </p>
             </div>
-
-            <div className="grid gap-4">
-              {filteredEnrollments.length === 0 ? (
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      No enrollments found
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {searchTerm
-                        ? "Try adjusting your search terms"
-                        : "No users are enrolled in any courses yet"}
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                filteredEnrollments.map((enrollment) => (
-                  <Card key={enrollment.id} className="rounded-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-4">
-                            <div>
-                              <h3 className="font-semibold">
-                                {enrollment.user?.first_name}{" "}
-                                {enrollment.user?.last_name}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                {enrollment.user?.email}
-                              </p>
-                            </div>
-                            <div className="text-muted-foreground">→</div>
-                            <div>
-                              <h3 className="font-semibold">
-                                {enrollment.course?.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                {enrollment.course?.slug}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge
-                              variant={
-                                enrollment.is_active ? "default" : "secondary"
-                              }
-                            >
-                              {enrollment.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                            <Badge variant="outline">
-                              {(enrollment.course?.price || 0) === 0
-                                ? "Free"
-                                : `₹${enrollment.course?.price}`}
-                            </Badge>
-                            <span className="text-sm text-muted-foreground">
-                              Enrolled:{" "}
-                              {new Date(
-                                enrollment.enrolled_at
-                              ).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {enrollment.is_active && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleUnenrollUser(enrollment.id)}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Unenroll
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="enroll" className="space-y-6">
-            <Card className="rounded-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Plus className="w-5 h-5 mr-2" />
-                  Enroll User in Course
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Enroll User
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="rounded-sm">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    <UserPlus className="w-5 h-5 mr-2 text-[#e27447]" />
+                    Enroll User in Course
+                  </DialogTitle>
+                  <DialogDescription>
+                    Select a user and course to create a new enrollment
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
                   <div className="space-y-2">
                     <Label htmlFor="user-select">Select User</Label>
                     <Select
@@ -445,56 +378,333 @@ export default function UserEnrollmentsPage() {
                     </Select>
                   </div>
                 </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                    className="rounded-sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleEnrollUser}
+                    disabled={!selectedUserId || !selectedCourseId}
+                    className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Enroll User
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
 
-                <Button
-                  onClick={handleEnrollUser}
-                  disabled={!selectedUserId || !selectedCourseId}
-                  className="w-full rounded-sm"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Enroll User
-                </Button>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <Card className="rounded-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Total Enrollments
+                    </p>
+                    <p className="text-2xl font-bold text-[#1e293b]">
+                      {stats.total}
+                    </p>
+                  </div>
+                  <Users className="w-8 h-8 text-[#e27447]" />
+                </div>
               </CardContent>
             </Card>
 
             <Card className="rounded-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="w-5 h-5 mr-2" />
-                  Quick Stats
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#e27447]">
-                      {users.length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Total Users
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#e27447]">
-                      {courses.length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Total Courses
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-[#e27447]">
-                      {enrollments.filter((e) => e.is_active).length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
                       Active Enrollments
-                    </div>
+                    </p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {stats.active}
+                    </p>
                   </div>
+                  <CheckCircle2 className="w-8 h-8 text-green-600" />
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+
+            <Card className="rounded-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Inactive Enrollments
+                    </p>
+                    <p className="text-2xl font-bold text-gray-600">
+                      {stats.inactive}
+                    </p>
+                  </div>
+                  <XCircle className="w-8 h-8 text-gray-600" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      This Month
+                    </p>
+                    <p className="text-2xl font-bold text-[#e27447]">
+                      {stats.thisMonth}
+                    </p>
+                  </div>
+                  <TrendingUp className="w-8 h-8 text-[#e27447]" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        {error && (
+          <Alert className="mb-6 border-red-200 bg-red-50 rounded-sm">
+            <AlertDescription className="text-red-800">
+              <strong>Error:</strong> {error}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {success && (
+          <Alert className="mb-6 border-green-200 bg-green-50 rounded-sm">
+            <AlertDescription className="text-green-800">
+              {success}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Filters */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search by user name, email, or course..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 rounded-sm"
+            />
+          </div>
+          <Select
+            value={filterStatus}
+            onValueChange={(value: "all" | "active" | "inactive") =>
+              setFilterStatus(value)
+            }
+          >
+            <SelectTrigger className="w-[180px] rounded-sm">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Enrollments</SelectItem>
+              <SelectItem value="active">Active Only</SelectItem>
+              <SelectItem value="inactive">Inactive Only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Enrollments Table */}
+        {filteredEnrollments.length === 0 ? (
+          <Card className="p-12 text-center rounded-sm">
+            <div className="max-w-md mx-auto">
+              <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">
+                No enrollments found
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {searchTerm || filterStatus !== "all"
+                  ? "Try adjusting your search or filters"
+                  : "Start by enrolling users in courses"}
+              </p>
+              {!searchTerm && filterStatus === "all" && (
+                <Button
+                  className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Enroll First User
+                </Button>
+              )}
+            </div>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            <Card className="rounded-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        User
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        Course
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        Status
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        Price
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        Enrolled
+                      </th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedEnrollments.map((enrollment) => (
+                      <tr
+                        key={enrollment.id}
+                        className="border-b last:border-0 hover:bg-muted/30 transition-colors"
+                      >
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="font-medium text-sm">
+                              {enrollment.user?.first_name}{" "}
+                              {enrollment.user?.last_name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {enrollment.user?.email}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="font-medium text-sm">
+                              {enrollment.course?.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {enrollment.course?.slug}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Badge
+                            variant={
+                              enrollment.is_active ? "default" : "secondary"
+                            }
+                            className="rounded-sm"
+                          >
+                            {enrollment.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm">
+                            {(enrollment.course?.price || 0) === 0
+                              ? "Free"
+                              : `₹${enrollment.course?.price}`}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(
+                              enrollment.enrolled_at
+                            ).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {enrollment.is_active && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUnenrollUser(enrollment.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  Showing {startIndex + 1} to{" "}
+                  {Math.min(endIndex, filteredEnrollments.length)} of{" "}
+                  {filteredEnrollments.length} enrollments
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="rounded-sm"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((page) => {
+                        // Show first page, last page, current page, and pages around current
+                        return (
+                          page === 1 ||
+                          page === totalPages ||
+                          Math.abs(page - currentPage) <= 1
+                        );
+                      })
+                      .map((page, index, array) => {
+                        // Add ellipsis
+                        const prevPage = array[index - 1];
+                        const showEllipsis = prevPage && page - prevPage > 1;
+
+                        return (
+                          <div key={page} className="flex items-center gap-1">
+                            {showEllipsis && (
+                              <span className="px-2 text-muted-foreground">
+                                ...
+                              </span>
+                            )}
+                            <Button
+                              variant={
+                                currentPage === page ? "default" : "outline"
+                              }
+                              size="sm"
+                              onClick={() => setCurrentPage(page)}
+                              className="rounded-sm min-w-[2.5rem]"
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="rounded-sm"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

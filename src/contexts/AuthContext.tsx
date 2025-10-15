@@ -554,15 +554,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Handle specific events
         if (event === "SIGNED_OUT") {
-          console.log("🚪 User signed out, clearing state and redirecting");
+          console.log("🚪 SIGNED_OUT event received, clearing state and redirecting");
 
           // Reset signing out flag
           setIsSigningOut(false);
+          console.log("🔵 SIGNED_OUT - Reset isSigningOut to false");
 
           // Clear all auth state
           setProfile(null);
           setUser(null);
           setSession(null);
+          console.log("🔵 SIGNED_OUT - Cleared all auth state");
 
           // Clear profile from localStorage
           if (typeof window !== "undefined") {
@@ -688,35 +690,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
-    console.log("SignOut function called");
+    console.log("🔵 signOut - SignOut function called");
     try {
       // Set signing out flag to prevent automatic session restoration
       setIsSigningOut(true);
+      console.log("🔵 signOut - Set isSigningOut to true");
 
       // Clear profile cache first
       setProfileCache(new Map());
-      console.log("Cleared profile cache");
+      console.log("🔵 signOut - Cleared profile cache");
 
       // Check if there's an active session before trying to sign out
       const {
         data: { session },
       } = await supabase.auth.getSession();
       console.log(
-        "Current session before signOut:",
+        "🔵 signOut - Current session before signOut:",
         session ? "exists" : "none"
       );
 
       if (session) {
+        console.log("🔵 signOut - Calling supabase.auth.signOut()");
         // Sign out from Supabase - let the auth state change handler manage state clearing
         const { error } = await supabase.auth.signOut();
         if (error) {
-          console.error("SignOut error:", error);
+          console.error("❌ signOut - SignOut error:", error);
           setIsSigningOut(false); // Reset flag on error
           throw error;
         }
-        console.log("SignOut successful");
+        console.log("✅ signOut - Successfully signed out from Supabase");
       } else {
-        console.log("No active session found, proceeding with local cleanup");
+        console.log("🔵 signOut - No active session found, proceeding with local cleanup");
         // No session to sign out from, just clear local state
         setProfile(null);
         setUser(null);

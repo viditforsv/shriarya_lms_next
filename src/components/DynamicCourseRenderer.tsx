@@ -246,6 +246,61 @@ function renderOverviewSection(
         </p>
       )}
 
+      {/* Official CBSE Syllabus Link */}
+      {(course.slug === "cbse-mathematics-class-9" ||
+        course.slug === "cbse-mathematics-class-10") && (
+        <div className="p-4 bg-[#feefea] border border-[#e27447] rounded-sm">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg
+                className="w-6 h-6 text-[#e27447]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-[#1e293b] mb-1">
+                Official CBSE Syllabus 2025-26
+              </h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                View the complete official CBSE Mathematics syllabus document
+                for detailed curriculum information, learning objectives, and
+                examination guidelines.
+              </p>
+              <a
+                href="https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/Maths_Sec_2025-26.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-[#e27447] hover:text-[#d1653a] font-medium text-sm"
+              >
+                <span>Download Official Syllabus PDF</span>
+                <svg
+                  className="w-4 h-4 ml-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Features */}
       {section.fields.includes("features") && course.features && (
         <div>
@@ -391,10 +446,7 @@ function renderLessonsSection(
   return (
     <div>
       <h4 className="font-semibold mb-4 text-[#1e293b]">Course Content</h4>
-      <p className="text-sm text-muted-foreground">
-        {course.lessons} lessons •{" "}
-        {course.isFree ? "Free" : `$${course.price || 0}`}
-      </p>
+      <p className="text-sm text-muted-foreground">{course.lessons} lessons</p>
       {/* This would be populated with actual lessons */}
     </div>
   );
@@ -403,13 +455,6 @@ function renderLessonsSection(
 // Render Badges Section
 function renderBadgesSection(section: TemplateSection, course: RenderedCourse) {
   const badgeConfigs = [
-    // Course Status Badges
-    {
-      text: course.isFree ? "Free" : `$${course.price || 0}`,
-      variant: course.isFree ? ("secondary" as const) : ("default" as const),
-      className: "",
-    },
-
     // Course Info Badges (Priority - show these first)
     ...(course.curriculum
       ? [

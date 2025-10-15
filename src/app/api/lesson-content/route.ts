@@ -27,13 +27,28 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    // Handle slug mismatch - strip lesson prefix if present
+    // Handle slug mismatch - clean up corrupted slugs
     let actualLessonSlug = lessonSlug;
+
+    // Handle lesson- prefix
     if (lessonSlug.startsWith("lesson-")) {
-      // Extract the actual slug after "lesson-X-" prefix
       const parts = lessonSlug.split("-");
       if (parts.length >= 3) {
         actualLessonSlug = parts.slice(2).join("-");
+      }
+    }
+
+    // Handle corrupted repeated slugs (e.g., cbse-mathematics-class-9-cbse-mathematics-class-9-...)
+    if (
+      actualLessonSlug.includes(
+        "cbse-mathematics-class-9-cbse-mathematics-class-9"
+      )
+    ) {
+      // Extract the clean slug after the repeated part
+      const parts = actualLessonSlug.split("-");
+      const cbseIndex = parts.indexOf("cbse9");
+      if (cbseIndex !== -1) {
+        actualLessonSlug = parts.slice(cbseIndex).join("-");
       }
     }
 

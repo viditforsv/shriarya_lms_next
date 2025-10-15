@@ -34,6 +34,8 @@ import {
 import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
 import { LessonPageSkeleton } from "@/components/skeletons";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface Course {
   id: string;
@@ -65,6 +67,8 @@ interface Lesson {
   video_thumbnail?: string;
   pdf_url?: string;
   quiz_id?: string;
+  unit_name?: string;
+  chapter_name?: string;
 }
 
 export default function DynamicLessonPage({
@@ -72,6 +76,7 @@ export default function DynamicLessonPage({
 }: {
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
+  const { user, profile } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
@@ -144,7 +149,29 @@ export default function DynamicLessonPage({
             },
           };
           setCourse(course);
-          setIsEnrolled(course.is_free || false);
+
+          // Check actual enrollment status from database
+          if (user) {
+            const supabase = createClient();
+            const { data: enrollmentData } = await supabase
+              .from("courses_enrollments")
+              .select("*")
+              .eq("student_id", user.id)
+              .eq("course_id", course.id)
+              .eq("is_active", true)
+              .maybeSingle();
+
+            setIsEnrolled(!!enrollmentData || course.is_free);
+            console.log("Enrollment check:", {
+              userId: user.id,
+              courseId: course.id,
+              enrolled: !!enrollmentData,
+              isFree: course.is_free,
+              finalIsEnrolled: !!enrollmentData || course.is_free,
+            });
+          } else {
+            setIsEnrolled(course.is_free);
+          }
 
           // Set default tab based on template type
           const isPDFTemplate =
@@ -152,7 +179,7 @@ export default function DynamicLessonPage({
           console.log("Template check:", {
             template_id: course.template_id,
             isPDFTemplate,
-            expectedTemplateId: "addffa2b-d88c-484e-9637-1f7fbe42e29c"
+            expectedTemplateId: "addffa2b-d88c-484e-9637-1f7fbe42e29c",
           });
           if (isPDFTemplate) {
             setActiveTab("pdf");
@@ -198,16 +225,17 @@ export default function DynamicLessonPage({
     };
 
     loadLesson();
-  }, [resolvedParams]);
+  }, [resolvedParams, user]);
 
   // Set active tab based on template when course loads
   useEffect(() => {
     if (course?.template_id) {
-      const isPDFTemplate = course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+      const isPDFTemplate =
+        course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
       console.log("Course loaded, checking template:", {
         template_id: course.template_id,
         isPDFTemplate,
-        currentActiveTab: activeTab
+        currentActiveTab: activeTab,
       });
       if (isPDFTemplate && activeTab !== "pdf") {
         setActiveTab("pdf");
@@ -217,6 +245,11 @@ export default function DynamicLessonPage({
   }, [course?.template_id, activeTab]);
 
   const hasAccess = () => {
+    // Admin has access to everything
+    if (profile?.role === "admin") {
+      return true;
+    }
+
     return lesson?.is_preview || isEnrolled || course?.is_free;
   };
 
@@ -447,11 +480,13 @@ export default function DynamicLessonPage({
               className="w-full"
             >
               {(() => {
-                const isPDFTemplate = course?.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
+                const isPDFTemplate =
+                  course?.template_id ===
+                  "addffa2b-d88c-484e-9637-1f7fbe42e29c";
                 console.log("Rendering TabsList:", {
                   courseTemplateId: course?.template_id,
                   isPDFTemplate,
-                  activeTab
+                  activeTab,
                 });
                 return isPDFTemplate;
               })() ? (

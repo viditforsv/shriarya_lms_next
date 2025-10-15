@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Card,
   CardContent,
@@ -28,19 +29,32 @@ import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { Chapter } from "@/lib/cbse-syllabus";
+
+// Extended RenderedCourse with template_data fields
+interface ExtendedCourse extends RenderedCourse {
+  template_data?: {
+    units?: any[];
+    tags?: string[];
+    learningOutcomes?: string[];
+    prerequisites?: string[];
+    examBoard?: string;
+    academicYear?: string;
+    textbookName?: string;
+  };
+}
 import {
   CBSE_CLASS_10_MATHEMATICS_SYLLABUS,
   CBSE_CLASS_9_MATHEMATICS_SYLLABUS,
 } from "@/lib/cbse-syllabus";
 import { syllabus as ibdpSyllabus } from "@/lib/courses/ibdp-mathematics-aa-hl/syllabus";
+import { createClient } from "@/lib/supabase/client";
 
 export function CoursePageClient({
   courseParams,
 }: {
   courseParams: { slug: string };
 }) {
-  // const { user } = useAuth()
-  const user = null;
+  const { user } = useAuth();
 
   // Check if this is an IBDP course
   const isIBDPCourse = courseParams.slug === "ibdp-mathematics-aa-hl";
@@ -230,13 +244,13 @@ export function CoursePageClient({
         "lines-angles-basic": "cbse9-lines-and-angles",
         "triangles-congruence": "cbse9-triangles",
         "quadrilaterals-properties": "cbse9-quadrilaterals",
-        "areas-basic": "cbse9-quadrilaterals", // Areas chapter maps to quadrilaterals lessons
+        "areas-basic": "cbse9-areas-parallelograms-triangles",
         "circles-basic": "cbse9-circles",
-        "basic-constructions": "cbse9-triangles", // Constructions maps to triangles
+        "basic-constructions": "cbse9-constructions",
         "heron-formula-area": "cbse9-herons-formula",
         "surface-areas-volumes-basic": "cbse9-surface-areas-and-volumes",
         "statistics-basic": "cbse9-statistics",
-        "probability-basic": "cbse9-samples-tests",
+        "probability-basic": "cbse9-probability",
       };
 
       const targetSlug = chapterNameToLessonMap[chapter.slug];
@@ -372,7 +386,7 @@ export function CoursePageClient({
       window.location.href = `/courses/${courseParams.slug}/lesson/${firstSubsection.slug}`;
     }
   };
-  const [course, setCourse] = useState<RenderedCourse | null>(null);
+  const [course, setCourse] = useState<ExtendedCourse | null>(null);
   const [template, setTemplate] = useState<CourseTemplate | null>(null);
   const [lessons, setLessons] = useState<LessonConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -411,6 +425,39 @@ export function CoursePageClient({
           setCourse(data.rendered);
           setTemplate(data.template);
 
+          // Check enrollment status if user is logged in
+          if (user && data.rendered?.id) {
+            const supabase = createClient();
+            const { data: enrollment } = await supabase
+              .from("courses_enrollments")
+              .select("*")
+              .eq("student_id", user.id)
+              .eq("course_id", data.rendered.id)
+              .eq("is_active", true)
+              .maybeSingle();
+
+            if (enrollment) {
+              setIsEnrolled(true);
+
+              // Also check last accessed lesson
+              const { data: progressData } = await supabase
+                .from("user_progress")
+                .select("lesson_slug, lesson_order")
+                .eq("user_id", user.id)
+                .eq("course_id", data.rendered.id)
+                .order("last_accessed_at", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+              if (progressData) {
+                setLastLesson({
+                  slug: progressData.lesson_slug,
+                  lesson_order: progressData.lesson_order,
+                });
+              }
+            }
+          }
+
           // Fetch lessons using the working lessons API
           try {
             const lessonsResponse = await fetch(
@@ -445,8 +492,8 @@ export function CoursePageClient({
             setLessons(lessonsData);
           }
 
-          // For free courses, user is automatically "enrolled"
-          setIsEnrolled(data.rendered.isFree || false);
+          // Don't override enrollment status - keep the database check result
+          // Free courses still need proper enrollment detection
 
           // Fetch last accessed lesson for continue learning
           try {
@@ -557,8 +604,8 @@ export function CoursePageClient({
             setLessons(lessonsData);
           }
 
-          // For free courses, user is automatically "enrolled"
-          setIsEnrolled(courseData.isFree || false);
+          // Don't override enrollment status - keep the database check result
+          // Free courses still need proper enrollment detection
 
           // Fetch last accessed lesson for continue learning
           try {
@@ -594,9 +641,29 @@ export function CoursePageClient({
       return;
     }
 
+    if (!course?.id) {
+      alert("Course information not available.");
+      return;
+    }
+
     try {
-      // For now, simulate enrollment
-      // In a real app, this would call the enrollment API
+      const supabase = createClient();
+
+      // Create enrollment
+      const { error: enrollError } = await supabase
+        .from("courses_enrollments")
+        .insert({
+          student_id: user.id,
+          course_id: course.id,
+          is_active: true,
+        });
+
+      if (enrollError) {
+        console.error("Enrollment error:", enrollError);
+        alert("Failed to enroll. Please try again.");
+        return;
+      }
+
       setIsEnrolled(true);
       alert("Successfully enrolled! You can now access all lessons.");
     } catch (err) {
@@ -652,9 +719,6 @@ export function CoursePageClient({
                 {course.description || "No description available"}
               </p>
               <div className="flex items-center flex-wrap gap-2">
-                <Badge variant={course.isFree ? "secondary" : "default"}>
-                  {course.isFree ? "Free" : `$${course.price || 0}`}
-                </Badge>
                 {isEnrolled && (
                   <Badge
                     variant="default"
@@ -699,37 +763,36 @@ export function CoursePageClient({
                 )}
 
                 {/* Additional Tags - Only show tags that aren't already displayed above */}
-                {course.tags &&
-                  course.tags
-                    .filter((tag) => {
-                      // Filter out tags that are already shown as individual badges
-                      const lowerTag = tag.toLowerCase();
-                      const unwantedTags = [
-                        "board preparation",
-                        "geometric constructions",
-                        "algebra",
-                        "geometry",
-                        "statistics",
-                        "probability",
-                      ];
+                {(course.template_data?.tags || course.tags || [])
+                  .filter((tag) => {
+                    // Filter out tags that are already shown as individual badges
+                    const lowerTag = tag.toLowerCase();
+                    const unwantedTags = [
+                      "board preparation",
+                      "geometric constructions",
+                      "algebra",
+                      "geometry",
+                      "statistics",
+                      "probability",
+                    ];
 
-                      return !(
-                        lowerTag === course.curriculum?.toLowerCase() ||
-                        lowerTag === course.subject?.toLowerCase() ||
-                        lowerTag === course.grade?.toLowerCase() ||
-                        lowerTag === course.level?.toLowerCase() ||
-                        unwantedTags.includes(lowerTag)
-                      );
-                    })
-                    .map((tag, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
+                    return !(
+                      lowerTag === course.curriculum?.toLowerCase() ||
+                      lowerTag === course.subject?.toLowerCase() ||
+                      lowerTag === course.grade?.toLowerCase() ||
+                      lowerTag === course.level?.toLowerCase() ||
+                      unwantedTags.includes(lowerTag)
+                    );
+                  })
+                  .map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
               </div>
             </div>
             <div className="ml-6">
@@ -793,6 +856,62 @@ export function CoursePageClient({
                         {course?.description ||
                           "This course provides comprehensive learning materials and practical exercises."}
                       </p>
+
+                      {/* Official CBSE Syllabus Link */}
+                      {(courseParams.slug === "cbse-mathematics-class-9" ||
+                        courseParams.slug === "cbse-mathematics-class-10") && (
+                        <div className="mb-6 p-4 bg-[#feefea] border border-[#e27447] rounded-sm">
+                          <div className="flex items-start space-x-3">
+                            <div className="flex-shrink-0">
+                              <svg
+                                className="w-6 h-6 text-[#e27447]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-[#1e293b] mb-1">
+                                Official CBSE Syllabus 2025-26
+                              </h4>
+                              <p className="text-sm text-muted-foreground mb-3">
+                                View the complete official CBSE Mathematics
+                                syllabus document for detailed curriculum
+                                information, learning objectives, and
+                                examination guidelines.
+                              </p>
+                              <a
+                                href="https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/Maths_Sec_2025-26.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center text-[#e27447] hover:text-[#d1653a] font-medium text-sm"
+                              >
+                                <span>Download Official Syllabus PDF</span>
+                                <svg
+                                  className="w-4 h-4 ml-1"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                  />
+                                </svg>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Complete CBSE Syllabus */}
                       <div className="mb-6">
@@ -875,7 +994,11 @@ export function CoursePageClient({
                             What you&apos;ll learn
                           </h4>
                           <ul className="space-y-2 text-sm text-muted-foreground">
-                            {course?.learningOutcomes?.map((outcome, index) => (
+                            {(
+                              course?.template_data?.learningOutcomes ||
+                              course?.learningOutcomes ||
+                              []
+                            ).map((outcome, index) => (
                               <li key={index}>• {outcome}</li>
                             ))}
                           </ul>
@@ -885,8 +1008,16 @@ export function CoursePageClient({
                             Course includes
                           </h4>
                           <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>• {course?.lessons} lessons</li>
-                            <li>• {course?.duration} of content</li>
+                            <li>
+                              • {lessons.length || course?.lessons} lessons
+                            </li>
+                            <li>
+                              •{" "}
+                              {course?.template_data?.duration ||
+                                course?.duration ||
+                                "Not specified"}{" "}
+                              of content
+                            </li>
                             <li>• Practice problems and assessments</li>
                             <li>• Certificate of completion</li>
                           </ul>
@@ -901,14 +1032,94 @@ export function CoursePageClient({
                 <Card>
                   <CardHeader>
                     <CardTitle>Course Content</CardTitle>
-                    <CardDescription>
-                      {course.lessons} lessons •{" "}
-                      {course.isFree ? "Free" : `$${course.price || 0}`}
-                    </CardDescription>
+                    <CardDescription>{course.lessons} lessons</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {isIBDPCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
+                    ) : courseParams.slug === "cbse-mathematics-class-9" ||
+                      courseParams.slug === "cbse-mathematics-class-10" ? (
+                      // Use database-driven structure for CBSE courses
+                      <div className="space-y-2">
+                        {(() => {
+                          // Group lessons by unit and chapter from database
+                          const groupedLessons = lessons.reduce(
+                            (acc, lesson: any) => {
+                              const unitName = lesson.unit_name || "Other";
+                              const chapterName =
+                                lesson.chapter_name || "Miscellaneous";
+
+                              if (!acc[unitName]) acc[unitName] = {};
+                              if (!acc[unitName][chapterName])
+                                acc[unitName][chapterName] = [];
+                              acc[unitName][chapterName].push(lesson);
+                              return acc;
+                            },
+                            {} as Record<string, Record<string, any[]>>
+                          );
+
+                          return Object.entries(groupedLessons).map(
+                            ([unitName, chapters], unitIndex) => {
+                              const unitId = `unit-${unitIndex}`;
+                              const isExpanded = expandedUnits.has(unitId);
+                              return (
+                                <div key={unitId} className="border rounded-sm">
+                                  {/* Unit Header */}
+                                  <div
+                                    className="p-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center"
+                                    onClick={() => toggleUnit(unitId)}
+                                  >
+                                    <div>
+                                      <span className="font-semibold text-lg">
+                                        {unitIndex + 1}. {unitName}
+                                      </span>
+                                      <span className="text-sm text-muted-foreground ml-2">
+                                        ({Object.keys(chapters).length}{" "}
+                                        {Object.keys(chapters).length === 1
+                                          ? "chapter"
+                                          : "chapters"}
+                                        )
+                                      </span>
+                                    </div>
+                                    <ChevronRight
+                                      className={`w-5 h-5 transition-transform ${
+                                        isExpanded ? "rotate-90" : ""
+                                      }`}
+                                    />
+                                  </div>
+
+                                  {/* Chapters List */}
+                                  {isExpanded && (
+                                    <div className="border-t">
+                                      {Object.entries(chapters).map(
+                                        (
+                                          [chapterName, chapterLessons],
+                                          chapterIndex
+                                        ) => (
+                                          <div
+                                            key={`${unitId}-chapter-${chapterIndex}`}
+                                            className="p-3 pl-8 hover:bg-gray-50 border-b last:border-b-0"
+                                          >
+                                            <div className="font-medium text-gray-700">
+                                              {chapterName}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground mt-1">
+                                              {chapterLessons.length}{" "}
+                                              {chapterLessons.length === 1
+                                                ? "lesson"
+                                                : "lessons"}
+                                            </div>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                          );
+                        })()}
+                      </div>
                     ) : (
                       <div className="space-y-2">
                         {/* Display units with chapters in accordion */}
@@ -997,16 +1208,23 @@ export function CoursePageClient({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Units</span>
                   <span className="font-medium">
-                    {isIBDPCourse ? "5" : "7"}
+                    {course.template_data?.units?.length ||
+                      getUnitsForCourse().length}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Lessons</span>
-                  <span className="font-medium">{course.lessons}</span>
+                  <span className="font-medium">
+                    {lessons.length || course.lessons}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Duration</span>
-                  <span className="font-medium">{course.duration}</span>
+                  <span className="font-medium">
+                    {course.template_data?.duration ||
+                      course.duration ||
+                      "Not specified"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Level</span>
@@ -1021,17 +1239,19 @@ export function CoursePageClient({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Exam Board</span>
                   <span className="font-medium">
-                    {isIBDPCourse ? "IBO" : "CBSE"}
+                    {course.template_data?.examBoard || course.curriculum}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Academic Year</span>
-                  <span className="font-medium">2025-26</span>
+                  <span className="font-medium">
+                    {course.template_data?.academicYear || "2025-26"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Textbook</span>
                   <span className="font-medium">
-                    {isIBDPCourse ? "IBDP" : "NCERT"}
+                    {course.template_data?.textbookName || "Standard Textbook"}
                   </span>
                 </div>
               </CardContent>
@@ -1044,88 +1264,36 @@ export function CoursePageClient({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  {isIBDPCourse ? (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          1. Number and Algebra
-                        </span>
-                        <span className="font-medium">89 lessons</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          2. Functions
-                        </span>
-                        <span className="font-medium">45 lessons</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          3. Geometry and Trigonometry
-                        </span>
-                        <span className="font-medium">42 lessons</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          4. Statistics and Probability
-                        </span>
-                        <span className="font-medium">58 lessons</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          5. Calculus
-                        </span>
-                        <span className="font-medium">59 lessons</span>
-                      </div>
-                    </>
+                  {getUnitsForCourse().length > 0 ? (
+                    getUnitsForCourse().map((unit, index) => {
+                      // Calculate number of lessons/chapters for each unit
+                      const chapterCount = unit.chapters?.length || 0;
+                      const lessonCount =
+                        unit.chapters?.reduce(
+                          (sum: number, ch: any) =>
+                            sum + (ch.subsections?.length || 0),
+                          0
+                        ) || 0;
+
+                      return (
+                        <div
+                          key={unit.id || index}
+                          className="flex justify-between"
+                        >
+                          <span className="text-muted-foreground">
+                            {index + 1}. {unit.title}
+                          </span>
+                          <span className="font-medium">
+                            {chapterCount}{" "}
+                            {chapterCount === 1 ? "chapter" : "chapters"}
+                          </span>
+                        </div>
+                      );
+                    })
                   ) : (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          1. Number Systems
-                        </span>
-                        <span className="font-medium">Real Numbers</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          2. Algebra
-                        </span>
-                        <span className="font-medium">
-                          Polynomials, Linear & Quadratic
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          3. Coordinate Geometry
-                        </span>
-                        <span className="font-medium">
-                          Distance & Section Formula
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          4. Geometry
-                        </span>
-                        <span className="font-medium">Triangles & Circles</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          5. Trigonometry
-                        </span>
-                        <span className="font-medium">Ratios & Identities</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          6. Mensuration
-                        </span>
-                        <span className="font-medium">Areas & Volumes</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          7. Statistics & Probability
-                        </span>
-                        <span className="font-medium">Data Analysis</span>
-                      </div>
-                    </>
+                    <div className="text-muted-foreground text-center py-4">
+                      No units available
+                    </div>
                   )}
                 </div>
               </CardContent>

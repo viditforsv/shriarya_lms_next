@@ -64,14 +64,14 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
     ],
   },
   {
-    id: "polynomials",
-    title: "Polynomials",
-    slug: "polynomials",
+    id: "algebra",
+    title: "Algebra",
+    slug: "algebra",
     isExpanded: false,
     chapters: [
       {
         id: "polynomials-intro",
-        title: "Polynomials in One Variable",
+        title: "Polynomials",
         slug: "polynomials-intro",
         subsections: [
           {
@@ -105,44 +105,6 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "coordinate-geometry",
-    title: "Coordinate Geometry",
-    slug: "coordinate-geometry",
-    isExpanded: false,
-    chapters: [
-      {
-        id: "cartesian-system",
-        title: "Cartesian System",
-        slug: "cartesian-system",
-        subsections: [
-          {
-            id: "coordinate-plane",
-            title: "Coordinate Plane and Axes",
-            slug: "coordinate-plane",
-            duration: "35 min",
-            isCompleted: false,
-          },
-          {
-            id: "plotting-points",
-            title: "Plotting Points in the Plane",
-            slug: "plotting-points",
-            duration: "40 min",
-            isCompleted: false,
-          },
-        ],
-        isExpanded: false,
-      },
-    ],
-  },
-  {
-    id: "linear-equations",
-    title: "Linear Equations in Two Variables",
-    slug: "linear-equations",
-    isExpanded: false,
-    chapters: [
       {
         id: "linear-equations-intro",
         title: "Linear Equations in Two Variables",
@@ -175,14 +137,44 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
     ],
   },
   {
-    id: "euclid-geometry",
-    title: "Introduction to Euclid's Geometry",
-    slug: "euclid-geometry",
+    id: "coordinate-geometry",
+    title: "Coordinate Geometry",
+    slug: "coordinate-geometry",
+    isExpanded: false,
+    chapters: [
+      {
+        id: "cartesian-system",
+        title: "Coordinate Geometry",
+        slug: "cartesian-system",
+        subsections: [
+          {
+            id: "coordinate-plane",
+            title: "Coordinate Plane and Axes",
+            slug: "coordinate-plane",
+            duration: "35 min",
+            isCompleted: false,
+          },
+          {
+            id: "plotting-points",
+            title: "Plotting Points in the Plane",
+            slug: "plotting-points",
+            duration: "40 min",
+            isCompleted: false,
+          },
+        ],
+        isExpanded: false,
+      },
+    ],
+  },
+  {
+    id: "geometry",
+    title: "Geometry",
+    slug: "geometry",
     isExpanded: false,
     chapters: [
       {
         id: "euclid-definitions",
-        title: "Euclid's Definitions, Axioms and Postulates",
+        title: "Introduction to Euclid Geometry",
         slug: "euclid-definitions",
         subsections: [
           {
@@ -209,17 +201,9 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "lines-angles",
-    title: "Lines and Angles",
-    slug: "lines-angles",
-    isExpanded: false,
-    chapters: [
       {
         id: "lines-angles-basic",
-        title: "Basic Terms and Definitions",
+        title: "Lines and Angles",
         slug: "lines-angles-basic",
         subsections: [
           {
@@ -246,17 +230,9 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "triangles",
-    title: "Triangles",
-    slug: "triangles",
-    isExpanded: false,
-    chapters: [
       {
         id: "triangles-congruence",
-        title: "Congruence of Triangles",
+        title: "Triangles",
         slug: "triangles-congruence",
         subsections: [
           {
@@ -283,17 +259,9 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "quadrilaterals",
-    title: "Quadrilaterals",
-    slug: "quadrilaterals",
-    isExpanded: false,
-    chapters: [
       {
         id: "quadrilaterals-properties",
-        title: "Properties of Quadrilaterals",
+        title: "Quadrilaterals",
         slug: "quadrilaterals-properties",
         subsections: [
           {
@@ -320,14 +288,6 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "areas-parallelograms-triangles",
-    title: "Areas of Parallelograms and Triangles",
-    slug: "areas-parallelograms-triangles",
-    isExpanded: false,
-    chapters: [
       {
         id: "areas-basic",
         title: "Areas of Parallelograms and Triangles",
@@ -347,27 +307,12 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
             duration: "45 min",
             isCompleted: false,
           },
-          {
-            id: "figures-same-base-parallel",
-            title: "Figures on Same Base and Between Same Parallels",
-            slug: "figures-same-base-parallel",
-            duration: "50 min",
-            isCompleted: false,
-          },
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "circles",
-    title: "Circles",
-    slug: "circles",
-    isExpanded: false,
-    chapters: [
       {
         id: "circles-basic",
-        title: "Circles and its Related Terms",
+        title: "Circles",
         slug: "circles-basic",
         subsections: [
           {
@@ -401,17 +346,9 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "constructions",
-    title: "Constructions",
-    slug: "constructions",
-    isExpanded: false,
-    chapters: [
       {
         id: "basic-constructions",
-        title: "Basic Constructions",
+        title: "Constructions",
         slug: "basic-constructions",
         subsections: [
           {
@@ -428,27 +365,20 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
             duration: "50 min",
             isCompleted: false,
           },
-          {
-            id: "construction-bisectors",
-            title: "Construction of Bisectors",
-            slug: "construction-bisectors",
-            duration: "40 min",
-            isCompleted: false,
-          },
         ],
         isExpanded: false,
       },
     ],
   },
   {
-    id: "heron-formula",
-    title: "Heron's Formula",
-    slug: "heron-formula",
+    id: "mensuration",
+    title: "Mensuration",
+    slug: "mensuration",
     isExpanded: false,
     chapters: [
       {
         id: "heron-formula-area",
-        title: "Area of Triangle using Heron's Formula",
+        title: "Areas of a triangle using Heron's Formula",
         slug: "heron-formula-area",
         subsections: [
           {
@@ -468,14 +398,6 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "surface-areas-volumes",
-    title: "Surface Areas and Volumes",
-    slug: "surface-areas-volumes",
-    isExpanded: false,
-    chapters: [
       {
         id: "surface-areas-volumes-basic",
         title: "Surface Areas and Volumes",
@@ -550,7 +472,7 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
     chapters: [
       {
         id: "statistics-basic",
-        title: "Collection and Presentation of Data",
+        title: "Statistics",
         slug: "statistics-basic",
         subsections: [
           {
@@ -584,14 +506,6 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
         ],
         isExpanded: false,
       },
-    ],
-  },
-  {
-    id: "probability",
-    title: "Probability",
-    slug: "probability",
-    isExpanded: false,
-    chapters: [
       {
         id: "probability-basic",
         title: "Probability",
@@ -609,13 +523,6 @@ export const CBSE_CLASS_9_MATHEMATICS_SYLLABUS: Section[] = [
             title: "Experimental Probability",
             slug: "probability-experimental",
             duration: "45 min",
-            isCompleted: false,
-          },
-          {
-            id: "probability-applications",
-            title: "Applications of Probability",
-            slug: "probability-applications",
-            duration: "40 min",
             isCompleted: false,
           },
         ],

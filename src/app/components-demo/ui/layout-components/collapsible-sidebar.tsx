@@ -26,6 +26,8 @@ interface Lesson {
   is_preview: boolean;
   section?: string;
   chapter?: string;
+  unit_name?: string;
+  chapter_name?: string;
 }
 
 interface CollapsibleSidebarProps {
@@ -70,8 +72,89 @@ export function CollapsibleSidebar({
     return new Set();
   });
 
-  // Map lesson order to section and chapter based on CBSE Class 10 syllabus
+  // Map lesson order to section and chapter based on course slug
   const getSectionAndChapter = (lessonOrder: number) => {
+    // CBSE Class 9 Mapping - Based on actual database lesson orders
+    if (courseSlug === "cbse-mathematics-class-9") {
+      // Lesson 1: Real Numbers
+      if (lessonOrder === 1) {
+        return { section: "Number Systems", chapter: "Real Numbers" };
+      }
+      // Lesson 2: Polynomials
+      else if (lessonOrder === 2) {
+        return { section: "Algebra", chapter: "Polynomials" };
+      }
+      // Lesson 3: Coordinate Geometry
+      else if (lessonOrder === 3) {
+        return {
+          section: "Coordinate Geometry",
+          chapter: "Coordinate Geometry",
+        };
+      }
+      // Lesson 4: Linear Equations
+      else if (lessonOrder === 4) {
+        return {
+          section: "Algebra",
+          chapter: "Linear Equations in Two Variables",
+        };
+      }
+      // Lesson 5: Euclid's Geometry
+      else if (lessonOrder === 5) {
+        return {
+          section: "Geometry",
+          chapter: "Introduction to Euclid Geometry",
+        };
+      }
+      // Lesson 6: Lines and Angles
+      else if (lessonOrder === 6) {
+        return { section: "Geometry", chapter: "Lines and Angles" };
+      }
+      // Lesson 7: Triangles
+      else if (lessonOrder === 7) {
+        return { section: "Geometry", chapter: "Triangles" };
+      }
+      // Lesson 8: Quadrilaterals
+      else if (lessonOrder === 8) {
+        return { section: "Geometry", chapter: "Quadrilaterals" };
+      }
+      // Lesson 9: Areas (not in comm_dnd.md structure, but exists in DB)
+      else if (lessonOrder === 9) {
+        return {
+          section: "Geometry",
+          chapter: "Areas of Parallelograms and Triangles",
+        };
+      }
+      // Lesson 10: Circles
+      else if (lessonOrder === 10) {
+        return { section: "Geometry", chapter: "Circles" };
+      }
+      // Lesson 11: Constructions (not in comm_dnd.md structure, but exists in DB)
+      else if (lessonOrder === 11) {
+        return { section: "Geometry", chapter: "Constructions" };
+      }
+      // Lesson 12: Heron's Formula
+      else if (lessonOrder === 12) {
+        return {
+          section: "Mensuration",
+          chapter: "Areas of a triangle using Heron's Formula",
+        };
+      }
+      // Lesson 13: Surface Areas and Volumes
+      else if (lessonOrder === 13) {
+        return { section: "Mensuration", chapter: "Surface Areas and Volumes" };
+      }
+      // Lesson 14: Statistics
+      else if (lessonOrder === 14) {
+        return { section: "Statistics", chapter: "Statistics" };
+      }
+      // Lesson 15: Probability (not in comm_dnd.md structure, but exists in DB)
+      else if (lessonOrder === 15) {
+        return { section: "Statistics", chapter: "Probability" };
+      }
+      return { section: "General", chapter: "Other Topics" };
+    }
+
+    // CBSE Class 10 Mapping (original)
     if (lessonOrder >= 1 && lessonOrder <= 6) {
       return { section: "Number Systems", chapter: "Real Numbers" };
     } else if (lessonOrder >= 7 && lessonOrder <= 11) {
@@ -111,7 +194,13 @@ export function CollapsibleSidebar({
 
   // Group lessons by section and chapter dynamically
   const groupedLessons = lessons.reduce((acc, lesson) => {
-    const { section, chapter } = getSectionAndChapter(lesson.lesson_order);
+    // Use database values if available, otherwise fall back to mapping function
+    const section =
+      (lesson as any).unit_name ||
+      getSectionAndChapter(lesson.lesson_order).section;
+    const chapter =
+      (lesson as any).chapter_name ||
+      getSectionAndChapter(lesson.lesson_order).chapter;
 
     if (!acc[section]) acc[section] = {};
     if (!acc[section][chapter]) acc[section][chapter] = [];
@@ -126,9 +215,13 @@ export function CollapsibleSidebar({
         (lesson) => lesson.slug === currentLessonSlug
       );
       if (currentLesson) {
-        const { section, chapter } = getSectionAndChapter(
-          currentLesson.lesson_order
-        );
+        // Use database values if available, otherwise fall back to mapping function
+        const section =
+          (currentLesson as any).unit_name ||
+          getSectionAndChapter(currentLesson.lesson_order).section;
+        const chapter =
+          (currentLesson as any).chapter_name ||
+          getSectionAndChapter(currentLesson.lesson_order).chapter;
 
         setExpandedSections((prev) => new Set([...prev, section]));
         setExpandedChapters((prev) => new Set([...prev, chapter]));

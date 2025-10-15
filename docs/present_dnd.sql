@@ -28,6 +28,13 @@ CREATE TABLE public.courses (
   price numeric DEFAULT 0,
   template_id uuid,
   template_data jsonb DEFAULT '{}'::jsonb,
+  curriculum text,
+  subject text,
+  grade text,
+  level text,
+  duration text,
+  validity_days integer DEFAULT 365,
+  thumbnail_url text,
   CONSTRAINT courses_pkey PRIMARY KEY (id),
   CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id),
   CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.courses_templates(id)
@@ -139,19 +146,6 @@ CREATE TABLE public.profiles (
   email text NOT NULL,
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
-);
-CREATE TABLE public.qa_comments (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  qa_id uuid NOT NULL,
-  commenter_id uuid NOT NULL,
-  comment_text text NOT NULL,
-  comment_type text DEFAULT 'general'::text CHECK (comment_type = ANY (ARRAY['general'::text, 'content'::text, 'solution'::text, 'formatting'::text, 'difficulty'::text, 'other'::text])),
-  is_resolved boolean DEFAULT false,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT qa_comments_pkey PRIMARY KEY (id),
-  CONSTRAINT qa_comments_qa_id_fkey FOREIGN KEY (qa_id) REFERENCES public.qa_questions(id),
-  CONSTRAINT qa_comments_commenter_id_fkey FOREIGN KEY (commenter_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.qa_history (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -296,6 +290,26 @@ CREATE TABLE public.user_onboarding_progress (
   selected_courses ARRAY DEFAULT '{}'::text[],
   CONSTRAINT user_onboarding_progress_pkey PRIMARY KEY (id),
   CONSTRAINT user_onboarding_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.user_progress (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  course_id uuid NOT NULL,
+  lesson_id uuid NOT NULL,
+  lesson_slug text NOT NULL,
+  lesson_order integer NOT NULL,
+  completion_percentage integer DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
+  time_spent_minutes integer DEFAULT 0,
+  last_accessed_at timestamp with time zone DEFAULT now(),
+  completed_at timestamp with time zone,
+  is_completed boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT user_progress_pkey PRIMARY KEY (id),
+  CONSTRAINT user_progress_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT user_progress_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT user_progress_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id),
+  CONSTRAINT user_progress_unique_user_lesson UNIQUE (user_id, lesson_id)
 );
 CREATE TABLE public.user_profiles (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

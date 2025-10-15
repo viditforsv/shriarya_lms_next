@@ -1,36 +1,48 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 // GET - Get user enrollments
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
-    const courseId = searchParams.get('courseId')
-    const userId = searchParams.get('userId')
+    const supabase = await createClient();
+    const { searchParams } = new URL(request.url);
+    const courseId = searchParams.get("courseId");
+    const userId = searchParams.get("userId");
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Users can only view their own enrollments unless they're admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const targetUserId = profile?.role === 'admin' && userId ? userId : user.id
+    let targetUserId = user.id;
+    
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      
+      targetUserId = profile?.role === "admin" && userId ? userId : user.id;
+    } catch (profileError) {
+      console.log("Profile fetch failed, using user ID:", user.id);
+      // If profile fetch fails, just use the user's own ID
+      targetUserId = user.id;
+    }
 
     let query = supabase
-      .from('enrollments')
-      .select(`
+      .from("courses_enrollments")
+      .select(
+        `
         id,
         is_active,
         enrolled_at,
-        courses!enrollments_course_id_fkey (
+        courses!courses_enrollments_course_id_fkey (
           id,
           title,
           description,
@@ -42,76 +54,95 @@ export async function GET(request: Request) {
           is_free,
           is_published
         )
-      `)
-      .eq('student_id', targetUserId)
-      .eq('is_active', true)
-      .order('enrolled_at', { ascending: false })
+      `
+      )
+      .eq("student_id", targetUserId)
+      .eq("is_active", true)
+      .order("enrolled_at", { ascending: false });
 
     if (courseId) {
-      query = query.eq('course_id', courseId)
+      query = query.eq("course_id", courseId);
     }
 
-    const { data: enrollments, error } = await query
+    const { data: enrollments, error } = await query;
 
     if (error) {
-      console.error('Error fetching enrollments:', error)
-      return NextResponse.json({ error: 'Failed to fetch enrollments' }, { status: 500 })
+      console.error("Error fetching enrollments:", error);
+      return NextResponse.json(
+        { error: "Failed to fetch enrollments" },
+        { status: 500 }
+      );
     }
 
     // Check if user is enrolled in specific course
-    const enrolled = enrollments && enrollments.length > 0
+    const enrolled = enrollments && enrollments.length > 0;
 
-    return NextResponse.json({ enrollments, enrolled })
+    return NextResponse.json({ enrollments, enrolled });
   } catch (error) {
-    console.error('Error in enrollments API:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error("Error in enrollments API:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 // POST - Enroll user in course
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
-    const body = await request.json()
+    const supabase = await createClient();
+    const body = await request.json();
 
-    const { course_id } = body
+    const { course_id } = body;
 
     // Validate required fields
     if (!course_id) {
-      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Course ID is required" },
+        { status: 400 }
+      );
     }
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if course exists and is published
     const { data: course } = await supabase
-      .from('courses')
-      .select('id, is_published, is_free')
-      .eq('id', course_id)
-      .single()
+      .from("courses")
+      .select("id, is_published, is_free")
+      .eq("id", course_id)
+      .single();
 
     if (!course) {
-      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
     if (!course.is_published) {
-      return NextResponse.json({ error: 'Course is not published' }, { status: 403 })
+      return NextResponse.json(
+        { error: "Course is not published" },
+        { status: 403 }
+      );
     }
 
     // Check if user is already enrolled
     const { data: existingEnrollment } = await supabase
-      .from('enrollments')
-      .select('id')
-      .eq('student_id', user.id)
-      .eq('course_id', course_id)
-      .single()
+      .from("courses_enrollments")
+      .select("id")
+      .eq("student_id", user.id)
+      .eq("course_id", course_id)
+      .single();
 
     if (existingEnrollment) {
-      return NextResponse.json({ error: 'User is already enrolled in this course' }, { status: 400 })
+      return NextResponse.json(
+        { error: "User is already enrolled in this course" },
+        { status: 400 }
+      );
     }
 
     // For paid courses, you would add payment logic here
@@ -119,70 +150,93 @@ export async function POST(request: Request) {
 
     // Create enrollment
     const { data: enrollment, error } = await supabase
-      .from('enrollments')
+      .from("courses_enrollments")
       .insert({
         student_id: user.id,
         course_id,
-        is_active: true
+        is_active: true,
       })
       .select()
-      .single()
+      .single();
 
     if (error) {
-      console.error('Error creating enrollment:', error)
-      return NextResponse.json({ error: 'Failed to enroll in course' }, { status: 500 })
+      console.error("Error creating enrollment:", error);
+      return NextResponse.json(
+        { error: "Failed to enroll in course" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ enrollment }, { status: 201 })
+    return NextResponse.json({ enrollment }, { status: 201 });
   } catch (error) {
-    console.error('Error in enrollments POST API:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error("Error in enrollments POST API:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 // DELETE - Unenroll user from course
 export async function DELETE(request: Request) {
   try {
-    const supabase = await createClient()
-    const { searchParams } = new URL(request.url)
-    const courseId = searchParams.get('courseId')
+    const supabase = await createClient();
+    const { searchParams } = new URL(request.url);
+    const courseId = searchParams.get("courseId");
 
     if (!courseId) {
-      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Course ID is required" },
+        { status: 400 }
+      );
     }
 
     // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if enrollment exists
     const { data: enrollment } = await supabase
-      .from('enrollments')
-      .select('id')
-      .eq('student_id', user.id)
-      .eq('course_id', courseId)
-      .single()
+      .from("enrollments")
+      .select("id")
+      .eq("student_id", user.id)
+      .eq("course_id", courseId)
+      .single();
 
     if (!enrollment) {
-      return NextResponse.json({ error: 'Enrollment not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: "Enrollment not found" },
+        { status: 404 }
+      );
     }
 
     // Deactivate enrollment (soft delete)
     const { error } = await supabase
-      .from('enrollments')
+      .from("enrollments")
       .update({ is_active: false })
-      .eq('id', enrollment.id)
+      .eq("id", enrollment.id);
 
     if (error) {
-      console.error('Error unenrolling from course:', error)
-      return NextResponse.json({ error: 'Failed to unenroll from course' }, { status: 500 })
+      console.error("Error unenrolling from course:", error);
+      return NextResponse.json(
+        { error: "Failed to unenroll from course" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ message: 'Successfully unenrolled from course' })
+    return NextResponse.json({
+      message: "Successfully unenrolled from course",
+    });
   } catch (error) {
-    console.error('Error in enrollments DELETE API:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error("Error in enrollments DELETE API:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

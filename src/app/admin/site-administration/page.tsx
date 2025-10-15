@@ -73,9 +73,9 @@ export default function SiteAdministrationPage() {
       iconColor: "text-green-600",
       items: [
         {
-          name: "Course Management",
-          href: "/dashboard/courses/manage",
-          icon: BookOpen,
+          name: "Course Creator",
+          href: "/admin/course-creator",
+          icon: Plus,
           description: "Create and manage courses",
         },
         {
@@ -86,7 +86,7 @@ export default function SiteAdministrationPage() {
         },
         {
           name: "Enrollment Management",
-          href: "/admin/enrollments",
+          href: "/admin/user-enrollments",
           icon: Users,
           description: "Manage student enrollments",
         },

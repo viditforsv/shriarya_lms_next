@@ -160,6 +160,12 @@ export const COURSE_ACCESS: Record<string, CourseAccessConfig> = {
     isFree: true,
     previewAvailable: true,
   },
+  "cbse-mathematics-class-9": {
+    courseId: "cbse-mathematics-class-9",
+    accessType: "free",
+    isFree: true,
+    previewAvailable: true,
+  },
   "cbse-math-10": {
     courseId: "cbse-math-10",
     accessType: "free",

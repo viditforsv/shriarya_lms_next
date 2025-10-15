@@ -12,6 +12,12 @@ const CourseSchema = z.object({
   template_data: z.any().optional(),
   price: z.number().optional(),
   status: z.enum(["published", "draft", "archived"]).default("draft"),
+  curriculum: z.string().optional(),
+  subject: z.string().optional(),
+  grade: z.string().optional(),
+  level: z.string().nullable().optional(),
+  validity_days: z.number().optional(),
+  thumbnail_url: z.string().optional(),
 });
 
 // Unused schemas removed to fix linting errors
@@ -51,15 +57,49 @@ async function checkAdminAccess() {
 
 // COURSE ENDPOINTS
 
-// GET /api/courses - Get all courses
+// GET /api/courses - Get all courses or single course by ID
 export async function GET(request: Request) {
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
     const status = searchParams.get("status");
     const curriculum = searchParams.get("curriculum");
     const isFree = searchParams.get("is_free");
 
+    // If ID is provided, fetch single course
+    if (id) {
+      const { data: course, error } = await supabase
+        .from("courses")
+        .select(
+          `
+          *,
+          profiles:instructor_id (
+            id,
+            first_name,
+            last_name,
+            email
+          )
+        `
+        )
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      if (!course) {
+        return NextResponse.json(
+          { error: "Course not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ course });
+    }
+
+    // Otherwise, fetch all courses
     let query = supabase
       .from("courses")
       .select(

@@ -5,15 +5,19 @@ import { z } from "zod";
 // Validation schemas
 const LessonSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  content: z.string().optional(),
+  notes: z.string().nullable().optional(),
+  content: z.string().nullable().optional(),
+  content_html: z.string().nullable().optional(),
   lesson_order: z.number().min(1, "Lesson order is required"),
   slug: z.string().min(1, "Slug is required"),
   is_preview: z.boolean().default(false),
-  duration: z.string().optional(),
-  type: z
-    .enum(["video", "document", "quiz", "assignment", "practice"])
-    .default("video"),
+  video_url: z.string().nullable().optional(),
+  video_thumbnail: z.string().nullable().optional(),
+  pdf_url: z.string().nullable().optional(),
+  key_points: z.any().nullable().optional(),
+  unit_name: z.string().optional(),
+  chapter_name: z.string().optional(),
+  quiz_id: z.string().nullable().optional(),
   course_id: z.string().min(1, "Course ID is required"),
 });
 

@@ -36,7 +36,9 @@ export async function GET(request: Request) {
         slug,
         lesson_order,
         is_preview,
-        video_thumbnail
+        video_thumbnail,
+        unit_name,
+        chapter_name
       `
       )
       .eq("course_id", course.id)
@@ -50,9 +52,19 @@ export async function GET(request: Request) {
       );
     }
 
+    // Clean up corrupted slugs in the response
+    const cleanedLessons = (lessons || []).map((lesson) => ({
+      ...lesson,
+      slug: lesson.slug.includes(
+        "cbse-mathematics-class-9-cbse-mathematics-class-9"
+      )
+        ? lesson.slug.split("-").slice(-2).join("-") // Extract last 2 parts
+        : lesson.slug,
+    }));
+
     return NextResponse.json(
       {
-        lessons: lessons || [],
+        lessons: cleanedLessons,
       },
       {
         headers: {

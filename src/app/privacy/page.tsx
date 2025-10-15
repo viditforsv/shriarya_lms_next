@@ -1,8 +1,13 @@
-'use client'
+"use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
-import { Shield, Eye, Lock, Users, Calendar } from "lucide-react"
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Shield, Eye, Lock, Users, Calendar } from "lucide-react";
 
 export default function PrivacyPage() {
   return (
@@ -18,12 +23,13 @@ export default function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Your privacy is important to us. This policy explains how we collect, use, and protect your personal information.
+              Your privacy is important to us. This policy explains how we
+              collect, use, and protect your personal information.
             </p>
             <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
                 <Calendar className="w-4 h-4" />
-                <span>Last updated: January 2024</span>
+                <span>Last updated: October 2025</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4" />
@@ -46,10 +52,16 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground">
                 <p>
-                  This Privacy Policy describes how ShriArya LMS (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects, uses, and shares your personal information when you use our learning management platform and related services.
+                  This Privacy Policy describes how ShriArya LMS
+                  (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects,
+                  uses, and shares your personal information when you use our
+                  learning management platform and related services.
                 </p>
                 <p>
-                  By using our services, you agree to the collection and use of information in accordance with this policy. We are committed to protecting your privacy and ensuring the security of your personal data.
+                  By using our services, you agree to the collection and use of
+                  information in accordance with this policy. We are committed
+                  to protecting your privacy and ensuring the security of your
+                  personal data.
                 </p>
               </CardContent>
             </Card>
@@ -64,16 +76,22 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h4 className="text-lg font-semibold text-[#1e293b] mb-3">Personal Information</h4>
+                  <h4 className="text-lg font-semibold text-[#1e293b] mb-3">
+                    Personal Information
+                  </h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Name and contact information (email, phone number)</li>
+                    <li>
+                      • Name and contact information (email, phone number)
+                    </li>
                     <li>• Account credentials and profile information</li>
                     <li>• Educational background and preferences</li>
                     <li>• Payment and billing information</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-[#1e293b] mb-3">Usage Information</h4>
+                  <h4 className="text-lg font-semibold text-[#1e293b] mb-3">
+                    Usage Information
+                  </h4>
                   <ul className="space-y-2 text-muted-foreground">
                     <li>• Course progress and completion data</li>
                     <li>• Learning preferences and behavior patterns</li>
@@ -87,12 +105,16 @@ export default function PrivacyPage() {
             {/* How We Use Information */}
             <Card className="mb-8 border-[#feefea]">
               <CardHeader>
-                <CardTitle className="text-2xl text-[#1e293b]">How We Use Your Information</CardTitle>
+                <CardTitle className="text-2xl text-[#1e293b]">
+                  How We Use Your Information
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-[#1e293b]">Service Provision</h4>
+                    <h4 className="font-semibold text-[#1e293b]">
+                      Service Provision
+                    </h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>• Provide and maintain our learning platform</li>
                       <li>• Process course enrollments and payments</li>
@@ -101,7 +123,9 @@ export default function PrivacyPage() {
                     </ul>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-[#1e293b]">Improvement & Analytics</h4>
+                    <h4 className="font-semibold text-[#1e293b]">
+                      Improvement & Analytics
+                    </h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>• Analyze usage patterns and trends</li>
                       <li>• Improve platform functionality</li>
@@ -116,23 +140,35 @@ export default function PrivacyPage() {
             {/* Information Sharing */}
             <Card className="mb-8 border-[#feefea]">
               <CardHeader>
-                <CardTitle className="text-2xl text-[#1e293b]">Information Sharing</CardTitle>
+                <CardTitle className="text-2xl text-[#1e293b]">
+                  Information Sharing
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground">
                 <p>
-                  We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:
+                  We do not sell, trade, or rent your personal information to
+                  third parties. We may share your information in the following
+                  circumstances:
                 </p>
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-[#1e293b]">Service Providers</h4>
+                    <h4 className="font-semibold text-[#1e293b]">
+                      Service Providers
+                    </h4>
                     <p className="text-sm">
-                      We work with trusted third-party service providers who assist us in operating our platform, processing payments, and providing customer support.
+                      We work with trusted third-party service providers who
+                      assist us in operating our platform, processing payments,
+                      and providing customer support.
                     </p>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-[#1e293b]">Legal Requirements</h4>
+                    <h4 className="font-semibold text-[#1e293b]">
+                      Legal Requirements
+                    </h4>
                     <p className="text-sm">
-                      We may disclose information when required by law, court order, or government request, or to protect our rights and safety.
+                      We may disclose information when required by law, court
+                      order, or government request, or to protect our rights and
+                      safety.
                     </p>
                   </div>
                 </div>
@@ -149,23 +185,37 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground">
                 <p>
-                  We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+                  We implement appropriate technical and organizational security
+                  measures to protect your personal information against
+                  unauthorized access, alteration, disclosure, or destruction.
                 </p>
                 <div className="grid md:grid-cols-3 gap-4 mt-6">
                   <div className="text-center p-4 bg-[#feefea] rounded-sm">
                     <Lock className="w-8 h-8 text-[#e27447] mx-auto mb-2" />
-                    <h5 className="font-semibold text-[#1e293b] mb-1">Encryption</h5>
-                    <p className="text-xs">All data is encrypted in transit and at rest</p>
+                    <h5 className="font-semibold text-[#1e293b] mb-1">
+                      Encryption
+                    </h5>
+                    <p className="text-xs">
+                      All data is encrypted in transit and at rest
+                    </p>
                   </div>
                   <div className="text-center p-4 bg-[#feefea] rounded-sm">
                     <Shield className="w-8 h-8 text-[#e27447] mx-auto mb-2" />
-                    <h5 className="font-semibold text-[#1e293b] mb-1">Access Control</h5>
-                    <p className="text-xs">Strict access controls and authentication</p>
+                    <h5 className="font-semibold text-[#1e293b] mb-1">
+                      Access Control
+                    </h5>
+                    <p className="text-xs">
+                      Strict access controls and authentication
+                    </p>
                   </div>
                   <div className="text-center p-4 bg-[#feefea] rounded-sm">
                     <Eye className="w-8 h-8 text-[#e27447] mx-auto mb-2" />
-                    <h5 className="font-semibold text-[#1e293b] mb-1">Monitoring</h5>
-                    <p className="text-xs">Continuous security monitoring and audits</p>
+                    <h5 className="font-semibold text-[#1e293b] mb-1">
+                      Monitoring
+                    </h5>
+                    <p className="text-xs">
+                      Continuous security monitoring and audits
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -174,7 +224,9 @@ export default function PrivacyPage() {
             {/* Your Rights */}
             <Card className="mb-8 border-[#feefea]">
               <CardHeader>
-                <CardTitle className="text-2xl text-[#1e293b]">Your Rights</CardTitle>
+                <CardTitle className="text-2xl text-[#1e293b]">
+                  Your Rights
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -185,7 +237,9 @@ export default function PrivacyPage() {
                       </div>
                       <div>
                         <h4 className="font-semibold text-[#1e293b]">Access</h4>
-                        <p className="text-sm text-muted-foreground">Request access to your personal information</p>
+                        <p className="text-sm text-muted-foreground">
+                          Request access to your personal information
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -193,8 +247,12 @@ export default function PrivacyPage() {
                         <span className="text-white text-xs font-bold">2</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#1e293b]">Correction</h4>
-                        <p className="text-sm text-muted-foreground">Request correction of inaccurate information</p>
+                        <h4 className="font-semibold text-[#1e293b]">
+                          Correction
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Request correction of inaccurate information
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -204,8 +262,12 @@ export default function PrivacyPage() {
                         <span className="text-white text-xs font-bold">3</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#1e293b]">Deletion</h4>
-                        <p className="text-sm text-muted-foreground">Request deletion of your personal data</p>
+                        <h4 className="font-semibold text-[#1e293b]">
+                          Deletion
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Request deletion of your personal data
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -213,8 +275,12 @@ export default function PrivacyPage() {
                         <span className="text-white text-xs font-bold">4</span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#1e293b]">Portability</h4>
-                        <p className="text-sm text-muted-foreground">Request data portability in a structured format</p>
+                        <h4 className="font-semibold text-[#1e293b]">
+                          Portability
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Request data portability in a structured format
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -225,23 +291,32 @@ export default function PrivacyPage() {
             {/* Contact Information */}
             <Card className="mb-8 border-[#feefea]">
               <CardHeader>
-                <CardTitle className="text-2xl text-[#1e293b]">Contact Us</CardTitle>
+                <CardTitle className="text-2xl text-[#1e293b]">
+                  Contact Us
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground">
                 <p>
-                  If you have any questions about this Privacy Policy or our data practices, please contact us:
+                  If you have any questions about this Privacy Policy or our
+                  data practices, please contact us:
                 </p>
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
                   <div>
                     <h4 className="font-semibold text-[#1e293b] mb-2">Email</h4>
-                    <p className="text-sm">privacy@shriarya.com</p>
+                    <p className="text-sm">contact@shrividhya.in</p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#1e293b] mb-2">Address</h4>
+                    <h4 className="font-semibold text-[#1e293b] mb-2">
+                      Address
+                    </h4>
                     <p className="text-sm">
-                      ShriArya LMS<br />
-                      123 Learning Street<br />
-                      Education City, EC 12345
+                      Shrividhya Classes
+                      <br />
+                      2919P, Ground Floor
+                      <br />
+                      Sushant Lok 2, Sector 57
+                      <br />
+                      Gurugram, Haryana 122003, IN
                     </p>
                   </div>
                 </div>
@@ -258,20 +333,20 @@ export default function PrivacyPage() {
                 Questions About Privacy?
               </h3>
               <p className="text-muted-foreground mb-6">
-                Our privacy team is here to help. Contact us for any concerns about your data.
+                Our privacy team is here to help. Contact us for any concerns
+                about your data.
               </p>
               <div className="flex gap-4 justify-center">
-                <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
-                  Contact Support
-                </Button>
-                <Button variant="outline" className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
-                  Download PDF
-                </Button>
+                <a href="mailto:contact@shrividhya.in?subject=Privacy Policy Inquiry">
+                  <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
+                    Contact Support
+                  </Button>
+                </a>
               </div>
             </CardContent>
           </Card>
         </section>
       </div>
     </div>
-  )
+  );
 }

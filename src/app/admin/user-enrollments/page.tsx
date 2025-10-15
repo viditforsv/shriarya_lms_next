@@ -621,7 +621,7 @@ export default function UserEnrollmentsPage() {
                         <td className="px-4 py-3 text-right">
                           {enrollment.is_active && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => handleUnenrollUser(enrollment.id)}
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm"
@@ -679,7 +679,7 @@ export default function UserEnrollmentsPage() {
                             )}
                             <Button
                               variant={
-                                currentPage === page ? "default" : "outline"
+                                currentPage === page ? "primary" : "outline"
                               }
                               size="sm"
                               onClick={() => setCurrentPage(page)}

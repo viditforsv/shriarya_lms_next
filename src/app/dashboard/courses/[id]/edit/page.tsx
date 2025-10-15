@@ -17,7 +17,35 @@ import { Switch } from "@/app/components-demo/ui/switch";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import { Course, Lesson } from "@/lib/courses";
+
+// Define local types based on database schema
+interface Course {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price: number;
+  status?: string;
+  curriculum?: string;
+  subject?: string;
+  grade?: string;
+  instructor_id?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface Lesson {
+  id: string;
+  course_id: string;
+  title: string;
+  slug: string;
+  content: string | null;
+  lesson_order: number;
+  is_preview: boolean;
+  duration?: string;
+  created_at?: string;
+  updated_at?: string;
+}
 
 // Unused interface removed
 

@@ -9,7 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
-import { BookOpen, Award, Clock, ArrowRight, TrendingUp } from "lucide-react";
+import {
+  BookOpen,
+  Award,
+  Clock,
+  ArrowRight,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";

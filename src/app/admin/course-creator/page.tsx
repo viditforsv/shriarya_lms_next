@@ -873,7 +873,7 @@ export default function CourseCreatorPage() {
                 (l) => l.id === over.id
               );
               const newLessons = [...chapter.lessons];
-              newLessons.splice(destIndex + 1, 0, draggedLesson);
+              newLessons.splice(destIndex + 1, 0, draggedLesson!);
               return {
                 ...chapter,
                 lessons: newLessons.map((lesson, idx) => ({

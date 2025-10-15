@@ -71,7 +71,9 @@ export default function CartPage() {
           <p className="text-muted-foreground mt-2">
             {itemCount === 0
               ? "Your cart is empty"
-              : `${itemCount} ${itemCount === 1 ? "course" : "courses"} in cart`}
+              : `${itemCount} ${
+                  itemCount === 1 ? "course" : "courses"
+                } in cart`}
           </p>
         </div>
 
@@ -111,7 +113,7 @@ export default function CartPage() {
                         </div>
                       </div>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => removeFromCart(item.courseId)}
                         className="rounded-sm"
@@ -134,7 +136,8 @@ export default function CartPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
-                        Subtotal ({itemCount} {itemCount === 1 ? "course" : "courses"})
+                        Subtotal ({itemCount}{" "}
+                        {itemCount === 1 ? "course" : "courses"})
                       </span>
                       <span className="font-medium">
                         ₹{totalPrice.toLocaleString()}
@@ -177,4 +180,3 @@ export default function CartPage() {
     </div>
   );
 }
-

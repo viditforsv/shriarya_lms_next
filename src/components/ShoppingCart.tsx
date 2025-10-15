@@ -28,9 +28,7 @@ export function ShoppingCart() {
         <Button variant="outline" size="sm" className="relative rounded-sm">
           <CartIcon className="w-4 h-4" />
           {itemCount > 0 && (
-            <Badge
-              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-[#e27447] text-white"
-            >
+            <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-[#e27447] text-white">
               {itemCount}
             </Badge>
           )}
@@ -60,7 +58,7 @@ export function ShoppingCart() {
                         </p>
                       </div>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => removeFromCart(item.courseId)}
                         className="rounded-sm"
@@ -97,4 +95,3 @@ export function ShoppingCart() {
     </Sheet>
   );
 }
-

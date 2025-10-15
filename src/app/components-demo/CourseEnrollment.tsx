@@ -1,39 +1,50 @@
-'use client'
+"use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button"
-import { Badge } from "@/app/components-demo/ui/ui-components/badge"
-import { useCourseEnrollment, useCourseAccess } from "@/hooks/useCourseEnrollment"
-import { useAuth } from "@/contexts/AuthContext"
-import { Course } from "@/lib/courses"
-import { BookOpen, CheckCircle, AlertCircle } from "lucide-react"
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import {
+  useCourseEnrollment,
+  useCourseAccess,
+} from "@/hooks/useCourseEnrollment";
+import { useAuth } from "@/contexts/AuthContext";
+import { BookOpen, CheckCircle, AlertCircle } from "lucide-react";
 
-interface CourseEnrollmentProps {
-  course: Course
-  onEnrollmentSuccess?: () => void
+interface Course {
+  id: string;
+  title: string;
+  description?: string;
 }
 
-export function CourseEnrollment({ course, onEnrollmentSuccess }: CourseEnrollmentProps) {
-  const { user } = useAuth()
-  const { enroll, loading, error } = useCourseEnrollment()
+interface CourseEnrollmentProps {
+  course: Course;
+  onEnrollmentSuccess?: () => void;
+}
+
+export function CourseEnrollment({
+  course,
+  onEnrollmentSuccess,
+}: CourseEnrollmentProps) {
+  const { user } = useAuth();
+  const { enroll, loading, error } = useCourseEnrollment();
 
   const handleEnroll = async () => {
     if (!user) {
       // Redirect to login
-      window.location.href = '/auth'
-      return
+      window.location.href = "/auth";
+      return;
     }
 
     try {
-      const enrollment = await enroll(course.id)
+      const enrollment = await enroll(course.id);
       if (enrollment) {
         // Show success message
-        alert('Successfully enrolled! You can now access the course.')
-        onEnrollmentSuccess?.()
+        alert("Successfully enrolled! You can now access the course.");
+        onEnrollmentSuccess?.();
       }
     } catch (err) {
-      console.error('Enrollment error:', err)
+      console.error("Enrollment error:", err);
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -43,13 +54,19 @@ export function CourseEnrollment({ course, onEnrollmentSuccess }: CourseEnrollme
           <BookOpen className="w-8 h-8 text-[#e27447]" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-[#1e293b] mb-2">{course.title}</h3>
+          <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
+            {course.title}
+          </h3>
           {course.description && (
-            <p className="text-sm text-muted-foreground mb-3">{course.description}</p>
+            <p className="text-sm text-muted-foreground mb-3">
+              {course.description}
+            </p>
           )}
           <div className="flex items-center space-x-2">
             <Badge className="bg-green-500 text-white">Free</Badge>
-            <span className="text-sm text-muted-foreground">No payment required</span>
+            <span className="text-sm text-muted-foreground">
+              No payment required
+            </span>
           </div>
         </div>
       </div>
@@ -67,7 +84,7 @@ export function CourseEnrollment({ course, onEnrollmentSuccess }: CourseEnrollme
         <div className="flex items-center space-x-2">
           <CheckCircle className="w-4 h-4 text-green-500" />
           <span className="text-sm text-muted-foreground">
-            {user ? 'Click to enroll immediately' : 'Sign in to enroll'}
+            {user ? "Click to enroll immediately" : "Sign in to enroll"}
           </span>
         </div>
         <Button
@@ -75,44 +92,56 @@ export function CourseEnrollment({ course, onEnrollmentSuccess }: CourseEnrollme
           disabled={loading === course.id}
           className="bg-[#e27447] hover:bg-[#e27447]/90"
         >
-          {loading === course.id ? 'Enrolling...' : (user ? 'Enroll Now' : 'Sign In to Enroll')}
+          {loading === course.id
+            ? "Enrolling..."
+            : user
+            ? "Enroll Now"
+            : "Sign In to Enroll"}
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 interface CourseAccessProps {
-  courseId: string
-  children: React.ReactNode
-  fallback?: React.ReactNode
+  courseId: string;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
-export function CourseAccess({ courseId, children, fallback }: CourseAccessProps) {
-  const { hasAccess, loading } = useCourseAccess(courseId)
+export function CourseAccess({
+  courseId,
+  children,
+  fallback,
+}: CourseAccessProps) {
+  const { hasAccess, loading } = useCourseAccess(courseId);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447]"></div>
       </div>
-    )
+    );
   }
 
   if (!hasAccess) {
-    return fallback || (
-      <div className="text-center py-8">
-        <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Course Access Required</h3>
-        <p className="text-muted-foreground mb-4">
-          You need to enroll in this course to access its content.
-        </p>
-        <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
-          Enroll Now
-        </Button>
-      </div>
-    )
+    return (
+      fallback || (
+        <div className="text-center py-8">
+          <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
+            Course Access Required
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            You need to enroll in this course to access its content.
+          </p>
+          <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
+            Enroll Now
+          </Button>
+        </div>
+      )
+    );
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

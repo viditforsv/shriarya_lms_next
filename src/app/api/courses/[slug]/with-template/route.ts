@@ -62,32 +62,16 @@ export async function GET(
       }
     }
 
-    // If no template, fall back to hardcoded course config
-    if (!template) {
-      // Import the old course config as fallback
-      const { getCourseBySlug } = await import("@/lib/course-config");
-      const fallbackCourse = getCourseBySlug(slug);
-
-      if (fallbackCourse) {
-        return NextResponse.json({
-          course: fallbackCourse,
-          template: null,
-          rendered: fallbackCourse,
-          isFallback: true,
-        });
-      }
-
-      return NextResponse.json({ error: "Course not found" }, { status: 404 });
-    }
-
-    // Render course with template
-    const renderedCourse = renderCourseWithTemplate(course, template);
+    // Render course with template (if available)
+    const renderedCourse = template
+      ? renderCourseWithTemplate(course, template)
+      : course;
 
     return NextResponse.json({
       course,
       template,
       rendered: renderedCourse,
-      isFallback: false,
+      isFallback: !template,
     });
   } catch (error) {
     return NextResponse.json(

@@ -1,67 +1,111 @@
-'use client'
+"use client";
 
-import { useState, useCallback, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { enrollInCourse, cancelEnrollment, isUserEnrolled, Enrollment } from '@/lib/courses'
+import { useState, useCallback, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
+
+interface Enrollment {
+  id: string;
+  student_id: string;
+  course_id: string;
+  enrollment_date: string;
+  is_active: boolean;
+}
 
 export function useCourseEnrollment() {
-  const { user } = useAuth()
-  const [loading, setLoading] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth();
+  const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   // Enroll in a course
-  const enroll = useCallback(async (courseId: string): Promise<Enrollment | null> => {
-    if (!user) {
-      setError('Please log in to enroll in courses')
-      return null
-    }
+  const enroll = useCallback(
+    async (courseId: string): Promise<Enrollment | null> => {
+      if (!user) {
+        setError("Please log in to enroll in courses");
+        return null;
+      }
 
-    setLoading(courseId)
-    setError(null)
+      setLoading(courseId);
+      setError(null);
 
-    try {
-      const enrollment = await enrollInCourse(courseId)
-      return enrollment
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to enroll in course'
-      setError(message)
-      return null
-    } finally {
-      setLoading(null)
-    }
-  }, [user])
+      try {
+        const { data, error: enrollError } = await supabase
+          .from("courses_enrollments")
+          .insert({
+            student_id: user.id,
+            course_id: courseId,
+            is_active: true,
+          })
+          .select()
+          .single();
+
+        if (enrollError) throw enrollError;
+        return data;
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to enroll in course";
+        setError(message);
+        return null;
+      } finally {
+        setLoading(null);
+      }
+    },
+    [user, supabase]
+  );
 
   // Cancel enrollment
-  const cancel = useCallback(async (courseId: string): Promise<void> => {
-    if (!user) {
-      setError('Please log in to manage enrollments')
-      return
-    }
+  const cancel = useCallback(
+    async (courseId: string): Promise<void> => {
+      if (!user) {
+        setError("Please log in to manage enrollments");
+        return;
+      }
 
-    setLoading(courseId)
-    setError(null)
+      setLoading(courseId);
+      setError(null);
 
-    try {
-      await cancelEnrollment(courseId)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to cancel enrollment'
-      setError(message)
-    } finally {
-      setLoading(null)
-    }
-  }, [user])
+      try {
+        const { error: cancelError } = await supabase
+          .from("courses_enrollments")
+          .update({ is_active: false })
+          .eq("student_id", user.id)
+          .eq("course_id", courseId);
+
+        if (cancelError) throw cancelError;
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to cancel enrollment";
+        setError(message);
+      } finally {
+        setLoading(null);
+      }
+    },
+    [user, supabase]
+  );
 
   // Check if user is enrolled
-  const checkEnrollment = useCallback(async (courseId: string): Promise<boolean> => {
-    if (!user) return false
+  const checkEnrollment = useCallback(
+    async (courseId: string): Promise<boolean> => {
+      if (!user) return false;
 
-    try {
-      return await isUserEnrolled(courseId)
-    } catch (err) {
-      console.error('Error checking enrollment:', err)
-      return false
-    }
-  }, [user])
+      try {
+        const { data } = await supabase
+          .from("courses_enrollments")
+          .select("*")
+          .eq("student_id", user.id)
+          .eq("course_id", courseId)
+          .eq("is_active", true)
+          .single();
+
+        return !!data;
+      } catch (err) {
+        console.error("Error checking enrollment:", err);
+        return false;
+      }
+    },
+    [user]
+  );
 
   return {
     enroll,
@@ -69,41 +113,49 @@ export function useCourseEnrollment() {
     checkEnrollment,
     loading,
     error,
-    clearError: () => setError(null)
-  }
+    clearError: () => setError(null),
+  };
 }
 
 export function useCourseAccess(courseId: string) {
-  const { user } = useAuth()
-  const [hasAccess, setHasAccess] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
+  const { user } = useAuth();
+  const [hasAccess, setHasAccess] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const supabase = createClient();
 
   const checkAccess = useCallback(async () => {
     if (!user) {
-      setHasAccess(false)
-      setLoading(false)
-      return
+      setHasAccess(false);
+      setLoading(false);
+      return;
     }
 
     try {
-      const enrolled = await isUserEnrolled(courseId)
-      setHasAccess(enrolled)
+      const { data } = await supabase
+        .from("courses_enrollments")
+        .select("*")
+        .eq("student_id", user.id)
+        .eq("course_id", courseId)
+        .eq("is_active", true)
+        .single();
+
+      setHasAccess(!!data);
     } catch (err) {
-      console.error('Error checking course access:', err)
-      setHasAccess(false)
+      console.error("Error checking course access:", err);
+      setHasAccess(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [user, courseId])
+  }, [user, courseId, supabase]);
 
   // Check access on mount and when dependencies change
   useEffect(() => {
-    checkAccess()
-  }, [checkAccess])
+    checkAccess();
+  }, [checkAccess]);
 
   return {
     hasAccess,
     loading,
-    checkAccess
-  }
+    checkAccess,
+  };
 }

@@ -63,7 +63,12 @@ export function useCourseAccess(courseId: string) {
   const isFree = coursePrice === 0;
 
   // Check if user can access the course
-  const canAccess = canAccessCourse(courseId, profile?.role, isEnrolled, coursePrice || undefined);
+  const canAccess = canAccessCourse(
+    courseId,
+    profile?.role,
+    isEnrolled,
+    coursePrice || undefined
+  );
 
   // Check if user can preview the course
   const courseConfig = getCourseAccessType(courseId);
@@ -91,18 +96,41 @@ export function useCourseAccess(courseId: string) {
 export function useCoursesAccess(courseIds: string[]) {
   const { user, profile } = useAuth();
   const [enrollments, setEnrollments] = useState<Record<string, boolean>>({});
+  const [coursePrices, setCoursePrices] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
   useEffect(() => {
     const checkEnrollments = async () => {
-      if (!user || !profile || courseIds.length === 0) {
+      if (courseIds.length === 0) {
         setEnrollments({});
+        setCoursePrices({});
         setIsLoading(false);
         return;
       }
 
       try {
+        // Fetch course prices
+        const { data: coursesData } = await supabase
+          .from("courses")
+          .select("id, price")
+          .in("id", courseIds);
+
+        if (coursesData) {
+          const priceMap: Record<string, number> = {};
+          coursesData.forEach((course) => {
+            priceMap[course.id] = course.price || 0;
+          });
+          setCoursePrices(priceMap);
+        }
+
+        // Check enrollments if user is logged in
+        if (!user || !profile) {
+          setEnrollments({});
+          setIsLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from("courses_enrollments")
           .select("course_id")
@@ -135,11 +163,12 @@ export function useCoursesAccess(courseIds: string[]) {
     const isEnrolled = enrollments[courseId] || false;
     const canAccess = canAccessCourse(courseId, profile?.role, isEnrolled);
     const courseConfig = getCourseAccessType(courseId);
+    const coursePrice = coursePrices[courseId] || 0;
 
     return {
       canAccess,
       isEnrolled,
-      isFree: courseConfig?.isFree || false,
+      isFree: coursePrice === 0,
       canPreview: courseConfig?.previewAvailable || false,
     };
   };

@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCourseBySlug, getLessonsByCourseId, Lesson } from "@/lib/courses";
+// import { getCourseBySlug, getLessonsByCourseId, Lesson } from "@/lib/courses"; // TODO: Update this import
 import { useCourseAccess } from "@/hooks/useCourseAccess";
+
+interface Lesson {
+  id: string;
+  title: string;
+  content: string | null;
+  is_preview: boolean;
+  slug: string | null;
+}
 
 interface CourseData {
   id: string;
@@ -192,22 +200,22 @@ export function useCourseData(courseSlug: string) {
         setIsLoading(true);
         setError(null);
 
-        // Fetch course data
-        const course = await getCourseBySlug(courseSlug);
-        if (!course) {
-          setError("Course not found");
-          return;
-        }
+        // TODO: Implement actual course and lesson fetching
+        // const course = await getCourseBySlug(courseSlug);
+        // if (!course) {
+        //   setError("Course not found");
+        //   return;
+        // }
+        // setCourseData(course);
+        // const courseLessons = await getLessonsByCourseId(course.id);
+        // setLessons(courseLessons);
 
-        setCourseData(course);
-
-        // Fetch lessons
-        const courseLessons = await getLessonsByCourseId(course.id);
-        setLessons(courseLessons);
+        setError("This hook needs to be updated");
+        return;
 
         // Organize lessons into sections (you can customize this logic)
-        const sections = organizeLessonsIntoSections(courseLessons, isEnrolled);
-        setCourseContent(sections);
+        // const sections = organizeLessonsIntoSections(courseLessons, isEnrolled);
+        // setCourseContent(sections);
 
         // Simulate progress (replace with actual progress tracking)
         if (user) {

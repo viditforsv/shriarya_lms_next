@@ -472,54 +472,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isSigningOut,
     });
 
-    // Only run auth logic in browser and prevent multiple initializations
-    if (typeof window !== "undefined" && !isInitialized) {
-      console.log("🔵 AuthContext - Initializing auth context");
-      setIsInitialized(true);
+    // Only run auth logic in browser
+    if (typeof window !== "undefined") {
+      if (!isInitialized) {
+        console.log("🔵 AuthContext - Initializing auth context");
+        setIsInitialized(true);
 
-      // Optimized session loading with minimal delays
-      const getSession = async () => {
-        try {
-          console.log("Getting initial session...");
+        // Optimized session loading with minimal delays
+        const getSession = async () => {
+          try {
+            console.log("Getting initial session...");
 
-          // Fast path: Get session immediately from Supabase
-          const {
-            data: { session },
-          } = await supabase.auth.getSession();
+            // Fast path: Get session immediately from Supabase
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
 
-          if (session?.user) {
-            // Set user state immediately for fast UI response
-            setSession(session);
-            setUser(session.user);
+            if (session?.user) {
+              // Set user state immediately for fast UI response
+              setSession(session);
+              setUser(session.user);
 
-            // Fetch profile in background to avoid blocking UI
-            fetchProfile(session.user.id)
-              .then(setProfile)
-              .catch((error) => {
-                console.error("Error fetching profile:", error);
-                // Don't block UI if profile fetch fails
-              });
-          } else {
-            // No session, clear state immediately
+              // Fetch profile in background to avoid blocking UI
+              fetchProfile(session.user.id)
+                .then(setProfile)
+                .catch((error) => {
+                  console.error("Error fetching profile:", error);
+                  // Don't block UI if profile fetch fails
+                });
+            } else {
+              // No session, clear state immediately
+              setSession(null);
+              setUser(null);
+              setProfile(null);
+            }
+          } catch (error) {
+            console.error("Error getting session:", error);
+            // Clear state on error
             setSession(null);
             setUser(null);
             setProfile(null);
+          } finally {
+            setLoading(false);
           }
-        } catch (error) {
-          console.error("Error getting session:", error);
-          // Clear state on error
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-        } finally {
-          setLoading(false);
-        }
-      };
+        };
 
-      getSession();
+        getSession();
+      }
 
-      // Listen for auth changes - simplified approach
+      // Listen for auth changes - ALWAYS set up listener (not just on initialization)
       console.log("🔵 AuthContext - Setting up onAuthStateChange listener");
+      console.log("🔵 AuthContext - Supabase client:", supabase.auth);
 
       const {
         data: { subscription },
@@ -531,19 +534,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           session ? "session exists" : "no session",
           session?.user?.email || "no user"
         );
-        
-        // Test: Force trigger a manual state update to see if React state works
-        console.log("🔐 Testing manual state update...");
+        console.log("🔐 Current state before update:", {
+          user: user?.id || "none",
+          session: !!session,
+          loading,
+          profile: profile?.id || "none",
+        });
+
+        // Update state immediately
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-
-        console.log("🔐 Auth state change - Current state before update:", {
-          hasUser: !!user,
-          hasSession: !!session,
-          hasProfile: !!profile,
-          loading: loading,
-        });
 
         console.log(
           "🔐 Auth state change - State updated, triggering re-render"
@@ -562,10 +563,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setIsSigningOut(false);
           console.log("🔵 SIGNED_OUT - Reset isSigningOut to false");
 
-          // Clear all auth state
+          // Clear all auth state immediately
           setProfile(null);
           setUser(null);
           setSession(null);
+          setLoading(false);
           console.log("🔵 SIGNED_OUT - Cleared all auth state");
 
           // Clear profile from localStorage
@@ -622,12 +624,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return () => {
         console.log("🔵 AuthContext - Cleaning up onAuthStateChange listener");
-        subscription.unsubscribe();
+        if (subscription) {
+          subscription.unsubscribe();
+          console.log("🔵 AuthContext - Subscription unsubscribed");
+        }
       };
     } else {
+      console.log("🔵 AuthContext - Not in browser, setting loading to false");
       setLoading(false);
     }
-  }, [supabase.auth, fetchProfile, isSigningOut, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase.auth, fetchProfile, isSigningOut, router, isInitialized]);
 
   const signIn = useCallback(
     async (email: string, password: string) => {
@@ -693,6 +700,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     console.log("🔵 signOut - SignOut function called");
+    console.log("🔵 Current state before signOut:", {
+      user: user?.id || "none",
+      session: !!session,
+      loading,
+      profile: profile?.id || "none",
+    });
+
     try {
       // Set signing out flag to prevent automatic session restoration
       setIsSigningOut(true);
@@ -763,7 +777,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("🔄 Redirecting to /auth (fallback)");
       router.push("/auth");
     }
-  }, [supabase, setProfileCache, router]);
+  }, [supabase, setProfileCache, router, user, session, loading, profile]);
 
   const signInWithGoogle = useCallback(async () => {
     // Automatically detect environment and use appropriate URL
@@ -868,6 +882,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshProfile,
     hasPermission,
   ]);
+
+  // Debug: Log auth state changes
+  useEffect(() => {
+    console.log("🔍 AuthContext Debug:", {
+      hasUser: !!user,
+      hasSession: !!session,
+      isLoading: loading,
+      hasProfile: !!profile,
+      isSigningOut,
+      timestamp: new Date().toISOString(),
+    });
+    console.log("🔍 State change details:", {
+      userId: user?.id || "none",
+      userEmail: user?.email || "none",
+      sessionExpiry: session?.expires_at || "none",
+      profileId: profile?.id || "none",
+    });
+  }, [user, session, loading, profile, isSigningOut]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

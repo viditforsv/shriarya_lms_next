@@ -92,7 +92,6 @@ interface Course {
   grade: string;
   level?: string;
   price: number;
-  isFree: boolean;
   duration: string;
   validityDays: number;
   thumbnail?: string;
@@ -901,7 +900,6 @@ export default function CourseCreatorPage() {
         grade: course.grade,
         level: course.level || null,
         price: course.price,
-        is_free: course.isFree,
         validity_days: course.validityDays,
         status: courseStatus,
         // Store structure as template_data
@@ -1120,7 +1118,6 @@ export default function CourseCreatorPage() {
           grade: courseData.grade || "",
           level: courseData.level || "",
           price: courseData.price || 0,
-          isFree: courseData.is_free || false,
           duration: courseData.duration || "",
           validityDays: courseData.validity_days || 365,
           units: courseData.template_data?.units || [],

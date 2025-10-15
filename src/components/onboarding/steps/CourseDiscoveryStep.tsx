@@ -27,7 +27,7 @@ interface Course {
   title: string;
   description: string;
   slug: string | null;
-  is_free: boolean;
+  price: number;
   difficulty: string;
   estimated_duration: number;
   student_count: number;
@@ -54,7 +54,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "CBSE Mathematics Class 10",
       description: "Complete CBSE Mathematics curriculum for Class 10 students",
       slug: "cbse-mathematics-class-10",
-      is_free: true,
+      price: 0,
       difficulty: "intermediate",
       estimated_duration: 120,
       student_count: 1250,
@@ -66,7 +66,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "CBSE Mathematics Class 12",
       description: "Advanced Mathematics for CBSE Class 12 students",
       slug: "cbse-mathematics-class-12",
-      is_free: false,
+      price: 2999,
       difficulty: "advanced",
       estimated_duration: 200,
       student_count: 320,
@@ -78,7 +78,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "CBSE Mathematics Class 11",
       description: "Intermediate Mathematics for CBSE Class 11 students",
       slug: "cbse-mathematics-class-11",
-      is_free: false,
+      price: 2499,
       difficulty: "intermediate",
       estimated_duration: 160,
       student_count: 420,
@@ -90,7 +90,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "CBSE Physics Class 12",
       description: "Complete CBSE Physics curriculum for Class 12 students",
       slug: "cbse-physics-class-12",
-      is_free: false,
+      price: 2999,
       difficulty: "advanced",
       estimated_duration: 180,
       student_count: 380,
@@ -103,7 +103,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "ICSE Mathematics Class 9",
       description: "Foundation Mathematics for ICSE Class 9 students",
       slug: "icse-mathematics-class-9",
-      is_free: true,
+      price: 0,
       difficulty: "beginner",
       estimated_duration: 90,
       student_count: 890,
@@ -115,7 +115,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "ICSE Mathematics Class 10",
       description: "Complete ICSE Mathematics curriculum for Class 10 students",
       slug: "icse-mathematics-class-10",
-      is_free: false,
+      price: 2299,
       difficulty: "intermediate",
       estimated_duration: 140,
       student_count: 650,
@@ -128,7 +128,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "IBDP Mathematics HL",
       description: "Advanced Mathematics for IBDP Higher Level students",
       slug: "ibdp-mathematics-hl",
-      is_free: false,
+      price: 3999,
       difficulty: "advanced",
       estimated_duration: 180,
       student_count: 450,
@@ -140,7 +140,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "IBDP Mathematics SL",
       description: "Standard Level Mathematics for IBDP students",
       slug: "ibdp-mathematics-sl",
-      is_free: false,
+      price: 3499,
       difficulty: "intermediate",
       estimated_duration: 160,
       student_count: 520,
@@ -153,7 +153,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "IGCSE Mathematics",
       description: "International Mathematics curriculum for IGCSE students",
       slug: "igcse-mathematics",
-      is_free: false,
+      price: 2799,
       difficulty: "intermediate",
       estimated_duration: 150,
       student_count: 680,
@@ -165,7 +165,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "IGCSE Physics",
       description: "International Physics curriculum for IGCSE students",
       slug: "igcse-physics",
-      is_free: false,
+      price: 2799,
       difficulty: "intermediate",
       estimated_duration: 140,
       student_count: 420,
@@ -178,7 +178,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "SAT Mathematics",
       description: "Complete SAT Mathematics preparation course",
       slug: "sat-mathematics",
-      is_free: false,
+      price: 4999,
       difficulty: "advanced",
       estimated_duration: 100,
       student_count: 1200,
@@ -190,7 +190,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "SAT English",
       description: "Complete SAT English preparation course",
       slug: "sat-english",
-      is_free: false,
+      price: 4499,
       difficulty: "advanced",
       estimated_duration: 80,
       student_count: 980,
@@ -202,7 +202,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "GMAT Quantitative",
       description: "Complete GMAT Quantitative reasoning preparation",
       slug: "gmat-quantitative",
-      is_free: false,
+      price: 5999,
       difficulty: "advanced",
       estimated_duration: 120,
       student_count: 750,
@@ -214,7 +214,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "GMAT Verbal",
       description: "Complete GMAT Verbal reasoning preparation",
       slug: "gmat-verbal",
-      is_free: false,
+      price: 5499,
       difficulty: "advanced",
       estimated_duration: 100,
       student_count: 680,
@@ -226,7 +226,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "GRE Mathematics",
       description: "Complete GRE Mathematics preparation course",
       slug: "gre-mathematics",
-      is_free: false,
+      price: 5499,
       difficulty: "advanced",
       estimated_duration: 140,
       student_count: 920,
@@ -238,7 +238,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       title: "GRE Verbal",
       description: "Complete GRE Verbal reasoning preparation",
       slug: "gre-verbal",
-      is_free: false,
+      price: 4999,
       difficulty: "advanced",
       estimated_duration: 120,
       student_count: 850,
@@ -555,10 +555,12 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
                       </p>
                     </div>
                     <Badge
-                      variant={course.is_free ? "outline" : "default"}
+                      variant={
+                        (course.price || 0) === 0 ? "outline" : "default"
+                      }
                       className="ml-2 text-xs"
                     >
-                      {course.is_free ? "Free" : "Paid"}
+                      {(course.price || 0) === 0 ? "Free" : "Paid"}
                     </Badge>
                   </div>
 

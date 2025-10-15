@@ -40,7 +40,7 @@ export function renderCourseWithTemplate(
     level: (courseData.level ||
       templateData.level ||
       defaultValues.level) as string,
-    isFree: courseData.is_free,
+    isFree: (courseData.price || 0) === 0,
     price: courseData.price,
     status: courseData.status,
     instructor: String(

@@ -20,7 +20,6 @@ export interface CourseAccessConfig {
   courseId: string;
   accessType: CourseAccess;
   requiredRole?: UserRole;
-  isFree: boolean;
   previewAvailable: boolean;
 }
 
@@ -157,37 +156,31 @@ export const COURSE_ACCESS: Record<string, CourseAccessConfig> = {
   "cbse-math-9": {
     courseId: "cbse-math-9",
     accessType: "free",
-    isFree: true,
     previewAvailable: true,
   },
   "cbse-mathematics-class-9": {
     courseId: "cbse-mathematics-class-9",
     accessType: "free",
-    isFree: true,
     previewAvailable: true,
   },
   "cbse-math-10": {
     courseId: "cbse-math-10",
     accessType: "free",
-    isFree: true,
     previewAvailable: true,
   },
   "cbse-mathematics-class-10": {
     courseId: "cbse-mathematics-class-10",
     accessType: "free",
-    isFree: true,
     previewAvailable: true,
   },
   "cbse-math-11": {
     courseId: "cbse-math-11",
     accessType: "paid",
-    isFree: false,
     previewAvailable: true,
   },
   "cbse-math-12": {
     courseId: "cbse-math-12",
     accessType: "paid",
-    isFree: false,
     previewAvailable: true,
   },
 
@@ -195,13 +188,11 @@ export const COURSE_ACCESS: Record<string, CourseAccessConfig> = {
   "ibdp-math-hl": {
     courseId: "ibdp-math-hl",
     accessType: "paid",
-    isFree: false,
     previewAvailable: true,
   },
   "ibdp-math-sl": {
     courseId: "ibdp-math-sl",
     accessType: "paid",
-    isFree: false,
     previewAvailable: true,
   },
 
@@ -209,13 +200,11 @@ export const COURSE_ACCESS: Record<string, CourseAccessConfig> = {
   "icse-math-9": {
     courseId: "icse-math-9",
     accessType: "free",
-    isFree: true,
     previewAvailable: true,
   },
   "icse-math-10": {
     courseId: "icse-math-10",
     accessType: "paid",
-    isFree: false,
     previewAvailable: true,
   },
 };

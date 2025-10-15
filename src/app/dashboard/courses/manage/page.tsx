@@ -1,103 +1,112 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { createClient } from '@supabase/supabase-js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { Input } from '@/app/components-demo/ui/ui-components/input'
-import { 
-  Plus, 
-  Edit, 
-  Eye, 
-  BookOpen, 
-  Clock, 
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@supabase/supabase-js";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
+import {
+  Plus,
+  Edit,
+  Eye,
+  BookOpen,
+  Clock,
   DollarSign,
   Search,
-  MoreHorizontal
-} from 'lucide-react'
+  MoreHorizontal,
+} from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-import Link from 'next/link'
+);
+import Link from "next/link";
 // import { getAllCourseTemplates } from '@/lib/course-templates' // Removed with course builder
 
 interface Course {
-  id: string
-  title: string
-  description: string
-  slug: string
-  curriculum: string
-  subject: string
-  grade?: string
-  level?: string
-  is_free: boolean
-  price: number
-  status: 'draft' | 'published' | 'archived'
-  estimated_duration: string
-  lesson_count: number
-  created_at: string
-  updated_at: string
-  lessons?: Record<string, unknown>[]
-  assessments?: Record<string, unknown>[]
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  curriculum: string;
+  subject: string;
+  grade?: string;
+  level?: string;
+  price: number;
+  status: "draft" | "published" | "archived";
+  estimated_duration: string;
+  lesson_count: number;
+  created_at: string;
+  updated_at: string;
+  lessons?: Record<string, unknown>[];
+  assessments?: Record<string, unknown>[];
 }
 
 export default function CourseManagement() {
-  const { user } = useAuth()
-  const [courses, setCourses] = useState<Course[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [curriculumFilter, setCurriculumFilter] = useState<string>('all')
+  const { user } = useAuth();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [curriculumFilter, setCurriculumFilter] = useState<string>("all");
 
   const fetchCourses = useCallback(async () => {
     try {
-      setIsLoading(true)
-      
-      if (!user) return
+      setIsLoading(true);
 
-      const token = await supabase.auth.getSession()
-      if (!token.data.session) return
-      
-      const response = await fetch('/api/courses/builder', {
+      if (!user) return;
+
+      const token = await supabase.auth.getSession();
+      if (!token.data.session) return;
+
+      const response = await fetch("/api/courses/builder", {
         headers: {
-          'Authorization': `Bearer ${token.data.session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Bearer ${token.data.session.access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setCourses(data.courses || [])
+        const data = await response.json();
+        setCourses(data.courses || []);
       } else {
-        console.error('Failed to fetch courses')
+        console.error("Failed to fetch courses");
       }
     } catch (error) {
-      console.error('Error fetching courses:', error)
+      console.error("Error fetching courses:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
+    fetchCourses();
+  }, [fetchCourses]);
 
   // const handleCreateFromTemplate = async (templateId: string) => { ... } // Removed with course builder
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.subject.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || course.status === statusFilter
-    const matchesCurriculum = curriculumFilter === 'all' || course.curriculum.toLowerCase() === curriculumFilter.toLowerCase()
-    
-    return matchesSearch && matchesStatus && matchesCurriculum
-  })
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.subject.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || course.status === statusFilter;
+    const matchesCurriculum =
+      curriculumFilter === "all" ||
+      course.curriculum.toLowerCase() === curriculumFilter.toLowerCase();
+
+    return matchesSearch && matchesStatus && matchesCurriculum;
+  });
 
   // const templates = getAllCourseTemplates() // Removed with course builder
 
@@ -109,7 +118,7 @@ export default function CourseManagement() {
           <p className="text-muted-foreground">Loading courses...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -119,7 +128,9 @@ export default function CourseManagement() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Course Management</h1>
-            <p className="text-muted-foreground">Create and manage your courses</p>
+            <p className="text-muted-foreground">
+              Create and manage your courses
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/dashboard/courses/builder">
@@ -132,7 +143,7 @@ export default function CourseManagement() {
         </div>
 
         {/* Quick Templates - Removed with course builder */}
-        
+
         {/* Filters */}
         <div className="flex items-center gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
@@ -174,17 +185,22 @@ export default function CourseManagement() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">{course.curriculum}</Badge>
-                  <Badge 
+                  <Badge
                     variant={
-                      course.status === 'published' ? 'default' :
-                      course.status === 'draft' ? 'secondary' : 'destructive'
+                      course.status === "published"
+                        ? "default"
+                        : course.status === "draft"
+                        ? "secondary"
+                        : "destructive"
                     }
                   >
                     {course.status}
                   </Badge>
                 </div>
                 <CardTitle className="text-lg">{course.title}</CardTitle>
-                <CardDescription className="line-clamp-2">{course.description}</CardDescription>
+                <CardDescription className="line-clamp-2">
+                  {course.description}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -198,10 +214,10 @@ export default function CourseManagement() {
                       <span>{course.estimated_duration}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {course.is_free ? (
+                      {(course.price || 0) === 0 ? (
                         <Badge variant="secondary">Free</Badge>
                       ) : (
                         <div className="flex items-center gap-1 text-sm font-medium">
@@ -217,7 +233,9 @@ export default function CourseManagement() {
                         </Link>
                       </Button>
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/dashboard/courses/builder?courseId=${course.id}`}>
+                        <Link
+                          href={`/dashboard/courses/builder?courseId=${course.id}`}
+                        >
                           <Edit className="w-4 h-4" />
                         </Link>
                       </Button>
@@ -238,10 +256,9 @@ export default function CourseManagement() {
               <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">No courses found</h3>
               <p className="text-muted-foreground mb-6">
-                {courses.length === 0 
+                {courses.length === 0
                   ? "You haven't created any courses yet. Start with a template above."
-                  : "No courses match your current filters."
-                }
+                  : "No courses match your current filters."}
               </p>
               {courses.length === 0 && (
                 <Link href="/dashboard/courses/builder">
@@ -256,5 +273,5 @@ export default function CourseManagement() {
         )}
       </div>
     </div>
-  )
+  );
 }

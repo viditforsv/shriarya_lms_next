@@ -20,14 +20,14 @@ export async function GET(request: Request) {
 
     // Users can only view their own enrollments unless they're admin
     let targetUserId = user.id;
-    
+
     try {
       const { data: profile } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
-      
+
       targetUserId = profile?.role === "admin" && userId ? userId : user.id;
     } catch (profileError) {
       console.log("Profile fetch failed, using user ID:", user.id);
@@ -47,12 +47,14 @@ export async function GET(request: Request) {
           title,
           description,
           slug,
-          category,
-          difficulty_level,
-          estimated_duration_hours,
+          curriculum,
+          subject,
+          grade,
+          level,
+          duration,
           thumbnail_url,
-          is_free,
-          is_published
+          status,
+          price
         )
       `
       )
@@ -115,7 +117,7 @@ export async function POST(request: Request) {
     // Check if course exists and is published
     const { data: course } = await supabase
       .from("courses")
-      .select("id, is_published, is_free")
+      .select("id, status, price")
       .eq("id", course_id)
       .single();
 
@@ -123,7 +125,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    if (!course.is_published) {
+    if (course.status !== "published") {
       return NextResponse.json(
         { error: "Course is not published" },
         { status: 403 }

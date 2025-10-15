@@ -298,6 +298,7 @@ export function CoursePageClient({
 
     // Free course - enroll directly
     try {
+      console.log("🔍 DEBUG: Starting enrollment for course:", course.id);
       const supabase = createClient();
       const { error: enrollError } = await supabase
         .from("courses_enrollments")

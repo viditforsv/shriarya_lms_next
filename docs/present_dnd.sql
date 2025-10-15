@@ -22,7 +22,6 @@ CREATE TABLE public.courses (
   instructor_id uuid,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  is_free boolean DEFAULT false,
   slug text UNIQUE,
   status text DEFAULT 'draft'::text CHECK (status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text])),
   price numeric DEFAULT 0,

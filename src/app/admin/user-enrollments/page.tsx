@@ -45,7 +45,6 @@ interface Course {
   id: string;
   title: string;
   slug: string;
-  is_free: boolean;
   price: number;
   status: string;
 }
@@ -124,7 +123,7 @@ export default function UserEnrollmentsPage() {
       console.log("Loading courses...");
       const { data: coursesData, error: coursesError } = await supabase
         .from("courses")
-        .select("id, title, slug, is_free, price, status")
+        .select("id, title, slug, price, status")
         .order("title");
 
       if (coursesError) {
@@ -350,7 +349,7 @@ export default function UserEnrollmentsPage() {
                               {enrollment.is_active ? "Active" : "Inactive"}
                             </Badge>
                             <Badge variant="outline">
-                              {enrollment.course?.is_free
+                              {(enrollment.course?.price || 0) === 0
                                 ? "Free"
                                 : `₹${enrollment.course?.price}`}
                             </Badge>
@@ -434,8 +433,10 @@ export default function UserEnrollmentsPage() {
                             <div className="flex flex-col">
                               <span>{course.title}</span>
                               <span className="text-sm text-muted-foreground">
-                                {course.is_free ? "Free" : `₹${course.price}`} •{" "}
-                                {course.status}
+                                {(course.price || 0) === 0
+                                  ? "Free"
+                                  : `₹${course.price}`}{" "}
+                                • {course.status}
                               </span>
                             </div>
                           </SelectItem>

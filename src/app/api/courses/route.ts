@@ -6,7 +6,6 @@ import { z } from "zod";
 const CourseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  is_free: z.boolean().default(false),
   slug: z.string().min(1, "Slug is required"),
   template_id: z.string().optional(),
   template_data: z.any().optional(),
@@ -65,7 +64,7 @@ export async function GET(request: Request) {
     const id = searchParams.get("id");
     const status = searchParams.get("status");
     const curriculum = searchParams.get("curriculum");
-    const isFree = searchParams.get("is_free");
+    const isFreeParam = searchParams.get("is_free"); // Legacy param, now checks price
 
     // If ID is provided, fetch single course
     if (id) {
@@ -123,8 +122,12 @@ export async function GET(request: Request) {
       query = query.eq("curriculum", curriculum);
     }
 
-    if (isFree !== null) {
-      query = query.eq("is_free", isFree === "true");
+    if (isFreeParam !== null) {
+      if (isFreeParam === "true") {
+        query = query.eq("price", 0);
+      } else {
+        query = query.gt("price", 0);
+      }
     }
 
     const { data: courses, error } = await query;

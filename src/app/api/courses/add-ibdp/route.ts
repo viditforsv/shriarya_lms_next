@@ -13,7 +13,6 @@ export async function POST() {
         description:
           "Advanced Higher Level Mathematics course for IBDP students focusing on analytical approaches, calculus, and mathematical reasoning.",
         slug: "ibdp-mathematics-aa-hl",
-        is_free: false,
         price: 399,
         status: "published",
         template_data: {

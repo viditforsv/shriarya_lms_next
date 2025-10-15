@@ -1,91 +1,97 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { Plus, Edit, Eye, BookOpen } from "lucide-react"
-import { Button } from "@/app/components-demo/ui/ui-components/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
-import { Badge } from "@/app/components-demo/ui/ui-components/badge"
-import { useAuth } from "@/contexts/AuthContext"
-import { createClient } from "@/lib/supabase/client"
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Edit, Eye, BookOpen } from "lucide-react";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface Course {
-  id: string
-  title: string
-  description: string
-  status: 'draft' | 'published' | 'archived'
-  is_free: boolean
-  price: number
-  slug: string
-  created_at: string
+  id: string;
+  title: string;
+  description: string;
+  status: "draft" | "published" | "archived";
+  price: number;
+  slug: string;
+  created_at: string;
 }
 
 export default function CoursesDashboard() {
-  const router = useRouter()
-  const { user } = useAuth()
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const router = useRouter();
+  const { user } = useAuth();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   const fetchCourses = useCallback(async () => {
     try {
-      setLoading(true)
-      
-      const { data: { session } } = await supabase.auth.getSession()
-      
+      setLoading(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        throw new Error('No active session')
+        throw new Error("No active session");
       }
 
-      const response = await fetch('/api/courses/my-courses', {
+      const response = await fetch("/api/courses/my-courses", {
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
-        }
-      })
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch courses')
+        throw new Error("Failed to fetch courses");
       }
 
-      const data = await response.json()
-      setCourses(data.courses || [])
+      const data = await response.json();
+      setCourses(data.courses || []);
     } catch (err) {
-      console.error('Error fetching courses:', err)
-      setError(err instanceof Error ? err.message : 'Failed to fetch courses')
+      console.error("Error fetching courses:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch courses");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [supabase])
+  }, [supabase]);
 
   useEffect(() => {
-    fetchCourses()
-  }, [fetchCourses])
+    fetchCourses();
+  }, [fetchCourses]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'published':
-        return 'bg-green-100 text-green-800'
-      case 'draft':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'archived':
-        return 'bg-gray-100 text-gray-800'
+      case "published":
+        return "bg-green-100 text-green-800";
+      case "draft":
+        return "bg-yellow-100 text-yellow-800";
+      case "archived":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-gray-100 text-gray-800'
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">Please log in to view your courses</p>
-          <Button onClick={() => router.push('/auth')}>
-            Sign In
-          </Button>
+          <p className="text-red-600 mb-4">
+            Please log in to view your courses
+          </p>
+          <Button onClick={() => router.push("/auth")}>Sign In</Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -103,8 +109,8 @@ export default function CoursesDashboard() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Button 
-                onClick={() => router.push('/dashboard/courses/manage')}
+              <Button
+                onClick={() => router.push("/dashboard/courses/manage")}
                 className="bg-[#e27447] hover:bg-[#d1653a]"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -117,7 +123,9 @@ export default function CoursesDashboard() {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading your courses...</p>
+              <p className="mt-4 text-muted-foreground">
+                Loading your courses...
+              </p>
             </div>
           ) : error ? (
             <div className="text-center py-12">
@@ -131,8 +139,8 @@ export default function CoursesDashboard() {
               <p className="text-muted-foreground mb-6">
                 Create your first course to get started
               </p>
-              <Button 
-                onClick={() => router.push('/dashboard/courses/builder')}
+              <Button
+                onClick={() => router.push("/dashboard/courses/builder")}
                 className="bg-[#e27447] hover:bg-[#d1653a]"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -142,10 +150,15 @@ export default function CoursesDashboard() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((course) => (
-                <Card key={course.id} className="border-[#feefea] hover:shadow-md transition-shadow">
+                <Card
+                  key={course.id}
+                  className="border-[#feefea] hover:shadow-md transition-shadow"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-2">
+                        {course.title}
+                      </CardTitle>
                       <Badge className={getStatusColor(course.status)}>
                         {course.status}
                       </Badge>
@@ -157,13 +170,17 @@ export default function CoursesDashboard() {
                     </p>
                     <div className="flex justify-between items-center">
                       <div className="text-sm text-muted-foreground">
-                        {course.is_free ? 'Free' : `$${course.price}`}
+                        {(course.price || 0) === 0
+                          ? "Free"
+                          : `$${course.price}`}
                       </div>
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => router.push(`/dashboard/courses/${course.id}/edit`)}
+                          onClick={() =>
+                            router.push(`/dashboard/courses/${course.id}/edit`)
+                          }
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
@@ -186,5 +203,5 @@ export default function CoursesDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

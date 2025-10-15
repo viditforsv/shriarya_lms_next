@@ -126,7 +126,6 @@ export default function CourseBuilder({
         .update({
           title: course.title,
           description: course.description,
-          is_free: course.is_free,
           price: course.price,
           slug: course.slug,
         })
@@ -392,26 +391,12 @@ export default function CourseBuilder({
                     />
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="is-free"
-                      checked={course?.is_free || false}
-                      onCheckedChange={(checked) =>
-                        setCourse((prev) =>
-                          prev ? { ...prev, is_free: checked } : null
-                        )
-                      }
-                    />
-                    <Label htmlFor="is-free">Free Course</Label>
-                  </div>
-
-                  {!course?.is_free && (
-                    <div>
-                      <Label htmlFor="price">Price (₹)</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        value={course?.price || 0}
+                  <div>
+                    <Label htmlFor="price">Price (₹)</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={course?.price || 0}
                         onChange={(e) =>
                           setCourse((prev) =>
                             prev
@@ -532,10 +517,10 @@ export default function CourseBuilder({
                     <div className="flex items-center space-x-4">
                       <Badge
                         className={
-                          course?.is_free ? "bg-green-500" : "bg-[#e27447]"
+                          (course?.price || 0) === 0 ? "bg-green-500" : "bg-[#e27447]"
                         }
                       >
-                        {course?.is_free ? "Free" : `₹${course?.price}`}
+                        {(course?.price || 0) === 0 ? "Free" : `₹${course?.price}`}
                       </Badge>
                       <Badge variant="outline">{lessons.length} lessons</Badge>
                     </div>

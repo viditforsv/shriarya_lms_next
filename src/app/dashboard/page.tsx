@@ -25,7 +25,7 @@ interface EnrolledCourse {
   id: string;
   title: string;
   slug: string | null;
-  is_free: boolean;
+  price: number;
   enrollment: {
     enrolled_at: string;
   };
@@ -119,7 +119,7 @@ export default function DashboardPage() {
                             </p>
                             <div className="flex items-center space-x-2">
                               <Badge variant="outline" className="text-xs">
-                                {course.is_free ? "Free" : "Paid"}
+                                {(course.price || 0) === 0 ? "Free" : "Paid"}
                               </Badge>
                               <span className="text-xs text-muted-foreground">
                                 Enrolled{" "}

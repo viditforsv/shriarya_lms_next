@@ -516,10 +516,14 @@ export default function CourseBuilder({
                     <div className="flex items-center space-x-4">
                       <Badge
                         className={
-                          (course?.price || 0) === 0 ? "bg-green-500" : "bg-[#e27447]"
+                          (course?.price || 0) === 0
+                            ? "bg-green-500"
+                            : "bg-[#e27447]"
                         }
                       >
-                        {(course?.price || 0) === 0 ? "Free" : `₹${course?.price}`}
+                        {(course?.price || 0) === 0
+                          ? "Free"
+                          : `₹${course?.price}`}
                       </Badge>
                       <Badge variant="outline">{lessons.length} lessons</Badge>
                     </div>

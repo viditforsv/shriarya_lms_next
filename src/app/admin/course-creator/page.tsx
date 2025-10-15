@@ -92,6 +92,7 @@ interface Course {
   grade: string;
   level?: string;
   price: number;
+  isFree?: boolean;
   duration: string;
   validityDays: number;
   thumbnail?: string;

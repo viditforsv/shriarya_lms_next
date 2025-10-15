@@ -21,11 +21,17 @@ export function SignUpForm() {
     setLoading(true)
     setError('')
 
+    console.log('🔵 SignUpForm - Starting signup process', { email, fullName });
+
     try {
       // All new users are automatically registered as students
       await signUp(email, password, fullName, 'student')
+      console.log('✅ SignUpForm - Signup completed successfully');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('❌ SignUpForm - Signup failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      console.error('❌ SignUpForm - Error message:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false)
     }

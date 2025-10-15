@@ -70,7 +70,7 @@ export function CoursePageClient({
 }: {
   courseParams: { slug: string };
 }) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { addToCart, isInCart } = useCart();
 
@@ -258,7 +258,20 @@ export function CoursePageClient({
   };
 
   const handleEnroll = async () => {
+    console.log("handleEnroll called", {
+      user: !!user,
+      userId: user?.id,
+      authLoading,
+    });
+
+    // Wait for auth to load
+    if (authLoading) {
+      console.log("Auth still loading, please wait...");
+      return;
+    }
+
     if (!user) {
+      console.log("No user, redirecting to auth");
       // Redirect to login with return URL
       const returnUrl = encodeURIComponent(`/courses/${courseParams.slug}`);
       router.push(`/auth?redirect=${returnUrl}`);
@@ -270,9 +283,15 @@ export function CoursePageClient({
       return;
     }
 
+    console.log("Proceeding with enrollment", {
+      courseId: course.id,
+      price: course.price,
+    });
+
     // Check if course is paid
     if ((course.price || 0) > 0) {
       // Paid course - redirect to payment page
+      console.log("Paid course, redirecting to payment");
       router.push(`/courses/${courseParams.slug}/payment`);
       return;
     }
@@ -295,7 +314,7 @@ export function CoursePageClient({
       }
 
       setIsEnrolled(true);
-      
+
       // Redirect to first lesson
       const firstLesson = lessons[0];
       if (firstLesson) {
@@ -434,15 +453,20 @@ export function CoursePageClient({
                   <div className="flex flex-col gap-2">
                     <Button
                       onClick={handleEnroll}
+                      disabled={authLoading}
                       className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
                     >
-                      {(course.price || 0) > 0 ? "Buy Now" : "Enroll for Free"}
+                      {authLoading
+                        ? "Loading..."
+                        : (course.price || 0) > 0
+                        ? "Buy Now"
+                        : "Enroll for Free"}
                     </Button>
                     {(course.price || 0) > 0 && (
                       <Button
                         onClick={handleAddToCart}
                         variant="outline"
-                        disabled={isInCart(course.id)}
+                        disabled={isInCart(course.id) || authLoading}
                         className="rounded-sm"
                       >
                         <ShoppingCart className="w-4 h-4 mr-2" />

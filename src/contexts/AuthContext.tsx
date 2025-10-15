@@ -70,21 +70,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const createProfile = useCallback(
     async (userId: string) => {
       try {
+        console.log("🔵 createProfile - Starting profile creation for userId:", userId);
+        
         // Get user data from auth.users
         const { data: userData, error: userError } =
           await supabase.auth.getUser();
 
         if (userError || !userData.user) {
-          console.error("Error getting user data:", userError);
+          console.error("❌ createProfile - Error getting user data:", userError);
           return null;
         }
 
         const user = userData.user;
         const email = user.email || "";
+        console.log("✅ createProfile - Got user data:", { userId: user.id, email });
 
         // All new users get student role by default
         const role: UserRole = "student";
-        console.log("Setting default role student for email:", email);
+        console.log("🔵 createProfile - Setting default role 'student' for email:", email);
 
         // Extract name from user metadata
         const fullName =
@@ -96,43 +99,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           fullName.split(" ").slice(1).join(" ") ||
           "";
 
+        console.log("🔵 createProfile - Extracted name:", { fullName, firstName, lastName });
+
+        const profileData = {
+          id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          role: role,
+        };
+
+        console.log("🔵 createProfile - Attempting to insert profile:", profileData);
+
         // Insert new profile
         const { data, error } = await supabase
           .from("profiles")
-          .insert({
-            id: userId,
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            role: role,
-          })
+          .insert(profileData)
           .select()
           .single();
 
         if (error) {
-          console.error("Error creating profile:", error);
-          console.error("Profile data attempted:", {
-            id: userId,
-            first_name: firstName,
-            last_name: lastName,
-            role: role,
-          });
+          console.error("❌ createProfile - Database error creating profile:", error);
+          console.error("❌ createProfile - Error code:", error.code);
+          console.error("❌ createProfile - Error message:", error.message);
+          console.error("❌ createProfile - Error details:", error.details);
+          console.error("❌ createProfile - Profile data attempted:", profileData);
           return null;
         }
 
         console.log(
-          "Successfully created profile with role:",
+          "✅ createProfile - Successfully created profile with role:",
           role,
           "for email:",
           email
         );
+        console.log("✅ createProfile - Profile data:", data);
 
         // Remove client-side role update to prevent admin demotion
         // Role should only be managed server-side for security
 
         return data as UserProfile;
       } catch (error) {
-        console.error("Error creating profile:", error);
+        console.error("❌ createProfile - Exception caught:", error);
         return null;
       }
     },
@@ -217,12 +225,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchProfile = useCallback(
     async (userId: string, retries = 2) => {
       try {
-        console.log("Fetching profile for user ID:", userId);
+        console.log("🔵 fetchProfile - Fetching profile for user ID:", userId);
 
         // Check cache first
         const cachedProfile = profileCache.get(userId);
         if (cachedProfile) {
-          console.log("Using cached profile for user:", userId);
+          console.log("✅ fetchProfile - Using cached profile for user:", userId);
           return cachedProfile;
         }
 
@@ -231,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setTimeout(() => reject(new Error("Profile fetch timeout")), 5000);
         });
 
+        console.log("🔵 fetchProfile - Querying profiles table...");
         const fetchPromise = supabase
           .from("profiles")
           .select(
@@ -247,15 +256,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error: { code?: string; message?: string } | null;
         };
 
-        console.log("Profile fetch result:", { data, error });
+        console.log("🔵 fetchProfile - Query result:", { 
+          hasData: !!data, 
+          errorCode: error?.code, 
+          errorMessage: error?.message 
+        });
 
         if (error) {
-          console.error("Error fetching profile:", error);
+          console.error("❌ fetchProfile - Error:", {
+            code: error.code,
+            message: error.message,
+            fullError: error,
+          });
 
           // Handle RLS policy errors (empty error object)
           if (!error.code && !error.message) {
             console.log(
-              "RLS policy error detected, creating fallback profile for user:",
+              "⚠️ fetchProfile - RLS policy error detected, creating fallback profile for user:",
               userId
             );
             const fallbackProfile = await createFallbackProfile(userId);
@@ -267,17 +284,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return fallbackProfile;
           }
 
-          // If profile doesn't exist, create it
+          // If profile doesn't exist (PGRST116), create it
           if (error.code === "PGRST116") {
             console.log(
-              "Profile not found, creating new profile for user:",
+              "🔵 fetchProfile - Profile not found (PGRST116), creating new profile for user:",
               userId
             );
             const newProfile = await createProfile(userId);
             if (newProfile) {
+              console.log("✅ fetchProfile - Profile created successfully:", newProfile);
               setProfileCache((prev) => new Map(prev).set(userId, newProfile));
+            } else {
+              console.error("❌ fetchProfile - createProfile returned null");
             }
-            console.log("Created profile:", newProfile);
             return newProfile;
           }
 
@@ -514,16 +533,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Fetch profile in background for SIGNED_IN events
         if (event === "SIGNED_IN" && session?.user && !isSigningOut) {
-          console.log("👤 Fetching profile for user:", session.user.id);
+          console.log("🔵 Auth state - SIGNED_IN event, fetching profile for user:", session.user.id);
+          console.log("🔵 Auth state - User email:", session.user.email);
           fetchProfile(session.user.id)
             .then((userProfile) => {
-              setProfile(userProfile);
-              console.log("✅ Profile loaded successfully:", userProfile);
+              if (userProfile) {
+                setProfile(userProfile);
+                console.log("✅ Auth state - Profile loaded successfully:", userProfile);
+              } else {
+                console.warn("⚠️ Auth state - Profile is null after fetch");
+              }
             })
             .catch((error) => {
-              console.error("❌ Error fetching profile:", error);
+              console.error("❌ Auth state - Error fetching profile:", error);
             });
         } else if (!session?.user) {
+          console.log("🔵 Auth state - No session user, clearing profile");
           setProfile(null);
         }
       });
@@ -554,7 +579,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       fullName: string,
       role: UserRole = "student"
     ) => {
-      const { error } = await supabase.auth.signUp({
+      console.log("🔵 signUp - Starting signup for email:", email);
+      console.log("🔵 signUp - Full name:", fullName);
+      console.log("🔵 signUp - Role:", role);
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -564,7 +593,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           },
         },
       });
-      if (error) throw error;
+
+      if (error) {
+        console.error("❌ signUp - Supabase auth.signUp error:", error);
+        throw error;
+      }
+
+      console.log("✅ signUp - Auth user created successfully:", {
+        userId: data.user?.id,
+        email: data.user?.email,
+        needsConfirmation: !data.session,
+      });
     },
     [supabase]
   );

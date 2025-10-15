@@ -466,8 +466,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, fetchProfile]);
 
   useEffect(() => {
+    console.log("🔵 AuthContext - useEffect triggered", { 
+      isBrowser: typeof window !== "undefined", 
+      isInitialized,
+      isSigningOut 
+    });
+    
     // Only run auth logic in browser and prevent multiple initializations
     if (typeof window !== "undefined" && !isInitialized) {
+      console.log("🔵 AuthContext - Initializing auth context");
       setIsInitialized(true);
 
       // Optimized session loading with minimal delays
@@ -512,9 +519,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       getSession();
 
       // Listen for auth changes - simplified approach
+      console.log("🔵 AuthContext - Setting up onAuthStateChange listener");
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
+        console.log("🔐 AUTH STATE CHANGE LISTENER CALLED!");
         console.log(
           "🔐 Auth state change:",
           event,
@@ -525,15 +534,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           hasUser: !!user,
           hasSession: !!session,
           hasProfile: !!profile,
-          loading: loading
+          loading: loading,
         });
 
         // Update state immediately (synchronous)
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        
-        console.log("🔐 Auth state change - State updated, triggering re-render");
+
+        console.log(
+          "🔐 Auth state change - State updated, triggering re-render"
+        );
 
         // Supabase handles session persistence automatically
         // No need for custom session management
@@ -577,7 +588,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             session.user.id
           );
           console.log("🔵 Auth state - User email:", session.user.email);
-          
+
           // Add a small delay to ensure state is fully updated
           setTimeout(() => {
             fetchProfile(session.user.id)
@@ -603,6 +614,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       return () => {
+        console.log("🔵 AuthContext - Cleaning up onAuthStateChange listener");
         subscription.unsubscribe();
       };
     } else {
@@ -613,23 +625,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = useCallback(
     async (email: string, password: string) => {
       console.log("🔵 signIn - Starting signin for email:", email);
-      
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (error) {
         console.error("❌ signIn - Signin failed:", error);
         throw error;
       }
-      
+
       console.log("✅ signIn - Signin successful:", {
         userId: data.user?.id,
         email: data.user?.email,
         hasSession: !!data.session,
       });
-      
+
       // The auth state change handler will update the state automatically
       // No need to manually update state here
     },

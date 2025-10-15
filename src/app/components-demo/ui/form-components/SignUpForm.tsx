@@ -1,54 +1,61 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Input } from '@/app/components-demo/ui/ui-components/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Label } from '@/app/components-demo/ui/ui-components/label'
-import { useAuth } from '@/contexts/AuthContext'
-import { Chrome, Mail, Lock, User } from 'lucide-react'
+import { useState } from "react";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { Chrome, Mail, Lock, User } from "lucide-react";
 
 export function SignUpForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const { signUp, signInWithGoogle } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { signUp, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    console.log('🔵 SignUpForm - Starting signup process', { email, fullName });
+    console.log("🔵 SignUpForm - Starting signup process", { email, fullName });
 
     try {
       // All new users are automatically registered as students
-      await signUp(email, password, fullName, 'student')
-      console.log('✅ SignUpForm - Signup completed successfully');
+      await signUp(email, password, fullName, "student");
+      console.log("✅ SignUpForm - Signup completed successfully");
     } catch (err) {
-      console.error('❌ SignUpForm - Signup failed:', err);
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      console.error('❌ SignUpForm - Error message:', errorMessage);
+      console.error("❌ SignUpForm - Signup failed:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "An error occurred";
+      console.error("❌ SignUpForm - Error message:", errorMessage);
       setError(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignUp = async () => {
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError("");
 
     try {
-      await signInWithGoogle()
+      await signInWithGoogle();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -91,7 +98,7 @@ export function SignUpForm() {
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
@@ -113,12 +120,8 @@ export function SignUpForm() {
             <div className="text-red-500 text-sm text-center">{error}</div>
           )}
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={loading}
-          >
-            {loading ? 'Creating account...' : 'Create Account'}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
 
@@ -145,5 +148,5 @@ export function SignUpForm() {
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 }

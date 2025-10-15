@@ -70,24 +70,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const createProfile = useCallback(
     async (userId: string) => {
       try {
-        console.log("🔵 createProfile - Starting profile creation for userId:", userId);
-        
+        console.log(
+          "🔵 createProfile - Starting profile creation for userId:",
+          userId
+        );
+
         // Get user data from auth.users
         const { data: userData, error: userError } =
           await supabase.auth.getUser();
 
         if (userError || !userData.user) {
-          console.error("❌ createProfile - Error getting user data:", userError);
+          console.error(
+            "❌ createProfile - Error getting user data:",
+            userError
+          );
           return null;
         }
 
         const user = userData.user;
         const email = user.email || "";
-        console.log("✅ createProfile - Got user data:", { userId: user.id, email });
+        console.log("✅ createProfile - Got user data:", {
+          userId: user.id,
+          email,
+        });
 
         // All new users get student role by default
         const role: UserRole = "student";
-        console.log("🔵 createProfile - Setting default role 'student' for email:", email);
+        console.log(
+          "🔵 createProfile - Setting default role 'student' for email:",
+          email
+        );
 
         // Extract name from user metadata
         const fullName =
@@ -99,7 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           fullName.split(" ").slice(1).join(" ") ||
           "";
 
-        console.log("🔵 createProfile - Extracted name:", { fullName, firstName, lastName });
+        console.log("🔵 createProfile - Extracted name:", {
+          fullName,
+          firstName,
+          lastName,
+        });
 
         const profileData = {
           id: userId,
@@ -109,7 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: role,
         };
 
-        console.log("🔵 createProfile - Attempting to insert profile:", profileData);
+        console.log(
+          "🔵 createProfile - Attempting to insert profile:",
+          profileData
+        );
 
         // Insert new profile
         const { data, error } = await supabase
@@ -119,11 +138,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single();
 
         if (error) {
-          console.error("❌ createProfile - Database error creating profile:", error);
+          console.error(
+            "❌ createProfile - Database error creating profile:",
+            error
+          );
           console.error("❌ createProfile - Error code:", error.code);
           console.error("❌ createProfile - Error message:", error.message);
           console.error("❌ createProfile - Error details:", error.details);
-          console.error("❌ createProfile - Profile data attempted:", profileData);
+          console.error(
+            "❌ createProfile - Profile data attempted:",
+            profileData
+          );
           return null;
         }
 
@@ -230,7 +255,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Check cache first
         const cachedProfile = profileCache.get(userId);
         if (cachedProfile) {
-          console.log("✅ fetchProfile - Using cached profile for user:", userId);
+          console.log(
+            "✅ fetchProfile - Using cached profile for user:",
+            userId
+          );
           return cachedProfile;
         }
 
@@ -256,10 +284,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error: { code?: string; message?: string } | null;
         };
 
-        console.log("🔵 fetchProfile - Query result:", { 
-          hasData: !!data, 
-          errorCode: error?.code, 
-          errorMessage: error?.message 
+        console.log("🔵 fetchProfile - Query result:", {
+          hasData: !!data,
+          errorCode: error?.code,
+          errorMessage: error?.message,
         });
 
         if (error) {
@@ -292,7 +320,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             const newProfile = await createProfile(userId);
             if (newProfile) {
-              console.log("✅ fetchProfile - Profile created successfully:", newProfile);
+              console.log(
+                "✅ fetchProfile - Profile created successfully:",
+                newProfile
+              );
               setProfileCache((prev) => new Map(prev).set(userId, newProfile));
             } else {
               console.error("❌ fetchProfile - createProfile returned null");
@@ -490,11 +521,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           session ? "session exists" : "no session",
           session?.user?.email || "no user"
         );
+        console.log("🔐 Auth state change - Current state before update:", {
+          hasUser: !!user,
+          hasSession: !!session,
+          hasProfile: !!profile,
+          loading: loading
+        });
 
         // Update state immediately (synchronous)
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        console.log("🔐 Auth state change - State updated, triggering re-render");
 
         // Supabase handles session persistence automatically
         // No need for custom session management
@@ -533,20 +572,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Fetch profile in background for SIGNED_IN events
         if (event === "SIGNED_IN" && session?.user && !isSigningOut) {
-          console.log("🔵 Auth state - SIGNED_IN event, fetching profile for user:", session.user.id);
+          console.log(
+            "🔵 Auth state - SIGNED_IN event, fetching profile for user:",
+            session.user.id
+          );
           console.log("🔵 Auth state - User email:", session.user.email);
-          fetchProfile(session.user.id)
-            .then((userProfile) => {
-              if (userProfile) {
-                setProfile(userProfile);
-                console.log("✅ Auth state - Profile loaded successfully:", userProfile);
-              } else {
-                console.warn("⚠️ Auth state - Profile is null after fetch");
-              }
-            })
-            .catch((error) => {
-              console.error("❌ Auth state - Error fetching profile:", error);
-            });
+          
+          // Add a small delay to ensure state is fully updated
+          setTimeout(() => {
+            fetchProfile(session.user.id)
+              .then((userProfile) => {
+                if (userProfile) {
+                  setProfile(userProfile);
+                  console.log(
+                    "✅ Auth state - Profile loaded successfully:",
+                    userProfile
+                  );
+                } else {
+                  console.warn("⚠️ Auth state - Profile is null after fetch");
+                }
+              })
+              .catch((error) => {
+                console.error("❌ Auth state - Error fetching profile:", error);
+              });
+          }, 100);
         } else if (!session?.user) {
           console.log("🔵 Auth state - No session user, clearing profile");
           setProfile(null);
@@ -563,11 +612,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = useCallback(
     async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("🔵 signIn - Starting signin for email:", email);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error("❌ signIn - Signin failed:", error);
+        throw error;
+      }
+      
+      console.log("✅ signIn - Signin successful:", {
+        userId: data.user?.id,
+        email: data.user?.email,
+        hasSession: !!data.session,
+      });
+      
+      // The auth state change handler will update the state automatically
+      // No need to manually update state here
     },
     [supabase]
   );

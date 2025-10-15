@@ -533,7 +533,7 @@ export default function CourseCreatorPage() {
           : u
       ),
     }));
-    setEditingLesson(newLesson.id);
+    setEditingLesson({ unitId, chapterId, lessonId: newLesson.id });
   };
 
   const updateUnit = (unitId: string, field: keyof Unit, value: any) => {

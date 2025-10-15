@@ -531,6 +531,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           session ? "session exists" : "no session",
           session?.user?.email || "no user"
         );
+        
+        // Test: Force trigger a manual state update to see if React state works
+        console.log("🔐 Testing manual state update...");
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
         console.log("🔐 Auth state change - Current state before update:", {
           hasUser: !!user,
@@ -538,12 +544,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           hasProfile: !!profile,
           loading: loading,
         });
-
-        // Update state immediately (synchronous)
-        console.log("🔐 Forcing manual state update...");
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
 
         console.log(
           "🔐 Auth state change - State updated, triggering re-render"
@@ -554,7 +554,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Handle specific events
         if (event === "SIGNED_OUT") {
-          console.log("🚪 SIGNED_OUT event received, clearing state and redirecting");
+          console.log(
+            "🚪 SIGNED_OUT event received, clearing state and redirecting"
+          );
 
           // Reset signing out flag
           setIsSigningOut(false);
@@ -720,7 +722,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         console.log("✅ signOut - Successfully signed out from Supabase");
       } else {
-        console.log("🔵 signOut - No active session found, proceeding with local cleanup");
+        console.log(
+          "🔵 signOut - No active session found, proceeding with local cleanup"
+        );
         // No session to sign out from, just clear local state
         setProfile(null);
         setUser(null);

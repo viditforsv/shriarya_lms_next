@@ -520,6 +520,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Listen for auth changes - simplified approach
       console.log("🔵 AuthContext - Setting up onAuthStateChange listener");
+      
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((event, session) => {
@@ -530,6 +531,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           session ? "session exists" : "no session",
           session?.user?.email || "no user"
         );
+        
         console.log("🔐 Auth state change - Current state before update:", {
           hasUser: !!user,
           hasSession: !!session,
@@ -538,6 +540,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         // Update state immediately (synchronous)
+        console.log("🔐 Forcing manual state update...");
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);

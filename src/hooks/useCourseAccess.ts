@@ -7,31 +7,47 @@ export function useCourseAccess(courseId: string) {
   const { user, profile } = useAuth();
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [coursePrice, setCoursePrice] = useState<number | null>(null);
   const supabase = createClient();
 
-  // Check enrollment status
+  // Check enrollment status and fetch course price
   useEffect(() => {
-    const checkEnrollment = async () => {
-      if (!user || !profile) {
-        setIsEnrolled(false);
+    const checkEnrollmentAndPrice = async () => {
+      if (!courseId) {
         setIsLoading(false);
         return;
       }
 
       try {
-        const { data, error } = await supabase
-          .from("courses_enrollments")
-          .select("*")
-          .eq("student_id", user.id)
-          .eq("course_id", courseId)
-          .eq("is_active", true)
+        // Fetch course price
+        const { data: courseData } = await supabase
+          .from("courses")
+          .select("price")
+          .eq("id", courseId)
           .single();
 
-        if (error && error.code !== "PGRST116") {
-          console.error("Error checking enrollment:", error);
+        if (courseData) {
+          setCoursePrice(courseData.price || 0);
         }
 
-        setIsEnrolled(!!data);
+        // Check enrollment if user is logged in
+        if (user && profile) {
+          const { data, error } = await supabase
+            .from("courses_enrollments")
+            .select("*")
+            .eq("student_id", user.id)
+            .eq("course_id", courseId)
+            .eq("is_active", true)
+            .single();
+
+          if (error && error.code !== "PGRST116") {
+            console.error("Error checking enrollment:", error);
+          }
+
+          setIsEnrolled(!!data);
+        } else {
+          setIsEnrolled(false);
+        }
       } catch (error) {
         console.error("Error checking enrollment:", error);
         setIsEnrolled(false);
@@ -40,23 +56,21 @@ export function useCourseAccess(courseId: string) {
       }
     };
 
-    checkEnrollment();
+    checkEnrollmentAndPrice();
   }, [user, profile, courseId, supabase]);
 
-  // Get course access configuration
-  const courseConfig = getCourseAccessType(courseId);
+  // Check if course is free
+  const isFree = coursePrice === 0;
 
   // Check if user can access the course
-  const canAccess = canAccessCourse(courseId, profile?.role, isEnrolled);
+  const canAccess = canAccessCourse(courseId, profile?.role, isEnrolled, coursePrice || undefined);
 
   // Check if user can preview the course
+  const courseConfig = getCourseAccessType(courseId);
   const canPreview = courseConfig?.previewAvailable || false;
 
-  // Check if course is free
-  const isFree = courseConfig?.isFree || false;
-
   // Check if user needs to enroll
-  const needsEnrollment = !isFree && !isEnrolled && profile?.role === "student";
+  const needsEnrollment = !isEnrolled && profile?.role === "student";
 
   // Check if user needs to upgrade (for paid courses)
   const needsUpgrade = !isFree && !user;

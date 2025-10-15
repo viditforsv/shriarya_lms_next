@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
+import { ShoppingCart } from "@/components/ShoppingCart";
 
 export function Header() {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -162,7 +163,11 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {/* User Actions */}
             {user ? (
-              <div className="relative user-dropdown">
+              <>
+                {/* Shopping Cart */}
+                <ShoppingCart />
+                
+                <div className="relative user-dropdown">
                 <button
                   onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                   className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
@@ -290,7 +295,8 @@ export function Header() {
                     </div>
                   </div>
                 )}
-              </div>
+                </div>
+              </>
             ) : (
               <div className="flex items-center space-x-4">
                 <Link href="/auth">

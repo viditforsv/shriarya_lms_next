@@ -6,7 +6,7 @@ export async function checkCourseAccessServer(courseId: string, userId: string):
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('enrollments')
+    .from('courses_enrollments')
     .select('id')
     .eq('user_id', userId)
     .eq('course_id', courseId)

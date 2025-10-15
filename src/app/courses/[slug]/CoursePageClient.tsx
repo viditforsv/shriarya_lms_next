@@ -20,10 +20,13 @@ import {
 } from "@/app/components-demo/ui/tabs";
 import { Play, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/contexts/CartContext";
+import { ShoppingCart } from "lucide-react";
 
 // Simplified LessonConfig interface
 interface LessonConfig {
@@ -68,6 +71,8 @@ export function CoursePageClient({
   courseParams: { slug: string };
 }) {
   const { user } = useAuth();
+  const router = useRouter();
+  const { addToCart, isInCart } = useCart();
 
   // State
   const [course, setCourse] = useState<ExtendedCourse | null>(null);
@@ -238,9 +243,25 @@ export function CoursePageClient({
     loadCourse();
   }, [courseParams.slug, user]);
 
+  const handleAddToCart = () => {
+    if (!course) return;
+
+    addToCart({
+      courseId: course.id,
+      courseSlug: course.slug,
+      title: course.title,
+      price: course.price || 0,
+      thumbnail: course.thumbnail,
+    });
+
+    alert("✅ Added to cart!");
+  };
+
   const handleEnroll = async () => {
     if (!user) {
-      alert("Please log in to enroll in this course.");
+      // Redirect to login with return URL
+      const returnUrl = encodeURIComponent(`/courses/${courseParams.slug}`);
+      router.push(`/auth?redirect=${returnUrl}`);
       return;
     }
 
@@ -249,6 +270,14 @@ export function CoursePageClient({
       return;
     }
 
+    // Check if course is paid
+    if ((course.price || 0) > 0) {
+      // Paid course - redirect to payment page
+      router.push(`/courses/${courseParams.slug}/payment`);
+      return;
+    }
+
+    // Free course - enroll directly
     try {
       const supabase = createClient();
       const { error: enrollError } = await supabase
@@ -266,7 +295,14 @@ export function CoursePageClient({
       }
 
       setIsEnrolled(true);
-      alert("Successfully enrolled! You can now access all lessons.");
+      
+      // Redirect to first lesson
+      const firstLesson = lessons[0];
+      if (firstLesson) {
+        router.push(`/courses/${courseParams.slug}/lesson/${firstLesson.slug}`);
+      } else {
+        alert("Successfully enrolled! You can now access all lessons.");
+      }
     } catch (err) {
       console.error("Error enrolling:", err);
       alert("Failed to enroll. Please try again.");
@@ -388,13 +424,33 @@ export function CoursePageClient({
               </div>
             </div>
             <div className="ml-6">
-              {!isEnrolled && !course.isFree ? (
-                <Button
-                  onClick={handleEnroll}
-                  className="bg-[#e27447] hover:bg-[#d1653a]"
-                >
-                  Enroll Now
-                </Button>
+              {!isEnrolled ? (
+                <div className="text-right space-y-3">
+                  {(course.price || 0) > 0 && (
+                    <div className="text-2xl font-bold text-[#e27447] mb-2">
+                      ₹{course.price?.toLocaleString()}
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={handleEnroll}
+                      className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                    >
+                      {(course.price || 0) > 0 ? "Buy Now" : "Enroll for Free"}
+                    </Button>
+                    {(course.price || 0) > 0 && (
+                      <Button
+                        onClick={handleAddToCart}
+                        variant="outline"
+                        disabled={isInCart(course.id)}
+                        className="rounded-sm"
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        {isInCart(course.id) ? "In Cart" : "Add to Cart"}
+                      </Button>
+                    )}
+                  </div>
+                </div>
               ) : (
                 <Link
                   href={`/courses/${courseParams?.slug}/lesson/${

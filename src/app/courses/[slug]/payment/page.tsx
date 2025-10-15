@@ -43,7 +43,7 @@ export default function CoursePaymentPage() {
         // Check if user is already enrolled
         if (user) {
           const { data: enrollment } = await supabase
-            .from("enrollments")
+            .from("courses_enrollments")
             .select("*")
             .eq("student_id", user.id)
             .eq("course_id", courseData.id)

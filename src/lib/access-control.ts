@@ -250,36 +250,25 @@ export function canAccessRoute(
 export function canAccessCourse(
   courseId: string,
   userRole?: UserRole,
-  isEnrolled?: boolean
+  isEnrolled?: boolean,
+  price?: number
 ): boolean {
-  const course = COURSE_ACCESS[courseId];
-
-  if (!course) {
-    // If no specific rule, deny access
-    return false;
-  }
-
-  // Free courses are accessible to everyone
-  if (course.isFree) {
-    return true;
-  }
-
-  // Paid courses require authentication
-  if (!userRole) {
-    return false;
-  }
-
   // Admins can access everything
   if (userRole === "admin") {
     return true;
   }
 
-  // Students need to be enrolled for paid courses
-  if (course.accessType === "paid") {
+  // Check if course is free (price = 0)
+  const isFree = price === 0;
+
+  // For free courses, users must be enrolled (even though it's free)
+  // This ensures proper access tracking
+  if (isFree) {
     return isEnrolled === true;
   }
 
-  return false;
+  // Paid courses require enrollment
+  return isEnrolled === true;
 }
 
 export function getCourseAccessType(

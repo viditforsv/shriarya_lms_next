@@ -44,7 +44,7 @@ export default function DashboardPage() {
       try {
         setIsLoadingCourses(true);
         const { data, error } = await supabase
-          .from("enrollments")
+          .from("courses_enrollments")
           .select(
             `
             *,

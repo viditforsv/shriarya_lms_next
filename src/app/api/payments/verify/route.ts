@@ -69,16 +69,23 @@ export async function POST(request: NextRequest) {
         (verificationResult.paymentDetails?.currency as string)?.toUpperCase() || "USD";
     }
 
-    // Create enrollment record (only if user is authenticated)
+    // Create enrollment record(s) (only if user is authenticated)
     if (user && !authError) {
+      // Handle multiple course IDs (comma-separated for cart checkout)
+      const courseIds = courseId.includes(",") 
+        ? courseId.split(",") 
+        : [courseId];
+
+      const enrollments = courseIds.map(id => ({
+        student_id: user.id,
+        course_id: id,
+        is_active: true,
+        enrolled_at: new Date().toISOString(),
+      }));
+
       const { error: enrollmentError } = await supabase
-        .from("enrollments")
-        .insert({
-          student_id: user.id,
-          course_id: courseId,
-          is_active: true,
-          enrolled_at: new Date().toISOString(),
-        });
+        .from("courses_enrollments")
+        .insert(enrollments);
 
       if (enrollmentError) {
         console.error("Enrollment creation error:", enrollmentError);

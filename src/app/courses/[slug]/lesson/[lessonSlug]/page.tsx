@@ -42,7 +42,7 @@ interface Course {
   title: string;
   description: string;
   slug: string;
-  is_free: boolean;
+  price: number;
   created_at: string;
   template_data?: Record<string, unknown>;
   template_id?: string;
@@ -136,7 +136,7 @@ export default function DynamicLessonPage({
           title: courseData.title,
           description: courseData.description,
           slug: courseData.slug,
-          is_free: courseData.is_free || false,
+          price: courseData.price || 0,
           created_at: courseData.created_at,
           template_data: courseData.template_data || {},
           template_id: courseData.template_id,
@@ -157,9 +157,9 @@ export default function DynamicLessonPage({
             .eq("is_active", true)
             .maybeSingle();
 
-          setIsEnrolled(!!enrollmentData || course.is_free);
+          setIsEnrolled(!!enrollmentData);
         } else {
-          setIsEnrolled(course.is_free);
+          setIsEnrolled(false);
         }
 
         // 3. Set default tab based on template
@@ -264,7 +264,8 @@ export default function DynamicLessonPage({
       return true;
     }
 
-    return lesson?.is_preview || isEnrolled || course?.is_free;
+    const isFree = course?.price === 0;
+    return lesson?.is_preview || isEnrolled || isFree;
   };
 
   const getNextLesson = () => {

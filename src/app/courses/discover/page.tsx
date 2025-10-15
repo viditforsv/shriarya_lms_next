@@ -44,7 +44,6 @@ interface CourseConfig {
   instructor_id?: string;
   created_at: string;
   updated_at: string;
-  is_free: boolean;
   status: string;
   price: number;
   curriculum?: string;
@@ -260,10 +259,10 @@ export default function CourseDiscoveryPage() {
       }
 
       // Price filter
-      if (filters.priceType === "free" && !course.is_free) {
+      if (filters.priceType === "free" && course.price > 0) {
         return false;
       }
-      if (filters.priceType === "paid" && course.is_free) {
+      if (filters.priceType === "paid" && course.price === 0) {
         return false;
       }
 
@@ -701,8 +700,8 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
-                  <Badge variant={course.is_free ? "secondary" : "default"}>
-                    {course.is_free ? "Free" : `$${course.price}`}
+                  <Badge variant={course.price === 0 ? "secondary" : "default"}>
+                    {course.price === 0 ? "Free" : `$${course.price}`}
                   </Badge>
                 </div>
               </div>
@@ -723,7 +722,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="w-4 h-4" />
                   <span>
-                    {course.is_free
+                    {course.price === 0
                       ? "Free Course"
                       : `Paid Course - $${course.price}`}
                   </span>
@@ -746,7 +745,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                         : "Other")}
                   </Badge>
                   <Badge variant="outline" className="text-xs">
-                    {course.is_free ? "Free" : "Paid"}
+                    {course.price === 0 ? "Free" : "Paid"}
                   </Badge>
                 </div>
                 <Link href={`/courses/${course.slug}`}>
@@ -789,8 +788,8 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
             {course.title}
           </CardTitle>
-          <Badge variant={course.is_free ? "secondary" : "default"}>
-            {course.is_free ? "Free" : `$${course.price}`}
+          <Badge variant={course.price === 0 ? "secondary" : "default"}>
+            {course.price === 0 ? "Free" : `$${course.price}`}
           </Badge>
         </div>
         <CardDescription className="line-clamp-3">
@@ -816,7 +815,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Star className="w-4 h-4" />
               <span>
-                {course.is_free
+                {course.price === 0
                   ? "Free Course"
                   : `Paid Course - $${course.price}`}
               </span>

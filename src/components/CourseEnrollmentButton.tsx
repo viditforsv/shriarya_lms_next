@@ -12,7 +12,6 @@ interface CourseEnrollmentButtonProps {
   courseSlug: string;
   price: number;
   currency: string;
-  isFree?: boolean;
 }
 
 export function CourseEnrollmentButton({
@@ -20,15 +19,17 @@ export function CourseEnrollmentButton({
   courseSlug,
   price,
   currency,
-  isFree = false,
 }: CourseEnrollmentButtonProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [isEnrolling, setIsEnrolling] = useState(false);
 
+  const isFree = price === 0;
+
   const handleEnrollment = async () => {
     if (!user) {
-      router.push("/auth");
+      const returnUrl = encodeURIComponent(`/courses/${courseSlug}`);
+      router.push(`/auth?redirect=${returnUrl}`);
       return;
     }
 
@@ -38,7 +39,7 @@ export function CourseEnrollmentButton({
       try {
         const supabase = createClient();
 
-        const { error } = await supabase.from("enrollments").insert({
+        const { error } = await supabase.from("courses_enrollments").insert({
           student_id: user.id,
           course_id: courseId,
           is_active: true,

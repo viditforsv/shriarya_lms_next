@@ -202,7 +202,7 @@ export async function DELETE(request: Request) {
 
     // Check if enrollment exists
     const { data: enrollment } = await supabase
-      .from("enrollments")
+      .from("courses_enrollments")
       .select("id")
       .eq("student_id", user.id)
       .eq("course_id", courseId)
@@ -217,7 +217,7 @@ export async function DELETE(request: Request) {
 
     // Deactivate enrollment (soft delete)
     const { error } = await supabase
-      .from("enrollments")
+      .from("courses_enrollments")
       .update({ is_active: false })
       .eq("id", enrollment.id);
 

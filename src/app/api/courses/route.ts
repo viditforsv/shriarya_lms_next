@@ -298,7 +298,7 @@ export async function DELETE(request: Request) {
 
     // 2. Delete enrollments
     const { error: enrollmentsError } = await supabase
-      .from("enrollments")
+      .from("courses_enrollments")
       .delete()
       .eq("course_id", id);
 

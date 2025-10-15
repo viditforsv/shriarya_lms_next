@@ -133,10 +133,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 })
     }
 
-    // For free courses, allow progress tracking without enrollment
-    if (!course.is_free) {
+    // For paid courses, verify enrollment before allowing progress tracking
+    if ((course.price || 0) > 0) {
       const { data: enrollment } = await supabase
-        .from('enrollments')
+        .from('courses_enrollments')
         .select('id')
         .eq('student_id', user.id)
         .eq('course_id', course_id)

@@ -272,7 +272,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-bold">Continue Learning</h2>
                   <Link href="/courses/enrolled">
-                    <Button variant="ghost" className="rounded-sm">
+                    <Button variant="outline" className="rounded-sm">
                       View All <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>

@@ -308,7 +308,8 @@ export function CoursePageClient({
     };
 
     loadCourse();
-  }, [courseParams.slug, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseParams.slug, user?.id]);
 
   const handleAddToCart = () => {
     if (!course) return;

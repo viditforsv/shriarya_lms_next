@@ -240,7 +240,8 @@ export default function DynamicLessonPage({
     };
 
     loadLesson();
-  }, [resolvedParams, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedParams?.slug, resolvedParams?.lessonSlug, user?.id]);
 
   const hasAccess = () => {
     // Admin has access to everything

@@ -20,7 +20,10 @@ export function MathRenderer({
   useEffect(() => {
     if (mathRef.current && latex) {
       try {
-        katex.render(latex, mathRef.current, {
+        // Preprocess the LaTeX to handle textcolor and other commands
+        const processedLatex = preprocessLatex(latex);
+
+        katex.render(processedLatex, mathRef.current, {
           throwOnError: false,
           displayMode,
           strict: false,
@@ -186,6 +189,8 @@ export function renderMixedContent(content: string) {
         case "vmatrix":
         case "Vmatrix":
           return <MatrixRenderer key={index} content={content} type={type} />;
+        case "parts":
+          return <PartsRenderer key={index} content={content} />;
         default:
           // For other environments, render as display math
           return (
@@ -212,11 +217,24 @@ function renderMathContent(content: string, baseIndex: number) {
     .replace(/\\newline/g, "<br>")
     .replace(/\\par/g, "<br><br>");
 
-  const parts = processedContent.split(/(\$[^$]+\$|\$\$[^$]+\$\$)/);
+  // Split by all math delimiters: $, $$, \(, \), \[, \]
+  const parts = processedContent.split(
+    /(\$[^$]+\$|\$\$[^$]+\$\$|\\\([^\\]*?\\\)|\\\[[^\\]*?\\\])/
+  );
 
   return parts.map((part, index) => {
     if (part.startsWith("$$") && part.endsWith("$$")) {
-      // Display math
+      // Display math with $$
+      return (
+        <MathRenderer
+          key={`${baseIndex}-${index}`}
+          latex={part.slice(2, -2)}
+          displayMode={true}
+          className="block my-4 text-center"
+        />
+      );
+    } else if (part.startsWith("\\[") && part.endsWith("\\]")) {
+      // Display math with \[ \]
       return (
         <MathRenderer
           key={`${baseIndex}-${index}`}
@@ -226,7 +244,7 @@ function renderMathContent(content: string, baseIndex: number) {
         />
       );
     } else if (part.startsWith("$") && part.endsWith("$")) {
-      // Inline math
+      // Inline math with $
       return (
         <MathRenderer
           key={`${baseIndex}-${index}`}
@@ -235,8 +253,18 @@ function renderMathContent(content: string, baseIndex: number) {
           className="inline"
         />
       );
+    } else if (part.startsWith("\\(") && part.endsWith("\\)")) {
+      // Inline math with \( \)
+      return (
+        <MathRenderer
+          key={`${baseIndex}-${index}`}
+          latex={part.slice(2, -2)}
+          displayMode={false}
+          className="inline"
+        />
+      );
     } else {
-      // Regular text - handle HTML line breaks
+      // Regular text - handle HTML line breaks and textcolor
       return (
         <span
           key={`${baseIndex}-${index}`}
@@ -245,6 +273,16 @@ function renderMathContent(content: string, baseIndex: number) {
       );
     }
   });
+}
+
+// Helper function to preprocess LaTeX content for better textcolor handling
+function preprocessLatex(latex: string): string {
+  // Handle textcolor commands - convert to KaTeX compatible format
+  return latex
+    .replace(/\\textcolor\{red\}\{([^}]+)\}/g, "\\color{red}{$1}")
+    .replace(/\\textcolor\{blue\}\{([^}]+)\}/g, "\\color{blue}{$1}")
+    .replace(/\\textcolor\{green\}\{([^}]+)\}/g, "\\color{green}{$1}")
+    .replace(/\\textcolor\{([^}]+)\}\{([^}]+)\}/g, "\\color{$1}{$2}");
 }
 
 // Enumerate environment renderer
@@ -317,5 +355,38 @@ function MatrixRenderer({ content, type }: { content: string; type: string }) {
       displayMode={true}
       className="block my-4 text-center"
     />
+  );
+}
+
+// Parts environment renderer for multi-part questions
+function PartsRenderer({ content }: { content: string }) {
+  const parts: { marks?: number; content: string }[] = [];
+
+  // Use a more precise regex to match \part commands and their content
+  const partRegex = /\\part(?:\[(\d+)\])?\s*([\s\S]*?)(?=\\part|$)/g;
+  let match;
+
+  while ((match = partRegex.exec(content)) !== null) {
+    const marks = match[1] ? parseInt(match[1]) : undefined;
+    const partContent = match[2].trim();
+
+    if (partContent) {
+      parts.push({ marks, content: partContent });
+    }
+  }
+
+  return (
+    <ol className="list-decimal list-inside my-4 space-y-3 ml-4">
+      {parts.map((part, index) => (
+        <li key={index} className="prose max-w-none">
+          {part.marks && (
+            <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-sm mr-2">
+              [{part.marks} marks]
+            </span>
+          )}
+          {renderMathContent(part.content, index)}
+        </li>
+      ))}
+    </ol>
   );
 }

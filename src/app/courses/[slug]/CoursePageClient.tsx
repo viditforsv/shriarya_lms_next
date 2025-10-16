@@ -18,7 +18,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components-demo/ui/tabs";
-import { Play, ChevronRight } from "lucide-react";
+import { Play, ChevronRight, ShoppingCart, Eye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
@@ -26,7 +26,6 @@ import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { createClient } from "@/lib/supabase/client";
 import { useCart } from "@/contexts/CartContext";
-import { ShoppingCart } from "lucide-react";
 
 // Simplified LessonConfig interface
 interface LessonConfig {
@@ -325,6 +324,21 @@ export function CoursePageClient({
     alert("✅ Added to cart!");
   };
 
+  const handlePreviewCourse = () => {
+    // Expand all units to show lessons
+    const allUnitIds = units.map((_, index) => `unit-${index}`);
+    setExpandedUnits(new Set(allUnitIds));
+    
+    // Scroll to content section
+    const contentSection = document.querySelector('[value="content"]');
+    if (contentSection) {
+      contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Click the content tab to show course structure
+      const contentTab = contentSection as HTMLElement;
+      contentTab.click();
+    }
+  };
+
   const handleEnroll = async () => {
     console.log("handleEnroll called", {
       user: !!user,
@@ -520,6 +534,18 @@ export function CoursePageClient({
                     </div>
                   )}
                   <div className="flex flex-col gap-2">
+                    {/* Preview Button - Only for logged-in, non-enrolled users */}
+                    {user && !isEnrolled && (
+                      <Button
+                        onClick={handlePreviewCourse}
+                        variant="outline"
+                        className="rounded-sm border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 font-medium"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Preview Course Content
+                      </Button>
+                    )}
+                    
                     <Button
                       onClick={handleEnroll}
                       disabled={authLoading}

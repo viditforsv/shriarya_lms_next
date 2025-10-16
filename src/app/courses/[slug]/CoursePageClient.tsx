@@ -766,25 +766,87 @@ export function CoursePageClient({
                                     return (
                                       <div
                                         key={`${unitId}-chapter-${chapterIndex}`}
-                                        className="p-3 pl-8 hover:bg-gray-50 border-b last:border-b-0"
+                                        className="border-b last:border-b-0"
                                       >
-                                        <div className="font-medium text-gray-700">
-                                          {chapter.chapter_name}
+                                        {/* Chapter Header */}
+                                        <div className="p-3 pl-8 bg-gray-50">
+                                          <div className="font-semibold text-gray-800">
+                                            {chapter.chapter_name}
+                                          </div>
+                                          <div className="text-xs text-muted-foreground mt-0.5">
+                                            {chapterLessons.length > 0 ? (
+                                              <span>
+                                                {chapterLessons.length}{" "}
+                                                {chapterLessons.length === 1
+                                                  ? "lesson"
+                                                  : "lessons"}
+                                              </span>
+                                            ) : (
+                                              <span className="text-orange-600">
+                                                No lessons yet
+                                              </span>
+                                            )}
+                                          </div>
                                         </div>
-                                        <div className="text-sm text-muted-foreground mt-1">
-                                          {chapterLessons.length > 0 ? (
-                                            <span>
-                                              {chapterLessons.length}{" "}
-                                              {chapterLessons.length === 1
-                                                ? "lesson"
-                                                : "lessons"}
-                                            </span>
-                                          ) : (
-                                            <span className="text-orange-600">
-                                              No lessons yet
-                                            </span>
-                                          )}
-                                        </div>
+
+                                        {/* Lessons List */}
+                                        {chapterLessons.length > 0 && (
+                                          <div className="pl-12">
+                                            {chapterLessons
+                                              .sort((a, b) => a.order - b.order)
+                                              .map((lesson) => {
+                                                const canAccess =
+                                                  isEnrolled ||
+                                                  lesson.isPreview ||
+                                                  course?.price === 0;
+
+                                                return (
+                                                  <Link
+                                                    key={lesson.id}
+                                                    href={`/courses/${courseParams.slug}/lesson/${lesson.slug}`}
+                                                    className={`flex items-center justify-between p-3 border-b last:border-b-0 transition-colors ${
+                                                      canAccess
+                                                        ? "hover:bg-gray-50 cursor-pointer"
+                                                        : "opacity-60 cursor-not-allowed"
+                                                    }`}
+                                                    onClick={(e) => {
+                                                      if (!canAccess) {
+                                                        e.preventDefault();
+                                                      }
+                                                    }}
+                                                  >
+                                                    <div className="flex items-center space-x-3 flex-1">
+                                                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#e27447]/10 text-[#e27447] text-xs font-medium flex-shrink-0">
+                                                        {lesson.order}
+                                                      </div>
+                                                      <div className="flex-1">
+                                                        <h4 className="text-sm font-medium text-gray-700 group-hover:text-[#e27447] transition-colors">
+                                                          {lesson.title}
+                                                        </h4>
+                                                        <div className="flex items-center space-x-2 mt-0.5">
+                                                          <span className="text-xs text-muted-foreground">
+                                                            {lesson.duration}
+                                                          </span>
+                                                          {lesson.isPreview && (
+                                                            <Badge
+                                                              variant="secondary"
+                                                              className="text-xs bg-blue-100 text-blue-700"
+                                                            >
+                                                              Preview
+                                                            </Badge>
+                                                          )}
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <div className="flex items-center space-x-1">
+                                                      <Play className="h-3.5 w-3.5 text-muted-foreground" />
+                                                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                  </Link>
+                                                );
+                                              })}
+                                          </div>
+                                        )}
                                       </div>
                                     );
                                   })}

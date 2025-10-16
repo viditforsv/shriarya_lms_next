@@ -400,7 +400,9 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any board"} />
+                    <SelectValue
+                      placeholder={loadingFilters ? "Loading..." : "Any board"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any board</SelectItem>
@@ -424,7 +426,11 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any course type"} />
+                    <SelectValue
+                      placeholder={
+                        loadingFilters ? "Loading..." : "Any course type"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any course type</SelectItem>
@@ -448,7 +454,9 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any level"} />
+                    <SelectValue
+                      placeholder={loadingFilters ? "Loading..." : "Any level"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any level</SelectItem>
@@ -472,7 +480,11 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any subject"} />
+                    <SelectValue
+                      placeholder={
+                        loadingFilters ? "Loading..." : "Any subject"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any subject</SelectItem>
@@ -529,7 +541,11 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any difficulty"} />
+                    <SelectValue
+                      placeholder={
+                        loadingFilters ? "Loading..." : "Any difficulty"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any difficulty</SelectItem>
@@ -553,13 +569,16 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any type"} />
+                    <SelectValue
+                      placeholder={loadingFilters ? "Loading..." : "Any type"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any type</SelectItem>
                     {filterOptions.question_types.map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1).replace("_", " ")}
+                        {type.charAt(0).toUpperCase() +
+                          type.slice(1).replace("_", " ")}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -579,7 +598,9 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any"} />
+                    <SelectValue
+                      placeholder={loadingFilters ? "Loading..." : "Any"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
@@ -611,7 +632,9 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any status"} />
+                    <SelectValue
+                      placeholder={loadingFilters ? "Loading..." : "Any status"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any status</SelectItem>
@@ -636,7 +659,11 @@ export default function QuestionBankPage() {
                   disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any priority"} />
+                    <SelectValue
+                      placeholder={
+                        loadingFilters ? "Loading..." : "Any priority"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any priority</SelectItem>
@@ -716,7 +743,9 @@ export default function QuestionBankPage() {
               <div className="text-sm text-gray-600">
                 <div className="font-medium mb-1">Active Filters:</div>
                 {searchTerm && (
-                  <div className="text-xs">• Search: &quot;{searchTerm}&quot;</div>
+                  <div className="text-xs">
+                    • Search: &quot;{searchTerm}&quot;
+                  </div>
                 )}
                 {Object.entries(simpleFilters).map(
                   ([key, value]) =>

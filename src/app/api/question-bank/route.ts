@@ -58,8 +58,7 @@ export async function GET(request: NextRequest) {
       created_at,
       updated_at,
       human_readable_id,
-      question_display_number,
-      qa_questions!left(qa_status, priority_level, is_flagged, overall_rating)
+      question_display_number
     `;
 
     let query = supabase
@@ -254,6 +253,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Fetch QA data separately for the returned questions
+    let questionsWithQA = questions || [];
+    if (questions && questions.length > 0) {
+      const questionIds = questions.map((q) => q.id);
+      const { data: qaData } = await supabase
+        .from("qa_questions")
+        .select("question_id, qa_status, priority_level, is_flagged, overall_rating")
+        .in("question_id", questionIds);
+
+      // Attach QA data to questions
+      questionsWithQA = questions.map((question) => {
+        const qaRecords = qaData?.filter((qa) => qa.question_id === question.id) || [];
+        return {
+          ...question,
+          qa_questions: qaRecords,
+        };
+      });
+    }
+
     // Get total count of all questions (without filters) for comparison
     const { count: totalCount } = await supabase
       .from("question_bank")
@@ -262,7 +280,7 @@ export async function GET(request: NextRequest) {
     const totalPages = Math.ceil((count || 0) / limit);
 
     return NextResponse.json({
-      questions: questions || [],
+      questions: questionsWithQA,
       total: count || 0,
       totalQuestions: totalCount || 0,
       page,

@@ -53,7 +53,7 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [recentCourses, setRecentCourses] = useState<EnrolledCourse[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
@@ -176,13 +176,19 @@ export default function DashboardPage() {
                 </div>
                 <div className="hidden md:flex items-center space-x-6">
                   <div className="text-center">
-                    <div className="text-3xl font-bold">{stats.totalCourses}</div>
+                    <div className="text-3xl font-bold">
+                      {stats.totalCourses}
+                    </div>
                     <div className="text-sm text-white/80">Active Courses</div>
                   </div>
                   <div className="h-12 w-px bg-white/30"></div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold">{stats.completedLessons}</div>
-                    <div className="text-sm text-white/80">Lessons Completed</div>
+                    <div className="text-3xl font-bold">
+                      {stats.completedLessons}
+                    </div>
+                    <div className="text-sm text-white/80">
+                      Lessons Completed
+                    </div>
                   </div>
                 </div>
               </div>
@@ -248,7 +254,9 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground mb-1">
                         Study Streak
                       </p>
-                      <p className="text-2xl font-bold">{stats.studyStreak} days</p>
+                      <p className="text-2xl font-bold">
+                        {stats.studyStreak} days
+                      </p>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
                       <Award className="w-6 h-6 text-purple-600" />
@@ -271,7 +279,10 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {recentCourses.map((course) => (
-                    <Card key={course.id} className="rounded-sm overflow-hidden hover:shadow-lg transition-shadow">
+                    <Card
+                      key={course.id}
+                      className="rounded-sm overflow-hidden hover:shadow-lg transition-shadow"
+                    >
                       <div className="h-32 bg-gradient-to-br from-[#e27447] to-[#ff8c66] flex items-center justify-center">
                         <PlayCircle className="w-12 h-12 text-white" />
                       </div>
@@ -284,15 +295,21 @@ export default function DashboardPage() {
                           <span>
                             Last accessed{" "}
                             {course.lastAccessed
-                              ? new Date(course.lastAccessed).toLocaleDateString()
+                              ? new Date(
+                                  course.lastAccessed
+                                ).toLocaleDateString()
                               : "recently"}
                           </span>
                         </div>
                         {course.progress !== undefined && (
                           <div className="mb-3">
                             <div className="flex items-center justify-between text-sm mb-1">
-                              <span className="text-muted-foreground">Progress</span>
-                              <span className="font-medium">{course.progress}%</span>
+                              <span className="text-muted-foreground">
+                                Progress
+                              </span>
+                              <span className="font-medium">
+                                {course.progress}%
+                              </span>
                             </div>
                             <Progress value={course.progress} />
                           </div>
@@ -325,12 +342,17 @@ export default function DashboardPage() {
               {isLoadingCourses ? (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Loading your courses...</p>
+                  <p className="text-muted-foreground">
+                    Loading your courses...
+                  </p>
                 </div>
               ) : enrolledCourses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {enrolledCourses.map((course) => (
-                    <Card key={course.id} className="rounded-sm hover:shadow-lg transition-shadow">
+                    <Card
+                      key={course.id}
+                      className="rounded-sm hover:shadow-lg transition-shadow"
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
@@ -357,7 +379,10 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <Link href={`/courses/${course.slug || course.id}`}>
-                          <Button className="w-full rounded-sm" variant="outline">
+                          <Button
+                            className="w-full rounded-sm"
+                            variant="outline"
+                          >
                             View Course
                             <ArrowRight className="w-4 h-4 ml-2" />
                           </Button>
@@ -452,35 +477,6 @@ export default function DashboardPage() {
             </Card>
           </>
         </AdminOnly>
-
-        {/* Common Dashboard Content */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Manage your account settings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/profile">
-              <Button className="w-full">Edit Profile</Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign Out</CardTitle>
-            <CardDescription>Sign out of your account</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => signOut()}
-            >
-              Sign Out
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

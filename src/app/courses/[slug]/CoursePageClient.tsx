@@ -328,11 +328,11 @@ export function CoursePageClient({
     // Expand all units to show lessons
     const allUnitIds = units.map((_, index) => `unit-${index}`);
     setExpandedUnits(new Set(allUnitIds));
-    
+
     // Scroll to content section
     const contentSection = document.querySelector('[value="content"]');
     if (contentSection) {
-      contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      contentSection.scrollIntoView({ behavior: "smooth", block: "start" });
       // Click the content tab to show course structure
       const contentTab = contentSection as HTMLElement;
       contentTab.click();
@@ -545,7 +545,7 @@ export function CoursePageClient({
                         Preview Course Content
                       </Button>
                     )}
-                    
+
                     <Button
                       onClick={handleEnroll}
                       disabled={authLoading}

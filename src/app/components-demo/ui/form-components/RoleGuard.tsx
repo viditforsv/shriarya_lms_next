@@ -81,7 +81,7 @@ export function AdminOnly({
     if (fallback !== undefined) {
       return <>{fallback}</>;
     }
-    
+
     // If showAccessDenied is true, show the access denied message
     if (showAccessDenied) {
       return (
@@ -100,7 +100,7 @@ export function AdminOnly({
         </div>
       );
     }
-    
+
     // Default: return null (hide content silently)
     return null;
   }

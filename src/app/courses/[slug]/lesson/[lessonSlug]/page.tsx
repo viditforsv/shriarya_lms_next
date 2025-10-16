@@ -66,6 +66,7 @@ interface Lesson {
   video_url?: string;
   video_thumbnail?: string;
   pdf_url?: string;
+  solution_url?: string;
   quiz_id?: string;
   chapter_id?: string;
   chapter?: {
@@ -93,7 +94,7 @@ export default function DynamicLessonPage({
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "video" | "notes" | "keypoints" | "quiz" | "pdf"
+    "video" | "notes" | "keypoints" | "quiz" | "assignment" | "solution"
   >("video");
   const [resolvedParams, setResolvedParams] = useState<{
     slug: string;
@@ -166,7 +167,7 @@ export default function DynamicLessonPage({
         const isPDFTemplate =
           course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
         if (isPDFTemplate) {
-          setActiveTab("pdf");
+          setActiveTab("assignment");
         }
 
         // 4. Fetch all lessons with unit/chapter structure
@@ -241,23 +242,6 @@ export default function DynamicLessonPage({
     loadLesson();
   }, [resolvedParams, user]);
 
-  // Set active tab based on template when course loads
-  useEffect(() => {
-    if (course?.template_id) {
-      const isPDFTemplate =
-        course.template_id === "addffa2b-d88c-484e-9637-1f7fbe42e29c";
-      console.log("Course loaded, checking template:", {
-        template_id: course.template_id,
-        isPDFTemplate,
-        currentActiveTab: activeTab,
-      });
-      if (isPDFTemplate && activeTab !== "pdf") {
-        setActiveTab("pdf");
-        console.log("Updated active tab to PDF");
-      }
-    }
-  }, [course?.template_id, activeTab]);
-
   const hasAccess = () => {
     // Admin has access to everything
     if (profile?.role === "admin") {
@@ -296,7 +280,15 @@ export default function DynamicLessonPage({
 
   // Track tab changes as progress
   const handleTabChange = (value: string) => {
-    setActiveTab(value as "video" | "notes" | "keypoints" | "quiz");
+    setActiveTab(
+      value as
+        | "video"
+        | "notes"
+        | "keypoints"
+        | "quiz"
+        | "assignment"
+        | "solution"
+    );
   };
 
   const handleBookmarkToggle = () => {
@@ -494,25 +486,23 @@ export default function DynamicLessonPage({
               onValueChange={handleTabChange}
               className="w-full"
             >
-              {(() => {
-                const isPDFTemplate =
-                  course?.template_id ===
-                  "addffa2b-d88c-484e-9637-1f7fbe42e29c";
-                console.log("Rendering TabsList:", {
-                  courseTemplateId: course?.template_id,
-                  isPDFTemplate,
-                  activeTab,
-                });
-                return isPDFTemplate;
-              })() ? (
-                // PDF-only template - Single tab
-                <TabsList className="grid w-full grid-cols-1 rounded-sm bg-white p-1 shadow-sm">
+              {course?.template_id ===
+              "addffa2b-d88c-484e-9637-1f7fbe42e29c" ? (
+                // PDF template - Assignment and Solution tabs
+                <TabsList className="grid w-full grid-cols-2 rounded-sm bg-white p-1 shadow-sm">
                   <TabsTrigger
-                    value="pdf"
+                    value="assignment"
                     className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
                   >
                     <FileText className="w-4 h-4 mr-2" />
-                    PDF Assignment
+                    Assignment
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="solution"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Solution
                   </TabsTrigger>
                 </TabsList>
               ) : (
@@ -851,32 +841,33 @@ export default function DynamicLessonPage({
                 </Card>
               </TabsContent>
 
-              {/* PDF Tab - For PDF-based courses */}
-              <TabsContent value="pdf" className="mt-6">
+              {/* Assignment Tab - For PDF-based courses */}
+              <TabsContent value="assignment" className="mt-6">
                 <Card className="rounded-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <FileText className="w-5 h-5 text-[#e27447]" />
-                      <span>PDF Assignment</span>
+                      <span>Assignment</span>
                     </CardTitle>
                     <CardDescription>
-                      View and complete the assignment PDF
+                      Complete this assignment to test your understanding
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {lesson.pdf_url ? (
                       <div className="space-y-4">
-                        {/* Adobe PDF Embedder via iframe */}
-                        <div className="w-full h-[800px] border border-[#feefea] rounded-sm overflow-hidden">
+                        {/* Assignment PDF Embedder - Try direct embedding first */}
+                        <div className="w-full h-[800px] border-2 border-[#feefea] rounded-sm overflow-hidden bg-gray-50">
                           <iframe
                             src={lesson.pdf_url}
                             className="w-full h-full"
-                            title={`${lesson.title} - PDF Assignment`}
-                            allow="autoplay"
+                            title={`${lesson.title} - Assignment`}
+                            allow="autoplay; fullscreen"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                           />
                         </div>
 
-                        {/* PDF Actions */}
+                        {/* Assignment Actions */}
                         <div className="flex items-center justify-between">
                           <Button
                             variant="outline"
@@ -888,23 +879,101 @@ export default function DynamicLessonPage({
                             <FileText className="w-4 h-4 mr-2" />
                             Open in New Tab
                           </Button>
-                          <Button
-                            className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
-                            onClick={handleMarkComplete}
-                          >
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Mark as Complete
-                          </Button>
+                          <div className="flex items-center space-x-3">
+                            <Button
+                              variant="outline"
+                              className="rounded-sm"
+                              onClick={() => handleTabChange("solution")}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              View Solution
+                            </Button>
+                            <Button
+                              className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                              onClick={handleMarkComplete}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Mark as Complete
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ) : (
                       <div className="text-center py-12 text-muted-foreground">
                         <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        <p className="text-lg mb-2">
-                          PDF assignment not available
-                        </p>
+                        <p className="text-lg mb-2">Assignment not available</p>
                         <p className="text-sm">
-                          The PDF for this lesson will be available soon
+                          The assignment for this lesson will be available soon
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Solution Tab - For PDF-based courses */}
+              <TabsContent value="solution" className="mt-6">
+                <Card className="rounded-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <span>Solution</span>
+                    </CardTitle>
+                    <CardDescription>
+                      Check your answers with the complete solution
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {lesson.solution_url ? (
+                      <div className="space-y-4">
+                        {/* Solution PDF Embedder - Try direct embedding first */}
+                        <div className="w-full h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
+                          <iframe
+                            src={lesson.solution_url}
+                            className="w-full h-full"
+                            title={`${lesson.title} - Solution`}
+                            allow="autoplay; fullscreen"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                          />
+                        </div>
+
+                        {/* Solution Actions */}
+                        <div className="flex items-center justify-between">
+                          <Button
+                            variant="outline"
+                            className="rounded-sm"
+                            onClick={() =>
+                              window.open(lesson.solution_url, "_blank")
+                            }
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Open in New Tab
+                          </Button>
+                          <div className="flex items-center space-x-3">
+                            <Button
+                              variant="outline"
+                              className="rounded-sm"
+                              onClick={() => handleTabChange("assignment")}
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              Back to Assignment
+                            </Button>
+                            <Button
+                              className="bg-green-600 hover:bg-green-700 rounded-sm"
+                              onClick={handleMarkComplete}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Mark as Complete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <CheckCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p className="text-lg mb-2">Solution not available</p>
+                        <p className="text-sm">
+                          The solution for this lesson will be available soon
                         </p>
                       </div>
                     )}

@@ -17,12 +17,16 @@ export async function GET(request: NextRequest) {
     const subject = searchParams.get("subject") || "";
     const difficulty = searchParams.get("difficulty") || "";
     const question_type = searchParams.get("question_type") || "";
-    const board = searchParams.get("board") || "";
+    const boards = searchParams.get("boards") || "";
+    const course_types = searchParams.get("course_types") || "";
+    const levels = searchParams.get("levels") || "";
     const grade = searchParams.get("grade") || "";
     const topic = searchParams.get("topic") || "";
     const tags = searchParams.get("tags") || "";
     const is_pyq = searchParams.get("is_pyq") || "";
     const qa_status = searchParams.get("qa_status") || "";
+    const priority_level = searchParams.get("priority_level") || "";
+    const is_flagged = searchParams.get("is_flagged") || "";
     const pyq_year = searchParams.get("pyq_year") || "";
     const month = searchParams.get("month") || "";
     const paper_number = searchParams.get("paper_number") || "";
@@ -33,6 +37,7 @@ export async function GET(request: NextRequest) {
     // Build the base query with select
     const baseSelect = `
       id,
+      question_number,
       question_text,
       difficulty,
       question_type,
@@ -43,6 +48,7 @@ export async function GET(request: NextRequest) {
       relevance,
       grade,
       topic,
+      subtopic,
       tags,
       is_pyq,
       total_marks,
@@ -54,7 +60,7 @@ export async function GET(request: NextRequest) {
       updated_at,
       human_readable_id,
       question_display_number,
-      qa_questions!left(qa_status, priority_level, is_flagged)
+      qa_questions!left(qa_status, priority_level, is_flagged, overall_rating)
     `;
 
     let query = supabase
@@ -62,19 +68,25 @@ export async function GET(request: NextRequest) {
       .select(baseSelect, { count: "exact" });
 
     // Apply basic filters
-    if (subject) {
+    if (subject && subject !== "any") {
       query = query.eq("subject", subject);
     }
-    if (difficulty) {
+    if (difficulty && difficulty !== "any") {
       query = query.eq("difficulty", parseInt(difficulty));
     }
-    if (question_type) {
+    if (question_type && question_type !== "any") {
       query = query.eq("question_type", question_type);
     }
-    if (board) {
-      query = query.contains("boards", [board]);
+    if (boards && boards !== "any") {
+      query = query.contains("boards", [boards]);
     }
-    if (grade) {
+    if (course_types && course_types !== "any") {
+      query = query.contains("course_types", [course_types]);
+    }
+    if (levels && levels !== "any") {
+      query = query.contains("levels", [levels]);
+    }
+    if (grade && grade !== "any") {
       query = query.eq("grade", grade);
     }
     if (topic) {
@@ -90,69 +102,95 @@ export async function GET(request: NextRequest) {
         query = query.overlaps("tags", tagArray);
       }
     }
-    if (is_pyq) {
+    if (is_pyq && is_pyq !== "any") {
       query = query.eq("is_pyq", is_pyq === "true");
     }
 
-    // Apply QA status filter - use efficient approach
+    // Apply QA filters - use efficient approach
     if (qa_status && qa_status !== "any") {
       console.log("Applying QA status filter:", qa_status);
 
+      // Build QA query
+      let qaQuery = supabase.from("qa_questions").select("question_id");
+
       if (qa_status === "pending") {
-        // For pending, use a simpler approach - just get questions with pending status
-        // This avoids the complexity of finding questions without QA records
-        const { data: pendingQA } = await supabase
-          .from("qa_questions")
-          .select("question_id")
-          .eq("qa_status", "pending")
-          .limit(100); // Smaller limit to prevent URL overflow
-
-        const pendingIds = pendingQA?.map((qa) => qa.question_id) || [];
-        console.log(
-          `Found ${pendingIds.length} questions with pending QA status`
-        );
-
-        // If no questions match, return empty results
-        if (pendingIds.length === 0) {
-          return NextResponse.json({
-            questions: [],
-            total: 0,
-            totalQuestions: 0,
-            page,
-            limit,
-            totalPages: 0,
-          });
-        }
-
-        // Apply the QA filter to the main query
-        query = query.in("id", pendingIds);
+        qaQuery = qaQuery.eq("qa_status", "pending");
       } else {
-        // For other QA statuses, get the question IDs first (with limit)
-        const { data: qaData } = await supabase
-          .from("qa_questions")
-          .select("question_id")
-          .eq("qa_status", qa_status)
-          .limit(500); // Limit to prevent URL overflow
+        qaQuery = qaQuery.eq("qa_status", qa_status);
+      }
 
-        const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
-        console.log(
-          `Found ${qaFilteredQuestionIds.length} questions with status: ${qa_status}`
-        );
+      // Add priority level filter if specified
+      if (priority_level && priority_level !== "any") {
+        qaQuery = qaQuery.eq("priority_level", priority_level);
+      }
 
-        // If no questions match, return empty results
-        if (qaFilteredQuestionIds.length === 0) {
-          return NextResponse.json({
-            questions: [],
-            total: 0,
-            totalQuestions: 0,
-            page,
-            limit,
-            totalPages: 0,
-          });
-        }
+      // Add flagged filter if specified
+      if (is_flagged && is_flagged !== "any") {
+        qaQuery = qaQuery.eq("is_flagged", is_flagged === "true");
+      }
 
-        // Apply the QA filter to the main query
+      const { data: qaData } = await qaQuery.limit(500);
+
+      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
+      console.log(
+        `Found ${qaFilteredQuestionIds.length} questions matching QA filters`
+      );
+
+      // If no questions match, return empty results
+      if (qaFilteredQuestionIds.length === 0) {
+        return NextResponse.json({
+          questions: [],
+          total: 0,
+          totalQuestions: 0,
+          page,
+          limit,
+          totalPages: 0,
+        });
+      }
+
+      // Apply the QA filter to the main query
+      query = query.in("id", qaFilteredQuestionIds);
+    } else if (priority_level && priority_level !== "any") {
+      // If only priority_level filter (without qa_status)
+      const { data: qaData } = await supabase
+        .from("qa_questions")
+        .select("question_id")
+        .eq("priority_level", priority_level)
+        .limit(500);
+
+      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
+      if (qaFilteredQuestionIds.length > 0) {
         query = query.in("id", qaFilteredQuestionIds);
+      } else {
+        return NextResponse.json({
+          questions: [],
+          total: 0,
+          totalQuestions: 0,
+          page,
+          limit,
+          totalPages: 0,
+        });
+      }
+    } else if (is_flagged && is_flagged !== "any") {
+      // If only is_flagged filter (without qa_status)
+      const { data: qaData } = await supabase
+        .from("qa_questions")
+        .select("question_id")
+        .eq("is_flagged", is_flagged === "true")
+        .limit(500);
+
+      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
+      if (qaFilteredQuestionIds.length > 0) {
+        query = query.in("id", qaFilteredQuestionIds);
+      } else {
+        return NextResponse.json({
+          questions: [],
+          total: 0,
+          totalQuestions: 0,
+          page,
+          limit,
+          totalPages: 0,
+        });
       }
     }
 

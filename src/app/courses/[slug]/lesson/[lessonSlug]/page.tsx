@@ -374,7 +374,11 @@ export default function DynamicLessonPage({
               This lesson is part of the premium course content.
             </p>
             <p className="text-sm text-muted-foreground">
-              Enroll in <span className="font-semibold text-foreground">{course.title}</span> to access this and all other lessons.
+              Enroll in{" "}
+              <span className="font-semibold text-foreground">
+                {course.title}
+              </span>{" "}
+              to access this and all other lessons.
             </p>
           </div>
 
@@ -400,7 +404,7 @@ export default function DynamicLessonPage({
             <div className="space-y-2 mb-6">
               <div className="flex items-center text-sm">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>Lifetime access to all course content</span>
+                <span>365 days access to all course content</span>
               </div>
               <div className="flex items-center text-sm">
                 <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
@@ -416,7 +420,9 @@ export default function DynamicLessonPage({
             <div className="space-y-3">
               <Link href={`/courses/${resolvedParams?.slug}`} className="block">
                 <Button className="w-full bg-[#e27447] hover:bg-[#d1653a] rounded-sm text-base py-6">
-                  {course.price && course.price > 0 ? "Enroll Now" : "Enroll for Free"}
+                  {course.price && course.price > 0
+                    ? "Enroll Now"
+                    : "Enroll for Free"}
                 </Button>
               </Link>
               <Link href={`/courses/${resolvedParams?.slug}`} className="block">
@@ -429,7 +435,7 @@ export default function DynamicLessonPage({
 
           {/* Back Link */}
           <div className="text-center">
-            <Link 
+            <Link
               href={`/courses/${resolvedParams?.slug}`}
               className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center"
             >

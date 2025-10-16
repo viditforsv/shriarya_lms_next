@@ -301,13 +301,17 @@ export function CoursePageClient({
         }
         if (!chaptersError && chaptersData) {
           // Transform chapters data to match our interface
-          const transformedChapters: Chapter[] = (chaptersData as any[]).map((chapter) => ({
-            id: chapter.id,
-            chapter_name: chapter.chapter_name,
-            chapter_order: chapter.chapter_order,
-            unit_id: chapter.unit_id,
-            unit: Array.isArray(chapter.unit) ? chapter.unit[0] : chapter.unit,
-          }));
+          const transformedChapters: Chapter[] = (chaptersData as any[]).map(
+            (chapter) => ({
+              id: chapter.id,
+              chapter_name: chapter.chapter_name,
+              chapter_order: chapter.chapter_order,
+              unit_id: chapter.unit_id,
+              unit: Array.isArray(chapter.unit)
+                ? chapter.unit[0]
+                : chapter.unit,
+            })
+          );
           setChapters(transformedChapters);
           setChapterCount(transformedChapters.length);
         }

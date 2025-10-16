@@ -87,6 +87,21 @@ interface QuestionBankResponse {
   totalPages: number;
 }
 
+interface FilterOptions {
+  boards: string[];
+  course_types: string[];
+  levels: string[];
+  subjects: string[];
+  topics: string[];
+  difficulties: number[];
+  question_types: string[];
+  grades: string[];
+  has_pyq: boolean;
+  has_practice: boolean;
+  qa_statuses: string[];
+  priority_levels: string[];
+}
+
 export default function QuestionBankPage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -100,6 +115,21 @@ export default function QuestionBankPage() {
   });
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [advancedQuery, setAdvancedQuery] = useState<any>(null);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    boards: [],
+    course_types: [],
+    levels: [],
+    subjects: [],
+    topics: [],
+    difficulties: [],
+    question_types: [],
+    grades: [],
+    has_pyq: false,
+    has_practice: false,
+    qa_statuses: [],
+    priority_levels: [],
+  });
+  const [loadingFilters, setLoadingFilters] = useState(true);
 
   // Simple filters state
   const [simpleFilters, setSimpleFilters] = useState({
@@ -190,6 +220,26 @@ export default function QuestionBankPage() {
     simpleFilters,
     advancedQuery,
   ]);
+
+  // Fetch filter options on mount
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        setLoadingFilters(true);
+        const response = await fetch("/api/question-bank/filters");
+        if (response.ok) {
+          const data = await response.json();
+          setFilterOptions(data);
+        }
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      } finally {
+        setLoadingFilters(false);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
 
   useEffect(() => {
     fetchQuestions();
@@ -347,19 +397,18 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("boards", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any board" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any board"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any board</SelectItem>
-                    <SelectItem value="IBDP">IBDP</SelectItem>
-                    <SelectItem value="CBSE">CBSE</SelectItem>
-                    <SelectItem value="ICSE">ICSE</SelectItem>
-                    <SelectItem value="IGCSE">IGCSE</SelectItem>
-                    <SelectItem value="A-Levels">A-Levels</SelectItem>
-                    <SelectItem value="SAT">SAT</SelectItem>
-                    <SelectItem value="ACT">ACT</SelectItem>
+                    {filterOptions.boards.map((board) => (
+                      <SelectItem key={board} value={board}>
+                        {board}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -372,14 +421,18 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("course_types", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any course type" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any course type"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any course type</SelectItem>
-                    <SelectItem value="AA">AA</SelectItem>
-                    <SelectItem value="AI">AI</SelectItem>
+                    {filterOptions.course_types.map((courseType) => (
+                      <SelectItem key={courseType} value={courseType}>
+                        {courseType}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -392,39 +445,42 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("levels", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any level" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any level"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any level</SelectItem>
-                    <SelectItem value="SL">SL</SelectItem>
-                    <SelectItem value="HL">HL</SelectItem>
+                    {filterOptions.levels.map((level) => (
+                      <SelectItem key={level} value={level}>
+                        {level}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* 4. Section */}
+              {/* 4. Subject */}
               <div className="mb-3">
-                <Label className="text-xs text-gray-600">Section</Label>
+                <Label className="text-xs text-gray-600">Subject</Label>
                 <Select
                   value={simpleFilters.subject}
                   onValueChange={(value) =>
                     handleSimpleFilterChange("subject", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any section" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any subject"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="any">Any section</SelectItem>
-                    <SelectItem value="mathematics">Mathematics</SelectItem>
-                    <SelectItem value="physics">Physics</SelectItem>
-                    <SelectItem value="chemistry">Chemistry</SelectItem>
-                    <SelectItem value="biology">Biology</SelectItem>
-                    <SelectItem value="english">English</SelectItem>
-                    <SelectItem value="history">History</SelectItem>
-                    <SelectItem value="geography">Geography</SelectItem>
+                    <SelectItem value="any">Any subject</SelectItem>
+                    {filterOptions.subjects.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -470,22 +526,18 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("difficulty", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any difficulty" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any difficulty"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any difficulty</SelectItem>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="6">6</SelectItem>
-                    <SelectItem value="7">7</SelectItem>
-                    <SelectItem value="8">8</SelectItem>
-                    <SelectItem value="9">9</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
+                    {filterOptions.difficulties.map((diff) => (
+                      <SelectItem key={diff} value={diff.toString()}>
+                        {diff} / 10
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -498,18 +550,18 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("question_type", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any type" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any type"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any type</SelectItem>
-                    <SelectItem value="mcq">MCQ</SelectItem>
-                    <SelectItem value="subjective">Subjective</SelectItem>
-                    <SelectItem value="true_false">True/False</SelectItem>
-                    <SelectItem value="fill_blank">
-                      Fill in the Blank
-                    </SelectItem>
+                    {filterOptions.question_types.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1).replace("_", " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -524,14 +576,19 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("is_pyq", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="true">PYQ Only</SelectItem>
-                    <SelectItem value="false">Practice Only</SelectItem>
+                    {filterOptions.has_pyq && (
+                      <SelectItem value="true">PYQ Only</SelectItem>
+                    )}
+                    {filterOptions.has_practice && (
+                      <SelectItem value="false">Practice Only</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -551,20 +608,19 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("qa_status", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any status" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any status"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_review">In Review</SelectItem>
-                    <SelectItem value="needs_revision">
-                      Needs Revision
-                    </SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    {filterOptions.qa_statuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status.charAt(0).toUpperCase() +
+                          status.slice(1).replace("_", " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -577,16 +633,18 @@ export default function QuestionBankPage() {
                   onValueChange={(value) =>
                     handleSimpleFilterChange("priority_level", value)
                   }
+                  disabled={loadingFilters}
                 >
                   <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any priority" />
+                    <SelectValue placeholder={loadingFilters ? "Loading..." : "Any priority"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="any">Any priority</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
+                    {filterOptions.priority_levels.map((priority) => (
+                      <SelectItem key={priority} value={priority}>
+                        {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

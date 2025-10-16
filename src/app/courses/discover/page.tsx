@@ -32,6 +32,7 @@ import {
   SortDesc,
 } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
 // import { getAllCourses } from '@/lib/course-config'
 // import { CourseConfig } from '@/lib/course-config'
 
@@ -73,6 +74,9 @@ interface FilterState {
 }
 
 export default function CourseDiscoveryPage() {
+  const { profile } = useAuth();
+  const isAdmin = profile?.role === "admin";
+
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     curriculum: "all",
@@ -181,8 +185,9 @@ export default function CourseDiscoveryPage() {
   // Filter and sort courses
   const filteredCourses = useMemo(() => {
     const filtered = courses.filter((course) => {
-      // Only show published courses
-      if (course.status !== "published") {
+      // Only show published courses for non-admins
+      // Admins can see both published and draft courses
+      if (!isAdmin && course.status !== "published") {
         return false;
       }
 
@@ -307,7 +312,7 @@ export default function CourseDiscoveryPage() {
     });
 
     return filtered;
-  }, [courses, filters]);
+  }, [courses, filters, isAdmin]);
 
   const updateFilter = (key: keyof FilterState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -700,8 +705,16 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
+                  {course.status === "draft" && (
+                    <Badge
+                      variant="outline"
+                      className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                    >
+                      Draft
+                    </Badge>
+                  )}
                   <Badge variant={course.price === 0 ? "secondary" : "default"}>
-                    {course.price === 0 ? "Free" : `$${course.price}`}
+                    {course.price === 0 ? "Free" : `₹${course.price}`}
                   </Badge>
                 </div>
               </div>
@@ -724,7 +737,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   <span>
                     {course.price === 0
                       ? "Free Course"
-                      : `Paid Course - $${course.price}`}
+                      : `Paid Course - ₹${course.price}`}
                   </span>
                 </div>
               </div>
@@ -788,9 +801,19 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
             {course.title}
           </CardTitle>
-          <Badge variant={course.price === 0 ? "secondary" : "default"}>
-            {course.price === 0 ? "Free" : `$${course.price}`}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {course.status === "draft" && (
+              <Badge
+                variant="outline"
+                className="border-yellow-500 text-yellow-700 bg-yellow-50"
+              >
+                Draft
+              </Badge>
+            )}
+            <Badge variant={course.price === 0 ? "secondary" : "default"}>
+              {course.price === 0 ? "Free" : `₹${course.price}`}
+            </Badge>
+          </div>
         </div>
         <CardDescription className="line-clamp-3">
           {course.description}
@@ -817,7 +840,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
               <span>
                 {course.price === 0
                   ? "Free Course"
-                  : `Paid Course - $${course.price}`}
+                  : `Paid Course - ₹${course.price}`}
               </span>
             </div>
           </div>

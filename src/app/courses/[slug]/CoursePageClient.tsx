@@ -257,6 +257,24 @@ export function CoursePageClient({
     alert("✅ Added to cart!");
   };
 
+  const handlePreview = () => {
+    // Find the first preview lesson
+    const previewLesson = lessons.find((lesson) => lesson.isPreview);
+
+    if (previewLesson) {
+      // Redirect to the first preview lesson
+      router.push(`/courses/${courseParams.slug}/lesson/${previewLesson.slug}`);
+    } else {
+      // If no preview lesson exists, show the first lesson (if it's free)
+      const firstLesson = lessons[0];
+      if (firstLesson && (course?.price || 0) === 0) {
+        router.push(`/courses/${courseParams.slug}/lesson/${firstLesson.slug}`);
+      } else {
+        alert("No preview content available for this course.");
+      }
+    }
+  };
+
   const handleEnroll = async () => {
     console.log("handleEnroll called", {
       user: !!user,
@@ -358,18 +376,18 @@ export function CoursePageClient({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Course Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 gap-4">
             <div className="flex-1">
-              <h1 className="text-4xl font-bold text-[#1e293b] mb-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e293b] mb-3 sm:mb-4">
                 {course.title}
               </h1>
-              <p className="text-xl text-muted-foreground mb-4">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-3 sm:mb-4">
                 {course.description || "No description available"}
               </p>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
                 {isEnrolled && (
                   <Badge
                     variant="default"
@@ -443,11 +461,11 @@ export function CoursePageClient({
                   ))}
               </div>
             </div>
-            <div className="ml-6">
+            <div className="w-full lg:w-auto lg:ml-6 mt-4 lg:mt-0">
               {!isEnrolled ? (
-                <div className="text-right space-y-3">
+                <div className="lg:text-right space-y-3">
                   {(course.price || 0) > 0 && (
-                    <div className="text-2xl font-bold text-[#e27447] mb-2">
+                    <div className="text-xl sm:text-2xl font-bold text-[#e27447] mb-2">
                       ₹{course.price?.toLocaleString()}
                     </div>
                   )}
@@ -455,7 +473,7 @@ export function CoursePageClient({
                     <Button
                       onClick={handleEnroll}
                       disabled={authLoading}
-                      className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                      className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm w-full lg:w-auto"
                     >
                       {authLoading
                         ? "Loading..."
@@ -463,12 +481,20 @@ export function CoursePageClient({
                         ? "Buy Now"
                         : "Enroll for Free"}
                     </Button>
+                    <Button
+                      onClick={handlePreview}
+                      variant="outline"
+                      className="rounded-sm w-full lg:w-auto border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white"
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      Preview Course
+                    </Button>
                     {(course.price || 0) > 0 && (
                       <Button
                         onClick={handleAddToCart}
                         variant="outline"
                         disabled={isInCart(course.id) || authLoading}
-                        className="rounded-sm"
+                        className="rounded-sm w-full lg:w-auto"
                       >
                         <ShoppingCart className="w-4 h-4 mr-2" />
                         {isInCart(course.id) ? "In Cart" : "Add to Cart"}
@@ -486,7 +512,7 @@ export function CoursePageClient({
                       : "introduction"
                   }`}
                 >
-                  <Button className="bg-[#e27447] hover:bg-[#d1653a]">
+                  <Button className="bg-[#e27447] hover:bg-[#d1653a] w-full lg:w-auto">
                     <Play className="w-4 h-4 mr-2" />
                     {isEnrolled ? "Continue Learning" : "Start Learning"}
                   </Button>
@@ -497,11 +523,11 @@ export function CoursePageClient({
         </div>
 
         {/* Course Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1">
+              <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1 text-sm sm:text-base">
                 <TabsTrigger
                   value="overview"
                   className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
@@ -522,10 +548,12 @@ export function CoursePageClient({
                 ) : (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Course Overview</CardTitle>
+                      <CardTitle className="text-lg sm:text-xl">
+                        Course Overview
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-muted-foreground mb-6">
+                      <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                         {course?.description ||
                           "This course provides comprehensive learning materials and practical exercises."}
                       </p>
@@ -533,8 +561,8 @@ export function CoursePageClient({
                       {/* Official CBSE Syllabus Link */}
                       {(courseParams.slug === "cbse-mathematics-class-9" ||
                         courseParams.slug === "cbse-mathematics-class-10") && (
-                        <div className="mb-6 p-4 bg-[#feefea] border border-[#e27447] rounded-sm">
-                          <div className="flex items-start space-x-3">
+                        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-[#feefea] border border-[#e27447] rounded-sm">
+                          <div className="flex items-start space-x-2 sm:space-x-3">
                             <div className="flex-shrink-0">
                               <svg
                                 className="w-6 h-6 text-[#e27447]"
@@ -551,10 +579,10 @@ export function CoursePageClient({
                               </svg>
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-semibold text-[#1e293b] mb-1">
+                              <h4 className="text-sm sm:text-base font-semibold text-[#1e293b] mb-1">
                                 Official CBSE Syllabus 2025-26
                               </h4>
-                              <p className="text-sm text-muted-foreground mb-3">
+                              <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">
                                 View the complete official CBSE Mathematics
                                 syllabus document for detailed curriculum
                                 information, learning objectives, and
@@ -586,12 +614,12 @@ export function CoursePageClient({
                         </div>
                       )}
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                         <div>
-                          <h4 className="font-semibold mb-2">
+                          <h4 className="text-sm sm:text-base font-semibold mb-2">
                             What you&apos;ll learn
                           </h4>
-                          <ul className="space-y-2 text-sm text-muted-foreground">
+                          <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
                             {(
                               course?.template_data?.learningOutcomes ||
                               course?.learningOutcomes ||
@@ -602,10 +630,10 @@ export function CoursePageClient({
                           </ul>
                         </div>
                         <div>
-                          <h4 className="font-semibold mb-2">
+                          <h4 className="text-sm sm:text-base font-semibold mb-2">
                             Course includes
                           </h4>
-                          <ul className="space-y-2 text-sm text-muted-foreground">
+                          <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
                             <li>
                               • {lessons.length || course?.lessons} lessons
                             </li>
@@ -626,17 +654,21 @@ export function CoursePageClient({
                 )}
               </TabsContent>
 
-              <TabsContent value="content" className="mt-6">
+              <TabsContent value="content" className="mt-4 sm:mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Course Content</CardTitle>
-                    <CardDescription>{lessons.length} lessons</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl">
+                      Course Content
+                    </CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">
+                      {lessons.length} lessons
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {isIBDPCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
                     ) : lessons.length > 0 ? (
-                      <div className="space-y-2">
+                      <div className="space-y-2 sm:space-y-3">
                         {(() => {
                           // Group lessons by unit and chapter from database
                           const groupedLessons = lessons.reduce(
@@ -699,14 +731,14 @@ export function CoursePageClient({
                                 <div key={unitId} className="border rounded-sm">
                                   {/* Unit Header */}
                                   <div
-                                    className="p-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center"
+                                    className="p-3 sm:p-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center"
                                     onClick={() => toggleUnit(unitId)}
                                   >
-                                    <div>
-                                      <span className="font-semibold text-lg">
+                                    <div className="flex-1 min-w-0">
+                                      <span className="font-semibold text-base sm:text-lg block sm:inline">
                                         {unitIndex + 1}. {unitName}
                                       </span>
-                                      <span className="text-sm text-muted-foreground ml-2">
+                                      <span className="text-xs sm:text-sm text-muted-foreground block sm:inline sm:ml-2 mt-1 sm:mt-0">
                                         ({sortedChapters.length}{" "}
                                         {sortedChapters.length === 1
                                           ? "chapter"
@@ -715,7 +747,7 @@ export function CoursePageClient({
                                       </span>
                                     </div>
                                     <ChevronRight
-                                      className={`w-5 h-5 transition-transform ${
+                                      className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ml-2 transition-transform ${
                                         isExpanded ? "rotate-90" : ""
                                       }`}
                                     />
@@ -731,12 +763,12 @@ export function CoursePageClient({
                                         ) => (
                                           <div
                                             key={`${unitId}-chapter-${chapterIndex}`}
-                                            className="p-3 pl-8 hover:bg-gray-50 border-b last:border-b-0"
+                                            className="p-2 sm:p-3 pl-6 sm:pl-8 hover:bg-gray-50 border-b last:border-b-0"
                                           >
-                                            <div className="font-medium text-gray-700">
+                                            <div className="font-medium text-sm sm:text-base text-gray-700">
                                               {chapterName}
                                             </div>
-                                            <div className="text-sm text-muted-foreground mt-1">
+                                            <div className="text-xs sm:text-sm text-muted-foreground mt-1">
                                               {chapterData.lessons.length}{" "}
                                               {chapterData.lessons.length === 1
                                                 ? "lesson"
@@ -754,7 +786,7 @@ export function CoursePageClient({
                         })()}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-muted-foreground px-4">
                         <p>
                           No lessons available yet. Please use the admin panel
                           to set up units and chapters.
@@ -768,13 +800,15 @@ export function CoursePageClient({
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
             {/* Course Facts */}
             <Card>
               <CardHeader>
-                <CardTitle>Course Facts</CardTitle>
+                <CardTitle className="text-base sm:text-lg">
+                  Course Facts
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4 text-sm sm:text-base">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Units</span>
                   <span className="font-medium">
@@ -833,10 +867,12 @@ export function CoursePageClient({
             {/* Unit Overview */}
             <Card>
               <CardHeader>
-                <CardTitle>Unit Overview</CardTitle>
+                <CardTitle className="text-base sm:text-lg">
+                  Unit Overview
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   {lessons.length > 0 ? (
                     (() => {
                       // Group lessons by unit to calculate chapters per unit
@@ -876,11 +912,14 @@ export function CoursePageClient({
                         sortedUnits.map(([unitName, data], index) => {
                           const chapterCount = data.chapters.size;
                           return (
-                            <div key={index} className="flex justify-between">
-                              <span className="text-muted-foreground">
+                            <div
+                              key={index}
+                              className="flex justify-between items-start gap-2"
+                            >
+                              <span className="text-muted-foreground flex-1 min-w-0">
                                 {index + 1}. {unitName}
                               </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-right flex-shrink-0">
                                 {chapterCount}{" "}
                                 {chapterCount === 1 ? "chapter" : "chapters"}
                               </span>
@@ -888,13 +927,13 @@ export function CoursePageClient({
                           );
                         })
                       ) : (
-                        <div className="text-muted-foreground text-center py-4">
+                        <div className="text-xs sm:text-sm text-muted-foreground text-center py-3 sm:py-4">
                           No units available
                         </div>
                       );
                     })()
                   ) : (
-                    <div className="text-muted-foreground text-center py-4">
+                    <div className="text-xs sm:text-sm text-muted-foreground text-center py-3 sm:py-4">
                       Loading units...
                     </div>
                   )}
@@ -906,18 +945,20 @@ export function CoursePageClient({
             {isEnrolled && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Progress</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">
+                    Your Progress
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     <div>
-                      <div className="flex justify-between text-sm mb-2">
+                      <div className="flex justify-between text-xs sm:text-sm mb-2">
                         <span className="text-muted-foreground">Progress</span>
                         <span className="font-medium">25%</span>
                       </div>
-                      <Progress value={25} className="h-2" />
+                      <Progress value={25} className="h-1.5 sm:h-2" />
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       {Math.ceil(course.lessons * 0.25)} of {course.lessons}{" "}
                       lessons completed
                     </div>

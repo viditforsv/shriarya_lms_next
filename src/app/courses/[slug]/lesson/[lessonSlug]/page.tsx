@@ -268,14 +268,27 @@ export default function DynamicLessonPage({
     return lesson?.is_preview || isEnrolled || isFree;
   };
 
+  const canAccessLesson = (lesson: Lesson) => {
+    // Admin has access to everything
+    if (profile?.role === "admin") {
+      return true;
+    }
+
+    const isFree = course?.price === 0;
+    return lesson.is_preview || isEnrolled || isFree;
+  };
+
   const getNextLesson = () => {
     if (!lesson || !allLessons.length) return;
 
     const currentIndex = allLessons.findIndex((l) => l.slug === lesson.slug);
     const nextLesson = allLessons[currentIndex + 1];
 
-    if (nextLesson) {
+    if (nextLesson && canAccessLesson(nextLesson)) {
       window.location.href = `/courses/${resolvedParams?.slug}/lesson/${nextLesson.slug}`;
+    } else if (nextLesson) {
+      // Next lesson is locked, show message
+      alert("Please enroll in the course to access the next lesson.");
     }
   };
 
@@ -285,8 +298,11 @@ export default function DynamicLessonPage({
     const currentIndex = allLessons.findIndex((l) => l.slug === lesson.slug);
     const prevLesson = allLessons[currentIndex - 1];
 
-    if (prevLesson) {
+    if (prevLesson && canAccessLesson(prevLesson)) {
       window.location.href = `/courses/${resolvedParams?.slug}/lesson/${prevLesson.slug}`;
+    } else if (prevLesson) {
+      // Previous lesson is locked, show message
+      alert("Please enroll in the course to access the previous lesson.");
     }
   };
 
@@ -371,15 +387,46 @@ export default function DynamicLessonPage({
   if (!hasAccess()) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto px-4">
           <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-4">Lesson Locked</h1>
           <p className="text-muted-foreground mb-6">
             Please enroll in this course to access this lesson.
           </p>
-          <Link href={`/courses/${resolvedParams?.slug}`}>
-            <Button>Back to Course</Button>
-          </Link>
+
+          {/* Course Price Display */}
+          {course && (course.price || 0) > 0 && (
+            <div className="text-xl font-bold text-[#e27447] mb-6">
+              ₹{course.price?.toLocaleString()}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href={`/courses/${resolvedParams?.slug}`}>
+              <Button variant="outline" className="rounded-sm w-full sm:w-auto">
+                Back to Course
+              </Button>
+            </Link>
+            {course && (course.price || 0) > 0 ? (
+              <Link href={`/courses/${resolvedParams?.slug}/payment`}>
+                <Button className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm w-full sm:w-auto">
+                  Buy Now - ₹{course.price?.toLocaleString()}
+                </Button>
+              </Link>
+            ) : (
+              <Link href={`/courses/${resolvedParams?.slug}`}>
+                <Button className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm w-full sm:w-auto">
+                  Enroll for Free
+                </Button>
+              </Link>
+            )}
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-6 text-sm text-muted-foreground">
+            <p>Unlock all lessons and start your learning journey!</p>
+          </div>
         </div>
       </div>
     );
@@ -388,16 +435,17 @@ export default function DynamicLessonPage({
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
-        <div className="container mx-auto px-4">
+      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-4 sm:py-6 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link
                 href={`/courses/${resolvedParams?.slug}`}
-                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-sm sm:text-base"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Course
+                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+                <span className="hidden sm:inline">Back to Course</span>
+                <span className="sm:hidden">Back</span>
               </Link>
             </div>
             <div className="flex items-center space-x-2">
@@ -405,80 +453,89 @@ export default function DynamicLessonPage({
                 variant="outline"
                 size="sm"
                 onClick={handleBookmarkToggle}
-                className="rounded-sm"
+                className="rounded-sm text-xs sm:text-sm"
               >
                 <Bookmark
-                  className={`w-4 h-4 mr-2 ${
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 ${
                     isBookmarked ? "fill-current" : ""
                   }`}
                 />
-                {isBookmarked ? "Bookmarked" : "Bookmark"}
+                <span className="hidden sm:inline">
+                  {isBookmarked ? "Bookmarked" : "Bookmark"}
+                </span>
+                <span className="sm:hidden">{isBookmarked ? "✓" : "☆"}</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full px-0 py-8">
+      <div className="w-full px-0 py-4 sm:py-6 lg:py-8">
         {/* Course Breadcrumb */}
-        <div className="mb-6 px-4">
-          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <div className="mb-4 sm:mb-6 px-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-muted-foreground">
             <Link href="/courses" className="hover:text-foreground">
               Courses
             </Link>
             <span>/</span>
             <Link
               href={`/courses/${resolvedParams?.slug}`}
-              className="hover:text-foreground"
+              className="hover:text-foreground truncate max-w-[120px] sm:max-w-none"
             >
               {course.title}
             </Link>
             <span>/</span>
-            <span className="text-foreground">{lesson.title}</span>
+            <span className="text-foreground truncate max-w-[150px] sm:max-w-none">
+              {lesson.title}
+            </span>
           </nav>
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           {/* Left Sidebar - Course Navigation */}
-          <CollapsibleSidebar
-            currentLessonSlug={lesson.slug}
-            courseSlug={resolvedParams?.slug || ""}
-            lessons={allLessons}
-          />
+          <div className="w-full lg:w-80 xl:w-96 flex-shrink-0 order-2 lg:order-1">
+            <CollapsibleSidebar
+              currentLessonSlug={lesson.slug}
+              courseSlug={resolvedParams?.slug || ""}
+              lessons={allLessons}
+            />
+          </div>
 
           {/* Main Content */}
-          <div className="flex-1 px-4">
+          <div className="flex-1 px-4 sm:px-6 lg:px-8 order-1 lg:order-2">
             {/* Lesson Header */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-6 mb-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <Badge className="bg-[#e27447] text-white mb-2 rounded-sm">
+            <div className="bg-white rounded-sm border border-[#feefea] p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+                <div className="flex-1">
+                  <Badge className="bg-[#e27447] text-white mb-2 rounded-sm text-xs sm:text-sm">
                     Lesson {lesson.lesson_order}
                   </Badge>
-                  <h1 className="text-4xl font-bold text-[#1e293b] mb-2">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e293b] mb-2">
                     {lesson.title}
                   </h1>
-                  <p className="text-muted-foreground text-xl">
+                  <p className="text-muted-foreground text-base sm:text-lg lg:text-xl">
                     Learn important concepts and practice problems
                   </p>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                   <div className="flex items-center space-x-2">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-base text-muted-foreground">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+                    <span className="text-sm sm:text-base text-muted-foreground">
                       30 min
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {lesson.is_preview ? (
                       <>
-                        <Eye className="w-4 h-4 text-blue-600" />
-                        <span className="text-base text-blue-600">Preview</span>
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                        <span className="text-sm sm:text-base text-blue-600">
+                          Preview
+                        </span>
                       </>
                     ) : (
                       <>
-                        <Unlock className="w-4 h-4 text-green-600" />
-                        <span className="text-base text-green-600">
+                        <Unlock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
+                        <span className="text-sm sm:text-base text-green-600">
                           Unlocked
                         </span>
                       </>
@@ -486,6 +543,32 @@ export default function DynamicLessonPage({
                   </div>
                 </div>
               </div>
+
+              {/* Preview Lesson Notice */}
+              {lesson.is_preview && !isEnrolled && (course?.price || 0) > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-sm p-3 sm:p-4 mb-4">
+                  <div className="flex items-start space-x-3">
+                    <Eye className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-1">
+                        You're viewing a preview lesson
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-800 mb-3">
+                        This is a free preview of the course content. Enroll now
+                        to access all lessons and unlock your learning journey!
+                      </p>
+                      <Link href={`/courses/${resolvedParams?.slug}`}>
+                        <Button
+                          size="sm"
+                          className="bg-[#e27447] hover:bg-[#d1653a] text-white rounded-sm"
+                        >
+                          Enroll Now - ₹{course.price?.toLocaleString()}
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Content Tabs */}
@@ -509,60 +592,64 @@ export default function DynamicLessonPage({
                 <TabsList className="grid w-full grid-cols-1 rounded-sm bg-white p-1 shadow-sm">
                   <TabsTrigger
                     value="pdf"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium text-sm sm:text-base"
                   >
-                    <FileText className="w-4 h-4 mr-2" />
+                    <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                     PDF Assignment
                   </TabsTrigger>
                 </TabsList>
               ) : (
                 // Default template - Multiple tabs
-                <TabsList className="grid w-full grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
                   <TabsTrigger
                     value="video"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium text-xs sm:text-sm"
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    Video
+                    <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Video</span>
+                    <span className="sm:hidden">📹</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="notes"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium text-xs sm:text-sm"
                   >
-                    <FileText className="w-4 h-4 mr-2" />
-                    Notes
+                    <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Notes</span>
+                    <span className="sm:hidden">📝</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="keypoints"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium text-xs sm:text-sm"
                   >
-                    <Bookmark className="w-4 h-4 mr-2" />
-                    Key Points
+                    <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Key Points</span>
+                    <span className="sm:hidden">🔑</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="quiz"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium text-xs sm:text-sm"
                   >
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    Quiz
+                    <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Quiz</span>
+                    <span className="sm:hidden">❓</span>
                   </TabsTrigger>
                 </TabsList>
               )}
 
               {/* Video Tab */}
-              <TabsContent value="video" className="mt-6">
+              <TabsContent value="video" className="mt-4 sm:mt-6">
                 <Card className="rounded-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Play className="w-5 h-5 text-[#e27447]" />
+                  <CardHeader className="p-4 sm:p-6">
+                    <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+                      <Play className="w-4 h-4 sm:w-5 sm:h-5 text-[#e27447]" />
                       <span>Video Lesson</span>
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-sm sm:text-base">
                       Watch the complete lesson video with explanations and
                       examples
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6">
                     {/* Main Video */}
                     {lesson.video_url ? (
                       <div className="mb-6">
@@ -583,23 +670,23 @@ export default function DynamicLessonPage({
                       </div>
                     ) : (
                       <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-sm flex items-center justify-center relative overflow-hidden">
-                        <div className="text-center">
-                          <div className="w-20 h-20 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#e27447]/90 transition-colors cursor-pointer">
-                            <Play className="w-8 h-8 text-white ml-1" />
+                        <div className="text-center p-4 sm:p-6">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 hover:bg-[#e27447]/90 transition-colors cursor-pointer">
+                            <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white ml-0.5 sm:ml-1" />
                           </div>
-                          <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
+                          <h3 className="text-base sm:text-lg font-semibold text-[#1e293b] mb-2">
                             {lesson.title}
                           </h3>
-                          <p className="text-muted-foreground mb-4 leading-relaxed">
+                          <p className="text-muted-foreground mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
                             Video content will be available soon
                           </p>
-                          <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                             <span className="flex items-center space-x-1">
-                              <Clock className="w-4 h-4" />
+                              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                               <span>30 min</span>
                             </span>
                             <span className="flex items-center space-x-1">
-                              <FileText className="w-4 h-4" />
+                              <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                               <span>HD Quality</span>
                             </span>
                           </div>
@@ -914,31 +1001,41 @@ export default function DynamicLessonPage({
             </Tabs>
 
             {/* Navigation */}
-            <div className="flex items-center justify-between mt-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 gap-4">
               <Button
                 variant="outline"
-                className="rounded-sm"
+                className="rounded-sm w-full sm:w-auto order-2 sm:order-1"
                 onClick={getPreviousLesson}
                 disabled={
                   !allLessons.find(
                     (l) => l.lesson_order === lesson.lesson_order - 1
+                  ) ||
+                  !canAccessLesson(
+                    allLessons.find(
+                      (l) => l.lesson_order === lesson.lesson_order - 1
+                    )!
                   )
                 }
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous Lesson
+                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+                <span className="text-sm sm:text-base">Previous Lesson</span>
               </Button>
               <Button
-                className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm w-full sm:w-auto order-1 sm:order-2"
                 onClick={getNextLesson}
                 disabled={
                   !allLessons.find(
                     (l) => l.lesson_order === lesson.lesson_order + 1
+                  ) ||
+                  !canAccessLesson(
+                    allLessons.find(
+                      (l) => l.lesson_order === lesson.lesson_order + 1
+                    )!
                   )
                 }
               >
-                Next Lesson
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <span className="text-sm sm:text-base">Next Lesson</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1.5 sm:ml-2" />
               </Button>
             </div>
           </div>

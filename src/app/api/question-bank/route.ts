@@ -55,7 +55,6 @@ export async function GET(request: NextRequest) {
       pyq_year,
       month,
       paper_number,
-      "Time Zone",
       created_at,
       updated_at,
       human_readable_id,
@@ -239,8 +238,18 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("Error fetching questions:", error);
+      console.error("Error details:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return NextResponse.json(
-        { error: "Failed to fetch questions" },
+        { 
+          error: "Failed to fetch questions",
+          details: error.message,
+          hint: error.hint,
+        },
         { status: 500 }
       );
     }

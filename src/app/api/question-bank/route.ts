@@ -108,87 +108,137 @@ export async function GET(request: NextRequest) {
     if (qa_status && qa_status !== "any") {
       console.log("Applying QA status filter:", qa_status);
 
-      // Build QA query
-      let qaQuery = supabase.from("qa_questions").select("question_id");
+      try {
+        // Build QA query for fetching data
+        let qaQueryBuilder = supabase.from("qa_questions");
+        let qaCountQuery = supabase.from("qa_questions");
 
-      if (qa_status === "pending") {
-        qaQuery = qaQuery.eq("qa_status", "pending");
-      } else {
-        qaQuery = qaQuery.eq("qa_status", qa_status);
+        // Apply filters to both queries
+        qaQueryBuilder = qaQueryBuilder.select("question_id");
+        qaCountQuery = qaCountQuery.select("*", { count: "exact", head: true });
+
+        // Apply status filter
+        qaQueryBuilder = qaQueryBuilder.eq("qa_status", qa_status);
+        qaCountQuery = qaCountQuery.eq("qa_status", qa_status);
+
+        // Add priority level filter if specified
+        if (priority_level && priority_level !== "any") {
+          qaQueryBuilder = qaQueryBuilder.eq("priority_level", priority_level);
+          qaCountQuery = qaCountQuery.eq("priority_level", priority_level);
+        }
+
+        // Add flagged filter if specified
+        if (is_flagged && is_flagged !== "any") {
+          qaQueryBuilder = qaQueryBuilder.eq("is_flagged", is_flagged === "true");
+          qaCountQuery = qaCountQuery.eq("is_flagged", is_flagged === "true");
+        }
+
+        // Get count first
+        const { count: qaCount, error: countError } = await qaCountQuery;
+
+        if (countError) {
+          console.error("Error counting QA records:", countError);
+          console.log("Skipping QA filter due to count error");
+        } else {
+          console.log(`Total QA records matching filter: ${qaCount}`);
+
+          // If there are too many results (>1000), show warning and limit
+          if (qaCount && qaCount > 1000) {
+            console.warn(
+              `Too many QA records (${qaCount}) - limiting to first 1000`
+            );
+          }
+
+          // Fetch QA data with limit
+          const { data: qaData, error: qaError } = await qaQueryBuilder.limit(1000);
+
+          if (qaError) {
+            console.error("Error fetching QA data:", qaError);
+            console.error("QA Error details:", {
+              message: qaError.message,
+              details: qaError.details,
+              hint: qaError.hint,
+            });
+          } else {
+            const qaFilteredQuestionIds =
+              qaData?.map((qa) => qa.question_id) || [];
+            console.log(
+              `Found ${qaFilteredQuestionIds.length} questions matching QA filters`
+            );
+
+            if (qaFilteredQuestionIds.length > 0) {
+              // Apply the QA filter to the main query
+              query = query.in("id", qaFilteredQuestionIds);
+            } else {
+              // Return empty results if no questions match
+              return NextResponse.json({
+                questions: [],
+                total: 0,
+                totalQuestions: 0,
+                page,
+                limit,
+                totalPages: 0,
+              });
+            }
+          }
+        }
+      } catch (qaFilterError) {
+        console.error("Exception in QA filter:", qaFilterError);
+        // Continue without QA filter
       }
-
-      // Add priority level filter if specified
-      if (priority_level && priority_level !== "any") {
-        qaQuery = qaQuery.eq("priority_level", priority_level);
-      }
-
-      // Add flagged filter if specified
-      if (is_flagged && is_flagged !== "any") {
-        qaQuery = qaQuery.eq("is_flagged", is_flagged === "true");
-      }
-
-      const { data: qaData } = await qaQuery.limit(500);
-
-      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
-      console.log(
-        `Found ${qaFilteredQuestionIds.length} questions matching QA filters`
-      );
-
-      // If no questions match, return empty results
-      if (qaFilteredQuestionIds.length === 0) {
-        return NextResponse.json({
-          questions: [],
-          total: 0,
-          totalQuestions: 0,
-          page,
-          limit,
-          totalPages: 0,
-        });
-      }
-
-      // Apply the QA filter to the main query
-      query = query.in("id", qaFilteredQuestionIds);
     } else if (priority_level && priority_level !== "any") {
       // If only priority_level filter (without qa_status)
-      const { data: qaData } = await supabase
-        .from("qa_questions")
-        .select("question_id")
-        .eq("priority_level", priority_level)
-        .limit(500);
+      try {
+        const { data: qaData, error: qaError } = await supabase
+          .from("qa_questions")
+          .select("question_id")
+          .eq("priority_level", priority_level)
+          .limit(1000);
 
-      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
-      if (qaFilteredQuestionIds.length > 0) {
-        query = query.in("id", qaFilteredQuestionIds);
-      } else {
-        return NextResponse.json({
-          questions: [],
-          total: 0,
-          totalQuestions: 0,
-          page,
-          limit,
-          totalPages: 0,
-        });
+        if (!qaError && qaData) {
+          const qaFilteredQuestionIds = qaData.map((qa) => qa.question_id);
+          if (qaFilteredQuestionIds.length > 0) {
+            query = query.in("id", qaFilteredQuestionIds);
+          } else {
+            return NextResponse.json({
+              questions: [],
+              total: 0,
+              totalQuestions: 0,
+              page,
+              limit,
+              totalPages: 0,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error in priority_level filter:", err);
       }
     } else if (is_flagged && is_flagged !== "any") {
       // If only is_flagged filter (without qa_status)
-      const { data: qaData } = await supabase
-        .from("qa_questions")
-        .select("question_id")
-        .eq("is_flagged", is_flagged === "true")
-        .limit(500);
+      try {
+        const { data: qaData, error: qaError } = await supabase
+          .from("qa_questions")
+          .select("question_id")
+          .eq("is_flagged", is_flagged === "true")
+          .limit(1000);
 
-      const qaFilteredQuestionIds = qaData?.map((qa) => qa.question_id) || [];
-      if (qaFilteredQuestionIds.length > 0) {
-        query = query.in("id", qaFilteredQuestionIds);
-      } else {
-        return NextResponse.json({
-          questions: [],
-          total: 0,
-          totalQuestions: 0,
-          page,
-          limit,
-          totalPages: 0,
-        });
+        if (!qaError && qaData) {
+          const qaFilteredQuestionIds = qaData.map((qa) => qa.question_id);
+          if (qaFilteredQuestionIds.length > 0) {
+            query = query.in("id", qaFilteredQuestionIds);
+          } else {
+            return NextResponse.json({
+              questions: [],
+              total: 0,
+              totalQuestions: 0,
+              page,
+              limit,
+              totalPages: 0,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error in is_flagged filter:", err);
       }
     }
 
@@ -244,7 +294,7 @@ export async function GET(request: NextRequest) {
         code: error.code,
       });
       return NextResponse.json(
-        { 
+        {
           error: "Failed to fetch questions",
           details: error.message,
           hint: error.hint,
@@ -259,12 +309,15 @@ export async function GET(request: NextRequest) {
       const questionIds = questions.map((q) => q.id);
       const { data: qaData } = await supabase
         .from("qa_questions")
-        .select("question_id, qa_status, priority_level, is_flagged, overall_rating")
+        .select(
+          "question_id, qa_status, priority_level, is_flagged, overall_rating"
+        )
         .in("question_id", questionIds);
 
       // Attach QA data to questions
       questionsWithQA = questions.map((question) => {
-        const qaRecords = qaData?.filter((qa) => qa.question_id === question.id) || [];
+        const qaRecords =
+          qaData?.filter((qa) => qa.question_id === question.id) || [];
         return {
           ...question,
           qa_questions: qaRecords,

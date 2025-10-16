@@ -110,6 +110,9 @@ export interface CourseData {
   price: number;
   status: "published" | "draft" | "archived";
   instructor_id?: string;
+  duration?: string;
+  validity_days?: number;
+  thumbnail_url?: string;
 
   // Template-specific data (JSON)
   template_data: Record<string, unknown>;

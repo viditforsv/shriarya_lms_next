@@ -49,11 +49,15 @@ export function renderCourseWithTemplate(
         "Shri Arya Education"
     ),
     duration: String(
-      templateData.duration || defaultValues.duration || "120 hours"
+      courseData.duration ||
+        templateData.duration ||
+        defaultValues.duration ||
+        "120 hours"
     ),
     lessons: Number(templateData.lessons || defaultValues.lessons || 0),
     thumbnail: String(
-      templateData.thumbnail ||
+      courseData.thumbnail_url ||
+        templateData.thumbnail ||
         defaultValues.thumbnail ||
         "/images/courses/default.jpg"
     ),

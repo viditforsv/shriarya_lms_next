@@ -78,6 +78,8 @@ export function CoursePageClient({
   const [course, setCourse] = useState<ExtendedCourse | null>(null);
   const [template, setTemplate] = useState<CourseTemplate | null>(null);
   const [lessons, setLessons] = useState<LessonConfig[]>([]);
+  const [units, setUnits] = useState<any[]>([]);
+  const [chapters, setChapters] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
@@ -123,17 +125,26 @@ export function CoursePageClient({
         }
 
         const data = await response.json();
+        console.log("API Response:", data);
+        console.log("Raw course data:", data.course);
+        console.log("Rendered course:", data.rendered);
+
+        // Use raw database course ID for all queries
+        const courseId = data.course?.id || data.rendered?.id;
+        console.log("Course ID for database queries:", courseId);
+        console.log("Course slug from params:", courseParams.slug);
+
         setCourse(data.rendered);
         setTemplate(data.template);
 
         // Check enrollment status
-        if (user && data.rendered?.id) {
+        if (user && courseId) {
           const supabase = createClient();
           const { data: enrollment } = await supabase
             .from("courses_enrollments")
             .select("*")
             .eq("student_id", user.id)
-            .eq("course_id", data.rendered.id)
+            .eq("course_id", courseId)
             .eq("is_active", true)
             .maybeSingle();
 
@@ -145,7 +156,7 @@ export function CoursePageClient({
               .from("user_progress")
               .select("lesson_slug, lesson_order")
               .eq("user_id", user.id)
-              .eq("course_id", data.rendered.id)
+              .eq("course_id", courseId)
               .order("last_accessed_at", { ascending: false })
               .limit(1)
               .maybeSingle();
@@ -159,8 +170,49 @@ export function CoursePageClient({
           }
         }
 
-        // Fetch lessons with unit/chapter structure
+        // Fetch course structure (units, chapters, lessons)
+        if (!courseId) {
+          console.error("No course ID available for lessons query");
+          setIsLoading(false);
+          return;
+        }
+
         const supabase = createClient();
+
+        // Fetch units for this course
+        const { data: unitsData, error: unitsError } = await supabase
+          .from("courses_units")
+          .select("id, unit_name, unit_order")
+          .eq("course_id", courseId)
+          .order("unit_order");
+
+        console.log("Units data:", unitsData);
+        console.log("Units error:", unitsError);
+
+        // Fetch chapters for this course (through units)
+        const { data: chaptersData, error: chaptersError } = await supabase
+          .from("courses_chapters")
+          .select(
+            `
+            id,
+            chapter_name,
+            chapter_order,
+            unit_id,
+            unit:courses_units!inner(
+              id,
+              unit_name,
+              unit_order,
+              course_id
+            )
+          `
+          )
+          .eq("unit.course_id", courseId)
+          .order("chapter_order");
+
+        console.log("Chapters data:", chaptersData);
+        console.log("Chapters error:", chaptersError);
+
+        // Fetch lessons with unit/chapter structure
         const { data: lessonsData, error: lessonsError } = await supabase
           .from("courses_lessons")
           .select(
@@ -185,10 +237,21 @@ export function CoursePageClient({
             )
           `
           )
-          .eq("course_id", data.rendered.id)
+          .eq("course_id", courseId)
           .order("lesson_order");
 
+        console.log("Lessons query error:", lessonsError);
+        console.log("Lessons data:", lessonsData);
+        console.log("Lessons count:", lessonsData?.length || 0);
+
+        // Process lessons if they exist
         if (!lessonsError && lessonsData) {
+          // Log first lesson to see structure
+          if (lessonsData.length > 0) {
+            console.log("First lesson sample:", lessonsData[0]);
+            console.log("First lesson chapter:", lessonsData[0].chapter);
+          }
+
           const convertedLessons: LessonConfig[] = (
             lessonsData as Record<string, unknown>[]
           ).map((lesson) => ({
@@ -205,19 +268,23 @@ export function CoursePageClient({
             resources: [],
             chapter: lesson.chapter as LessonConfig["chapter"],
           }));
-          setLessons(convertedLessons);
 
-          // Calculate unique units and chapters
-          const uniqueUnits = new Set(
-            convertedLessons
-              .map((l) => l.chapter?.unit?.unit_name)
-              .filter(Boolean)
+          console.log("Converted lessons:", convertedLessons);
+          console.log(
+            "Lessons with chapters:",
+            convertedLessons.filter((l) => l.chapter).length
           );
-          const uniqueChapters = new Set(
-            convertedLessons.map((l) => l.chapter?.chapter_name).filter(Boolean)
-          );
-          setUnitCount(uniqueUnits.size);
-          setChapterCount(uniqueChapters.size);
+          setLessons(convertedLessons);
+        }
+
+        // Set unit and chapter counts from database data
+        if (!unitsError && unitsData) {
+          setUnits(unitsData);
+          setUnitCount(unitsData.length);
+        }
+        if (!chaptersError && chaptersData) {
+          setChapters(chaptersData);
+          setChapterCount(chaptersData.length);
         }
 
         // Fetch last accessed lesson
@@ -635,129 +702,103 @@ export function CoursePageClient({
                   <CardContent>
                     {isIBDPCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
-                    ) : lessons.length > 0 ? (
+                    ) : units.length > 0 ? (
                       <div className="space-y-2">
-                        {(() => {
-                          // Group lessons by unit and chapter from database
-                          const groupedLessons = lessons.reduce(
-                            (acc, lesson) => {
-                              const unitName =
-                                lesson.chapter?.unit?.unit_name ||
-                                "Uncategorized";
-                              const chapterName =
-                                lesson.chapter?.chapter_name || "Other";
-                              const unitOrder =
-                                lesson.chapter?.unit?.unit_order || 999;
-                              const chapterOrder =
-                                lesson.chapter?.chapter_order || 999;
+                        {units.map((unit, unitIndex) => {
+                          const unitId = `unit-${unitIndex}`;
+                          const isExpanded = expandedUnits.has(unitId);
 
-                              if (!acc[unitName]) {
-                                acc[unitName] = {
-                                  order: unitOrder,
-                                  chapters: {},
-                                };
-                              }
-                              if (!acc[unitName].chapters[chapterName]) {
-                                acc[unitName].chapters[chapterName] = {
-                                  order: chapterOrder,
-                                  lessons: [],
-                                };
-                              }
-                              acc[unitName].chapters[chapterName].lessons.push(
-                                lesson
-                              );
-                              return acc;
-                            },
-                            {} as Record<
-                              string,
-                              {
-                                order: number;
-                                chapters: Record<
-                                  string,
-                                  { order: number; lessons: LessonConfig[] }
-                                >;
-                              }
-                            >
+                          // Get chapters for this unit
+                          const unitChapters = chapters.filter(
+                            (chapter) => chapter.unit_id === unit.id
                           );
 
-                          // Sort units by order
-                          const sortedUnits = Object.entries(
-                            groupedLessons
-                          ).sort(([, a], [, b]) => a.order - b.order);
+                          // Get lessons for this unit (through chapters)
+                          const unitLessons = lessons.filter((lesson) =>
+                            unitChapters.some(
+                              (chapter) => chapter.id === lesson.chapter?.id
+                            )
+                          );
 
-                          return sortedUnits.map(
-                            ([unitName, unitData], unitIndex) => {
-                              const unitId = `unit-${unitIndex}`;
-                              const isExpanded = expandedUnits.has(unitId);
-
-                              // Sort chapters by order
-                              const sortedChapters = Object.entries(
-                                unitData.chapters
-                              ).sort(([, a], [, b]) => a.order - b.order);
-
-                              return (
-                                <div key={unitId} className="border rounded-sm">
-                                  {/* Unit Header */}
-                                  <div
-                                    className="p-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center"
-                                    onClick={() => toggleUnit(unitId)}
-                                  >
-                                    <div>
-                                      <span className="font-semibold text-lg">
-                                        {unitIndex + 1}. {unitName}
+                          return (
+                            <div key={unitId} className="border rounded-sm">
+                              {/* Unit Header */}
+                              <div
+                                className="p-4 cursor-pointer hover:bg-gray-50 flex justify-between items-center"
+                                onClick={() => toggleUnit(unitId)}
+                              >
+                                <div>
+                                  <span className="font-semibold text-lg">
+                                    {unitIndex + 1}. {unit.unit_name}
+                                  </span>
+                                  <span className="text-sm text-muted-foreground ml-2">
+                                    ({unitChapters.length}{" "}
+                                    {unitChapters.length === 1
+                                      ? "chapter"
+                                      : "chapters"}
+                                    {unitLessons.length > 0 && (
+                                      <span className="ml-1">
+                                        • {unitLessons.length}{" "}
+                                        {unitLessons.length === 1
+                                          ? "lesson"
+                                          : "lessons"}
                                       </span>
-                                      <span className="text-sm text-muted-foreground ml-2">
-                                        ({sortedChapters.length}{" "}
-                                        {sortedChapters.length === 1
-                                          ? "chapter"
-                                          : "chapters"}
-                                        )
-                                      </span>
-                                    </div>
-                                    <ChevronRight
-                                      className={`w-5 h-5 transition-transform ${
-                                        isExpanded ? "rotate-90" : ""
-                                      }`}
-                                    />
-                                  </div>
+                                    )}
+                                    )
+                                  </span>
+                                </div>
+                                <ChevronRight
+                                  className={`w-5 h-5 transition-transform ${
+                                    isExpanded ? "rotate-90" : ""
+                                  }`}
+                                />
+                              </div>
 
-                                  {/* Chapters List */}
-                                  {isExpanded && (
-                                    <div className="border-t">
-                                      {sortedChapters.map(
-                                        (
-                                          [chapterName, chapterData],
-                                          chapterIndex
-                                        ) => (
-                                          <div
-                                            key={`${unitId}-chapter-${chapterIndex}`}
-                                            className="p-3 pl-8 hover:bg-gray-50 border-b last:border-b-0"
-                                          >
-                                            <div className="font-medium text-gray-700">
-                                              {chapterName}
-                                            </div>
-                                            <div className="text-sm text-muted-foreground mt-1">
-                                              {chapterData.lessons.length}{" "}
-                                              {chapterData.lessons.length === 1
+                              {/* Chapters List */}
+                              {isExpanded && (
+                                <div className="border-t">
+                                  {unitChapters.map((chapter, chapterIndex) => {
+                                    const chapterLessons = lessons.filter(
+                                      (lesson) =>
+                                        lesson.chapter?.id === chapter.id
+                                    );
+
+                                    return (
+                                      <div
+                                        key={`${unitId}-chapter-${chapterIndex}`}
+                                        className="p-3 pl-8 hover:bg-gray-50 border-b last:border-b-0"
+                                      >
+                                        <div className="font-medium text-gray-700">
+                                          {chapter.chapter_name}
+                                        </div>
+                                        <div className="text-sm text-muted-foreground mt-1">
+                                          {chapterLessons.length > 0 ? (
+                                            <span>
+                                              {chapterLessons.length}{" "}
+                                              {chapterLessons.length === 1
                                                 ? "lesson"
                                                 : "lessons"}
-                                            </div>
-                                          </div>
-                                        )
-                                      )}
-                                    </div>
-                                  )}
+                                            </span>
+                                          ) : (
+                                            <span className="text-orange-600">
+                                              No lessons yet
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
-                              );
-                            }
+                              )}
+                            </div>
                           );
-                        })()}
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
                         <p>
-                          No lessons available yet. Please use the admin panel
-                          to set up units and chapters.
+                          No course structure available yet. Please use the
+                          admin panel to set up units and chapters.
                         </p>
                       </div>
                     )}

@@ -363,16 +363,80 @@ export default function DynamicLessonPage({
 
   if (!hasAccess()) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Lock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-4">Lesson Locked</h1>
-          <p className="text-muted-foreground mb-6">
-            Please enroll in this course to access this lesson.
-          </p>
-          <Link href={`/courses/${resolvedParams?.slug}`}>
-            <Button>Back to Course</Button>
-          </Link>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 mb-4">
+              <Lock className="w-10 h-10 text-[#e27447]" />
+            </div>
+            <h1 className="text-3xl font-bold mb-3">Lesson Locked 🔒</h1>
+            <p className="text-muted-foreground text-lg mb-2">
+              This lesson is part of the premium course content.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Enroll in <span className="font-semibold text-foreground">{course.title}</span> to access this and all other lessons.
+            </p>
+          </div>
+
+          {/* Course Info Card */}
+          <div className="bg-white border-2 border-[#feefea] rounded-sm p-6 mb-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Full course access with all lessons
+                </p>
+              </div>
+              {course.price && course.price > 0 && (
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-[#e27447]">
+                    ₹{course.price.toLocaleString()}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Benefits */}
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                <span>Lifetime access to all course content</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                <span>Downloadable resources and assignments</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                <span>Certificate of completion</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <Link href={`/courses/${resolvedParams?.slug}`} className="block">
+                <Button className="w-full bg-[#e27447] hover:bg-[#d1653a] rounded-sm text-base py-6">
+                  {course.price && course.price > 0 ? "Enroll Now" : "Enroll for Free"}
+                </Button>
+              </Link>
+              <Link href={`/courses/${resolvedParams?.slug}`} className="block">
+                <Button variant="outline" className="w-full rounded-sm">
+                  View Course Details
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Back Link */}
+          <div className="text-center">
+            <Link 
+              href={`/courses/${resolvedParams?.slug}`}
+              className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back to Course
+            </Link>
+          </div>
         </div>
       </div>
     );

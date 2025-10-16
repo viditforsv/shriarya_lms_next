@@ -55,9 +55,11 @@ export function RoleGuard({
 export function AdminOnly({
   children,
   fallback,
+  showAccessDenied = false,
 }: {
   children: ReactNode;
   fallback?: ReactNode;
+  showAccessDenied?: boolean;
 }) {
   const { loading, user, profile } = useAuth();
 
@@ -75,8 +77,14 @@ export function AdminOnly({
 
   // Show fallback if not admin
   if (!user || !profile || profile.role !== "admin") {
-    return (
-      fallback || (
+    // If fallback is explicitly provided, use it
+    if (fallback !== undefined) {
+      return <>{fallback}</>;
+    }
+    
+    // If showAccessDenied is true, show the access denied message
+    if (showAccessDenied) {
+      return (
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-red-600 mb-4">
@@ -90,8 +98,11 @@ export function AdminOnly({
             </a>
           </div>
         </div>
-      )
-    );
+      );
+    }
+    
+    // Default: return null (hide content silently)
+    return null;
   }
 
   return <>{children}</>;

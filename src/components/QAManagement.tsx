@@ -51,7 +51,7 @@ export default function QAManagement({
   questionId,
   onStatusChange,
 }: QAManagementProps) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [qaRecord, setQARecord] = useState<QARecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -115,6 +115,7 @@ export default function QAManagement({
     newStatus: QARecord["qa_status"],
     notes?: string
   ) => {
+    console.log("🚀 updateQAStatus FUNCTION CALLED!");
     console.log("updateQAStatus called with:", {
       newStatus,
       notes,
@@ -124,7 +125,10 @@ export default function QAManagement({
     });
 
     if (!qaRecord) {
-      console.log("No QA record found, cannot update status");
+      console.log(
+        "⚠️ No QA record found, creating a new one before updating..."
+      );
+      await createQARecord(newStatus, notes);
       return;
     }
 
@@ -135,8 +139,15 @@ export default function QAManagement({
       });
       setTimeout(() => setNotification(null), 5000);
       console.error("❌ No user ID found - user not logged in");
+      console.error("❌ User object:", user);
       return;
     }
+
+    console.log("✅ User authenticated:", {
+      userId: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || "unknown",
+    });
 
     try {
       setSaving(true);
@@ -162,26 +173,56 @@ export default function QAManagement({
 
       console.log("Sending API request with reviewer_id:", user?.id);
       console.log("Full request body:", requestBody);
-
-      const response = await fetch(`/api/qa`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+      console.log("Request headers:", {
+        "Content-Type": "application/json",
+        ...(session?.access_token && {
+          Authorization: `Bearer ${session.access_token}`,
+        }),
       });
+
+      let response;
+      try {
+        const apiUrl = `/api/qa`;
+        console.log("🌐 Making request to:", apiUrl);
+        console.log("🌐 Full URL would be:", window.location.origin + apiUrl);
+
+        response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(session?.access_token && {
+              Authorization: `Bearer ${session.access_token}`,
+            }),
+          },
+          body: JSON.stringify(requestBody),
+        });
+        console.log("✅ Fetch request completed successfully");
+      } catch (fetchError) {
+        console.error("❌ Fetch request failed:", fetchError);
+        throw fetchError;
+      }
 
       console.log("API response status:", response.status);
 
       if (response.ok) {
         const updatedQA = await response.json();
         console.log("✅ API Success - Updated QA record:", updatedQA);
+
+        // Update local state first
         setQARecord(updatedQA.qa_record);
-        await fetchQAData(); // Refresh all data
+
+        // Notify parent component to refresh
         onStatusChange?.(newStatus);
+
+        // Show success notification
         setNotification({
           type: "success",
           message: `Successfully updated status to: ${newStatus}`,
         });
         setTimeout(() => setNotification(null), 5000);
+
+        // Refresh data from server to ensure consistency
+        await fetchQAData();
       } else {
         const errorData = await response.json();
         console.error("❌ API Error Response:", errorData);
@@ -229,19 +270,30 @@ export default function QAManagement({
     );
   }
 
-  const createQARecord = async (status: "pending" | "approved" = "pending") => {
+  const createQARecord = async (
+    status: QARecord["qa_status"] = "pending",
+    notes?: string
+  ) => {
     try {
       setSaving(true);
+      console.log("🆕 Creating new QA record with status:", status);
 
       const response = await fetch(`/api/qa`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token && {
+            Authorization: `Bearer ${session.access_token}`,
+          }),
+        },
         body: JSON.stringify({
           question_id: questionId,
           qa_status: status,
           reviewer_id: user?.id, // Pass current user ID as reviewer
           priority_level: "medium",
-          review_notes: status === "approved" ? "Pre-approved" : undefined,
+          review_notes:
+            notes ||
+            (status === "approved" ? "Pre-approved" : "Auto-created QA record"),
           ...(status === "approved" && {
             review_date: new Date().toISOString(),
           }),
@@ -250,12 +302,43 @@ export default function QAManagement({
 
       if (response.ok) {
         const newQA = await response.json();
+        console.log("✅ QA record created successfully:", newQA);
+
+        // Update local state first
         setQARecord(newQA.qa_record);
-        await fetchQAData(); // Refresh all data
+
+        // Notify parent component to refresh
         onStatusChange?.(status);
+
+        // Show success notification
+        setNotification({
+          type: "success",
+          message: `Successfully created and set status to: ${status}`,
+        });
+        setTimeout(() => setNotification(null), 5000);
+
+        // Refresh data from server to ensure consistency
+        await fetchQAData();
+      } else {
+        const errorData = await response.json();
+        console.error("❌ Failed to create QA record:", errorData);
+        setNotification({
+          type: "error",
+          message: `Failed to create QA record: ${
+            errorData.error || "Unknown error"
+          }`,
+        });
+        setTimeout(() => setNotification(null), 5000);
       }
     } catch (error) {
-      console.error("Error creating QA record:", error);
+      console.error("❌ Error creating QA record:", error);
+      setNotification({
+        type: "error",
+        message: `Error creating QA record: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      });
+      setTimeout(() => setNotification(null), 5000);
     } finally {
       setSaving(false);
     }
@@ -327,7 +410,10 @@ export default function QAManagement({
 
         <div className="flex gap-2">
           <Button
-            onClick={() => updateQAStatus("approved", "Approved after review")}
+            onClick={() => {
+              console.log("🖱️ APPROVE BUTTON CLICKED!");
+              updateQAStatus("approved", "Approved after review");
+            }}
             disabled={saving}
             className="flex items-center gap-2"
           >

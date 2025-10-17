@@ -963,13 +963,21 @@ export default function QuestionDetailPage() {
       <div className="bg-white border-t border-gray-200 px-6 py-4">
         <QAManagement
           questionId={questionId}
-          onStatusChange={(newStatus) => {
+          onStatusChange={async (newStatus) => {
             console.log(
               "🔄 QA status changed to:",
               newStatus,
               "- refreshing question data"
             );
-            fetchQuestion();
+            // Update local state immediately for optimistic UI
+            if (question) {
+              setQuestion({
+                ...question,
+                qa_status: newStatus,
+              });
+            }
+            // Then fetch fresh data from server
+            await fetchQuestion();
           }}
         />
       </div>

@@ -1,5 +1,90 @@
 "use client";
 
+/**
+ * QUESTION BANK PAGE - Guidelines and Architecture
+ * ================================================
+ *
+ * This page provides a comprehensive interface for browsing, filtering, and managing
+ * mathematics questions in the ShriArya LMS system.
+ *
+ * SIDEBAR FUNCTIONALITY GUIDELINES:
+ * ================================
+ *
+ * 1. SEARCH FUNCTIONALITY:
+ *    - Supports text search across question content, tags, topics, and human-readable IDs
+ *    - Handles UUID patterns and human-readable ID patterns automatically
+ *    - Real-time search with debouncing to prevent excessive API calls
+ *
+ * 2. QUICK FILTERS SECTION:
+ *    - Board: Filter by educational board (CBSE, IBDP, ICSE, etc.)
+ *    - Course Type: Filter by course type (AA, HL, SL, etc.)
+ *    - Level: Filter by academic level (Grade 9, Grade 10, etc.)
+ *    - Subject: Filter by subject area (Mathematics, Physics, etc.)
+ *    - Topic: Text-based topic filtering with partial matching
+ *    - Tags: Comma-separated tag filtering with overlap matching
+ *    - Difficulty: Numeric difficulty rating (1-10 scale)
+ *    - Question Type: Filter by question format (MCQ, Short Answer, etc.)
+ *    - PYQ Filter: Toggle between Past Year Questions and Practice Questions
+ *
+ * 3. QUALITY ASSURANCE FILTERS:
+ *    - QA Status: Filter by review status (pending, approved, rejected, etc.)
+ *    - Priority Level: Filter by QA priority (low, medium, high, urgent)
+ *    - Flagged Status: Filter by flagged questions requiring attention
+ *
+ *    ⚠️ CRITICAL CONSTRAINT: Supabase has a 1000-row limit per query
+ *       - QA filtering must fetch limited data (currently set to 2000 max)
+ *       - Deduplication happens in-memory after fetching
+ *       - If we exceed limits, we need to implement pagination for QA data fetching
+ *
+ * 4. ADVANCED FILTERS:
+ *    - Currently disabled due to build issues
+ *    - Future: Complex query builder for advanced filtering combinations
+ *
+ * 5. FILTER MANAGEMENT:
+ *    - Clear All Filters: Reset all filters to default state
+ *    - Active Filters Summary: Shows currently applied filters
+ *    - Filter persistence: Maintains filter state during navigation
+ *
+ * MAIN CONTENT AREA:
+ * ==================
+ * - Displays questions in responsive grid layout (1-3 columns based on screen size)
+ * - Shows question preview with math rendering
+ * - Displays QA status badges and metadata
+ * - Provides quick actions (View, Edit) for each question
+ * - Implements pagination for large question sets
+ *
+ * PERFORMANCE CONSIDERATIONS & CONSTRAINTS:
+ * ==========================================
+ *
+ * ⚠️ **CRITICAL: Supabase 1000-Row Query Limit**
+ * This is the most important constraint affecting our implementation:
+ *
+ * 1. **Problem**: Supabase limits each query to 1000 rows
+ *    - When filtering by QA status (e.g., "pending"), we may have 10,000+ questions
+ *    - Direct filtering would hit this limit and cause "Bad Request" errors
+ *
+ * 2. **Current Solution** (implemented in /api/question-bank/route.ts):
+ *    a. Fetch up to 2000 QA records (ordered by updated_at DESC)
+ *    b. Deduplicate in-memory to get latest QA per question
+ *    c. Apply status filters AFTER deduplication
+ *    d. Use filtered question IDs to fetch actual question data
+ *
+ * 3. **Trade-offs**:
+ *    ✅ Avoids hitting the 1000-row limit
+ *    ✅ Ensures we only show latest QA status per question
+ *    ⚠️ May not capture all questions if there are 2000+ unique questions with QA records
+ *    ⚠️ If this becomes an issue, we need to implement:
+ *       - Pagination for QA data fetching
+ *       - Server-side aggregation/materialized views
+ *       - Separate QA status cache table
+ *
+ * 4. **Other Optimizations**:
+ *    - Uses efficient API filtering to reduce data transfer
+ *    - Implements pagination to handle large question sets (10 per page default)
+ *    - Caches filter options to reduce API calls
+ *    - Optimized QA status filtering with in-memory deduplication
+ */
+
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
@@ -38,32 +123,37 @@ import {
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
 import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
+import { renderMultiPartQuestion } from "@/components/MathRenderer";
 // import QuestionBankQueryBuilder from "@/components/QuestionBankQueryBuilder";
 
+/**
+ * Question Interface - Represents a single question in the question bank
+ * Includes all metadata, content, and QA information
+ */
 interface Question {
-  id: string;
-  question_number: string;
-  question_text: string;
-  total_marks: number;
-  difficulty: number;
-  tags: string[];
-  subject: string;
-  boards: string[]; // Changed from board (string) to boards (array)
-  course_types: string[]; // Added
-  levels: string[]; // Added
-  relevance: string[]; // Added
-  grade: string;
-  topic: string;
-  subtopic: string;
-  question_type: string;
-  is_pyq: boolean;
-  pyq_year: number;
-  month: string;
-  paper_number: number;
-  created_at: string;
-  human_readable_id?: string;
-  question_display_number?: number;
-  // QA fields
+  id: string; // Unique identifier (UUID)
+  question_number: string; // Human-readable question number
+  question_text: string; // Main question content (LaTeX supported)
+  total_marks: number; // Total marks for the question
+  difficulty: number; // Difficulty rating (1-10 scale)
+  tags: string[]; // Array of topic tags
+  subject: string; // Subject area (e.g., "Mathematics")
+  boards: string[]; // Educational boards (CBSE, IBDP, etc.)
+  course_types: string[]; // Course types (AA, HL, SL, etc.)
+  levels: string[]; // Academic levels (Grade 9, Grade 10, etc.)
+  relevance: string[]; // Relevance tags
+  grade: string; // Grade level
+  topic: string; // Main topic
+  subtopic: string; // Subtopic
+  question_type: string; // Type of question (MCQ, Short Answer, etc.)
+  is_pyq: boolean; // Whether this is a Past Year Question
+  pyq_year: number; // Year of the past year question
+  month: string; // Month of the exam
+  paper_number: number; // Paper number
+  created_at: string; // Creation timestamp
+  human_readable_id?: string; // Human-readable identifier
+  question_display_number?: number; // Display number
+  // QA (Quality Assurance) fields - latest QA record for this question
   qa_questions?: {
     qa_status?:
       | "pending"
@@ -78,43 +168,78 @@ interface Question {
   }[];
 }
 
+/**
+ * API Response Interface - Response structure from the question bank API
+ */
 interface QuestionBankResponse {
-  questions: Question[];
-  total: number;
-  totalQuestions: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  questions: Question[]; // Array of questions for current page
+  total: number; // Total number of questions matching current filters
+  totalQuestions: number; // Total questions in database (unfiltered)
+  page: number; // Current page number
+  limit: number; // Number of questions per page
+  totalPages: number; // Total number of pages
 }
 
+/**
+ * Filter Options Interface - Available filter options fetched from API
+ * Used to populate dropdown menus in the sidebar
+ */
 interface FilterOptions {
-  boards: string[];
-  course_types: string[];
-  levels: string[];
-  subjects: string[];
-  topics: string[];
-  difficulties: number[];
-  question_types: string[];
-  grades: string[];
-  has_pyq: boolean;
-  has_practice: boolean;
-  qa_statuses: string[];
-  priority_levels: string[];
+  boards: string[]; // Available educational boards
+  course_types: string[]; // Available course types
+  levels: string[]; // Available academic levels
+  subjects: string[]; // Available subjects
+  topics: string[]; // Available topics
+  difficulties: number[]; // Available difficulty levels
+  question_types: string[]; // Available question types
+  grades: string[]; // Available grades
+  has_pyq: boolean; // Whether PYQ questions exist
+  has_practice: boolean; // Whether practice questions exist
+  qa_statuses: string[]; // Available QA statuses
+  priority_levels: string[]; // Available priority levels
 }
 
+/**
+ * MAIN QUESTION BANK PAGE COMPONENT
+ * =================================
+ *
+ * This component provides the complete question bank interface with:
+ * - Left sidebar with comprehensive filtering options
+ * - Main content area with question grid and pagination
+ * - Search functionality with real-time filtering
+ * - QA status management and display
+ */
 export default function QuestionBankPage() {
   const router = useRouter();
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  // ===== CORE STATE MANAGEMENT =====
+
+  // Question data and loading states
+  const [questions, setQuestions] = useState<Question[]>([]); // Current page questions
+  const [loading, setLoading] = useState(true); // Loading state for questions
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  // Search functionality
+  const [searchTerm, setSearchTerm] = useState(""); // Current search term
+
+  // Pagination state
   const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
+    page: 1, // Current page number
+    limit: 10, // Questions per page
+    total: 0, // Total questions matching filters
+    totalPages: 0, // Total number of pages
   });
-  const [totalQuestions, setTotalQuestions] = useState(0);
-  const [advancedQuery, setAdvancedQuery] = useState<any>(null);
+
+  // Additional pagination data
+  const [totalQuestions, setTotalQuestions] = useState(0); // Total questions in database
+
+  // Advanced filtering (currently disabled)
+  const [advancedQuery, setAdvancedQuery] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+
+  // Filter options fetched from API
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     boards: [],
     course_types: [],
@@ -129,48 +254,65 @@ export default function QuestionBankPage() {
     qa_statuses: [],
     priority_levels: [],
   });
+
+  // Filter loading state
   const [loadingFilters, setLoadingFilters] = useState(true);
 
-  // Simple filters state
+  // ===== FILTER STATE MANAGEMENT =====
+
+  // Simple filters state - stores current filter selections
+  // "any" means no filter applied, specific values filter by that criteria
   const [simpleFilters, setSimpleFilters] = useState({
-    boards: "any",
-    course_types: "any",
-    levels: "any",
-    subject: "any",
-    topic: "",
-    tags: "",
-    difficulty: "any",
-    question_type: "any",
-    is_pyq: "any",
-    qa_status: "any",
-    priority_level: "any",
-    is_flagged: "any",
+    boards: "any", // Educational board filter
+    course_types: "any", // Course type filter (AA, HL, SL, etc.)
+    levels: "any", // Academic level filter
+    subject: "any", // Subject area filter
+    topic: "", // Topic filter (text-based, empty string = no filter)
+    tags: "", // Tags filter (comma-separated, empty string = no filter)
+    difficulty: "any", // Difficulty rating filter
+    question_type: "any", // Question type filter
+    is_pyq: "any", // PYQ filter: "pyq", "practice", "any"
+    qa_status: "any", // QA status filter
+    priority_level: "any", // QA priority level filter
+    is_flagged: "any", // Flagged status filter
   });
 
+  /**
+   * FETCH QUESTIONS FUNCTION
+   * ========================
+   *
+   * Fetches questions from the API based on current filters and pagination.
+   * Handles search terms, simple filters, and advanced queries.
+   * Updates the questions state and pagination information.
+   */
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
+      // Build base query parameters
       const params = new URLSearchParams({
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
-        ...(searchTerm && { search: searchTerm }),
+        ...(searchTerm && { search: searchTerm }), // Only add search if not empty
       });
 
-      // Add simple filters
+      // Add simple filters - only include non-empty, non-"any" values
       Object.entries(simpleFilters).forEach(([key, value]) => {
         if (value && value !== "any") {
           params.append(key, value);
         }
       });
 
-      // Add advanced query if available
+      // Add advanced query if available (currently disabled)
       if (advancedQuery) {
         params.append("advanced_filters", JSON.stringify(advancedQuery));
       }
 
+      // Make API request to question-bank endpoint
       const response = await fetch(`/api/question-bank?${params}`);
 
       if (response.ok) {
+        // Success: Parse response and update state
         const data: QuestionBankResponse = await response.json();
         setQuestions(data.questions);
         setPagination({
@@ -181,13 +323,19 @@ export default function QuestionBankPage() {
         });
         setTotalQuestions(data.totalQuestions || data.total);
       } else {
+        // Error: Handle different response types
         // Check if response is JSON before trying to parse
         const contentType = response.headers.get("content-type");
-        let errorData = {};
+        let errorMessage = "Failed to fetch questions";
 
         if (contentType && contentType.includes("application/json")) {
           try {
-            errorData = await response.json();
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+            if (errorData.details) {
+              errorMessage += `: ${errorData.details}`;
+            }
+            console.error("API Error:", errorData);
           } catch (e) {
             console.error("Failed to parse error response as JSON:", e);
           }
@@ -201,15 +349,23 @@ export default function QuestionBankPage() {
           }
         }
 
-        console.error(
-          "Failed to fetch questions:",
-          response.status,
-          response.statusText,
-          errorData
-        );
+        setError(errorMessage);
+        setQuestions([]);
+        setPagination({
+          page: 1,
+          limit: pagination.limit,
+          total: 0,
+          totalPages: 0,
+        });
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
+      setError(
+        `Network error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
@@ -221,11 +377,19 @@ export default function QuestionBankPage() {
     advancedQuery,
   ]);
 
-  // Fetch filter options on mount
+  /**
+   * FETCH FILTER OPTIONS EFFECT
+   * ===========================
+   *
+   * Fetches available filter options from the API on component mount.
+   * This populates the dropdown menus in the sidebar with valid options.
+   * Runs only once when the component mounts.
+   */
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
         setLoadingFilters(true);
+        // Fetch available filter options from API
         const response = await fetch("/api/question-bank/filters");
         if (response.ok) {
           const data = await response.json();
@@ -241,15 +405,36 @@ export default function QuestionBankPage() {
     fetchFilterOptions();
   }, []);
 
+  /**
+   * FETCH QUESTIONS EFFECT
+   * =====================
+   *
+   * Triggers question fetching whenever dependencies change.
+   * Dependencies include pagination, search term, filters, and advanced query.
+   */
   useEffect(() => {
     fetchQuestions();
   }, [fetchQuestions]);
 
+  /**
+   * SEARCH HANDLER
+   * ==============
+   *
+   * Updates search term and resets pagination to page 1.
+   * This ensures search results start from the first page.
+   */
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
+  /**
+   * SIMPLE FILTER CHANGE HANDLER
+   * ============================
+   *
+   * Updates a specific filter value and resets pagination to page 1.
+   * This ensures filtered results start from the first page.
+   */
   const handleSimpleFilterChange = (key: string, value: string) => {
     setSimpleFilters((prev) => ({
       ...prev,
@@ -258,7 +443,15 @@ export default function QuestionBankPage() {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
+  /**
+   * CLEAR ALL FILTERS FUNCTION
+   * ===========================
+   *
+   * Resets all filters to their default state and resets pagination.
+   * This provides a quick way to clear all applied filters.
+   */
   const clearAllFilters = () => {
+    // Reset all filters to default values
     setSimpleFilters({
       difficulty: "any",
       boards: "any",
@@ -273,12 +466,18 @@ export default function QuestionBankPage() {
       priority_level: "any",
       is_flagged: "any",
     });
-    setAdvancedQuery(null);
-    setSearchTerm("");
-    setPagination((prev) => ({ ...prev, page: 1 }));
+    setAdvancedQuery(null); // Clear advanced query
+    setSearchTerm(""); // Clear search term
+    setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page
   };
 
-  // Check if any filters are active
+  /**
+   * CHECK ACTIVE FILTERS FUNCTION
+   * =============================
+   *
+   * Determines if any filters are currently active.
+   * Used to show/hide the "Clear All Filters" button.
+   */
   const hasActiveFilters = () => {
     const hasSimpleFilters = Object.values(simpleFilters).some(
       (value) => value !== "any"
@@ -286,22 +485,48 @@ export default function QuestionBankPage() {
     return searchTerm || hasSimpleFilters || advancedQuery;
   };
 
+  /**
+   * PAGINATION HANDLER
+   * ==================
+   *
+   * Updates the current page number for pagination.
+   */
   const goToPage = (page: number) => {
     setPagination((prev) => ({ ...prev, page }));
   };
 
+  /**
+   * TEXT TRUNCATION UTILITY
+   * =======================
+   *
+   * Truncates text to specified length and adds ellipsis.
+   * Used for question preview text in the grid.
+   */
   const truncateText = (text: string, maxLength: number = 150) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
+  /**
+   * DIFFICULTY COLOR UTILITY
+   * ========================
+   *
+   * Returns appropriate color classes based on difficulty level.
+   * Green: Easy (1-3), Yellow: Medium (4-6), Red: Hard (7-10)
+   */
   const getDifficultyColor = (difficulty: number) => {
     if (difficulty <= 3) return "bg-green-100 text-green-800";
     if (difficulty <= 6) return "bg-yellow-100 text-yellow-800";
     return "bg-red-100 text-red-800";
   };
 
-  // Get human-readable ID for display (use database-stored or fallback to generation)
+  /**
+   * HUMAN READABLE ID GENERATOR
+   * ===========================
+   *
+   * Generates or retrieves human-readable ID for question display.
+   * Uses database-stored ID if available, otherwise generates one.
+   */
   const getHumanReadableId = (question: Question, index?: number) => {
     // Use database-stored human-readable ID if available
     if (question.human_readable_id) {
@@ -333,9 +558,19 @@ export default function QuestionBankPage() {
     return `${board}_${courseType.toLowerCase()}_${level.toLowerCase()}_${type}_${number}`;
   };
 
+  /**
+   * MAIN RENDER SECTION
+   * ===================
+   *
+   * Renders the complete question bank interface with:
+   * - Header with title and add question button
+   * - Left sidebar with filters
+   * - Main content area with question grid
+   * - Pagination controls
+   */
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* PAGE HEADER */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
@@ -347,6 +582,7 @@ export default function QuestionBankPage() {
                 Manage and browse {pagination.total} Mathematics questions
               </p>
             </div>
+            {/* Add Question Button */}
             <Button
               onClick={() => router.push("/question-bank/new")}
               className="bg-orange-600 hover:bg-orange-700 text-white rounded-sm"
@@ -358,11 +594,12 @@ export default function QuestionBankPage() {
         </div>
       </div>
 
+      {/* MAIN CONTENT LAYOUT */}
       <div className="flex">
-        {/* Filter Sidebar */}
+        {/* FILTER SIDEBAR */}
         <div className="w-80 bg-white border-r border-gray-200 p-4">
           <div className="space-y-4">
-            {/* Search */}
+            {/* SEARCH SECTION */}
             <div>
               <Label
                 htmlFor="search"
@@ -383,7 +620,7 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
-            {/* Simple Filters */}
+            {/* QUICK FILTERS SECTION */}
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-sm font-medium text-gray-700 mb-3">
                 Quick Filters
@@ -615,7 +852,7 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
-            {/* QA Status Filters */}
+            {/* QUALITY ASSURANCE FILTERS SECTION */}
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-sm font-medium text-gray-700 mb-3">
                 Quality Assurance
@@ -697,7 +934,7 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
-            {/* Advanced Query Builder Modal */}
+            {/* ADVANCED FILTERS SECTION (Currently Disabled) */}
             <div>
               <Dialog>
                 <DialogTrigger asChild>
@@ -710,13 +947,15 @@ export default function QuestionBankPage() {
                   <DialogHeader>
                     <DialogTitle>Advanced Query Builder</DialogTitle>
                   </DialogHeader>
-                  {/* <QuestionBankQueryBuilder
-                    onQueryChange={(query) => {
-                      setAdvancedQuery(query);
-                      setPagination((prev) => ({ ...prev, page: 1 }));
-                    }}
-                    initialQuery={advancedQuery}
-                  /> */}
+                  {/* Advanced Query Builder Component - Currently Disabled
+                      This would provide complex filtering capabilities
+                      <QuestionBankQueryBuilder
+                        onQueryChange={(query) => {
+                          setAdvancedQuery(query);
+                          setPagination((prev) => ({ ...prev, page: 1 }));
+                        }}
+                        initialQuery={advancedQuery}
+                      /> */}
                   <div className="p-8 text-center text-muted-foreground">
                     Query Builder temporarily disabled due to build issues
                   </div>
@@ -725,6 +964,7 @@ export default function QuestionBankPage() {
             </div>
 
             {/* Clear Filters */}
+            {/* CLEAR ALL FILTERS BUTTON */}
             {hasActiveFilters() && (
               <div>
                 <Button
@@ -738,7 +978,7 @@ export default function QuestionBankPage() {
               </div>
             )}
 
-            {/* Active Filters Summary */}
+            {/* ACTIVE FILTERS SUMMARY */}
             {hasActiveFilters() && (
               <div className="text-sm text-gray-600">
                 <div className="font-medium mb-1">Active Filters:</div>
@@ -764,15 +1004,34 @@ export default function QuestionBankPage() {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* MAIN CONTENT AREA */}
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Breadcrumb */}
+            {/* BREADCRUMB NAVIGATION */}
             <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
               <span>Dashboard</span>
               <span>/</span>
               <span className="text-gray-900 font-medium">Question Bank</span>
             </nav>
+
+            {/* ERROR MESSAGE DISPLAY */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-sm">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <X className="h-5 w-5 text-red-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">
+                      Error Loading Questions
+                    </h3>
+                    <div className="mt-2 text-sm text-red-700">
+                      <p>{error}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Results Summary */}
             <div className="mb-6 flex justify-between items-center">
@@ -818,8 +1077,9 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
-            {/* Questions Grid */}
+            {/* QUESTIONS GRID */}
             {loading ? (
+              // Loading skeleton grid
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i}>
@@ -838,6 +1098,7 @@ export default function QuestionBankPage() {
                 ))}
               </div>
             ) : (
+              // Actual questions grid
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {questions.map((question, index) => (
                   <Card
@@ -879,9 +1140,11 @@ export default function QuestionBankPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="mb-4">
-                        <p className="text-gray-700 text-sm leading-relaxed">
-                          {truncateText(question.question_text)}
-                        </p>
+                        <div className="text-gray-700 text-sm leading-relaxed">
+                          {renderMultiPartQuestion(
+                            truncateText(question.question_text)
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
@@ -1004,7 +1267,7 @@ export default function QuestionBankPage() {
               </div>
             )}
 
-            {/* Pagination */}
+            {/* PAGINATION CONTROLS */}
             {pagination.totalPages > 1 && (
               <div className="flex items-center justify-center space-x-2 mt-8">
                 <Button

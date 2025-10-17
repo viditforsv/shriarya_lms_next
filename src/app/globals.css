@@ -3,6 +3,38 @@
 @import "katex/dist/katex.min.css";
 @import "react-querybuilder/dist/query-builder.css";
 
+/* Enhanced Math Rendering - Larger Fractions */
+.katex-math {
+  font-size: 1.1em !important;
+}
+
+.katex-math .katex-display {
+  font-size: 1.2em !important;
+}
+
+.katex-math .frac-line {
+  border-bottom-width: 0.08em !important;
+}
+
+.katex-math .frac-num,
+.katex-math .frac-den {
+  font-size: 1.1em !important;
+}
+
+/* Make cfrac (continued fractions) even larger */
+.katex-math .cfrac {
+  font-size: 1.15em !important;
+}
+
+.katex-math .cfrac .frac-line {
+  border-bottom-width: 0.1em !important;
+}
+
+.katex-math .cfrac .frac-num,
+.katex-math .cfrac .frac-den {
+  font-size: 1.15em !important;
+}
+
 /* Custom Query Builder Styles - Minimal and Intuitive */
 .queryBuilder-custom {
   @apply bg-white border border-gray-200 rounded-sm p-4;

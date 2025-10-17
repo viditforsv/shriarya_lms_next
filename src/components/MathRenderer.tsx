@@ -28,15 +28,38 @@ export function MathRenderer({
           displayMode,
           strict: false,
           trust: true,
+          // Increase font size for better readability
+          fleqn: false,
+          leqno: false,
         });
       } catch (error) {
         console.error("KaTeX rendering error:", error);
-        mathRef.current.innerHTML = latex; // Fallback to raw LaTeX
+        // Fallback: try rendering without preprocessing
+        try {
+          katex.render(latex, mathRef.current, {
+            throwOnError: false,
+            displayMode,
+            strict: false,
+            trust: true,
+            fleqn: false,
+            leqno: false,
+          });
+        } catch (fallbackError) {
+          console.error("KaTeX fallback rendering error:", fallbackError);
+          mathRef.current.innerHTML = latex; // Final fallback to raw LaTeX
+        }
       }
     }
   }, [latex, displayMode]);
 
-  return <span ref={mathRef} className={className} />;
+  return (
+    <span
+      ref={mathRef}
+      className={`${className} ${
+        displayMode ? "text-lg" : "text-base"
+      } katex-math`}
+    />
+  );
 }
 
 // Helper function to parse and render multi-part questions
@@ -191,6 +214,16 @@ export function renderMixedContent(content: string) {
           return <MatrixRenderer key={index} content={content} type={type} />;
         case "parts":
           return <PartsRenderer key={index} content={content} />;
+        case "tabular":
+          return <TabularRenderer key={index} content={content} />;
+        case "center":
+          return (
+            <div key={index} className="text-center my-4">
+              {renderMixedContent(content)}
+            </div>
+          );
+        case "tasks":
+          return <TasksRenderer key={index} content={content} />;
         default:
           // For other environments, render as display math
           return (
@@ -211,15 +244,19 @@ export function renderMixedContent(content: string) {
 
 // Helper function to render math content within regular text
 function renderMathContent(content: string, baseIndex: number) {
-  // First, handle LaTeX line breaks
-  const processedContent = content
+  // First, preprocess textcolor commands in the entire content
+  const preprocessedContent = preprocessLatex(content);
+
+  // Then handle LaTeX line breaks
+  const processedContent = preprocessedContent
     .replace(/\\\\/g, "<br>")
     .replace(/\\newline/g, "<br>")
     .replace(/\\par/g, "<br><br>");
 
   // Split by all math delimiters: $, $$, \(, \), \[, \]
+  // Use a more robust regex that handles edge cases and multiline content
   const parts = processedContent.split(
-    /(\$[^$]+\$|\$\$[^$]+\$\$|\\\([^\\]*?\\\)|\\\[[^\\]*?\\\])/
+    /(\$\$[\s\S]*?\$\$|\$[^$\n]*?\$|\\\[[\s\S]*?\\\]|\\\([^\\]*?\\\))/g
   );
 
   return parts.map((part, index) => {
@@ -264,7 +301,7 @@ function renderMathContent(content: string, baseIndex: number) {
         />
       );
     } else {
-      // Regular text - handle HTML line breaks and textcolor
+      // Regular text - handle HTML line breaks
       return (
         <span
           key={`${baseIndex}-${index}`}
@@ -278,11 +315,32 @@ function renderMathContent(content: string, baseIndex: number) {
 // Helper function to preprocess LaTeX content for better textcolor handling
 function preprocessLatex(latex: string): string {
   // Handle textcolor commands - convert to KaTeX compatible format
-  return latex
-    .replace(/\\textcolor\{red\}\{([^}]+)\}/g, "\\color{red}{$1}")
-    .replace(/\\textcolor\{blue\}\{([^}]+)\}/g, "\\color{blue}{$1}")
-    .replace(/\\textcolor\{green\}\{([^}]+)\}/g, "\\color{green}{$1}")
-    .replace(/\\textcolor\{([^}]+)\}\{([^}]+)\}/g, "\\color{$1}{$2}");
+  // Use a more robust regex that handles nested braces
+  return (
+    latex
+      .replace(
+        /\\textcolor\{red\}\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g,
+        "\\color{red}{$1}"
+      )
+      .replace(
+        /\\textcolor\{blue\}\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g,
+        "\\color{blue}{$1}"
+      )
+      .replace(
+        /\\textcolor\{green\}\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g,
+        "\\color{green}{$1}"
+      )
+      .replace(
+        /\\textcolor\{([^{}]+)\}\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g,
+        "\\color{$1}{$2}"
+      )
+      // Convert \cfrac to \frac (KaTeX doesn't support \cfrac)
+      .replace(/\\cfrac/g, "\\frac")
+      // Handle other common LaTeX commands that might not be supported
+      .replace(/\\centering/g, "")
+      .replace(/\\vspace\{[^}]*\}/g, "")
+      .replace(/\\hspace\{[^}]*\}/g, "")
+  );
 }
 
 // Enumerate environment renderer
@@ -355,6 +413,142 @@ function MatrixRenderer({ content, type }: { content: string; type: string }) {
       displayMode={true}
       className="block my-4 text-center"
     />
+  );
+}
+
+// Tasks environment renderer for LaTeX tasks/exercises
+function TasksRenderer({ content }: { content: string }) {
+  // Parse the tasks content to extract individual tasks
+  const parseTasks = (tasksContent: string) => {
+    // Handle the optional parameter for number of columns (e.g., \begin{tasks}(2))
+    const columnMatch = tasksContent.match(/^\((\d+)\)/);
+    const columns = columnMatch ? parseInt(columnMatch[1]) : 1;
+
+    // Remove the column parameter from content
+    const cleanContent = tasksContent.replace(/^\(\d+\)/, "").trim();
+
+    // Split by \task commands
+    const taskRegex = /\\task\s+([\s\S]*?)(?=\\task|$)/g;
+    const tasks: string[] = [];
+    let match;
+
+    while ((match = taskRegex.exec(cleanContent)) !== null) {
+      if (match[1].trim()) {
+        tasks.push(match[1].trim());
+      }
+    }
+
+    return { tasks, columns };
+  };
+
+  const { tasks, columns } = parseTasks(content);
+
+  if (tasks.length === 0) {
+    return <div className="my-4 p-4 bg-gray-100 rounded">No tasks found</div>;
+  }
+
+  // Create grid layout based on number of columns
+  const gridCols =
+    columns === 1
+      ? "grid-cols-1"
+      : columns === 2
+      ? "grid-cols-1 md:grid-cols-2"
+      : columns === 3
+      ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+
+  return (
+    <div className={`my-4 grid ${gridCols} gap-4`}>
+      {tasks.map((task, index) => (
+        <div
+          key={index}
+          className="border border-gray-200 rounded-sm p-4 bg-white"
+        >
+          <div className="flex items-start gap-3">
+            <span className="flex-shrink-0 w-6 h-6 bg-orange-100 text-orange-800 rounded-full flex items-center justify-center text-sm font-medium">
+              {index + 1}
+            </span>
+            <div className="flex-1">
+              <MathRenderer
+                latex={task}
+                displayMode={false}
+                className="inline"
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Tabular environment renderer for LaTeX tables
+function TabularRenderer({ content }: { content: string }) {
+  // Parse the tabular content to extract table structure
+  const parseTabular = (tabularContent: string) => {
+    const lines = tabularContent.split("\n").filter((line) => line.trim());
+    const rows: string[][] = [];
+
+    for (const line of lines) {
+      // Skip empty lines and lines that are just separators
+      if (!line.trim() || line.trim() === "\\hline") continue;
+
+      // Handle lines that contain both \hline and data
+      let cleanLine = line;
+      if (line.includes("\\hline") && line.includes("&")) {
+        // Remove \hline from the beginning and end, but keep the data
+        cleanLine = line.replace(/^\\hline\s*/, "").replace(/\s*\\hline$/, "");
+      }
+
+      // Split by & and clean up
+      const cells = cleanLine.split("&").map((cell) => {
+        // Remove any remaining \hline, \\, and trim
+        return cell
+          .replace(/\\hline/g, "")
+          .replace(/\\\\/g, "")
+          .trim();
+      });
+
+      if (cells.length > 0 && cells.some((cell) => cell.length > 0)) {
+        rows.push(cells);
+      }
+    }
+
+    return rows;
+  };
+
+  const rows = parseTabular(content);
+
+  if (rows.length === 0) {
+    return <div className="my-4 p-4 bg-gray-100 rounded">Empty table</div>;
+  }
+
+  return (
+    <div className="my-4 overflow-x-auto">
+      <table className="min-w-full border-collapse border border-gray-300 rounded-sm">
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr
+              key={rowIndex}
+              className={rowIndex === 0 ? "bg-gray-50 font-semibold" : ""}
+            >
+              {row.map((cell, cellIndex) => (
+                <td
+                  key={cellIndex}
+                  className="border border-gray-300 px-3 py-2 text-center"
+                >
+                  <MathRenderer
+                    latex={cell}
+                    displayMode={false}
+                    className="inline"
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

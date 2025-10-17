@@ -87,20 +87,26 @@ export async function GET(request: NextRequest) {
     // Apply filters
     if (questionId) {
       query = query.eq("question_id", questionId);
-    }
-    if (status) {
-      query = query.eq("qa_status", status);
-    }
-    if (priority) {
-      query = query.eq("priority_level", priority);
-    }
-    if (flagged === "true") {
-      query = query.eq("is_flagged", true);
-    }
+      // When fetching for a specific question, always get the latest record only
+      query = query.order("updated_at", { ascending: false }).limit(1);
+    } else {
+      // For general queries, apply other filters and pagination
+      if (status) {
+        query = query.eq("qa_status", status);
+      }
+      if (priority) {
+        query = query.eq("priority_level", priority);
+      }
+      if (flagged === "true") {
+        query = query.eq("is_flagged", true);
+      }
 
-    // Apply pagination
-    const offset = (page - 1) * limit;
-    query = query.range(offset, offset + limit - 1);
+      // Apply pagination only when not fetching a specific question
+      const offset = (page - 1) * limit;
+      query = query.range(offset, offset + limit - 1);
+      // Order by updated_at DESC for list views
+      query = query.order("updated_at", { ascending: false });
+    }
 
     const { data: qaRecords, error, count } = await query;
 
@@ -109,11 +115,13 @@ export async function GET(request: NextRequest) {
       status,
       priority,
       flagged,
+      fetchingLatestOnly: !!questionId,
     });
     console.log("📥 GET QA API - Raw query result:", {
       qaRecords,
       error,
       count,
+      recordsReturned: qaRecords?.length || 0,
     });
 
     if (error) {
@@ -147,6 +155,10 @@ export async function GET(request: NextRequest) {
 
 // Create or update QA record
 export async function POST(request: NextRequest) {
+  console.log("🚀 QA API POST ENDPOINT CALLED!");
+  console.log("🚀 Request URL:", request.url);
+  console.log("🚀 Request method:", request.method);
+
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -160,6 +172,14 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     let currentUserId = body.reviewer_id;
 
+    console.log("🔍 User ID resolution:", {
+      providedInBody: body.reviewer_id,
+      authHeaderExists: !!authHeader,
+      authHeaderPreview: authHeader
+        ? authHeader.substring(0, 20) + "..."
+        : null,
+    });
+
     if (!currentUserId && authHeader) {
       // Try to extract user from token
       const supabaseAuth = createClient(
@@ -169,12 +189,17 @@ export async function POST(request: NextRequest) {
       const token = authHeader.replace("Bearer ", "");
       const {
         data: { user },
+        error: userError,
       } = await supabaseAuth.auth.getUser(token);
       if (user) {
         currentUserId = user.id;
         console.log("✅ Extracted user ID from auth token:", currentUserId);
+      } else {
+        console.error("❌ Failed to extract user from token:", userError);
       }
     }
+
+    console.log("🔍 Final currentUserId:", currentUserId);
 
     const {
       question_id,
@@ -210,6 +235,15 @@ export async function POST(request: NextRequest) {
       console.error("Error checking existing QA record:", checkError);
       return NextResponse.json(
         { error: "Failed to check QA record" },
+        { status: 500 }
+      );
+    }
+
+    // Debug guard: Ensure we have a valid existingQA for updates
+    if (existingQA && !existingQA.id) {
+      console.error("❌ Existing QA record found but missing ID:", existingQA);
+      return NextResponse.json(
+        { error: "Invalid QA record data" },
         { status: 500 }
       );
     }
@@ -270,8 +304,41 @@ export async function POST(request: NextRequest) {
 
     let result;
     if (existingQA) {
+      // First, clean up any duplicate records (keep only the latest one we're updating)
+      console.log(
+        "🧹 Checking for duplicate QA records for question_id:",
+        question_id
+      );
+      const { data: allRecords, error: fetchError } = await supabase
+        .from("qa_questions")
+        .select("id, created_at, updated_at")
+        .eq("question_id", question_id)
+        .order("updated_at", { ascending: false });
+
+      if (!fetchError && allRecords && allRecords.length > 1) {
+        console.log(
+          `⚠️ Found ${allRecords.length} QA records for this question`
+        );
+        // Keep the most recent one (first in the sorted list), delete the rest
+        const recordsToDelete = allRecords.slice(1).map((r) => r.id);
+        console.log("🗑️ Deleting old duplicate records:", recordsToDelete);
+
+        const { error: deleteError } = await supabase
+          .from("qa_questions")
+          .delete()
+          .in("id", recordsToDelete);
+
+        if (deleteError) {
+          console.error("❌ Error deleting duplicate records:", deleteError);
+        } else {
+          console.log("✅ Successfully cleaned up duplicate records");
+        }
+      }
+
       // Update existing record
       console.log("✅ Updating existing QA record with ID:", existingQA.id);
+      console.log("✅ Using question_id for update:", question_id);
+
       // Remove question_id from update payload since it's immutable
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { question_id: _questionId, ...updatePayload } = qaData;
@@ -290,7 +357,7 @@ export async function POST(request: NextRequest) {
       const { data, error } = await supabase
         .from("qa_questions")
         .update(updatePayload)
-        .eq("id", existingQA.id)
+        .eq("question_id", question_id)
         .select()
         .single();
 

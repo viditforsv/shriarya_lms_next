@@ -88,18 +88,37 @@ export default function QuestionDetailPage() {
 
         // Fetch QA data
         try {
-          const qaResponse = await fetch(`/api/qa?question_id=${questionId}`);
+          console.log("🔄 Parent: Fetching QA data for question:", questionId);
+          const cacheBuster = `&_t=${Date.now()}`;
+          const qaResponse = await fetch(
+            `/api/qa?question_id=${questionId}${cacheBuster}`,
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+              },
+            }
+          );
           if (qaResponse.ok) {
             const qaData = await qaResponse.json();
+            console.log("📥 Parent: QA data received:", qaData);
             if (qaData.qa_records && qaData.qa_records.length > 0) {
               const qaRecord = qaData.qa_records[0];
               data.qa_status = qaRecord.qa_status;
               data.qa_priority = qaRecord.priority_level;
               data.qa_flagged = qaRecord.is_flagged;
+              console.log(
+                "✅ Parent: Updated question with QA status:",
+                qaRecord.qa_status
+              );
+            } else {
+              console.log("⚠️ Parent: No QA records found");
             }
+          } else {
+            console.error("❌ Parent: QA fetch failed:", qaResponse.status);
           }
         } catch (qaError) {
-          console.error("Error fetching QA data:", qaError);
+          console.error("❌ Parent: Error fetching QA data:", qaError);
         }
 
         setQuestion(data);
@@ -150,7 +169,12 @@ export default function QuestionDetailPage() {
     setSaving(true);
     try {
       // Remove QA fields before sending to question-bank API
-      const { qa_status: _, qa_priority: __, qa_flagged: ___, ...questionData } = question;
+      const {
+        qa_status: _,
+        qa_priority: __,
+        qa_flagged: ___,
+        ...questionData
+      } = question;
 
       const response = await fetch(`/api/question-bank/${questionId}`, {
         method: "PUT",
@@ -939,7 +963,12 @@ export default function QuestionDetailPage() {
       <div className="bg-white border-t border-gray-200 px-6 py-4">
         <QAManagement
           questionId={questionId}
-          onStatusChange={() => {
+          onStatusChange={(newStatus) => {
+            console.log(
+              "🔄 QA status changed to:",
+              newStatus,
+              "- refreshing question data"
+            );
             fetchQuestion();
           }}
         />

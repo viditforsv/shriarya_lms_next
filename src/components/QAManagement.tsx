@@ -2,28 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Textarea } from "@/app/components-demo/ui/textarea";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components-demo/ui/select";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import {
-  QAStatusBadge,
-  QAPriorityBadge,
-  QAStatusSelector,
-} from "@/components/QAComponents";
-import { CheckCircle, Edit, Flag, History, AlertCircle } from "lucide-react";
+import { CheckCircle, Edit, AlertCircle, Flag } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface QARecord {
   id: string;
@@ -56,17 +42,6 @@ interface QARecord {
 
 // QAComment interface removed - comments functionality disabled
 
-interface QAHistory {
-  id: string;
-  qa_id: string;
-  action: string;
-  old_value?: string;
-  new_value?: string;
-  action_by?: string;
-  action_reason?: string;
-  created_at: string;
-}
-
 interface QAManagementProps {
   questionId: string;
   onStatusChange?: (status: string) => void;
@@ -76,39 +51,56 @@ export default function QAManagement({
   questionId,
   onStatusChange,
 }: QAManagementProps) {
+  const { user } = useAuth();
   const [qaRecord, setQARecord] = useState<QARecord | null>(null);
-  const [history, setHistory] = useState<QAHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  // Form states
-  const [reviewNotes, setReviewNotes] = useState("");
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const fetchQAData = useCallback(async () => {
     try {
       setLoading(true);
+      console.log("🔄 Fetching QA data for question:", questionId);
 
-      // Fetch QA record
-      const qaResponse = await fetch(`/api/qa?question_id=${questionId}`);
+      // Fetch QA record with cache busting
+      const cacheBuster = `&_t=${Date.now()}`;
+      const qaResponse = await fetch(
+        `/api/qa?question_id=${questionId}${cacheBuster}`,
+        {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
+      console.log("📡 QA fetch response status:", qaResponse.status);
+
       if (qaResponse.ok) {
         const qaData = await qaResponse.json();
+        console.log("📥 QA fetch response data:", qaData);
+
         if (qaData.qa_records && qaData.qa_records.length > 0) {
           const record = qaData.qa_records[0];
+          console.log("✅ Setting QA record:", record);
           setQARecord(record);
-          setReviewNotes(record.review_notes || "");
-
-          // Fetch history
-          const historyResponse = await fetch(
-            `/api/qa/history?qa_id=${record.id}`
-          );
-          if (historyResponse.ok) {
-            const historyData = await historyResponse.json();
-            setHistory(historyData.history || []);
-          }
+        } else {
+          console.log("⚠️ No QA records found, setting to null");
+          setQARecord(null);
         }
+      } else {
+        console.error(
+          "❌ QA fetch failed:",
+          qaResponse.status,
+          qaResponse.statusText
+        );
+        setQARecord(null);
       }
     } catch (error) {
-      console.error("Error fetching QA data:", error);
+      console.error("❌ Error fetching QA data:", error);
+      setQARecord(null);
     } finally {
       setLoading(false);
     }
@@ -123,45 +115,93 @@ export default function QAManagement({
     newStatus: QARecord["qa_status"],
     notes?: string
   ) => {
-    if (!qaRecord) return;
+    console.log("updateQAStatus called with:", {
+      newStatus,
+      notes,
+      qaRecord,
+      questionId,
+      currentUserId: user?.id,
+    });
+
+    if (!qaRecord) {
+      console.log("No QA record found, cannot update status");
+      return;
+    }
+
+    if (!user?.id) {
+      setNotification({
+        type: "error",
+        message: "You must be logged in to approve questions",
+      });
+      setTimeout(() => setNotification(null), 5000);
+      console.error("❌ No user ID found - user not logged in");
+      return;
+    }
 
     try {
       setSaving(true);
 
       const updateData = {
         qa_status: newStatus,
-        review_notes: notes || reviewNotes,
-        ...(newStatus === "in_review" && {
+        review_notes: notes,
+        ...((newStatus === "in_review" || newStatus === "approved") && {
           review_date: new Date().toISOString(),
         }),
         ...(newStatus === "needs_revision" && {
-          revision_count: qaRecord.revision_count + 1,
-        }),
-        ...(newStatus === "needs_revision" && {
+          revision_count: (qaRecord.revision_count || 0) + 1,
           last_revision_date: new Date().toISOString(),
-        }),
-        ...(newStatus === "needs_revision" && {
-          revision_notes: notes || reviewNotes,
+          revision_notes: notes,
         }),
       };
+
+      const requestBody = {
+        question_id: questionId,
+        reviewer_id: user?.id, // Pass current user ID as reviewer
+        ...updateData,
+      };
+
+      console.log("Sending API request with reviewer_id:", user?.id);
+      console.log("Full request body:", requestBody);
 
       const response = await fetch(`/api/qa`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question_id: questionId,
-          ...updateData,
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log("API response status:", response.status);
 
       if (response.ok) {
         const updatedQA = await response.json();
+        console.log("✅ API Success - Updated QA record:", updatedQA);
         setQARecord(updatedQA.qa_record);
         await fetchQAData(); // Refresh all data
         onStatusChange?.(newStatus);
+        setNotification({
+          type: "success",
+          message: `Successfully updated status to: ${newStatus}`,
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } else {
+        const errorData = await response.json();
+        console.error("❌ API Error Response:", errorData);
+        setNotification({
+          type: "error",
+          message: `Failed to update status: ${
+            errorData.error || "Unknown error"
+          }`,
+        });
+        setTimeout(() => setNotification(null), 5000);
       }
     } catch (error) {
-      console.error("Error updating QA status:", error);
+      console.error("❌ Unexpected error updating QA status:", error);
+      setNotification({
+        type: "error",
+        message: `Unexpected error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      });
+      setTimeout(() => setNotification(null), 5000);
     } finally {
       setSaving(false);
     }
@@ -199,6 +239,7 @@ export default function QAManagement({
         body: JSON.stringify({
           question_id: questionId,
           qa_status: status,
+          reviewer_id: user?.id, // Pass current user ID as reviewer
           priority_level: "medium",
           review_notes: status === "approved" ? "Pre-approved" : undefined,
           ...(status === "approved" && {
@@ -256,149 +297,63 @@ export default function QAManagement({
   }
 
   return (
-    <div className="space-y-6">
-      {/* QA Status Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5" />
-            Quality Assurance Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <QAStatusBadge status={qaRecord.qa_status} size="lg" />
-            <QAPriorityBadge priority={qaRecord.priority_level} size="md" />
-            {qaRecord.is_flagged && (
-              <Badge variant="destructive" className="flex items-center gap-1">
-                <Flag className="w-3 h-3" />
-                Flagged
-              </Badge>
-            )}
-          </div>
-
-          {qaRecord.revision_count > 0 && (
-            <div className="text-sm text-gray-600">
-              <strong>Revisions:</strong> {qaRecord.revision_count}
-              {qaRecord.last_revision_date && (
-                <span>
-                  {" "}
-                  (Last:{" "}
-                  {new Date(qaRecord.last_revision_date).toLocaleDateString()})
-                </span>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <CheckCircle className="w-5 h-5" />
+          Quality Assurance
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Notification Banner */}
+        {notification && (
+          <div
+            className={`mb-4 p-3 rounded-sm text-sm ${
+              notification.type === "success"
+                ? "bg-green-50 text-green-800 border border-green-200"
+                : "bg-red-50 text-red-800 border border-red-200"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {notification.type === "success" ? (
+                <CheckCircle className="w-4 h-4" />
+              ) : (
+                <AlertCircle className="w-4 h-4" />
               )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* QA Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Edit className="w-5 h-5" />
-            QA Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Status Change */}
-          <div>
-            <Label>Change Status</Label>
-            <div className="flex items-center gap-2 mt-2">
-              <QAStatusSelector
-                value={qaRecord.qa_status}
-                onValueChange={(status) => updateQAStatus(status)}
-                disabled={saving}
-              />
-              <Button
-                onClick={() => updateQAStatus(qaRecord.qa_status, reviewNotes)}
-                disabled={saving}
-                size="sm"
-              >
-                Update
-              </Button>
+              <span>{notification.message}</span>
             </div>
           </div>
+        )}
 
-          {/* Review Notes */}
-          <div>
-            <Label htmlFor="review_notes">Review Notes</Label>
-            <Textarea
-              id="review_notes"
-              value={reviewNotes}
-              onChange={(e) => setReviewNotes(e.target.value)}
-              placeholder="Add review notes..."
-              className="mt-2"
-            />
-          </div>
-
-          {/* Quick Actions */}
-          <div className="flex gap-2 pt-4 border-t">
-            <Button
-              onClick={() =>
-                updateQAStatus("approved", "Approved after review")
-              }
-              disabled={saving}
-              className="flex items-center gap-2"
-            >
-              <CheckCircle className="w-4 h-4" />
-              Approve
-            </Button>
-            <Button
-              onClick={() => updateQAStatus("needs_revision", "Needs revision")}
-              disabled={saving}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Needs Revision
-            </Button>
-            <Button
-              onClick={() => updateQAStatus("rejected", "Rejected")}
-              disabled={saving}
-              variant="destructive"
-              className="flex items-center gap-2"
-            >
-              <AlertCircle className="w-4 h-4" />
-              Reject
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Comments section removed - qa_comments table deleted */}
-
-      {/* History */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5" />
-            QA History
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {history.map((entry) => (
-              <div key={entry.id} className="flex items-center gap-3 text-sm">
-                <Badge variant="outline" className="text-xs">
-                  {entry.action.replace("_", " ")}
-                </Badge>
-                <span className="text-gray-600">
-                  {entry.old_value && entry.new_value
-                    ? `${entry.old_value} → ${entry.new_value}`
-                    : entry.action_reason || entry.action}
-                </span>
-                <span className="text-gray-400 text-xs">
-                  {new Date(entry.created_at).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
-            {history.length === 0 && (
-              <p className="text-gray-500 text-sm">No history available.</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => updateQAStatus("approved", "Approved after review")}
+            disabled={saving}
+            className="flex items-center gap-2"
+          >
+            <CheckCircle className="w-4 h-4" />
+            {saving ? "Saving..." : "Approve"}
+          </Button>
+          <Button
+            onClick={() => updateQAStatus("needs_revision", "Needs revision")}
+            disabled={saving}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            Needs Revision
+          </Button>
+          <Button
+            onClick={() => updateQAStatus("rejected", "Rejected")}
+            disabled={saving}
+            variant="destructive"
+            className="flex items-center gap-2"
+          >
+            <AlertCircle className="w-4 h-4" />
+            Reject
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

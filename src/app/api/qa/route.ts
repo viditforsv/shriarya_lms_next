@@ -104,15 +104,27 @@ export async function GET(request: NextRequest) {
 
     const { data: qaRecords, error, count } = await query;
 
+    console.log("🔍 GET QA API - Query params:", {
+      questionId,
+      status,
+      priority,
+      flagged,
+    });
+    console.log("📥 GET QA API - Raw query result:", {
+      qaRecords,
+      error,
+      count,
+    });
+
     if (error) {
-      console.error("Error fetching QA records:", error);
+      console.error("❌ Error fetching QA records:", error);
       return NextResponse.json(
         { error: "Failed to fetch QA records" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
+    const response = {
       qa_records: qaRecords || [],
       pagination: {
         page,
@@ -120,7 +132,10 @@ export async function GET(request: NextRequest) {
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
       },
-    });
+    };
+
+    console.log("📤 GET QA API - Response:", response);
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error in GET /api/qa:", error);
     return NextResponse.json(
@@ -139,6 +154,28 @@ export async function POST(request: NextRequest) {
     );
 
     const body = await request.json();
+    console.log("QA API POST request body:", JSON.stringify(body, null, 2));
+
+    // Get current user from auth header if not provided in body
+    const authHeader = request.headers.get("authorization");
+    let currentUserId = body.reviewer_id;
+
+    if (!currentUserId && authHeader) {
+      // Try to extract user from token
+      const supabaseAuth = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      const token = authHeader.replace("Bearer ", "");
+      const {
+        data: { user },
+      } = await supabaseAuth.auth.getUser(token);
+      if (user) {
+        currentUserId = user.id;
+        console.log("✅ Extracted user ID from auth token:", currentUserId);
+      }
+    }
+
     const {
       question_id,
       qa_status,
@@ -149,14 +186,25 @@ export async function POST(request: NextRequest) {
       qa_tags,
       is_flagged,
       flag_reason,
+      revision_count,
+      last_revision_date,
+      revision_notes,
+      review_date,
     } = body;
 
     // Check if QA record already exists
+    console.log(
+      "Checking for existing QA record for question_id:",
+      question_id
+    );
     const { data: existingQA, error: checkError } = await supabase
       .from("qa_questions")
-      .select("id")
+      .select("id, revision_count")
       .eq("question_id", question_id)
       .single();
+
+    console.log("Existing QA record:", existingQA);
+    console.log("Check error:", checkError);
 
     if (checkError && checkError.code !== "PGRST116") {
       console.error("Error checking existing QA record:", checkError);
@@ -166,10 +214,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Determine final reviewer_id
+    const finalReviewerId = reviewer_id || currentUserId;
+
+    console.log("🔍 Reviewer ID resolution:", {
+      providedReviewerId: reviewer_id,
+      currentUserId,
+      finalReviewerId,
+      qa_status,
+      requiresReviewer: qa_status === "approved" || qa_status === "in_review",
+    });
+
+    // Validate that reviewer_id exists when approving or reviewing
+    if (
+      (qa_status === "approved" || qa_status === "in_review") &&
+      !finalReviewerId
+    ) {
+      console.error("❌ Cannot approve/review without a reviewer_id");
+      return NextResponse.json(
+        {
+          error: "Reviewer ID is required for approval/review",
+          details: "You must be logged in to approve or review questions",
+        },
+        { status: 400 }
+      );
+    }
+
     const qaData = {
       question_id,
       qa_status: qa_status || "pending",
-      reviewer_id,
+      reviewer_id: finalReviewerId,
       review_notes,
       priority_level: priority_level || "medium",
       qa_tags: qa_tags || [],
@@ -182,36 +256,82 @@ export async function POST(request: NextRequest) {
         clarity_rating: ratings.clarity_rating,
         solution_quality: ratings.solution_quality,
       }),
-      ...(qa_status === "in_review" && {
-        review_date: new Date().toISOString(),
-      }),
+      ...(review_date
+        ? { review_date }
+        : (qa_status === "in_review" || qa_status === "approved") && {
+            review_date: new Date().toISOString(),
+          }),
+      ...(revision_count !== undefined && { revision_count }),
+      ...(last_revision_date && { last_revision_date }),
+      ...(revision_notes && { revision_notes }),
     };
+
+    console.log("QA data to save:", JSON.stringify(qaData, null, 2));
 
     let result;
     if (existingQA) {
       // Update existing record
+      console.log("✅ Updating existing QA record with ID:", existingQA.id);
+      // Remove question_id from update payload since it's immutable
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { question_id: _questionId, ...updatePayload } = qaData;
+
+      // Log detailed info about the update
+      console.log(
+        "📤 Update payload (without question_id):",
+        JSON.stringify(updatePayload, null, 2)
+      );
+      console.log("📋 Key fields:", {
+        qa_status: updatePayload.qa_status,
+        reviewer_id: updatePayload.reviewer_id,
+        review_date: updatePayload.review_date,
+      });
+
       const { data, error } = await supabase
         .from("qa_questions")
-        .update(qaData)
+        .update(updatePayload)
         .eq("id", existingQA.id)
         .select()
         .single();
 
+      console.log("📥 Update result:", JSON.stringify(data, null, 2));
+      console.log("❌ Update error:", error);
+
       if (error) {
-        console.error("Error updating QA record:", error);
+        console.error("❌ Error updating QA record:", error);
+        console.error(
+          "❌ Failed payload:",
+          JSON.stringify(updatePayload, null, 2)
+        );
+        console.error("❌ Error details:", {
+          message: error.message,
+          code: error.code,
+          hint: error.hint,
+          details: error.details,
+        });
         return NextResponse.json(
-          { error: "Failed to update QA record" },
+          {
+            error: "Failed to update QA record",
+            details: error.message,
+            code: error.code,
+            hint: error.hint,
+            dbDetails: error.details,
+          },
           { status: 500 }
         );
       }
       result = data;
     } else {
       // Create new record
+      console.log("Creating new QA record");
       const { data, error } = await supabase
         .from("qa_questions")
         .insert(qaData)
         .select()
         .single();
+
+      console.log("Create result:", data);
+      console.log("Create error:", error);
 
       if (error) {
         console.error("Error creating QA record:", error);

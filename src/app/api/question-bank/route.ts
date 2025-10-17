@@ -14,29 +14,31 @@
  * would exceed this limit and cause "Bad Request" errors.
  *
  * **Our Solution** (see lines 256-360):
- * 1. Apply qa_status filter DIRECTLY in the Supabase query using .eq()
- * 2. Fetch up to 1000 QA records using .range(0, 999) to stay within limits
- * 3. Deduplicate in-memory to get the LATEST QA record per question
+ * 1. Fetch up to 1000 QA records using .range(0, 999) ordered by updated_at DESC
+ * 2. Deduplicate in-memory to get the LATEST QA record per question
+ * 3. Apply qa_status filter AFTER deduplication to ensure we get latest status
  * 4. Limit to (page_limit * 10) question IDs to prevent overwhelming .in() queries
  * 5. Use filtered question IDs to fetch actual question data
  *
- * **CRITICAL**: We use `.range(0, 999)` with `.eq()` filter because:
- * - `.eq("qa_status", status)` filters at database level before counting rows
- * - `.range(0, 999)` ensures we only fetch max 1000 records
- * - This combination stays well within Supabase's 1000-row scan limit
+ * **CRITICAL**: We fetch ALL records first, then filter because:
+ * - Questions can have multiple QA records over time (pending → approved)
+ * - We need the LATEST status per question, not just any matching status
+ * - `.range(0, 999)` ensures we stay within Supabase's 1000-row scan limit
+ * - Deduplication ensures we get the most recent QA status per question
  *
  * **Why This Works**:
- * - Database-level filtering reduces the result set before scanning
- * - We only fetch what we need (1000 records max)
- * - Deduplication gets unique questions only
+ * - We fetch the most recent QA records first (ordered by updated_at DESC)
+ * - Deduplication ensures we get only the LATEST QA status per question
+ * - Filtering after deduplication ensures accurate status matching
  * - Limiting IDs prevents overwhelming the main query
  * - Final question fetch uses filtered IDs efficiently
  *
  * **Current Approach**:
- * - Fetches max 1000 QA records with the specified status
- * - After deduplication, typically yields 500-1000 unique questions
+ * - Fetches max 1000 QA records ordered by updated_at DESC
+ * - Deduplicates to get LATEST QA status per question
+ * - Filters by qa_status AFTER deduplication for accuracy
  * - Limits to (limit * 10) questions for .in() query
- * - This is sufficient since we paginate results (10-20 per page)
+ * - This ensures we only get questions with the CURRENT status, not historical ones
  *
  * **Future Improvements** (if needed):
  * - Implement pagination for QA data fetching
@@ -236,17 +238,17 @@ export async function GET(request: NextRequest) {
     // - If there are >1000 QA records with status="pending", query fails
     //
     // OPTIMIZED SOLUTION:
-    // 1. Apply .eq() filter for qa_status AT DATABASE LEVEL (reduces rows before scan)
-    // 2. Fetch ONLY 1000 records using .range(0, 999)
-    // 3. Deduplicate to get LATEST record per question
+    // 1. Fetch up to 1000 QA records ordered by updated_at DESC (most recent first)
+    // 2. Deduplicate to get LATEST record per question
+    // 3. Apply qa_status filter AFTER deduplication to ensure we get current status
     // 4. Limit to (limit * 10) question IDs to prevent huge .in() queries
     // 5. Use filtered question IDs for main query
     //
     // WHY THIS APPROACH?
-    // - .eq() filter happens at database level, reducing rows BEFORE scan
+    // - Questions can have multiple QA records over time (pending → approved)
+    // - We need the LATEST status per question, not historical statuses
     // - .range(0, 999) ensures we stay within Supabase's 1000-row limit
-    // - Limiting IDs prevents overwhelming the main .in() query
-    // - Fetching 1000 records gives us 500-1000 unique questions (sufficient for pagination)
+    // - Deduplication + filtering ensures accurate current status matching
     // =====================================================================
 
     if (qa_status && qa_status !== "any") {
@@ -263,12 +265,13 @@ export async function GET(request: NextRequest) {
           `Fetching up to ${maxRecordsToFetch} QA records (need ${limit} questions for current page)...`
         );
 
+        // First, get ALL QA records (up to 1000) ordered by updated_at DESC
+        // We'll filter by status AFTER deduplication to ensure we get the latest status per question
         const { data: qaPageData, error: qaError } = await supabase
           .from("qa_questions")
           .select(
             "question_id, qa_status, priority_level, is_flagged, updated_at"
           )
-          .eq("qa_status", qa_status) // Filter by status in the query itself
           .order("updated_at", { ascending: false })
           .range(0, maxRecordsToFetch - 1); // Fetch only first 1000 records max
 
@@ -315,11 +318,12 @@ export async function GET(request: NextRequest) {
           `Total unique questions with QA: ${latestQAByQuestion.size}`
         );
 
-        // STEP 3: Apply additional filters on deduplicated data (if any)
+        // STEP 3: Apply filters on deduplicated data (now we have latest QA per question)
         const filteredQuestions = Array.from(
           latestQAByQuestion.values()
         ).filter((qa) => {
-          let matches = true;
+          // First check if the LATEST QA status matches our filter
+          let matches = qa.qa_status === qa_status;
 
           // Add additional filters if specified
           if (priority_level && priority_level !== "any") {

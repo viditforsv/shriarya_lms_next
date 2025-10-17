@@ -98,6 +98,7 @@ export function CoursePageClient({
   const [units, setUnits] = useState<Unit[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
@@ -124,8 +125,24 @@ export function CoursePageClient({
     });
   };
 
+  // Authentication check - redirect if not logged in
+  useEffect(() => {
+    // Wait for auth context to initialize
+    if (user === undefined) return;
+    
+    if (!user) {
+      // User is not logged in, redirect to login
+      router.push(`/login?redirect=/courses/${courseParams.slug}`);
+      return;
+    }
+    
+    setAuthChecked(true);
+  }, [user, router, courseParams.slug]);
+
   // Load course data
   useEffect(() => {
+    if (!authChecked) return;
+    
     const loadCourse = async () => {
       try {
         setIsLoading(true);
@@ -338,7 +355,7 @@ export function CoursePageClient({
 
     loadCourse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseParams.slug, user?.id]);
+  }, [courseParams.slug, user?.id, authChecked]);
 
   const handleAddToCart = () => {
     if (!course) return;
@@ -441,7 +458,7 @@ export function CoursePageClient({
     }
   };
 
-  if (isLoading) {
+  if (!authChecked || isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

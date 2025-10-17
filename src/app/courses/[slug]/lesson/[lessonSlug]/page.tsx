@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Card,
@@ -86,6 +87,7 @@ export default function DynamicLessonPage({
 }: {
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
+  const router = useRouter();
   const { user, profile } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
@@ -93,6 +95,7 @@ export default function DynamicLessonPage({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "video" | "notes" | "keypoints" | "quiz" | "assignment" | "solution"
   >("video");
@@ -110,8 +113,22 @@ export default function DynamicLessonPage({
     params.then(setResolvedParams);
   }, [params]);
 
+  // Authentication check - redirect if not logged in
   useEffect(() => {
-    if (!resolvedParams) return;
+    // Wait for auth context to initialize
+    if (user === undefined) return;
+    
+    if (!user) {
+      // User is not logged in, redirect to login
+      router.push(`/login?redirect=/courses/${resolvedParams?.slug}/lesson/${resolvedParams?.lessonSlug}`);
+      return;
+    }
+    
+    setAuthChecked(true);
+  }, [user, router, resolvedParams]);
+
+  useEffect(() => {
+    if (!resolvedParams || !authChecked) return;
 
     const loadLesson = async () => {
       try {
@@ -241,7 +258,7 @@ export default function DynamicLessonPage({
 
     loadLesson();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedParams?.slug, resolvedParams?.lessonSlug, user?.id]);
+  }, [resolvedParams?.slug, resolvedParams?.lessonSlug, user?.id, authChecked]);
 
   const hasAccess = () => {
     // Admin has access to everything
@@ -331,7 +348,8 @@ export default function DynamicLessonPage({
     },
   ];
 
-  if (isLoading) {
+  // Show loading while checking authentication
+  if (!authChecked || isLoading) {
     return <LessonPageSkeleton />;
   }
 

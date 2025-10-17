@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import {
   Card,
@@ -60,6 +61,7 @@ export function SeparatePDFLessonPage({
   assignmentId,
   assignments,
 }: SeparatePDFLessonPageProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const [currentAssignment, setCurrentAssignment] =
     useState<PDFAssignment | null>(null);
@@ -74,15 +76,32 @@ export function SeparatePDFLessonPage({
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Authentication check - redirect if not logged in
+  useEffect(() => {
+    // Wait for auth context to initialize
+    if (user === undefined) return;
+    
+    if (!user) {
+      // User is not logged in, redirect to login
+      router.push(`/login?redirect=/courses/${courseSlug}/pdf-assignment/${assignmentId}`);
+      return;
+    }
+    
+    setAuthChecked(true);
+  }, [user, router, courseSlug, assignmentId]);
 
   // Find current assignment
   useEffect(() => {
+    if (!authChecked) return;
+    
     const assignment = assignments.find((a) => a.id === assignmentId);
     if (assignment) {
       setCurrentAssignment(assignment);
       setCurrentIndex(assignments.findIndex((a) => a.id === assignmentId));
     }
-  }, [assignmentId, assignments]);
+  }, [assignmentId, assignments, authChecked]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -199,6 +218,18 @@ export function SeparatePDFLessonPage({
             <ArrowLeft className="w-4 h-4 mr-2" />
             Go Back
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while checking authentication
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );

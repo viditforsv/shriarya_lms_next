@@ -117,13 +117,16 @@ export default function DynamicLessonPage({
   useEffect(() => {
     // Wait for auth context to initialize
     if (user === undefined) return;
-    
+
     if (!user) {
-      // User is not logged in, redirect to login
-      router.push(`/login?redirect=/courses/${resolvedParams?.slug}/lesson/${resolvedParams?.lessonSlug}`);
+      // User is not logged in, redirect to auth page
+      const redirectUrl = encodeURIComponent(
+        `/courses/${resolvedParams?.slug}/lesson/${resolvedParams?.lessonSlug}`
+      );
+      router.push(`/auth?redirect=${redirectUrl}`);
       return;
     }
-    
+
     setAuthChecked(true);
   }, [user, router, resolvedParams]);
 

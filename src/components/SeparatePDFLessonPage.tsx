@@ -82,20 +82,23 @@ export function SeparatePDFLessonPage({
   useEffect(() => {
     // Wait for auth context to initialize
     if (user === undefined) return;
-    
+
     if (!user) {
-      // User is not logged in, redirect to login
-      router.push(`/login?redirect=/courses/${courseSlug}/pdf-assignment/${assignmentId}`);
+      // User is not logged in, redirect to auth page
+      const redirectUrl = encodeURIComponent(
+        `/courses/${courseSlug}/pdf-assignment/${assignmentId}`
+      );
+      router.push(`/auth?redirect=${redirectUrl}`);
       return;
     }
-    
+
     setAuthChecked(true);
   }, [user, router, courseSlug, assignmentId]);
 
   // Find current assignment
   useEffect(() => {
     if (!authChecked) return;
-    
+
     const assignment = assignments.find((a) => a.id === assignmentId);
     if (assignment) {
       setCurrentAssignment(assignment);

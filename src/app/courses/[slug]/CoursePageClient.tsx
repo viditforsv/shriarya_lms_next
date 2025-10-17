@@ -129,20 +129,21 @@ export function CoursePageClient({
   useEffect(() => {
     // Wait for auth context to initialize
     if (user === undefined) return;
-    
+
     if (!user) {
-      // User is not logged in, redirect to login
-      router.push(`/login?redirect=/courses/${courseParams.slug}`);
+      // User is not logged in, redirect to auth page
+      const redirectUrl = encodeURIComponent(`/courses/${courseParams.slug}`);
+      router.push(`/auth?redirect=${redirectUrl}`);
       return;
     }
-    
+
     setAuthChecked(true);
   }, [user, router, courseParams.slug]);
 
   // Load course data
   useEffect(() => {
     if (!authChecked) return;
-    
+
     const loadCourse = async () => {
       try {
         setIsLoading(true);

@@ -244,22 +244,51 @@ export function renderMixedContent(content: string) {
 
 // Helper function to render math content within regular text
 function renderMathContent(content: string, baseIndex: number) {
-  // First, preprocess textcolor commands in the entire content
-  const preprocessedContent = preprocessLatex(content);
+  // First, process includegraphics commands
+  const { processedContent, images } = processIncludegraphics(content);
+  
+  // Then preprocess textcolor commands in the entire content
+  const preprocessedContent = preprocessLatex(processedContent);
 
   // Then handle LaTeX line breaks
-  const processedContent = preprocessedContent
+  const finalContent = preprocessedContent
     .replace(/\\\\/g, "<br>")
     .replace(/\\newline/g, "<br>")
     .replace(/\\par/g, "<br><br>");
 
   // Split by all math delimiters: $, $$, \(, \), \[, \]
   // Use a more robust regex that handles edge cases and multiline content
-  const parts = processedContent.split(
+  const parts = finalContent.split(
     /(\$\$[\s\S]*?\$\$|\$[^$\n]*?\$|\\\[[\s\S]*?\\\]|\\\([^\\]*?\\\))/g
   );
 
   return parts.map((part, index) => {
+    // Check for image placeholders first
+    const imagePlaceholderMatch = part.match(/__INCLUDEGRAPHICS_PLACEHOLDER_(\d+)__/);
+    if (imagePlaceholderMatch) {
+      const imageIndex = parseInt(imagePlaceholderMatch[1]);
+      const image = images[imageIndex];
+      if (image) {
+        return (
+          <div key={`${baseIndex}-${index}`} className="my-4 text-center">
+            <img
+              src={image.url}
+              alt="Question diagram"
+              className="max-w-full h-auto"
+              style={{
+                width: image.options.includes('width') ? 
+                  image.options.match(/width=([^,}]+)/)?.[1] || 'auto' : 'auto'
+              }}
+              onError={(e) => {
+                console.error('Image failed to load:', image.url);
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+        );
+      }
+    }
+
     if (part.startsWith("$$") && part.endsWith("$$")) {
       // Display math with $$
       return (
@@ -341,6 +370,28 @@ function preprocessLatex(latex: string): string {
       .replace(/\\vspace\{[^}]*\}/g, "")
       .replace(/\\hspace\{[^}]*\}/g, "")
   );
+}
+
+// Helper function to extract and replace includegraphics commands
+function processIncludegraphics(content: string): { processedContent: string; images: Array<{ url: string; options: string }> } {
+  const images: Array<{ url: string; options: string }> = [];
+  const includegraphicsPattern = /\\includegraphics(?:\[([^\]]*)\])?\{([^}]+)\}/g;
+  
+  const processedContent = content.replace(includegraphicsPattern, (match, options, url) => {
+    const imageIndex = images.length;
+    images.push({ url, options: options || '' });
+    
+    console.log(`🖼️ Found includegraphics: ${url} with options: ${options || 'none'}`);
+    
+    // Replace with a placeholder that we'll handle in the renderer
+    return `__INCLUDEGRAPHICS_PLACEHOLDER_${imageIndex}__`;
+  });
+  
+  if (images.length > 0) {
+    console.log(`🖼️ Processed ${images.length} images in content`);
+  }
+  
+  return { processedContent, images };
 }
 
 // Enumerate environment renderer

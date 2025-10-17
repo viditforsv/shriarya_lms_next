@@ -13,30 +13,30 @@
  * (e.g., "pending"), we may have thousands of QA records across many questions, which
  * would exceed this limit and cause "Bad Request" errors.
  *
- * **Our Solution** (see lines 246-360):
- * 1. Fetch QA records using PAGINATION with .range() (not .limit()!) up to 5000 records
- * 2. Deduplicate in-memory to get the LATEST QA record per question
- * 3. Apply filters (qa_status, priority_level, is_flagged) AFTER deduplication
- * 4. Extract question IDs and use them to fetch actual question data
+ * **Our Solution** (see lines 256-360):
+ * 1. Apply qa_status filter DIRECTLY in the Supabase query using .eq()
+ * 2. Fetch up to 1000 QA records using .range(0, 999) to stay within limits
+ * 3. Deduplicate in-memory to get the LATEST QA record per question
+ * 4. Limit to (page_limit * 10) question IDs to prevent overwhelming .in() queries
+ * 5. Use filtered question IDs to fetch actual question data
  *
- * **CRITICAL**: We use `.range(start, end)` NOT `.limit(n)` because:
- * - `.limit(2000)` still scans ALL rows to find 2000, hitting the 1000-row limit
- * - `.range(0, 999)` only scans rows 0-999, staying within limits
- * - We paginate with multiple .range() calls to get more data safely
+ * **CRITICAL**: We use `.range(0, 999)` with `.eq()` filter because:
+ * - `.eq("qa_status", status)` filters at database level before counting rows
+ * - `.range(0, 999)` ensures we only fetch max 1000 records
+ * - This combination stays well within Supabase's 1000-row scan limit
  *
  * **Why This Works**:
- * - We limit our initial fetch to 2000 (within reasonable bounds)
- * - Deduplication reduces the dataset to unique questions only
- * - Filtering on deduplicated data is faster and more accurate
- * - Final question fetch uses filtered IDs, which is efficient
+ * - Database-level filtering reduces the result set before scanning
+ * - We only fetch what we need (1000 records max)
+ * - Deduplication gets unique questions only
+ * - Limiting IDs prevents overwhelming the main query
+ * - Final question fetch uses filtered IDs efficiently
  *
- * **Current Limitations**:
- * - If there are >2000 unique questions with QA records matching the status,
- *   we won't see all of them
- * - This is acceptable for now since:
- *   a. We paginate the final results (10 per page by default)
- *   b. Most QA statuses won't have 2000+ unique questions
- *   c. QA workflow typically processes questions in batches
+ * **Current Approach**:
+ * - Fetches max 1000 QA records with the specified status
+ * - After deduplication, typically yields 500-1000 unique questions
+ * - Limits to (limit * 10) questions for .in() query
+ * - This is sufficient since we paginate results (10-20 per page)
  *
  * **Future Improvements** (if needed):
  * - Implement pagination for QA data fetching
@@ -224,33 +224,29 @@ export async function GET(request: NextRequest) {
     }
 
     // =====================================================================
-    // QA FILTERS - SPECIAL HANDLING FOR SUPABASE 1000-ROW LIMIT
+    // QA FILTERS - OPTIMIZED FOR SUPABASE 1000-ROW LIMIT
     // =====================================================================
     //
-    // ⚠️ CRITICAL: This section implements our workaround for Supabase's
+    // ⚠️ CRITICAL: This section implements our optimized approach for Supabase's
     // 1000-row query limit. DO NOT modify this logic without understanding
     // the constraint and testing thoroughly.
     //
     // PROBLEM:
     // - QA table can have multiple records per question (revision history)
-    // - Filtering by qa_status directly would fetch ALL matching records
-    // - If there are >1000 records with status="pending", query fails
+    // - If there are >1000 QA records with status="pending", query fails
     //
-    // SOLUTION:
-    // 1. Fetch QA records with PAGINATION using .range() (up to 5000 records max)
-    // 2. Deduplicate to get LATEST record per question
-    // 3. Filter deduplicated data by qa_status/priority/flagged
-    // 4. Use resulting question IDs for main query
+    // OPTIMIZED SOLUTION:
+    // 1. Apply .eq() filter for qa_status AT DATABASE LEVEL (reduces rows before scan)
+    // 2. Fetch ONLY 1000 records using .range(0, 999)
+    // 3. Deduplicate to get LATEST record per question
+    // 4. Limit to (limit * 10) question IDs to prevent huge .in() queries
+    // 5. Use filtered question IDs for main query
     //
-    // WHY .range() not .limit()?
-    // - .limit(N) STILL SCANS ALL ROWS to find N records → hits 1000-row limit
-    // - .range(start, end) ONLY SCANS specified range → safe!
-    // - We paginate: .range(0,999), then .range(1000,1999), etc.
-    //
-    // WHY up to 5000?
-    // - 5 pages × 1000 rows = 5000 records max
-    // - After deduplication, typically results in 2000-3000 unique questions
-    // - Balances completeness with performance
+    // WHY THIS APPROACH?
+    // - .eq() filter happens at database level, reducing rows BEFORE scan
+    // - .range(0, 999) ensures we stay within Supabase's 1000-row limit
+    // - Limiting IDs prevents overwhelming the main .in() query
+    // - Fetching 1000 records gives us 500-1000 unique questions (sufficient for pagination)
     // =====================================================================
 
     if (qa_status && qa_status !== "any") {
@@ -259,80 +255,35 @@ export async function GET(request: NextRequest) {
       try {
         // STEP 1: Fetch QA records with PAGINATION to avoid Supabase 1000-row limit
         // We use .range() instead of .limit() because .limit() still scans all rows
-        // OPTIMIZATION: Stop early once we have enough unique questions (50 target)
-        let allQAData: QARecord[] = [];
-        const uniqueQuestionIds = new Set<string>();
-        let hasMore = true;
-        let pageNum = 0;
-        const pageSize = 1000; // Supabase's safe limit per request
-        const targetQuestions = 50; // Target number of unique questions to find
+        // OPTIMIZATION: Fetch only what we need for current page (limit * 10 to account for filtering)
+        const maxQuestionsNeeded = limit * 10; // Fetch extra to account for other filters
+        const maxRecordsToFetch = 1000; // Stay well within Supabase's limits
 
         console.log(
-          `Starting paginated fetch for QA records (target: ${targetQuestions} unique questions)...`
+          `Fetching up to ${maxRecordsToFetch} QA records (need ${limit} questions for current page)...`
         );
 
-        while (
-          hasMore &&
-          pageNum < 5 &&
-          uniqueQuestionIds.size < targetQuestions
-        ) {
-          // Max 5 pages OR until we have enough unique questions
-          const startRange = pageNum * pageSize;
-          const endRange = (pageNum + 1) * pageSize - 1;
+        const { data: qaPageData, error: qaError } = await supabase
+          .from("qa_questions")
+          .select(
+            "question_id, qa_status, priority_level, is_flagged, updated_at"
+          )
+          .eq("qa_status", qa_status) // Filter by status in the query itself
+          .order("updated_at", { ascending: false })
+          .range(0, maxRecordsToFetch - 1); // Fetch only first 1000 records max
 
-          console.log(
-            `Fetching QA records page ${
-              pageNum + 1
-            } (range: ${startRange}-${endRange}), unique questions so far: ${
-              uniqueQuestionIds.size
-            }`
+        if (qaError) {
+          console.error(`Error fetching QA data:`, qaError);
+          return NextResponse.json(
+            {
+              error: "Failed to apply QA status filter",
+              details: qaError.message,
+            },
+            { status: 500 }
           );
-
-          const { data: pageData, error: qaError } = await supabase
-            .from("qa_questions")
-            .select(
-              "question_id, qa_status, priority_level, is_flagged, updated_at"
-            )
-            .order("updated_at", { ascending: false })
-            .range(startRange, endRange); // ⚠️ CRITICAL: Use .range() not .limit() to avoid scanning all rows
-
-          if (qaError) {
-            console.error(
-              `Error fetching QA data page ${pageNum + 1}:`,
-              qaError
-            );
-            return NextResponse.json(
-              {
-                error: "Failed to apply QA status filter",
-                details: qaError.message,
-              },
-              { status: 500 }
-            );
-          }
-
-          if (pageData && pageData.length > 0) {
-            allQAData = allQAData.concat(pageData);
-            // Track unique question IDs to know when to stop
-            pageData.forEach((qa) => uniqueQuestionIds.add(qa.question_id));
-
-            hasMore = pageData.length === pageSize; // If we got a full page, there might be more
-            pageNum++;
-            console.log(
-              `Fetched ${pageData.length} records, total: ${allQAData.length}, unique questions: ${uniqueQuestionIds.size}`
-            );
-
-            // Early exit if we have enough unique questions
-            if (uniqueQuestionIds.size >= targetQuestions) {
-              console.log(
-                `✅ Reached target of ${targetQuestions} unique questions, stopping pagination`
-              );
-              break;
-            }
-          } else {
-            hasMore = false;
-            console.log("No more QA records to fetch");
-          }
         }
+
+        let allQAData = qaPageData || [];
 
         console.log(`Total QA records fetched: ${allQAData.length}`);
 
@@ -364,12 +315,11 @@ export async function GET(request: NextRequest) {
           `Total unique questions with QA: ${latestQAByQuestion.size}`
         );
 
-        // STEP 3: Apply filters on deduplicated data
-        // This is now safe and accurate since we have only ONE record per question
+        // STEP 3: Apply additional filters on deduplicated data (if any)
         const filteredQuestions = Array.from(
           latestQAByQuestion.values()
         ).filter((qa) => {
-          let matches = qa.qa_status === qa_status;
+          let matches = true;
 
           // Add additional filters if specified
           if (priority_level && priority_level !== "any") {
@@ -383,14 +333,12 @@ export async function GET(request: NextRequest) {
           return matches;
         });
 
-        // STEP 4: Extract question IDs and use them for main query
-        // This is efficient because:
-        // - We're filtering by IDs (indexed column)
-        // - The number of IDs is reasonable (typically <1000)
-        // - Supabase handles IN queries well for this size
-        const qaFilteredQuestionIds = filteredQuestions.map(
-          (qa) => qa.question_id
-        );
+        // STEP 4: Extract question IDs and limit to reasonable number
+        // Limit to maxQuestionsNeeded to prevent overwhelming the .in() query
+        const qaFilteredQuestionIds = filteredQuestions
+          .map((qa) => qa.question_id)
+          .slice(0, maxQuestionsNeeded);
+
         console.log(
           `Found ${qaFilteredQuestionIds.length} unique questions with QA status: ${qa_status}`
         );
@@ -426,37 +374,28 @@ export async function GET(request: NextRequest) {
     } else if (priority_level && priority_level !== "any") {
       // If only priority_level filter (without qa_status)
       try {
-        // Fetch QA data with pagination to handle Supabase's 1000 row limit
-        let allQAData: QARecord[] = [];
-        let hasMore = true;
-        let page = 0;
-        const pageSize = 1000;
+        const maxQuestionsNeeded = limit * 10;
+        const maxRecordsToFetch = 1000;
 
-        while (hasMore) {
-          const { data: qaData, error: qaError } = await supabase
-            .from("qa_questions")
-            .select("question_id, priority_level, updated_at")
-            .order("updated_at", { ascending: false })
-            .range(page * pageSize, (page + 1) * pageSize - 1);
+        const { data: qaData, error: qaError } = await supabase
+          .from("qa_questions")
+          .select("question_id, priority_level, updated_at")
+          .eq("priority_level", priority_level)
+          .order("updated_at", { ascending: false })
+          .range(0, maxRecordsToFetch - 1);
 
-          if (qaError) {
-            console.error("Error fetching QA data (page", page, "):", qaError);
-            throw qaError;
-          }
-
-          if (qaData && qaData.length > 0) {
-            allQAData = allQAData.concat(qaData);
-            hasMore = qaData.length === pageSize; // If we got a full page, there might be more
-            page++;
-          } else {
-            hasMore = false;
-          }
+        if (qaError) {
+          console.error("Error fetching QA data:", qaError);
+          return NextResponse.json(
+            {
+              error: "Failed to apply priority level filter",
+              details: qaError.message,
+            },
+            { status: 500 }
+          );
         }
 
-        const qaData = allQAData;
-        const qaError = null;
-
-        if (!qaError && qaData) {
+        if (qaData && qaData.length > 0) {
           // Keep only latest record per question
           const latestQAByQuestion = new Map<string, QARecord>();
           qaData.forEach((qa) => {
@@ -465,13 +404,9 @@ export async function GET(request: NextRequest) {
             }
           });
 
-          const filteredQuestions = Array.from(
-            latestQAByQuestion.values()
-          ).filter((qa) => qa.priority_level === priority_level);
+          const qaFilteredQuestionIds = Array.from(latestQAByQuestion.keys())
+            .slice(0, maxQuestionsNeeded);
 
-          const qaFilteredQuestionIds = filteredQuestions.map(
-            (qa) => qa.question_id
-          );
           if (qaFilteredQuestionIds.length > 0) {
             query = query.in("id", qaFilteredQuestionIds);
           } else {
@@ -484,44 +419,48 @@ export async function GET(request: NextRequest) {
               totalPages: 0,
             });
           }
+        } else {
+          return NextResponse.json({
+            questions: [],
+            total: 0,
+            totalQuestions: 0,
+            page,
+            limit,
+            totalPages: 0,
+          });
         }
       } catch (err) {
         console.error("Error in priority_level filter:", err);
+        return NextResponse.json(
+          { error: "Failed to apply priority level filter" },
+          { status: 500 }
+        );
       }
     } else if (is_flagged && is_flagged !== "any") {
       // If only is_flagged filter (without qa_status)
       try {
-        // Fetch QA data with pagination to handle Supabase's 1000 row limit
-        let allQAData: QARecord[] = [];
-        let hasMore = true;
-        let page = 0;
-        const pageSize = 1000;
+        const maxQuestionsNeeded = limit * 10;
+        const maxRecordsToFetch = 1000;
 
-        while (hasMore) {
-          const { data: qaData, error: qaError } = await supabase
-            .from("qa_questions")
-            .select("question_id, is_flagged, updated_at")
-            .order("updated_at", { ascending: false })
-            .range(page * pageSize, (page + 1) * pageSize - 1);
+        const { data: qaData, error: qaError } = await supabase
+          .from("qa_questions")
+          .select("question_id, is_flagged, updated_at")
+          .eq("is_flagged", is_flagged === "true")
+          .order("updated_at", { ascending: false })
+          .range(0, maxRecordsToFetch - 1);
 
-          if (qaError) {
-            console.error("Error fetching QA data (page", page, "):", qaError);
-            throw qaError;
-          }
-
-          if (qaData && qaData.length > 0) {
-            allQAData = allQAData.concat(qaData);
-            hasMore = qaData.length === pageSize; // If we got a full page, there might be more
-            page++;
-          } else {
-            hasMore = false;
-          }
+        if (qaError) {
+          console.error("Error fetching QA data:", qaError);
+          return NextResponse.json(
+            {
+              error: "Failed to apply flagged filter",
+              details: qaError.message,
+            },
+            { status: 500 }
+          );
         }
 
-        const qaData = allQAData;
-        const qaError = null;
-
-        if (!qaError && qaData) {
+        if (qaData && qaData.length > 0) {
           // Keep only latest record per question
           const latestQAByQuestion = new Map<string, QARecord>();
           qaData.forEach((qa) => {
@@ -530,13 +469,9 @@ export async function GET(request: NextRequest) {
             }
           });
 
-          const filteredQuestions = Array.from(
-            latestQAByQuestion.values()
-          ).filter((qa) => qa.is_flagged === (is_flagged === "true"));
+          const qaFilteredQuestionIds = Array.from(latestQAByQuestion.keys())
+            .slice(0, maxQuestionsNeeded);
 
-          const qaFilteredQuestionIds = filteredQuestions.map(
-            (qa) => qa.question_id
-          );
           if (qaFilteredQuestionIds.length > 0) {
             query = query.in("id", qaFilteredQuestionIds);
           } else {
@@ -549,9 +484,22 @@ export async function GET(request: NextRequest) {
               totalPages: 0,
             });
           }
+        } else {
+          return NextResponse.json({
+            questions: [],
+            total: 0,
+            totalQuestions: 0,
+            page,
+            limit,
+            totalPages: 0,
+          });
         }
       } catch (err) {
         console.error("Error in is_flagged filter:", err);
+        return NextResponse.json(
+          { error: "Failed to apply flagged filter" },
+          { status: 500 }
+        );
       }
     }
 

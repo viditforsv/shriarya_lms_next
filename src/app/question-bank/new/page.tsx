@@ -20,7 +20,7 @@ import {
 } from "@/app/components-demo/ui/select";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
 import { Switch } from "@/app/components-demo/ui/switch";
-import { ArrowLeft, Save } from "lucide-react";
+import ImageUpload from "@/components/ImageUpload";
 
 interface QuestionForm {
   question_number: string;
@@ -447,29 +447,19 @@ export default function NewQuestionPage() {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="image_url">Question Image URL</Label>
-                <Input
-                  id="image_url"
-                  value={formData.image_url}
-                  onChange={(e) =>
-                    handleInputChange("image_url", e.target.value)
-                  }
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUpload
+                label="Question Image"
+                value={formData.image_url}
+                onChange={(url) => handleInputChange("image_url", url)}
+                placeholder="Upload an image for the question"
+              />
 
-              <div>
-                <Label htmlFor="solution_image">Solution Image URL</Label>
-                <Input
-                  id="solution_image"
-                  value={formData.solution_image}
-                  onChange={(e) =>
-                    handleInputChange("solution_image", e.target.value)
-                  }
-                  placeholder="https://example.com/solution.jpg"
-                />
-              </div>
+              <ImageUpload
+                label="Solution Image"
+                value={formData.solution_image}
+                onChange={(url) => handleInputChange("solution_image", url)}
+                placeholder="Upload an image for the solution"
+              />
             </CardContent>
           </Card>
         </div>

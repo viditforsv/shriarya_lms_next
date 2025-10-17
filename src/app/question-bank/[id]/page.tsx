@@ -12,6 +12,8 @@ import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
 import { renderMultiPartQuestion } from "@/components/MathRenderer";
 import QAManagement from "@/components/QAManagement";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
+import ImageDisplay from "@/components/ImageDisplay";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Question {
   id: string;
@@ -907,6 +909,23 @@ export default function QuestionDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Image Upload Fields */}
+            <div className="mb-6 space-y-4">
+              <ImageUpload
+                label="Question Image"
+                value={question.image_url || ""}
+                onChange={(url) => setQuestion({ ...question, image_url: url })}
+                placeholder="Upload an image for the question"
+              />
+
+              <ImageUpload
+                label="Solution Image"
+                value={question.solution_image || ""}
+                onChange={(url) => setQuestion({ ...question, solution_image: url })}
+                placeholder="Upload an image for the solution"
+              />
+            </div>
           </div>
         </div>
 
@@ -920,6 +939,20 @@ export default function QuestionDetailPage() {
             {/* Question Preview */}
             <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-medium mb-2 text-gray-900">Question</h3>
+              
+              {/* Question Image */}
+              {question.image_url && (
+                <div className="mb-4">
+                  <ImageDisplay
+                    src={question.image_url}
+                    alt="Question diagram"
+                    caption="Question diagram"
+                    maxWidth={600}
+                    maxHeight={400}
+                  />
+                </div>
+              )}
+              
               <div className="prose max-w-none">
                 {renderMultiPartQuestion(question.question_text)}
               </div>
@@ -929,6 +962,20 @@ export default function QuestionDetailPage() {
             {question.explanation && (
               <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
                 <h3 className="font-medium mb-2 text-gray-900">Solution</h3>
+                
+                {/* Solution Image */}
+                {question.solution_image && (
+                  <div className="mb-4">
+                    <ImageDisplay
+                      src={question.solution_image}
+                      alt="Solution diagram"
+                      caption="Solution diagram"
+                      maxWidth={600}
+                      maxHeight={400}
+                    />
+                  </div>
+                )}
+                
                 <div className="prose max-w-none">
                   {renderMultiPartQuestion(question.explanation)}
                 </div>

@@ -37,9 +37,15 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File
     const lessonId = formData.get('lessonId') as string
     const title = formData.get('title') as string || file?.name
+    const type = formData.get('type') as string || 'lesson-resource'
     
-    if (!file || !lessonId) {
-      return NextResponse.json({ error: 'Missing file or lessonId' }, { status: 400 })
+    // For question images, lessonId is optional
+    if (!file) {
+      return NextResponse.json({ error: 'Missing file' }, { status: 400 })
+    }
+    
+    if (type !== 'question-image' && !lessonId) {
+      return NextResponse.json({ error: 'Missing lessonId for non-question uploads' }, { status: 400 })
     }
 
     // 3. Validate file size (max 100MB)
@@ -52,7 +58,14 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now()
     const randomId = Math.random().toString(36).substring(2, 15)
     const fileExtension = file.name.split('.').pop()
-    const fileName = `${timestamp}-${randomId}.${fileExtension}`
+    
+    // Different naming for question images
+    let fileName: string
+    if (type === 'question-image') {
+      fileName = `question-images/${timestamp}-${randomId}.${fileExtension}`
+    } else {
+      fileName = `${timestamp}-${randomId}.${fileExtension}`
+    }
 
 // 5. Upload to Bunny CDN using token authentication
 const tokenKey = process.env.BUNNY_TOKEN_KEY
@@ -97,26 +110,30 @@ const uploadResponse = await fetch(uploadUrl, {
 
     console.log('File uploaded successfully:', cdnUrl)
 
-    // 7. Store metadata in database
-    const { data: resource, error: dbError } = await supabase
-      .from('resources')
-      .insert({
-        lesson_id: lessonId,
-        kind: getFileKind(file.type),
-        url: cdnUrl,
-        cdn_url: cdnUrl,
-        title: title,
-        description: `Uploaded file: ${file.name}`,
-        file_size: file.size,
-        mime: file.type,
-        upload_status: 'completed'
-      })
-      .select()
-      .single()
+    // 7. Store metadata in database (only for lesson resources)
+    let resource = null
+    if (type !== 'question-image' && lessonId) {
+      const { data: resourceData, error: dbError } = await supabase
+        .from('resources')
+        .insert({
+          lesson_id: lessonId,
+          kind: getFileKind(file.type),
+          url: cdnUrl,
+          cdn_url: cdnUrl,
+          title: title,
+          description: `Uploaded file: ${file.name}`,
+          file_size: file.size,
+          mime: file.type,
+          upload_status: 'completed'
+        })
+        .select()
+        .single()
 
-    if (dbError) {
-      console.error('Database error:', dbError)
-      throw dbError
+      if (dbError) {
+        console.error('Database error:', dbError)
+        throw dbError
+      }
+      resource = resourceData
     }
 
     // Generate signed URL for accessing the file

@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components-demo/ui/select";
+import { ArrowLeft, Save } from "lucide-react";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
 import { Switch } from "@/app/components-demo/ui/switch";
 import ImageUpload from "@/components/ImageUpload";

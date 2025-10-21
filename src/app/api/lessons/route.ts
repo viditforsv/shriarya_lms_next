@@ -15,10 +15,17 @@ const LessonSchema = z.object({
   video_thumbnail: z.string().nullable().optional(),
   pdf_url: z.string().nullable().optional(),
   key_points: z.any().nullable().optional(),
-  unit_name: z.string().optional(),
-  chapter_name: z.string().optional(),
+  chapter_id: z.string().uuid().nullable().optional(),
   quiz_id: z.string().nullable().optional(),
   course_id: z.string().min(1, "Course ID is required"),
+  topic_number: z.string().nullable().optional(),
+  lesson_code: z.string().nullable().optional(),
+  conceptual_focus: z.string().nullable().optional(),
+  lesson_description: z.string().nullable().optional(),
+  skill_emphasis: z.string().nullable().optional(),
+  assessment_context: z.string().nullable().optional(),
+  difficulty_level: z.number().int().min(1).max(10).nullable().optional(),
+  learning_outcome: z.string().nullable().optional(),
 });
 
 // Helper function to get authenticated user
@@ -65,7 +72,21 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("courses_lessons")
-      .select("*")
+      .select(
+        `
+        *,
+        chapter:courses_chapters (
+          id,
+          chapter_name,
+          chapter_order,
+          unit:courses_units (
+            id,
+            unit_name,
+            unit_order
+          )
+        )
+      `
+      )
       .order("lesson_order", { ascending: true });
 
     if (courseId) {

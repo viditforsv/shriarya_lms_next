@@ -84,7 +84,7 @@ export default function ImageDisplay({
                     maxHeight: `${maxHeight}px`,
                   }}
                 />
-                
+
                 {/* Overlay controls */}
                 {showControls && (
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -124,17 +124,17 @@ export default function ImageDisplay({
               {caption && (
                 <p className="text-sm text-gray-600 italic">{caption}</p>
               )}
-              
+
               <div className="flex items-center justify-between">
                 <Badge variant="outline" className="text-xs">
                   CDN Image
                 </Badge>
-                
+
                 {showControls && (
                   <div className="flex space-x-1">
                     <Button
                       size="sm"
-                      variant="ghost"
+                      variant="outline"
                       onClick={openInNewTab}
                       className="text-xs h-6 px-2"
                     >
@@ -142,7 +142,7 @@ export default function ImageDisplay({
                     </Button>
                     <Button
                       size="sm"
-                      variant="ghost"
+                      variant="outline"
                       onClick={downloadImage}
                       className="text-xs h-6 px-2"
                     >

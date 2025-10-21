@@ -37,6 +37,7 @@ import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/c
 import { LessonPageSkeleton } from "@/components/skeletons";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { IBDPMathLessonPage } from "@/components/IBDPMathTemplate";
 
 interface Course {
   id: string;
@@ -469,6 +470,153 @@ export default function DynamicLessonPage({
     );
   }
 
+  // Check if this is an IBDP Mathematics course - use specialized template
+  const isIBDPMathCourse = resolvedParams?.slug?.includes("ibdp-mathematics");
+
+  if (isIBDPMathCourse && lesson && course) {
+    // Transform lessons data to IBDP template format
+    interface IBDPUnit {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+      chapters: IBDPChapter[];
+    }
+
+    interface IBDPChapter {
+      id: string;
+      chapter_name: string;
+      chapter_order: number;
+      unit_id: string;
+      lessons: IBDPLesson[];
+    }
+
+    interface IBDPLesson {
+      id: string;
+      title: string;
+      slug: string;
+      lesson_order: number;
+      chapter_id: string;
+    }
+
+    const units = allLessons.reduce((acc: IBDPUnit[], l) => {
+      if (!l.chapter?.unit) return acc;
+
+      const unitId = l.chapter.unit.id;
+      let unit = acc.find((u: IBDPUnit) => u.id === unitId);
+
+      if (!unit) {
+        unit = {
+          id: unitId,
+          unit_name: l.chapter.unit.unit_name,
+          unit_order: l.chapter.unit.unit_order,
+          chapters: [],
+        };
+        acc.push(unit);
+      }
+
+      const chapterId = l.chapter.id;
+      let chapter = unit.chapters.find((c: IBDPChapter) => c.id === chapterId);
+
+      if (!chapter) {
+        chapter = {
+          id: chapterId,
+          chapter_name: l.chapter.chapter_name,
+          chapter_order: l.chapter.chapter_order,
+          unit_id: unitId,
+          lessons: [],
+        };
+        unit.chapters.push(chapter);
+      }
+
+      chapter.lessons.push({
+        id: l.id,
+        title: l.title,
+        slug: l.slug,
+        lesson_order: l.lesson_order,
+        chapter_id: chapterId,
+      });
+
+      return acc;
+    }, []);
+
+    // Sort units and chapters
+    units.sort((a: IBDPUnit, b: IBDPUnit) => a.unit_order - b.unit_order);
+    units.forEach((unit: IBDPUnit) => {
+      unit.chapters.sort(
+        (a: IBDPChapter, b: IBDPChapter) => a.chapter_order - b.chapter_order
+      );
+      unit.chapters.forEach((chapter: IBDPChapter) => {
+        chapter.lessons.sort(
+          (a: IBDPLesson, b: IBDPLesson) => a.lesson_order - b.lesson_order
+        );
+      });
+    });
+
+    // Define course-specific links based on course slug
+    const getCourseLinks = (slug: string) => {
+      switch (slug) {
+        case "ibdp-mathematics-aa-hl":
+          return {
+            subjectGuide:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aahl/Mathematics%20-%20Analysis%20and%20Approaches%20Subject%20Guide.pdf",
+            formulaBooklet:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aahl/Math%20AA%20HL%20formula%20booklet.pdf",
+          };
+        case "ibdp-mathematics-aa-sl":
+          return {
+            subjectGuide:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aasl/Mathematics%20-%20Analysis%20and%20Approaches%20Subject%20Guide.pdf",
+            formulaBooklet:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aasl/Math%20AA%20SL%20formula%20booklet.pdf",
+          };
+        case "ibdp-mathematics-ai-hl":
+          return {
+            subjectGuide:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aihl/Mathematics%20-%20Applications%20and%20Interpretation%20Subject%20Guide.pdf",
+            formulaBooklet:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aihl/Math%20AI%20HL%20formula%20booklet.pdf",
+          };
+        case "ibdp-mathematics-ai-sl":
+          return {
+            subjectGuide:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aisl/Mathematics%20-%20Applications%20and%20Interpretation%20Subject%20Guide.pdf",
+            formulaBooklet:
+              "https://shrividhyaclasses.b-cdn.net/misc_files/ibdp/aisl/Math%20AI%20SL%20formula%20booklet.pdf",
+          };
+        default:
+          return {};
+      }
+    };
+
+    return (
+      <IBDPMathLessonPage
+        courseSlug={resolvedParams?.slug || ""}
+        currentLessonSlug={resolvedParams?.lessonSlug || ""}
+        units={units}
+        currentLesson={{
+          id: lesson.id,
+          title: lesson.title,
+          slug: lesson.slug,
+          lesson_order: lesson.lesson_order,
+          chapter_id: lesson.chapter_id || "",
+        }}
+        questions={
+          [
+            // TODO: Load questions from database
+            // For now, empty array - questions need to be added to the lesson
+          ]
+        }
+        unitName={lesson.chapter?.unit?.unit_name || "Unit"}
+        chapterName={lesson.chapter?.chapter_name || "Chapter"}
+        courseLinks={getCourseLinks(resolvedParams?.slug || "")}
+        onProgressUpdate={(lessonId, progress) => {
+          console.log(`Lesson ${lessonId} progress: ${progress}%`);
+          // TODO: Save progress to database
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -505,7 +653,7 @@ export default function DynamicLessonPage({
 
       <div className="w-full px-0 py-8">
         {/* Course Breadcrumb */}
-        <div className="mb-6 px-4">
+        <div className="mb-6 px-6">
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Link href="/courses" className="hover:text-foreground">
               Courses
@@ -522,7 +670,7 @@ export default function DynamicLessonPage({
           </nav>
         </div>
 
-        <div className="flex">
+        <div className="flex max-w-7xl mx-auto">
           {/* Left Sidebar - Course Navigation */}
           <CollapsibleSidebar
             currentLessonSlug={lesson.slug}
@@ -531,7 +679,7 @@ export default function DynamicLessonPage({
           />
 
           {/* Main Content */}
-          <div className="flex-1 px-4">
+          <div className="flex-1 px-6">
             {/* Lesson Header */}
             <div className="bg-white rounded-sm border border-[#feefea] p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
@@ -581,17 +729,17 @@ export default function DynamicLessonPage({
               {course?.template_id ===
               "addffa2b-d88c-484e-9637-1f7fbe42e29c" ? (
                 // PDF template - Assignment and Solution tabs
-                <TabsList className="grid w-full grid-cols-2 rounded-sm bg-white p-1 shadow-sm">
+                <TabsList className="grid w-full grid-cols-2 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
                   <TabsTrigger
                     value="assignment"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Assignment
                   </TabsTrigger>
                   <TabsTrigger
                     value="solution"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Solution
@@ -599,31 +747,31 @@ export default function DynamicLessonPage({
                 </TabsList>
               ) : (
                 // Default template - Multiple tabs
-                <TabsList className="grid w-full grid-cols-4 rounded-sm bg-white p-1 shadow-sm">
+                <TabsList className="grid w-full grid-cols-4 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
                   <TabsTrigger
                     value="video"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <Play className="w-4 h-4 mr-2" />
                     Video
                   </TabsTrigger>
                   <TabsTrigger
                     value="notes"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Notes
                   </TabsTrigger>
                   <TabsTrigger
                     value="keypoints"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <Bookmark className="w-4 h-4 mr-2" />
                     Key Points
                   </TabsTrigger>
                   <TabsTrigger
                     value="quiz"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <BookOpen className="w-4 h-4 mr-2" />
                     Quiz
@@ -644,7 +792,7 @@ export default function DynamicLessonPage({
                       examples
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     {/* Main Video */}
                     {lesson.video_url ? (
                       <div className="mb-6">
@@ -715,7 +863,7 @@ export default function DynamicLessonPage({
                       Comprehensive notes and key concepts from this lesson
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-6 p-6">
                     {/* Lesson Content */}
                     {lesson.content_html ? (
                       <div className="prose prose-sm max-w-none leading-relaxed">
@@ -774,7 +922,7 @@ export default function DynamicLessonPage({
                       Important concepts and takeaways from this lesson
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="space-y-4">
                       {lesson.key_points && lesson.key_points.length > 0 ? (
                         <div className="prose prose-sm max-w-none">
@@ -820,7 +968,7 @@ export default function DynamicLessonPage({
                       Test your understanding with these quiz questions
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="space-y-6">
                       {lesson.quiz_id ? (
                         <div className="prose prose-sm max-w-none">

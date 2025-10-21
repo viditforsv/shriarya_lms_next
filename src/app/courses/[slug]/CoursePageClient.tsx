@@ -87,7 +87,7 @@ export function CoursePageClient({
 }: {
   courseParams: { slug: string };
 }) {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const { addToCart, isInCart } = useCart();
 
@@ -109,8 +109,8 @@ export function CoursePageClient({
   const [unitCount, setUnitCount] = useState<number>(0);
   const [chapterCount, setChapterCount] = useState<number>(0);
 
-  // Check if this is an IBDP course
-  const isIBDPCourse = courseParams.slug === "ibdp-mathematics-aa-hl";
+  // Check if this is an IBDP Mathematics course
+  const isIBDPMathCourse = courseParams.slug?.includes("ibdp-mathematics");
 
   // Toggle unit expansion
   const toggleUnit = (unitId: string) => {
@@ -493,9 +493,16 @@ export function CoursePageClient({
         <div className="mb-8">
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
-              <h1 className="text-4xl font-bold text-[#1e293b] mb-4">
-                {course.title}
-              </h1>
+              <div className="flex items-center gap-3 mb-4">
+                <h1 className="text-4xl font-bold text-[#1e293b]">
+                  {course.title}
+                </h1>
+                {profile?.role === "admin" && (
+                  <Badge className="bg-purple-600 text-white rounded-sm">
+                    Admin Access
+                  </Badge>
+                )}
+              </div>
               <p className="text-xl text-muted-foreground mb-4">
                 {course.description || "No description available"}
               </p>
@@ -582,8 +589,29 @@ export function CoursePageClient({
                     </div>
                   )}
                   <div className="flex flex-col gap-2">
+                    {/* Admin Access Button - Only for admins */}
+                    {user && profile?.role === "admin" && (
+                      <Button
+                        onClick={() => {
+                          // Find the first lesson and navigate to it
+                          const firstLesson = lessons[0];
+                          if (firstLesson) {
+                            router.push(
+                              `/courses/${courseParams.slug}/lesson/${firstLesson.slug}`
+                            );
+                          } else {
+                            alert("No lessons available yet");
+                          }
+                        }}
+                        className="rounded-sm bg-purple-600 hover:bg-purple-700 text-white font-medium"
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Enter Course as Admin
+                      </Button>
+                    )}
+
                     {/* Preview Button - Only for logged-in, non-enrolled users */}
-                    {user && !isEnrolled && (
+                    {user && !isEnrolled && profile?.role !== "admin" && (
                       <Button
                         onClick={handlePreviewCourse}
                         variant="outline"
@@ -594,27 +622,32 @@ export function CoursePageClient({
                       </Button>
                     )}
 
-                    <Button
-                      onClick={handleEnroll}
-                      disabled={authLoading}
-                      className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
-                    >
-                      {authLoading
-                        ? "Loading..."
-                        : (course.price || 0) > 0
-                        ? "Buy Now"
-                        : "Enroll for Free"}
-                    </Button>
-                    {(course.price || 0) > 0 && (
-                      <Button
-                        onClick={handleAddToCart}
-                        variant="outline"
-                        disabled={isInCart(course.id) || authLoading}
-                        className="rounded-sm"
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        {isInCart(course.id) ? "In Cart" : "Add to Cart"}
-                      </Button>
+                    {/* Regular enrollment buttons - hide for admins */}
+                    {profile?.role !== "admin" && (
+                      <>
+                        <Button
+                          onClick={handleEnroll}
+                          disabled={authLoading}
+                          className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                        >
+                          {authLoading
+                            ? "Loading..."
+                            : (course.price || 0) > 0
+                            ? "Buy Now"
+                            : "Enroll for Free"}
+                        </Button>
+                        {(course.price || 0) > 0 && (
+                          <Button
+                            onClick={handleAddToCart}
+                            variant="outline"
+                            disabled={isInCart(course.id) || authLoading}
+                            className="rounded-sm"
+                          >
+                            <ShoppingCart className="w-4 h-4 mr-2" />
+                            {isInCart(course.id) ? "In Cart" : "Add to Cart"}
+                          </Button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -775,7 +808,7 @@ export function CoursePageClient({
                     <CardDescription>{lessons.length} lessons</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {isIBDPCourse ? (
+                    {isIBDPMathCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
                     ) : units.length > 0 ? (
                       <div className="space-y-2">

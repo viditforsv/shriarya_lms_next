@@ -922,7 +922,9 @@ export default function QuestionDetailPage() {
               <ImageUpload
                 label="Solution Image"
                 value={question.solution_image || ""}
-                onChange={(url) => setQuestion({ ...question, solution_image: url })}
+                onChange={(url) =>
+                  setQuestion({ ...question, solution_image: url })
+                }
                 placeholder="Upload an image for the solution"
               />
             </div>
@@ -939,7 +941,7 @@ export default function QuestionDetailPage() {
             {/* Question Preview */}
             <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-medium mb-2 text-gray-900">Question</h3>
-              
+
               {/* Question Image */}
               {question.image_url && (
                 <div className="mb-4">
@@ -952,7 +954,7 @@ export default function QuestionDetailPage() {
                   />
                 </div>
               )}
-              
+
               <div className="prose max-w-none">
                 {renderMultiPartQuestion(question.question_text)}
               </div>
@@ -962,7 +964,7 @@ export default function QuestionDetailPage() {
             {question.explanation && (
               <div className="mb-4 bg-white rounded-lg border border-gray-200 p-4">
                 <h3 className="font-medium mb-2 text-gray-900">Solution</h3>
-                
+
                 {/* Solution Image */}
                 {question.solution_image && (
                   <div className="mb-4">
@@ -975,7 +977,7 @@ export default function QuestionDetailPage() {
                     />
                   </div>
                 )}
-                
+
                 <div className="prose max-w-none">
                   {renderMultiPartQuestion(question.explanation)}
                 </div>
@@ -1020,7 +1022,7 @@ export default function QuestionDetailPage() {
             if (question) {
               setQuestion({
                 ...question,
-                qa_status: newStatus,
+                qa_status: newStatus as Question["qa_status"],
               });
             }
             // Then fetch fresh data from server

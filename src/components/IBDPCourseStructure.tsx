@@ -21,11 +21,19 @@ interface Lesson {
   title: string;
   slug: string;
   lesson_order: number;
-  chapter_name: string;
-  unit_name: string;
   is_preview: boolean;
   content_html?: string;
   content?: string;
+  chapter?: {
+    id: string;
+    chapter_name: string;
+    chapter_order: number;
+    unit?: {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+    };
+  };
 }
 
 interface Unit {
@@ -36,6 +44,7 @@ interface Unit {
 interface Chapter {
   name: string;
   lessons: Lesson[];
+  chapter_order: number;
 }
 
 interface IBDPCourseStructureProps {
@@ -69,40 +78,48 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
         const unitMap = new Map<string, Map<string, Lesson[]>>();
 
         lessons.forEach((lesson) => {
-          if (!lesson.unit_name || !lesson.chapter_name) return;
+          if (!lesson.chapter?.unit?.unit_name || !lesson.chapter?.chapter_name)
+            return;
 
-          if (!unitMap.has(lesson.unit_name)) {
-            unitMap.set(lesson.unit_name, new Map());
+          const unitName = lesson.chapter.unit.unit_name;
+          const chapterName = lesson.chapter.chapter_name;
+
+          if (!unitMap.has(unitName)) {
+            unitMap.set(unitName, new Map());
           }
 
-          const chapterMap = unitMap.get(lesson.unit_name)!;
-          if (!chapterMap.has(lesson.chapter_name)) {
-            chapterMap.set(lesson.chapter_name, []);
+          const chapterMap = unitMap.get(unitName)!;
+          if (!chapterMap.has(chapterName)) {
+            chapterMap.set(chapterName, []);
           }
 
-          chapterMap.get(lesson.chapter_name)!.push(lesson);
+          chapterMap.get(chapterName)!.push(lesson);
         });
 
         // Convert to the structure we need
         const unitsArray: Unit[] = Array.from(unitMap.entries()).map(
           ([unitName, chapterMap]) => ({
             name: unitName,
-            chapters: Array.from(chapterMap.entries()).map(
-              ([chapterName, chapterLessons]) => ({
+            chapters: Array.from(chapterMap.entries())
+              .map(([chapterName, chapterLessons]) => ({
                 name: chapterName,
                 lessons: chapterLessons.sort(
                   (a, b) => a.lesson_order - b.lesson_order
                 ),
-              })
-            ),
+                chapter_order: chapterLessons[0]?.chapter?.chapter_order || 0,
+              }))
+              .sort((a, b) => a.chapter_order - b.chapter_order),
           })
         );
 
-        // Sort units by their number (extract number from unit name)
+        // Sort units by their unit_order from database
+        // Find the first lesson in each unit to get its order
         unitsArray.sort((a, b) => {
-          const aNum = parseInt(a.name.split(" ")[0]) || 0;
-          const bNum = parseInt(b.name.split(" ")[0]) || 0;
-          return aNum - bNum;
+          const aFirstLesson = a.chapters[0]?.lessons[0];
+          const bFirstLesson = b.chapters[0]?.lessons[0];
+          const aOrder = aFirstLesson?.chapter?.unit?.unit_order || 0;
+          const bOrder = bFirstLesson?.chapter?.unit?.unit_order || 0;
+          return aOrder - bOrder;
         });
 
         setUnits(unitsArray);

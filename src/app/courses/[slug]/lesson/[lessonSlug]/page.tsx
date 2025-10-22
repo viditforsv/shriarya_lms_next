@@ -39,6 +39,34 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { IBDPMathLessonPage } from "@/components/IBDPMathTemplate";
 
+// Function to load questions for a lesson (client-side)
+function useQuestionsForLesson(lessonId: string) {
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch(`/api/lessons/${lessonId}/questions`);
+        if (response.ok) {
+          const data = await response.json();
+          setQuestions(data.questions || []);
+        }
+      } catch (error) {
+        console.error("Error loading questions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (lessonId) {
+      loadQuestions();
+    }
+  }, [lessonId]);
+
+  return { questions, loading };
+}
+
 interface Course {
   id: string;
   title: string;
@@ -108,6 +136,11 @@ export default function DynamicLessonPage({
   const [practiceAnswers, setPracticeAnswers] = useState<
     Record<string, string>
   >({});
+
+  // Load questions for the lesson
+  const { questions, loading: questionsLoading } = useQuestionsForLesson(
+    lesson?.id || ""
+  );
 
   // Resolve params
   useEffect(() => {
@@ -600,12 +633,7 @@ export default function DynamicLessonPage({
           lesson_order: lesson.lesson_order,
           chapter_id: lesson.chapter_id || "",
         }}
-        questions={
-          [
-            // TODO: Load questions from database
-            // For now, empty array - questions need to be added to the lesson
-          ]
-        }
+        questions={questions}
         unitName={lesson.chapter?.unit?.unit_name || "Unit"}
         chapterName={lesson.chapter?.chapter_name || "Chapter"}
         courseLinks={getCourseLinks(resolvedParams?.slug || "")}

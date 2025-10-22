@@ -23,6 +23,7 @@ import {
   Play,
 } from "lucide-react";
 import { IBDPQuestionCard } from "./IBDPQuestionCard";
+import { IBDPQuestionSession } from "./IBDPQuestionSession";
 import { IBDPConceptsTab } from "./IBDPConceptsTab";
 
 interface Unit {
@@ -455,11 +456,6 @@ export function IBDPMathLessonPage({
                 className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
               >
                 Questions
-                {questions.length > 0 && (
-                  <Badge variant="secondary" className="ml-2 rounded-sm">
-                    {questions.length}
-                  </Badge>
-                )}
               </TabsTrigger>
               <TabsTrigger
                 value="concepts"
@@ -470,34 +466,19 @@ export function IBDPMathLessonPage({
             </TabsList>
 
             {/* Questions Tab */}
-            <TabsContent value="questions" className="mt-6 space-y-6">
-              {questions.length > 0 ? (
-                questions.map((question) => (
-                  <IBDPQuestionCard
-                    key={question.id}
-                    questionId={question.id}
-                    questionText={question.question_text}
-                    tags={question.tags}
-                    marks={question.marks}
-                    solution={question.solution}
-                    onMarkDone={handleMarkDone}
-                    onReviewLater={handleReviewLater}
-                    onTagClick={handleTagClick}
-                  />
-                ))
-              ) : (
-                <Card className="rounded-sm">
-                  <CardContent className="py-12 text-center">
-                    <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                      No Questions Available
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Questions for this lesson will be added soon.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+            <TabsContent value="questions" className="mt-6">
+              <IBDPQuestionSession
+                questions={questions}
+                onSessionComplete={(results) => {
+                  console.log("Question session completed:", results);
+                  // Update progress based on results
+                  const correctAnswers = results.filter(
+                    (r) => r.result === "correct"
+                  ).length;
+                  const progress = (correctAnswers / questions.length) * 100;
+                  onProgressUpdate?.(currentLesson.id, progress);
+                }}
+              />
             </TabsContent>
 
             {/* Concepts Tab */}

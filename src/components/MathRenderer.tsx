@@ -246,7 +246,7 @@ export function renderMixedContent(content: string) {
 function renderMathContent(content: string, baseIndex: number) {
   // First, process includegraphics commands
   const { processedContent, images } = processIncludegraphics(content);
-  
+
   // Then preprocess textcolor commands in the entire content
   const preprocessedContent = preprocessLatex(processedContent);
 
@@ -264,7 +264,9 @@ function renderMathContent(content: string, baseIndex: number) {
 
   return parts.map((part, index) => {
     // Check for image placeholders first
-    const imagePlaceholderMatch = part.match(/__INCLUDEGRAPHICS_PLACEHOLDER_(\d+)__/);
+    const imagePlaceholderMatch = part.match(
+      /__INCLUDEGRAPHICS_PLACEHOLDER_(\d+)__/
+    );
     if (imagePlaceholderMatch) {
       const imageIndex = parseInt(imagePlaceholderMatch[1]);
       const image = images[imageIndex];
@@ -276,12 +278,13 @@ function renderMathContent(content: string, baseIndex: number) {
               alt="Question diagram"
               className="max-w-full h-auto"
               style={{
-                width: image.options.includes('width') ? 
-                  image.options.match(/width=([^,}]+)/)?.[1] || 'auto' : 'auto'
+                width: image.options.includes("width")
+                  ? image.options.match(/width=([^,}]+)/)?.[1] || "auto"
+                  : "auto",
               }}
               onError={(e) => {
-                console.error('Image failed to load:', image.url);
-                e.currentTarget.style.display = 'none';
+                console.error("Image failed to load:", image.url);
+                e.currentTarget.style.display = "none";
               }}
             />
           </div>
@@ -365,6 +368,11 @@ function preprocessLatex(latex: string): string {
       )
       // Convert \cfrac to \frac (KaTeX doesn't support \cfrac)
       .replace(/\\cfrac/g, "\\frac")
+      // Handle enumerate environments - convert to HTML lists
+      .replace(/\\begin\{enumerate\}/g, "")
+      .replace(/\\end\{enumerate\}/g, "")
+      .replace(/\\item\[(\d+)\]/g, "$1. ")
+      .replace(/\\item/g, "• ")
       // Handle other common LaTeX commands that might not be supported
       .replace(/\\centering/g, "")
       .replace(/\\vspace\{[^}]*\}/g, "")
@@ -373,24 +381,33 @@ function preprocessLatex(latex: string): string {
 }
 
 // Helper function to extract and replace includegraphics commands
-function processIncludegraphics(content: string): { processedContent: string; images: Array<{ url: string; options: string }> } {
+function processIncludegraphics(content: string): {
+  processedContent: string;
+  images: Array<{ url: string; options: string }>;
+} {
   const images: Array<{ url: string; options: string }> = [];
-  const includegraphicsPattern = /\\includegraphics(?:\[([^\]]*)\])?\{([^}]+)\}/g;
-  
-  const processedContent = content.replace(includegraphicsPattern, (match, options, url) => {
-    const imageIndex = images.length;
-    images.push({ url, options: options || '' });
-    
-    console.log(`🖼️ Found includegraphics: ${url} with options: ${options || 'none'}`);
-    
-    // Replace with a placeholder that we'll handle in the renderer
-    return `__INCLUDEGRAPHICS_PLACEHOLDER_${imageIndex}__`;
-  });
-  
+  const includegraphicsPattern =
+    /\\includegraphics(?:\[([^\]]*)\])?\{([^}]+)\}/g;
+
+  const processedContent = content.replace(
+    includegraphicsPattern,
+    (match, options, url) => {
+      const imageIndex = images.length;
+      images.push({ url, options: options || "" });
+
+      console.log(
+        `🖼️ Found includegraphics: ${url} with options: ${options || "none"}`
+      );
+
+      // Replace with a placeholder that we'll handle in the renderer
+      return `__INCLUDEGRAPHICS_PLACEHOLDER_${imageIndex}__`;
+    }
+  );
+
   if (images.length > 0) {
     console.log(`🖼️ Processed ${images.length} images in content`);
   }
-  
+
   return { processedContent, images };
 }
 

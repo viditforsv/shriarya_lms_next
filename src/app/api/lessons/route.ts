@@ -67,9 +67,38 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const courseId = searchParams.get("course_id");
     const courseSlug = searchParams.get("course_slug");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const search = searchParams.get("search") || "";
 
     const supabase = await createClient();
 
+    // Get course ID
+    let courseIdToUse = courseId;
+    if (courseSlug) {
+      const { data: course } = await supabase
+        .from("courses")
+        .select("id")
+        .eq("slug", courseSlug)
+        .single();
+
+      if (!course) {
+        return NextResponse.json(
+          { error: "Course not found" },
+          { status: 404 }
+        );
+      }
+      courseIdToUse = course.id;
+    }
+
+    if (!courseIdToUse) {
+      return NextResponse.json(
+        { error: "course_id or course_slug is required" },
+        { status: 400 }
+      );
+    }
+
+    // Build base query
     let query = supabase
       .from("courses_lessons")
       .select(
@@ -85,42 +114,43 @@ export async function GET(request: Request) {
             unit_order
           )
         )
-      `
+      `,
+        { count: "exact" }
       )
+      .eq("course_id", courseIdToUse)
       .order("lesson_order", { ascending: true });
 
-    if (courseId) {
-      query = query.eq("course_id", courseId);
-    } else if (courseSlug) {
-      // First get course by slug
-      const { data: course } = await supabase
-        .from("courses")
-        .select("id")
-        .eq("slug", courseSlug)
-        .single();
-
-      if (!course) {
-        return NextResponse.json(
-          { error: "Course not found" },
-          { status: 404 }
-        );
-      }
-
-      query = query.eq("course_id", course.id);
-    } else {
-      return NextResponse.json(
-        { error: "course_id or course_slug is required" },
-        { status: 400 }
+    // Add search filter if provided
+    if (search.trim()) {
+      query = query.or(
+        `title.ilike.%${search}%,topic_number.ilike.%${search}%,lesson_code.ilike.%${search}%`
       );
     }
 
-    const { data: lessons, error } = await query;
+    // Add pagination
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data: lessons, error, count } = await query;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ lessons });
+    const totalPages = Math.ceil((count || 0) / limit);
+
+    return NextResponse.json({
+      lessons: lessons || [],
+      pagination: {
+        currentPage: page,
+        totalPages,
+        total: count || 0,
+        limit,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       {

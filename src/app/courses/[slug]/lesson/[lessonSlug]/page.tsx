@@ -89,7 +89,7 @@ export default function DynamicLessonPage({
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [allLessons, setAllLessons] = useState<Lesson[]>([]);
@@ -116,8 +116,8 @@ export default function DynamicLessonPage({
 
   // Authentication check - redirect if not logged in
   useEffect(() => {
-    // Wait for auth context to initialize
-    if (user === undefined) return;
+    // Wait for auth context to initialize and finish loading
+    if (loading) return;
 
     if (!user) {
       // User is not logged in, redirect to auth page
@@ -129,7 +129,7 @@ export default function DynamicLessonPage({
     }
 
     setAuthChecked(true);
-  }, [user, router, resolvedParams]);
+  }, [user, loading, router, resolvedParams]);
 
   useEffect(() => {
     if (!resolvedParams || !authChecked) return;
@@ -621,7 +621,7 @@ export default function DynamicLessonPage({
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
-        <div className="container mx-auto px-4">
+        <div className="px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link
@@ -670,7 +670,7 @@ export default function DynamicLessonPage({
           </nav>
         </div>
 
-        <div className="flex max-w-7xl mx-auto">
+        <div className="flex">
           {/* Left Sidebar - Course Navigation */}
           <CollapsibleSidebar
             currentLessonSlug={lesson.slug}

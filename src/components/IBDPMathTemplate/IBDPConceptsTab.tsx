@@ -27,7 +27,7 @@ import {
   ExternalLink,
   Download,
 } from "lucide-react";
-import { MathRenderer } from "@/components/MathRenderer";
+import { MathRenderer, renderMixedContent } from "@/components/MathRenderer";
 
 interface Formula {
   id: string;
@@ -173,10 +173,7 @@ export function IBDPConceptsTab({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-base leading-relaxed text-gray-700">
-                  <MathRenderer
-                    latex={conceptSummary.content}
-                    displayMode={false}
-                  />
+                  {renderMixedContent(conceptSummary.content)}
                 </div>
 
                 {conceptSummary.keyPoints &&
@@ -236,11 +233,9 @@ export function IBDPConceptsTab({
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="p-4 bg-gray-50 rounded-sm border border-gray-200">
-                    <MathRenderer
-                      latex={formula.formula}
-                      displayMode={true}
-                      className="text-xl"
-                    />
+                    <div className="text-xl">
+                      {renderMixedContent(formula.formula)}
+                    </div>
                   </div>
                   {formula.description && (
                     <p className="text-sm text-gray-600">

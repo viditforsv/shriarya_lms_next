@@ -40,9 +40,12 @@ export default function AuthPage() {
   // Redirect authenticated users to enrolled courses
   useEffect(() => {
     if (!loading && user) {
-      router.push(next || "/courses/enrolled");
+      // Check for redirect parameter first, then next parameter, then default
+      const redirectParam = searchParams.get("redirect");
+      const redirectUrl = redirectParam || next || "/courses/enrolled";
+      router.push(redirectUrl);
     }
-  }, [user, loading, router, next]);
+  }, [user, loading, router, next, searchParams]);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -64,7 +67,10 @@ export default function AuthPage() {
             "Auth page - OAuth success, redirecting to:",
             next || "/courses/enrolled"
           );
-          router.push(next || "/courses/enrolled");
+          // Check for redirect parameter first, then next parameter, then default
+          const redirectParam = searchParams.get("redirect");
+          const redirectUrl = redirectParam || next || "/courses/enrolled";
+          router.push(redirectUrl);
         } catch (err) {
           console.error("Auth page - OAuth callback exception:", err);
           router.push("/auth?error=Authentication failed");

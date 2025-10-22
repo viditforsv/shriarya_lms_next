@@ -630,9 +630,16 @@ interface CourseCardProps {
 
 // Helper function to get thumbnail URL with fallback
 function getThumbnailUrl(course: CourseConfig): string {
+  // Check both thumbnail and thumbnail_url fields (API inconsistency)
+  const thumbnailUrl = course.thumbnail || (course as any).thumbnail_url;
+
   // If course has a thumbnail, use it
-  if (course.thumbnail && course.thumbnail !== "/images/courses/default.jpg") {
-    return course.thumbnail;
+  if (thumbnailUrl && thumbnailUrl !== "/images/courses/default.jpg") {
+    // If it's a Bunny CDN URL, use the CDN proxy
+    if (thumbnailUrl.includes("shrividhyaclasses.b-cdn.net")) {
+      return `/api/cdn-proxy?url=${encodeURIComponent(thumbnailUrl)}`;
+    }
+    return thumbnailUrl;
   }
 
   // Generate thumbnail based on curriculum and subject
@@ -675,20 +682,35 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
         <CardContent className="p-6">
           <div className="flex gap-6">
             <div className="w-32 h-24 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-              <Image
-                src={thumbnailUrl}
-                alt={`${course.title} thumbnail`}
-                width={128}
-                height={96}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Fallback to gradient if image fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  const fallback = target.nextElementSibling as HTMLElement;
-                  if (fallback) fallback.style.display = "flex";
-                }}
-              />
+              {thumbnailUrl.includes("/api/cdn-proxy") ? (
+                <img
+                  src={thumbnailUrl}
+                  alt={`${course.title} thumbnail`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to gradient if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    const fallback = target.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = "flex";
+                  }}
+                />
+              ) : (
+                <Image
+                  src={thumbnailUrl}
+                  alt={`${course.title} thumbnail`}
+                  width={128}
+                  height={96}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to gradient if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    const fallback = target.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = "flex";
+                  }}
+                />
+              )}
               <div
                 className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center"
                 style={{ display: "none" }}
@@ -776,20 +798,35 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
     <Card className="hover:shadow-md transition-shadow group">
       <CardHeader className="pb-4">
         <div className="w-full h-32 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
-          <Image
-            src={thumbnailUrl}
-            alt={`${course.title} thumbnail`}
-            width={400}
-            height={128}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Fallback to gradient if image fails to load
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-              const fallback = target.nextElementSibling as HTMLElement;
-              if (fallback) fallback.style.display = "flex";
-            }}
-          />
+          {thumbnailUrl.includes("/api/cdn-proxy") ? (
+            <img
+              src={thumbnailUrl}
+              alt={`${course.title} thumbnail`}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback to gradient if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+          ) : (
+            <Image
+              src={thumbnailUrl}
+              alt={`${course.title} thumbnail`}
+              width={400}
+              height={128}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback to gradient if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+          )}
           <div
             className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center absolute inset-0"
             style={{ display: "none" }}

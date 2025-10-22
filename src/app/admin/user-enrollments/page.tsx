@@ -100,6 +100,11 @@ export default function UserEnrollmentsPage() {
     }
   }, [currentUser, profile]);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
+
   // Check if user is admin - moved after hooks
   if (!currentUser || profile?.role !== "admin") {
     return (
@@ -276,11 +281,6 @@ export default function UserEnrollmentsPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedEnrollments = filteredEnrollments.slice(startIndex, endIndex);
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filterStatus]);
 
   if (isLoading) {
     return (

@@ -24,6 +24,7 @@ interface Lesson {
   slug: string;
   lesson_order: number;
   is_preview: boolean;
+  topic_number?: string;
   chapter_id?: string;
   chapter?: {
     id: string;
@@ -375,6 +376,9 @@ export function CollapsibleSidebar({
                                           status
                                         )} truncate`}
                                       >
+                                        {lesson.topic_number
+                                          ? `${lesson.topic_number}: `
+                                          : ""}
                                         {lesson.title}
                                       </p>
                                       <div className="flex items-center space-x-2 mt-1">

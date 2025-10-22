@@ -46,6 +46,7 @@ interface Lesson {
   slug: string;
   lesson_order: number;
   chapter_id: string;
+  topic_number?: string;
   questions?: Question[];
 }
 
@@ -103,6 +104,10 @@ export function IBDPMathLessonPage({
   );
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [lastLesson, setLastLesson] = useState<string | null>(null);
+  const [lessonContent, setLessonContent] = useState<{
+    concepts: any[];
+    formulas: any[];
+  }>({ concepts: [], formulas: [] });
 
   // Auto-expand current lesson's unit and chapter
   useEffect(() => {
@@ -135,6 +140,27 @@ export function IBDPMathLessonPage({
   useEffect(() => {
     localStorage.setItem(`ibdp-last-lesson-${courseSlug}`, currentLessonSlug);
   }, [currentLessonSlug, courseSlug]);
+
+  // Fetch lesson content from database
+  useEffect(() => {
+    const fetchLessonContent = async () => {
+      try {
+        const response = await fetch(
+          `/api/lesson-content?lesson_id=${currentLesson.id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setLessonContent(data.content);
+        }
+      } catch (error) {
+        console.error("Error fetching lesson content:", error);
+      }
+    };
+
+    if (currentLesson.id) {
+      fetchLessonContent();
+    }
+  }, [currentLesson.id]);
 
   const toggleUnit = (unitId: string) => {
     setExpandedUnits((prev) => {
@@ -355,7 +381,12 @@ export function IBDPMathLessonPage({
                                 >
                                   <div className="flex items-center gap-2">
                                     {isCurrent && <Play className="w-3 h-3" />}
-                                    <span>{lesson.title}</span>
+                                    <span>
+                                      {lesson.topic_number
+                                        ? `${lesson.topic_number}: `
+                                        : ""}
+                                      {lesson.title}
+                                    </span>
                                   </div>
                                 </Link>
                               );
@@ -476,20 +507,39 @@ export function IBDPMathLessonPage({
                 chapterName={chapterName}
                 lessonName={currentLesson.title}
                 tags={selectedTag ? [selectedTag] : allTags}
-                conceptSummary={{
-                  title: `Understanding ${currentLesson.title}`,
-                  content: `This lesson covers the fundamental concepts of ${currentLesson.title}.`,
-                  keyPoints: [
-                    "Master the core principles",
-                    "Apply concepts to solve problems",
-                    "Connect ideas to real-world scenarios",
-                  ],
-                }}
-                formulas={
-                  [
-                    // TODO: Load from database
-                  ]
+                conceptSummary={
+                  lessonContent.concepts.length > 0
+                    ? {
+                        title:
+                          lessonContent.concepts[0]?.title ||
+                          `Understanding ${currentLesson.title}`,
+                        content:
+                          lessonContent.concepts[0]?.content ||
+                          lessonContent.concepts[0]?.content_html ||
+                          `This lesson covers the fundamental concepts of ${currentLesson.title}.`,
+                        keyPoints: lessonContent.concepts[0]?.metadata
+                          ?.keyPoints || [
+                          "Master the core principles",
+                          "Apply concepts to solve problems",
+                          "Connect ideas to real-world scenarios",
+                        ],
+                      }
+                    : {
+                        title: `Understanding ${currentLesson.title}`,
+                        content: `This lesson covers the fundamental concepts of ${currentLesson.title}.`,
+                        keyPoints: [
+                          "Master the core principles",
+                          "Apply concepts to solve problems",
+                          "Connect ideas to real-world scenarios",
+                        ],
+                      }
                 }
+                formulas={lessonContent.formulas.map((formula) => ({
+                  id: formula.id,
+                  title: formula.title,
+                  formula: formula.content || formula.content_html || "",
+                  description: formula.metadata?.description || "",
+                }))}
                 recommendedQuestions={
                   [
                     // TODO: Load from database based on performance

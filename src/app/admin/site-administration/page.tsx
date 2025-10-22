@@ -89,6 +89,12 @@ export default function SiteAdministrationPage() {
           description: "Map and organize course lessons",
         },
         {
+          name: "Lesson Content Editor",
+          href: "/admin/lesson-editor",
+          icon: FileText,
+          description: "Edit lesson concepts and formulas",
+        },
+        {
           name: "Enrollment Management",
           href: "/admin/user-enrollments",
           icon: Users,

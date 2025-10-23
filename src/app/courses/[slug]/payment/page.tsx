@@ -2,9 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { PaymentFlow } from "@/components/payments/PaymentFlow";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { ArrowLeft, Check } from "lucide-react";
+import Link from "next/link";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 interface Course {
   id: string;
@@ -13,16 +27,48 @@ interface Course {
   price: number;
   currency: string;
   slug: string;
+  thumbnail: string;
 }
 
 export default function CoursePaymentPage() {
   const params = useParams();
   const router = useRouter();
   const { user, profile } = useAuth();
+  
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>("");
 
+  // Load Razorpay script
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+
+      const existingScript = document.querySelector(
+        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+      );
+
+      if (existingScript) {
+        existingScript.addEventListener("load", () => resolve(true));
+        existingScript.addEventListener("error", () => resolve(false));
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Fetch course data
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -48,7 +94,7 @@ export default function CoursePaymentPage() {
             .eq("student_id", user.id)
             .eq("course_id", courseData.id)
             .eq("is_active", true)
-            .single();
+            .maybeSingle();
 
           if (enrollment) {
             // User is already enrolled, redirect to course
@@ -71,36 +117,155 @@ export default function CoursePaymentPage() {
     }
   }, [params.slug, user, router]);
 
+  const handlePayment = async () => {
+    if (!course || !user) return;
+
+    try {
+      setIsProcessing(true);
+      setError("");
+      setStatus("Loading Razorpay...");
+
+      // Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Failed to load Razorpay SDK");
+      }
+
+      setStatus("Creating order...");
+
+      // Create Razorpay order
+      const createResponse = await fetch("/api/payments/create-razorpay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: course.price,
+          currency: course.currency || "INR",
+          courseId: course.id,
+          courseName: course.title,
+        }),
+      });
+
+      const createData = await createResponse.json();
+
+      if (!createResponse.ok || !createData.success) {
+        throw new Error(createData.error || "Failed to create order");
+      }
+
+      setStatus("Opening Razorpay checkout...");
+
+      // Get Razorpay Key from environment
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        throw new Error("Razorpay key not configured");
+      }
+
+      // Get user details
+      const userName = profile
+        ? `${profile.first_name} ${profile.last_name}`
+        : user.email!;
+      const userEmail = user.email!;
+
+      // Open Razorpay checkout
+      const options = {
+        key: razorpayKey,
+        amount: course.price * 100, // Convert to paise
+        currency: course.currency || "INR",
+        name: "ShriArya LMS",
+        description: course.title,
+        order_id: createData.orderId,
+        prefill: {
+          name: userName,
+          email: userEmail,
+        },
+        theme: {
+          color: "#e27447",
+        },
+        handler: async function (response: any) {
+          setStatus("Verifying payment...");
+
+          try {
+            const verifyResponse = await fetch(
+              "/api/payments/verify-razorpay",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId: response.razorpay_order_id,
+                  paymentId: response.razorpay_payment_id,
+                  signature: response.razorpay_signature,
+                  courseId: course.id,
+                }),
+              }
+            );
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+              setStatus("✅ Payment successful! Redirecting...");
+              // Redirect to course page after short delay
+              setTimeout(() => {
+                router.push(`/courses/${course.slug}?enrolled=true`);
+              }, 1500);
+            } else {
+              throw new Error(
+                verifyData.error || "Payment verification failed"
+              );
+            }
+          } catch (err) {
+            setError(
+              err instanceof Error ? err.message : "Verification failed"
+            );
+            setStatus("");
+            setIsProcessing(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setStatus("");
+            setError("Payment cancelled");
+            setIsProcessing(false);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      console.error("Payment error:", err);
+      setError(err instanceof Error ? err.message : "Payment failed");
+      setStatus("");
+      setIsProcessing(false);
+    }
+  };
+
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600 mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading course...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading course...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !course) {
+  // Error state
+  if (error && !course) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-muted-foreground mb-4">
-            {error || "Course not found"}
-          </p>
-          <button
-            onClick={() => router.push("/courses")}
-            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-          >
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => router.push("/courses")}>
             Back to Courses
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
+  // Not authenticated
   if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -109,30 +274,121 @@ export default function CoursePaymentPage() {
           <p className="text-muted-foreground mb-4">
             Please sign in to enroll in this course
           </p>
-          <button
-            onClick={() => router.push("/auth")}
-            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-          >
-            Sign In
-          </button>
+          <Button onClick={() => router.push("/auth")}>Sign In</Button>
         </div>
       </div>
     );
   }
 
+  if (!course) return null;
+
   return (
     <div className="min-h-screen bg-background">
-      <PaymentFlow
-        amount={course.price}
-        currency={course.currency || "INR"}
-        courseId={course.id}
-        courseTitle={course.title}
-        userCountry={undefined}
-        userEmail={user.email!}
-        userName={
-          profile ? `${profile.first_name} ${profile.last_name}` : user.email!
-        }
-      />
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto">
+          {/* Back Button */}
+          <Link
+            href={`/courses/${course.slug}`}
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Course
+          </Link>
+
+          {/* Payment Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-3xl">Complete Your Purchase</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Course Details */}
+              <div className="bg-gray-50 rounded-sm p-6 border">
+                <div className="flex items-start space-x-4">
+                  {course.thumbnail && (
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      className="w-24 h-24 object-cover rounded-sm"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-xl mb-2">
+                      {course.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {course.description}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-[#e27447]">
+                      ₹{course.price?.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {course.currency || "INR"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* What's Included */}
+              <div className="bg-blue-50 border border-blue-200 rounded-sm p-4">
+                <h4 className="font-semibold mb-3 text-blue-900">
+                  What's Included
+                </h4>
+                <ul className="space-y-2 text-sm text-blue-800">
+                  <li className="flex items-center">
+                    <Check className="w-4 h-4 mr-2" />
+                    Full lifetime access
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="w-4 h-4 mr-2" />
+                    All course materials and resources
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="w-4 h-4 mr-2" />
+                    Certificate of completion
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="w-4 h-4 mr-2" />
+                    Progress tracking
+                  </li>
+                </ul>
+              </div>
+
+              {/* Status Messages */}
+              {status && (
+                <div className="bg-green-50 border border-green-200 rounded-sm p-4">
+                  <p className="text-green-800 text-sm font-medium">{status}</p>
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-sm p-4">
+                  <p className="text-red-800 text-sm font-medium">❌ {error}</p>
+                </div>
+              )}
+
+              {/* Payment Button */}
+              <Button
+                onClick={handlePayment}
+                disabled={isProcessing}
+                className="w-full bg-[#e27447] hover:bg-[#d1653a] text-white text-lg py-6 rounded-sm"
+                size="lg"
+              >
+                {isProcessing
+                  ? "Processing..."
+                  : `Pay ₹${course.price?.toLocaleString()}`}
+              </Button>
+
+              {/* Security Note */}
+              <p className="text-xs text-center text-muted-foreground">
+                🔒 Secure payment powered by Razorpay. Your payment information
+                is encrypted and secure.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

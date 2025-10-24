@@ -11,7 +11,6 @@ import {
 import { Card, CardHeader } from "@/app/components-demo/ui/ui-components/card";
 import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm";
 import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -96,15 +95,6 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       <div className="relative z-10 w-full max-w-md">
-        <div className="mb-6">
-          <Breadcrumb
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Authentication", href: "/auth", isActive: true },
-            ]}
-          />
-        </div>
-
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">

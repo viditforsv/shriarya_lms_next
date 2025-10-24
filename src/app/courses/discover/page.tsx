@@ -140,6 +140,10 @@ export default function CourseDiscoveryPage() {
             // Fallback to slug-based detection
             if (c.slug.includes("cbse")) return "CBSE";
             if (c.slug.includes("ibdp")) return "IBDP";
+            if (c.slug.includes("icse")) return "ICSE";
+            if (c.slug.includes("igcse")) return "IGCSE";
+            if (c.slug.includes("gmat")) return "GMAT";
+            if (c.slug.includes("sat")) return "SAT";
             return "Other";
           })
           .filter(Boolean)
@@ -222,6 +226,14 @@ export default function CourseDiscoveryPage() {
             ? "CBSE"
             : course.slug.includes("ibdp")
             ? "IBDP"
+            : course.slug.includes("icse")
+            ? "ICSE"
+            : course.slug.includes("igcse")
+            ? "IGCSE"
+            : course.slug.includes("gmat")
+            ? "GMAT"
+            : course.slug.includes("sat")
+            ? "SAT"
             : "Other");
         if (courseCurriculum !== filters.curriculum) {
           return false;
@@ -784,6 +796,14 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                         ? "CBSE"
                         : course.slug.includes("ibdp")
                         ? "IBDP"
+                        : course.slug.includes("icse")
+                        ? "ICSE"
+                        : course.slug.includes("igcse")
+                        ? "IGCSE"
+                        : course.slug.includes("gmat")
+                        ? "GMAT"
+                        : course.slug.includes("sat")
+                        ? "SAT"
                         : "Other")}
                   </Badge>
                   <Badge variant="outline" className="text-xs">

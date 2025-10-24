@@ -3,18 +3,40 @@ import Razorpay from "razorpay";
 
 // Razorpay configuration
 export const razorpayConfig = {
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_2vCJcOX18SSurY",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "d7EZNglQiGtRMCkibA5r0jSR",
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
 };
+
+// Validate Razorpay configuration
+function validateRazorpayConfig() {
+  console.log("Validating Razorpay config...");
+  console.log("RAZORPAY_KEY_ID exists:", !!process.env.RAZORPAY_KEY_ID);
+  console.log("RAZORPAY_KEY_SECRET exists:", !!process.env.RAZORPAY_KEY_SECRET);
+  console.log(
+    "RAZORPAY_KEY_ID value:",
+    process.env.RAZORPAY_KEY_ID?.substring(0, 10) + "..."
+  );
+
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    console.error("❌ Missing Razorpay credentials!");
+    throw new Error(
+      "Missing Razorpay credentials. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your environment variables."
+    );
+  }
+  console.log("✅ Razorpay config validation passed");
+}
 
 // Initialize Razorpay instance (lazy initialization)
 let razorpayInstance: Razorpay | null = null;
 export const getRazorpayInstance = (): Razorpay => {
   if (!razorpayInstance) {
+    console.log("🔧 Creating Razorpay instance...");
+    validateRazorpayConfig();
     razorpayInstance = new Razorpay({
       key_id: razorpayConfig.key_id,
       key_secret: razorpayConfig.key_secret,
     });
+    console.log("✅ Razorpay instance created successfully");
   }
   return razorpayInstance;
 };

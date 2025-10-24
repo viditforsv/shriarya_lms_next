@@ -19,6 +19,7 @@ import {
   Layout,
   Palette,
   Plus,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -51,6 +52,26 @@ export default function SiteAdministrationPage() {
 
   const adminSections = [
     {
+      title: "Dashboard & Analytics",
+      icon: BarChart3,
+      color: "bg-orange-50 border-orange-200",
+      iconColor: "text-orange-600",
+      items: [
+        {
+          name: "Admin Dashboard",
+          href: "/admin",
+          icon: BarChart3,
+          description: "Overview of platform analytics and metrics",
+        },
+        {
+          name: "Student Progress Dashboard",
+          href: "/admin/student-progress",
+          icon: Users,
+          description: "Monitor student performance and tag mastery",
+        },
+      ],
+    },
+    {
       title: "Users & Access",
       icon: Users,
       color: "bg-blue-50 border-blue-200",
@@ -61,6 +82,12 @@ export default function SiteAdministrationPage() {
           href: "/admin/role-assignment-matrix",
           icon: Shield,
           description: "Configure user roles and permissions",
+        },
+        {
+          name: "Enrollment Management",
+          href: "/admin/user-enrollments",
+          icon: Users,
+          description: "Manage student enrollments",
         },
       ],
     },
@@ -93,12 +120,6 @@ export default function SiteAdministrationPage() {
           href: "/admin/lesson-editor",
           icon: FileText,
           description: "Edit lesson concepts and formulas",
-        },
-        {
-          name: "Enrollment Management",
-          href: "/admin/user-enrollments",
-          icon: Users,
-          description: "Manage student enrollments",
         },
       ],
     },

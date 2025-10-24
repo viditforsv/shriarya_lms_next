@@ -58,28 +58,73 @@ export function PaymentMethodSelector({
     onPaymentMethodSelect(provider);
   };
 
+  const testConnection = async () => {
+    try {
+      console.log("Testing connection to test endpoint...");
+      const response = await fetch("/api/test-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ test: "connection test" }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Test endpoint response:", data);
+      alert("Connection test successful!");
+    } catch (error) {
+      console.error("Connection test failed:", error);
+      alert(
+        `Connection test failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  };
+
   const handleCreatePayment = async () => {
     if (!selectedProvider) return;
 
     setIsLoading(true);
     try {
+      const requestData = {
+        amount,
+        currency,
+        courseId,
+        provider: selectedProvider,
+        userCountry: userCountry || null,
+      };
+
+      console.log("🚀 Creating payment with data:", requestData);
+      console.log("📝 Request data types:", {
+        amount: typeof amount,
+        currency: typeof currency,
+        courseId: typeof courseId,
+        provider: typeof selectedProvider,
+        userCountry: typeof userCountry,
+      });
+
       const response = await fetch("/api/payments/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          amount,
-          currency,
-          courseId,
-          provider: selectedProvider,
-          userCountry,
-        }),
+        body: JSON.stringify(requestData),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const paymentData = await response.json();
+      console.log("Payment API response:", paymentData);
 
       if (paymentData.success) {
+        console.log("Payment created successfully, calling onPaymentCreate");
         onPaymentCreate(paymentData);
       } else {
         console.error("Payment creation failed:", paymentData.error);
@@ -87,7 +132,16 @@ export function PaymentMethodSelector({
       }
     } catch (error) {
       console.error("Payment creation error:", error);
-      alert("An error occurred. Please try again.");
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : "No stack trace",
+        error: error,
+      });
+      alert(
+        `An error occurred: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }. Please try again.`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -161,7 +215,14 @@ export function PaymentMethodSelector({
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <Button
+          onClick={testConnection}
+          variant="outline"
+          className="border-gray-300"
+        >
+          Test Connection
+        </Button>
         <Button
           onClick={handleCreatePayment}
           disabled={!selectedProvider || isLoading}

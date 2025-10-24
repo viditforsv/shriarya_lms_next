@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     });
 
     const payment = await razorpay.payments.fetch(paymentId);
-    const amount = payment.amount / 100; // Convert from paise to rupees
+    const amount = Number(payment.amount) / 100; // Convert from paise to rupees
     const currency = payment.currency;
 
     console.log("Payment details:", {

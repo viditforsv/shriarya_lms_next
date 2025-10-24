@@ -1,6 +1,21 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.course_lesson_content (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  lesson_id uuid NOT NULL,
+  content_type text NOT NULL CHECK (content_type = ANY (ARRAY['concepts'::text, 'formulas'::text])),
+  title text NOT NULL,
+  content text,
+  content_html text,
+  metadata jsonb DEFAULT '{}'::jsonb,
+  order_index integer DEFAULT 0,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT course_lesson_content_pkey PRIMARY KEY (id),
+  CONSTRAINT course_lesson_content_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
+);
 CREATE TABLE public.course_template_fields (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   template_id uuid NOT NULL,

@@ -10,6 +10,7 @@ export class RazorpayService {
     paymentRequest: PaymentRequest
   ): Promise<PaymentResponse> {
     try {
+      console.log("RazorpayService.createOrder called with:", paymentRequest);
       const amountInPaise = paymentRequest.amount * 100; // Convert to paise
 
       const orderOptions = {
@@ -24,9 +25,13 @@ export class RazorpayService {
         },
       };
 
+      console.log("Razorpay order options:", orderOptions);
       const razorpay = getRazorpayInstance();
+      console.log("Razorpay instance created successfully");
       const order = await razorpay.orders.create(orderOptions);
+      console.log("Razorpay order created:", order);
 
+      console.log("✅ Razorpay order created successfully!");
       return {
         success: true,
         orderId: order.id,
@@ -38,7 +43,12 @@ export class RazorpayService {
         },
       };
     } catch (error) {
-      console.error("Razorpay order creation failed:", error);
+      console.error("❌ Razorpay order creation failed:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : "No stack trace",
+        error: error,
+      });
       return {
         success: false,
         provider: "razorpay",

@@ -1,91 +1,119 @@
-## 🚀 **Phase 1: Foundation (Now)**
+## 🚀 **PHASE 1 — FOUNDATION**
 
-### **Content & DB**
+### 🧱 **1. Content System**
+
+**Goal:** Build a complete and validated IBDP Mathematics content base.
+**Subtasks:**
 
 - [x] Populate 2000+ IBDP Math questions (AA/AI HL/SL)
 - [ ] Implement automated tagging system
 - [x] Set up manual QC workflow
-
-### **Progress Tracking**
-
-- [ ] Track accuracy, time, attempts per question
-- [ ] Calculate tag mastery levels
-- [ ] Implement R/Y/G adaptation rules
-
-### **Admin Dashboard**
-
-- [ ] Build student progress dashboard
-- [ ] Add class performance + tag insights
-- [ ] Include content effectiveness metrics
-
-### **Infra**
-
-- [ ] Add enhanced analytics (Recharts)
 - [ ] Automate content validation pipeline
 
 ---
 
-## 🧠 **Phase 2: Intelligence**
+### 📊 **2. Student Progress Tracking**
 
-### **Analytics**
+**Goal:** Capture and visualize real learning data.
+**Subtasks:**
 
-- [ ] Implement IRT model (difficulty, ability)
-- [ ] Add retention decay + review interval model
-
-### **Smart Features**
-
-- [ ] Build recommendation engine (weak tags)
-- [ ] Add spaced repetition logic
-
-### **Dashboards**
-
-- [ ] Cognitive insights (stamina, pattern)
-- [ ] Teacher insights (AI reasoning, journey view)
+- [ ] Track attempts, accuracy, and time per question
+- [ ] Compute tag mastery levels
+- [ ] Implement R/Y/G adaptation logic
+- [ ] Build student progress dashboard (visualize mastery per tag/topic)
 
 ---
 
-## 🤖 **Phase 3: AI Integration**
+### ⚙️ **3. Infrastructure**
 
-### **AI Tutor & Generation**
+**Goal:** Strengthen analytics and backend structure.
+**Subtasks:**
 
-- [ ] Build context-aware AI tutor chat
-- [ ] Add AI question generator + theory simplifier
-- [ ] Create content quality flagging system
-
-### **Personalization**
-
-- [ ] Implement adaptive learning paths
-- [ ] Add human-in-loop validation + QA workflow
+- [x] Supabase + Auth + Storage setup
+- [x] Next.js + Shadcn/UI + Tailwind + KaTeX
+- [x] Add enhanced analytics using Recharts
+- [x] Build admin view for content effectiveness metrics
 
 ---
 
-## 🧩 **Immediate This Week**
+## 🧠 **PHASE 2 — INTELLIGENCE**
 
-### **Priority 1: Content**
+### 🧩 **4. Recommendation Engine**
 
-- [x] Run SQL to populate `course_lesson_content`
-- [x] Verify LaTeX rendering + formula display
+**Goal:** Deliver smart question and lesson suggestions.
+**Subtasks:**
 
-### **Priority 2: Questions**
-
-- [x] Import remaining questions
-- [ ] Enable auto-tagging
-- [x] Enable manual QC
-
-### **Priority 3: Tracking**
-
-- [ ] Record attempts, time, accuracy
-- [ ] Apply basic RYG logic
-
-### **Priority 4: Dashboard**
-
-- [ ] Build teacher view with tag mastery + effectiveness
+- [ ] Implement IRT model (difficulty & ability calibration)
+- [ ] Add retention decay model (knowledge forgetting curve)
+- [ ] Implement review interval model (spaced repetition)
+- [ ] Build API for next-question recommendation
+- [ ] Explainable logic for teacher insights (why AI recommended X)
 
 ---
 
-## ⚙️ **Tech Stack**
+### 🧮 **5. Advanced Analytics**
 
-- ✅ Next.js + Shadcn/UI + Tailwind + Supabase + KaTeX
-- [x] Recharts analytics
-- [x] Python ML microservices (Phase 2)
-- [ ] OpenAI/Claude API (Phase 3)
+**Goal:** Understand learning behavior deeply.
+**Subtasks:**
+
+- [ ] Build cognitive insights dashboard (stamina, focus, learning pattern)
+- [ ] Track engagement trends across students
+- [ ] Add question difficulty calibration from real data
+
+---
+
+## 🤖 **PHASE 3 — AI INTEGRATION**
+
+### 💬 **6. AI Tutor System**
+
+**Goal:** Deliver context-aware, on-demand AI tutoring.
+**Subtasks:**
+
+- [ ] Build chat interface (per-lesson context)
+- [ ] Integrate OpenAI/Claude APIs
+- [ ] Add context-based prompt engineering
+- [ ] Log tutoring insights into student model
+
+---
+
+### 🧠 **7. AI Content Generation**
+
+**Goal:** Automate new content creation & curation.
+**Subtasks:**
+
+- [ ] AI question generator for weak tags
+- [ ] Theory simplifier (student-level rephrasing)
+- [ ] Content quality flagging system
+- [ ] Human-in-loop review workflow
+
+---
+
+### 🧭 **8. Personalization Engine**
+
+**Goal:** Adapt curriculum dynamically for each student.
+**Subtasks:**
+
+- [ ] Build adaptive learning path generator
+- [ ] Real-time path adjustments from performance data
+- [ ] Integrate teacher approval / intervention workflow
+
+---
+
+## ⚙️ **PHASE 4 — SUPPORT SYSTEMS (Continuous)**
+
+**Goal:** Tie all analytics, dashboards, and data services together.
+**Subtasks:**
+
+- [x] Python ML microservices setup (FastAPI)
+- [ ] Integration with Supabase event listeners
+- [ ] Deploy monitoring and model versioning
+- [ ] Periodic difficulty recalibration
+
+---
+
+## 🔥 **IMMEDIATE SPRINT (This Week)**
+
+1. Finalize automated tagging logic
+2. Implement progress tracking schema (attempts, accuracy, time)
+3. Prototype RYG logic + test data sync
+4. Basic teacher dashboard with tag-based progress view

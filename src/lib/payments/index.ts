@@ -7,6 +7,9 @@ import {
   getAvailablePaymentMethods,
 } from "./config";
 
+// Re-export types
+export type { PaymentRequest, PaymentResponse, PaymentProvider };
+
 interface RazorpayPaymentData {
   razorpayOrderId: string;
   razorpayPaymentId: string;
@@ -27,21 +30,29 @@ export class PaymentService {
     paymentRequest: PaymentRequest,
     provider?: PaymentProvider
   ): Promise<PaymentResponse> {
+    console.log("=== PaymentService.createPayment called ===");
+    console.log("Payment request:", JSON.stringify(paymentRequest, null, 2));
+    console.log("Provider:", provider);
+
     // Determine provider if not specified
-    const selectedProvider =
-      provider || getRecommendedPaymentProvider();
+    const selectedProvider = provider || getRecommendedPaymentProvider();
+    console.log("Selected provider:", selectedProvider);
 
     // Validate provider availability
+    console.log("Checking provider availability...");
     const availableMethods = getAvailablePaymentMethods(
       paymentRequest.userCountry,
       paymentRequest.currency
     );
+    console.log("Available methods:", availableMethods);
 
     const isProviderAvailable = availableMethods.some(
       (method) => method.provider === selectedProvider
     );
+    console.log("Is provider available:", isProviderAvailable);
 
     if (!isProviderAvailable) {
+      console.log("❌ Provider not available");
       return {
         success: false,
         provider: selectedProvider,
@@ -55,11 +66,14 @@ export class PaymentService {
     }
 
     // Create payment based on provider
+    console.log("Creating payment with provider:", selectedProvider);
     switch (selectedProvider) {
       case "razorpay":
+        console.log("🚀 Calling RazorpayService.createOrder...");
         return await RazorpayService.createOrder(paymentRequest);
 
       default:
+        console.log("❌ Unsupported provider:", selectedProvider);
         return {
           success: false,
           provider: selectedProvider,
@@ -134,7 +148,11 @@ export class PaymentService {
     paymentId: string,
     amount?: number,
     reason?: string
-  ): Promise<{ success: boolean; error?: string; refundDetails?: Record<string, unknown> }> {
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    refundDetails?: Record<string, unknown>;
+  }> {
     try {
       switch (provider) {
         case "razorpay":

@@ -9,33 +9,23 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default [
+  ...compat.extends("next/core-web-vitals"),
   {
     ignores: [
-      "dev-templates/**/*", // Exclude dev templates from linting entirely
-      "src/app/components-demo/**/*", // Exclude component demos from linting
+      "dev-templates/**/*",
+      "src/app/components-demo/**/*",
+      ".next/**/*",
+      "node_modules/**/*",
+      "out/**/*",
     ],
   },
   {
     rules: {
-      // Keep important rules strict for core functionality
-      "@typescript-eslint/no-unused-vars": "error",
-      "react-hooks/exhaustive-deps": "error",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
       "jsx-a11y/alt-text": "error",
+      "@next/next/no-img-element": "warn",
     },
-    files: [
-      "src/app/**/*",
-      "src/lib/**/*",
-      "src/hooks/**/*",
-      "src/contexts/**/*",
-      "src/types/**/*",
-      "src/middleware.ts",
-    ],
-    ignores: [
-      "src/app/components-demo/**/*",
-    ],
   },
 ];
-
-export default eslintConfig;

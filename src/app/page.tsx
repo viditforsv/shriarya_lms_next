@@ -28,6 +28,7 @@ export default function Home() {
   // Use auth context
   const authContext = useAuth();
   const user = authContext?.user;
+  const profile = authContext?.profile;
   const loading = authContext?.loading;
 
   // Stats state
@@ -105,7 +106,8 @@ export default function Home() {
         <section className="bg-gradient-to-br from-secondary to-muted py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-5xl font-bold text-foreground mb-6">
-              Welcome back, {user.user_metadata?.full_name || user.email}!
+              Welcome back,{" "}
+              {profile?.first_name || profile?.full_name || "Student"}!
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Continue your learning journey with personalized courses and

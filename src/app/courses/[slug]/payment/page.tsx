@@ -34,7 +34,7 @@ export default function CoursePaymentPage() {
   const params = useParams();
   const router = useRouter();
   const { user, profile } = useAuth();
-  
+
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);

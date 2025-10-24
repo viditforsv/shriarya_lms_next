@@ -136,6 +136,8 @@ export default function DynamicLessonPage({
   const [practiceAnswers, setPracticeAnswers] = useState<
     Record<string, string>
   >({});
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   // Load questions for the lesson
   const { questions, loading: questionsLoading } = useQuestionsForLesson(
@@ -285,6 +287,20 @@ export default function DynamicLessonPage({
 
         setLesson(lessonData as unknown as Lesson);
         console.log("Lesson loaded:", lessonData.title);
+
+        // 6. Check if lesson is already completed
+        if (user) {
+          const { data: progressData } = await supabase
+            .from("user_progress")
+            .select("is_completed")
+            .eq("user_id", user.id)
+            .eq("lesson_id", lessonData.id)
+            .maybeSingle();
+
+          if (progressData?.is_completed) {
+            setIsCompleted(true);
+          }
+        }
       } catch (err) {
         console.error("Error loading lesson:", err);
         setError(err instanceof Error ? err.message : "Lesson not found");
@@ -330,7 +346,119 @@ export default function DynamicLessonPage({
   };
 
   const handleMarkComplete = async () => {
-    alert("🎉 Lesson completed!");
+    if (!user || !lesson || !course) return;
+
+    setIsMarkingComplete(true);
+
+    try {
+      const supabase = createClient();
+
+      // Check if progress record exists
+      const { data: existingProgress } = await supabase
+        .from("user_progress")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("lesson_id", lesson.id)
+        .maybeSingle();
+
+      let progressError;
+
+      if (existingProgress) {
+        // Update existing record
+        const { error } = await supabase
+          .from("user_progress")
+          .update({
+            completion_percentage: 100,
+            is_completed: true,
+            completed_at: new Date().toISOString(),
+            last_accessed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingProgress.id);
+        progressError = error;
+      } else {
+        // Insert new record
+        const { error } = await supabase.from("user_progress").insert({
+          user_id: user.id,
+          course_id: course.id,
+          lesson_id: lesson.id,
+          lesson_slug: lesson.slug,
+          lesson_order: lesson.lesson_order,
+          completion_percentage: 100,
+          is_completed: true,
+          completed_at: new Date().toISOString(),
+          last_accessed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        progressError = error;
+      }
+
+      if (progressError) {
+        console.error("Error marking lesson complete:", progressError);
+        showNotification(
+          "Error",
+          "Failed to mark lesson as complete. Please try again.",
+          "error"
+        );
+        return;
+      }
+
+      setIsCompleted(true);
+      showNotification(
+        "Lesson Completed! 🎉",
+        `Great job completing "${lesson.title}"! Keep up the good work.`,
+        "success"
+      );
+    } catch (error) {
+      console.error("Error in handleMarkComplete:", error);
+      showNotification(
+        "Error",
+        "Something went wrong. Please try again.",
+        "error"
+      );
+    } finally {
+      setIsMarkingComplete(false);
+    }
+  };
+
+  const showNotification = (
+    title: string,
+    message: string,
+    type: "success" | "error"
+  ) => {
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `fixed top-4 right-4 z-50 max-w-md w-full bg-white border-2 ${
+      type === "success" ? "border-green-500" : "border-red-500"
+    } rounded-sm shadow-lg p-4 animate-slide-in`;
+
+    notification.innerHTML = `
+      <div class="flex items-start space-x-3">
+        <div class="flex-shrink-0">
+          ${
+            type === "success"
+              ? '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+              : '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+          }
+        </div>
+        <div class="flex-1">
+          <h3 class="text-sm font-semibold text-gray-900">${title}</h3>
+          <p class="text-sm text-gray-600 mt-1">${message}</p>
+        </div>
+        <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      notification.style.opacity = "0";
+      notification.style.transform = "translateX(100%)";
+      setTimeout(() => notification.remove(), 300);
+    }, 5000);
   };
 
   // Track tab changes as progress
@@ -868,11 +996,20 @@ export default function DynamicLessonPage({
                     {/* Video Controls */}
                     <div className="mt-4 flex items-center justify-end">
                       <Button
-                        className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                        className={`rounded-sm ${
+                          isCompleted
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-[#e27447] hover:bg-[#e27447]/90"
+                        }`}
                         onClick={handleMarkComplete}
+                        disabled={isCompleted || isMarkingComplete}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
-                        Mark as Complete
+                        {isMarkingComplete
+                          ? "Saving..."
+                          : isCompleted
+                          ? "Completed ✓"
+                          : "Mark as Complete"}
                       </Button>
                     </div>
                   </CardContent>
@@ -1157,11 +1294,20 @@ export default function DynamicLessonPage({
                               View Solution
                             </Button>
                             <Button
-                              className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                              className={`rounded-sm ${
+                                isCompleted
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : "bg-[#e27447] hover:bg-[#e27447]/90"
+                              }`}
                               onClick={handleMarkComplete}
+                              disabled={isCompleted || isMarkingComplete}
                             >
                               <CheckCircle className="w-4 h-4 mr-2" />
-                              Mark as Complete
+                              {isMarkingComplete
+                                ? "Saving..."
+                                : isCompleted
+                                ? "Completed ✓"
+                                : "Mark as Complete"}
                             </Button>
                           </div>
                         </div>
@@ -1227,11 +1373,20 @@ export default function DynamicLessonPage({
                               Back to Assignment
                             </Button>
                             <Button
-                              className="bg-green-600 hover:bg-green-700 rounded-sm"
+                              className={`rounded-sm ${
+                                isCompleted
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : "bg-green-600 hover:bg-green-700"
+                              }`}
                               onClick={handleMarkComplete}
+                              disabled={isCompleted || isMarkingComplete}
                             >
                               <CheckCircle className="w-4 h-4 mr-2" />
-                              Mark as Complete
+                              {isMarkingComplete
+                                ? "Saving..."
+                                : isCompleted
+                                ? "Completed ✓"
+                                : "Mark as Complete"}
                             </Button>
                           </div>
                         </div>

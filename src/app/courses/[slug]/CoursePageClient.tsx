@@ -18,7 +18,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components-demo/ui/tabs";
-import { Play, ChevronRight, ShoppingCart, Eye } from "lucide-react";
+import {
+  Play,
+  ChevronRight,
+  ShoppingCart,
+  Eye,
+  CheckCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
@@ -108,6 +114,11 @@ export function CoursePageClient({
   } | null>(null);
   const [unitCount, setUnitCount] = useState<number>(0);
   const [chapterCount, setChapterCount] = useState<number>(0);
+  const [completedLessons, setCompletedLessons] = useState<number>(0);
+  const [progressPercentage, setProgressPercentage] = useState<number>(0);
+  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(
+    new Set()
+  );
 
   // Check if this is an IBDP Mathematics course
   const isIBDPMathCourse = courseParams.slug?.includes("ibdp-mathematics");
@@ -201,6 +212,28 @@ export function CoursePageClient({
                 slug: progressData.lesson_slug,
                 lesson_order: progressData.lesson_order,
               });
+            }
+
+            // Get completion statistics
+            const { data: allProgress } = await supabase
+              .from("user_progress")
+              .select("is_completed, lesson_id")
+              .eq("user_id", user.id)
+              .eq("course_id", courseId);
+
+            if (allProgress) {
+              const completed = allProgress.filter(
+                (p) => p.is_completed
+              ).length;
+              setCompletedLessons(completed);
+
+              // Track which lessons are completed
+              const completedIds = new Set(
+                allProgress
+                  .filter((p) => p.is_completed)
+                  .map((p) => p.lesson_id)
+              );
+              setCompletedLessonIds(completedIds);
             }
           }
         }
@@ -310,6 +343,34 @@ export function CoursePageClient({
             convertedLessons.filter((l) => l.chapter).length
           );
           setLessons(convertedLessons);
+
+          // Calculate progress percentage after lessons are loaded
+          if (user && courseId && convertedLessons.length > 0) {
+            const { data: allProgress } = await supabase
+              .from("user_progress")
+              .select("is_completed, lesson_id")
+              .eq("user_id", user.id)
+              .eq("course_id", courseId);
+
+            if (allProgress) {
+              const completed = allProgress.filter(
+                (p) => p.is_completed
+              ).length;
+              setCompletedLessons(completed);
+              const percentage = Math.round(
+                (completed / convertedLessons.length) * 100
+              );
+              setProgressPercentage(percentage);
+
+              // Track which lessons are completed
+              const completedIds = new Set(
+                allProgress
+                  .filter((p) => p.is_completed)
+                  .map((p) => p.lesson_id)
+              );
+              setCompletedLessonIds(completedIds);
+            }
+          }
         }
 
         // Set unit and chapter counts from database data
@@ -924,11 +985,33 @@ export function CoursePageClient({
                                                     }}
                                                   >
                                                     <div className="flex items-center space-x-3 flex-1">
-                                                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#e27447]/10 text-[#e27447] text-xs font-medium flex-shrink-0">
-                                                        {lesson.order}
+                                                      <div
+                                                        className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                                                          completedLessonIds.has(
+                                                            lesson.id
+                                                          )
+                                                            ? "bg-green-100 text-green-700"
+                                                            : "bg-[#e27447]/10 text-[#e27447]"
+                                                        } text-xs font-medium flex-shrink-0`}
+                                                      >
+                                                        {completedLessonIds.has(
+                                                          lesson.id
+                                                        ) ? (
+                                                          <CheckCircle className="w-4 h-4" />
+                                                        ) : (
+                                                          lesson.order
+                                                        )}
                                                       </div>
                                                       <div className="flex-1">
-                                                        <h4 className="text-sm font-medium text-gray-700 group-hover:text-[#e27447] transition-colors">
+                                                        <h4
+                                                          className={`text-sm font-medium transition-colors ${
+                                                            completedLessonIds.has(
+                                                              lesson.id
+                                                            )
+                                                              ? "text-gray-500 line-through"
+                                                              : "text-gray-700 group-hover:text-[#e27447]"
+                                                          }`}
+                                                        >
                                                           {lesson.title}
                                                         </h4>
                                                         <div className="flex items-center space-x-2 mt-0.5">
@@ -941,6 +1024,16 @@ export function CoursePageClient({
                                                               className="text-xs bg-blue-100 text-blue-700"
                                                             >
                                                               Preview
+                                                            </Badge>
+                                                          )}
+                                                          {completedLessonIds.has(
+                                                            lesson.id
+                                                          ) && (
+                                                            <Badge
+                                                              variant="secondary"
+                                                              className="text-xs bg-green-100 text-green-700"
+                                                            >
+                                                              Completed
                                                             </Badge>
                                                           )}
                                                         </div>
@@ -1124,14 +1217,38 @@ export function CoursePageClient({
                     <div>
                       <div className="flex justify-between text-sm mb-2">
                         <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">25%</span>
+                        <span className="font-medium">
+                          {progressPercentage}%
+                        </span>
                       </div>
-                      <Progress value={25} className="h-2" />
+                      <Progress value={progressPercentage} className="h-2" />
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {Math.ceil(course.lessons * 0.25)} of {course.lessons}{" "}
+                      {completedLessons} of {lessons.length || course.lessons}{" "}
                       lessons completed
                     </div>
+                    {progressPercentage === 100 && (
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-sm">
+                        <div className="flex items-center space-x-2 text-green-800">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="text-sm font-semibold">
+                            Course Completed! 🎉
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

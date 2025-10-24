@@ -89,6 +89,19 @@ export default function CourseDiscoveryPage() {
     viewMode: "grid",
   });
 
+  // Handle URL parameters for pre-selecting filters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const curriculum = urlParams.get("curriculum");
+
+    if (curriculum) {
+      setFilters((prev) => ({
+        ...prev,
+        curriculum: curriculum,
+      }));
+    }
+  }, []);
+
   const [showFilters, setShowFilters] = useState(false);
   const [courses, setCourses] = useState<CourseConfig[]>([]);
 

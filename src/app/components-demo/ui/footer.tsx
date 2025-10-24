@@ -43,7 +43,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Learning */}
+          {/* Learning & Boards Combined */}
           <div className="space-y-3 sm:space-y-4">
             <h4 className="text-base sm:text-lg font-semibold text-[#1e293b]">
               Learning
@@ -51,18 +51,10 @@ export function Footer() {
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1e293b]">
               <li>
                 <Link
-                  href="/courses"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  Browse Courses
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/courses/discover"
                   className="hover:text-[#e27447] transition-colors"
                 >
-                  Discover Courses
+                  Browse Courses
                 </Link>
               </li>
               <li>
@@ -73,15 +65,51 @@ export function Footer() {
                   My Courses
                 </Link>
               </li>
-              <li>
+            </ul>
+
+            <div className="mt-4">
+              <h5 className="text-sm font-medium text-[#1e293b] mb-2">
+                Boards
+              </h5>
+              <div className="grid grid-cols-2 gap-1 text-xs text-[#1e293b]">
                 <Link
-                  href="/dashboard"
+                  href="/courses/discover?curriculum=CBSE"
                   className="hover:text-[#e27447] transition-colors"
                 >
-                  My Dashboard
+                  CBSE
                 </Link>
-              </li>
-            </ul>
+                <Link
+                  href="/courses/discover?curriculum=ICSE"
+                  className="hover:text-[#e27447] transition-colors"
+                >
+                  ICSE
+                </Link>
+                <Link
+                  href="/courses/discover?curriculum=IBDP"
+                  className="hover:text-[#e27447] transition-colors"
+                >
+                  IBDP
+                </Link>
+                <Link
+                  href="/courses/discover?curriculum=IGCSE"
+                  className="hover:text-[#e27447] transition-colors"
+                >
+                  IGCSE
+                </Link>
+                <Link
+                  href="/courses/discover?curriculum=GMAT"
+                  className="hover:text-[#e27447] transition-colors"
+                >
+                  GMAT
+                </Link>
+                <Link
+                  href="/courses/discover?curriculum=SAT"
+                  className="hover:text-[#e27447] transition-colors"
+                >
+                  SAT
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* Company */}
@@ -106,19 +134,11 @@ export function Footer() {
                   Contact Us
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/pricing"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  Pricing
-                </Link>
-              </li>
             </ul>
           </div>
 
           {/* Contact */}
-          <div className="space-y-3 sm:space-y-4 sm:col-span-2 lg:col-span-1">
+          <div className="space-y-3 sm:space-y-4">
             <h4 className="text-base sm:text-lg font-semibold text-[#1e293b]">
               Contact
             </h4>
@@ -148,22 +168,6 @@ export function Footer() {
                 <p>Sushant Lok 2, Sector 57</p>
                 <p>Gurugram, Haryana 122003, IN</p>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Link href="/auth">
-                <Button size="sm" className="w-full rounded-sm">
-                  Start Learning
-                </Button>
-              </Link>
-              <Link href="/courses/discover">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full rounded-sm border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white"
-                >
-                  Explore Courses
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

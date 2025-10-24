@@ -11,6 +11,7 @@ import {
   Settings,
   BookOpen,
   FileText,
+  TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -76,6 +77,8 @@ export function Header() {
           href: "/courses/discover",
           hasDropdown: false,
         },
+        { name: "FAQ", href: "/faq", hasDropdown: false },
+        { name: "Contact", href: "/contact", hasDropdown: false },
         {
           name: "Site Administration",
           href: "/admin/site-administration",
@@ -92,6 +95,8 @@ export function Header() {
           hasDropdown: false,
         },
         { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
+        { name: "FAQ", href: "/faq", hasDropdown: false },
+        { name: "Contact", href: "/contact", hasDropdown: false },
       ];
     } else {
       // Public users (not logged in)
@@ -103,8 +108,8 @@ export function Header() {
           hasDropdown: false,
         },
         { name: "About", href: "/about", hasDropdown: false },
+        { name: "FAQ", href: "/faq", hasDropdown: false },
         { name: "Contact", href: "/contact", hasDropdown: false },
-        { name: "Pricing", href: "/pricing", hasDropdown: false },
       ];
     }
   };
@@ -166,135 +171,126 @@ export function Header() {
               <>
                 {/* Shopping Cart */}
                 <ShoppingCart />
-                
+
                 <div className="relative user-dropdown">
-                <button
-                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
-                >
-                  <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                    <User className="w-4 h-4 text-accent" />
-                  </div>
-                  <span className="hidden md:block">
-                    {profile?.first_name && profile?.last_name
-                      ? `${profile.first_name} ${profile.last_name}`
-                      : user.email}
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${
-                      isUserDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
+                  <button
+                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-accent" />
+                    </div>
+                    <span className="hidden md:block">
+                      {profile?.first_name && profile?.last_name
+                        ? `${profile.first_name} ${profile.last_name}`
+                        : user.email}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        isUserDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
 
-                {/* User Dropdown Menu */}
-                {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
-                    <div className="py-2">
-                      <div className="px-4 py-2 border-b border-[#feefea]">
-                        <p className="text-sm font-medium text-[#1e293b]">
-                          {profile?.first_name && profile?.last_name
-                            ? `${profile.first_name} ${profile.last_name}`
-                            : user.email}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {profile?.role === "admin"
-                            ? "Administrator"
-                            : profile?.role === "content_manager"
-                            ? "Content Manager"
-                            : "Student"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user.email}
-                        </p>
-                      </div>
+                  {/* User Dropdown Menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
+                      <div className="py-2">
+                        <div className="px-4 py-2 border-b border-[#feefea]">
+                          <p className="text-sm font-medium text-[#1e293b]">
+                            {profile?.first_name && profile?.last_name
+                              ? `${profile.first_name} ${profile.last_name}`
+                              : user.email}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {profile?.role === "admin"
+                              ? "Administrator"
+                              : profile?.role === "content_manager"
+                              ? "Content Manager"
+                              : "Student"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {user.email}
+                          </p>
+                        </div>
 
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
-                        onClick={() => setIsUserDropdownOpen(false)}
-                      >
-                        <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
-                        Dashboard
-                      </Link>
-
-                      <Link
-                        href="/courses/enrolled"
-                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
-                        onClick={() => setIsUserDropdownOpen(false)}
-                      >
-                        <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
-                        My Courses
-                      </Link>
-
-                      {profile?.role === "admin" && (
                         <Link
-                          href="/admin/site-administration"
+                          href="/courses/enrolled"
                           className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
                           onClick={() => setIsUserDropdownOpen(false)}
                         >
-                          <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
-                          Site Administration
+                          <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
+                          Dashboard
                         </Link>
-                      )}
 
-                      {(profile?.role === "admin" ||
-                        profile?.role === "content_manager") && (
+                        {profile?.role === "admin" && (
+                          <Link
+                            href="/admin/site-administration"
+                            className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                            onClick={() => setIsUserDropdownOpen(false)}
+                          >
+                            <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                            Site Administration
+                          </Link>
+                        )}
+
+                        {(profile?.role === "admin" ||
+                          profile?.role === "content_manager") && (
+                          <Link
+                            href="/question-bank"
+                            className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                            onClick={() => setIsUserDropdownOpen(false)}
+                          >
+                            <FileText className="w-4 h-4 mr-3 text-[#e27447]" />
+                            Question Bank
+                          </Link>
+                        )}
+
                         <Link
-                          href="/question-bank"
+                          href="/profile"
                           className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
                           onClick={() => setIsUserDropdownOpen(false)}
                         >
-                          <FileText className="w-4 h-4 mr-3 text-[#e27447]" />
-                          Question Bank
+                          <User className="w-4 h-4 mr-3 text-[#e27447]" />
+                          Profile
                         </Link>
-                      )}
 
-                      <Link
-                        href="/profile"
-                        className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
-                        onClick={() => setIsUserDropdownOpen(false)}
-                      >
-                        <User className="w-4 h-4 mr-3 text-[#e27447]" />
-                        Profile
-                      </Link>
-
-                      <div className="border-t border-[#feefea] mt-2 pt-2">
-                        <button
-                          onClick={async (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log("Sign out button clicked");
-                            console.log(
-                              "signOut function available:",
-                              !!signOut
-                            );
-
-                            if (!signOut) {
-                              console.error(
-                                "signOut function is not available!"
+                        <div className="border-t border-[#feefea] mt-2 pt-2">
+                          <button
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log("Sign out button clicked");
+                              console.log(
+                                "signOut function available:",
+                                !!signOut
                               );
-                              return;
-                            }
 
-                            try {
-                              setIsUserDropdownOpen(false);
-                              console.log("Calling signOut function...");
-                              await signOut();
-                              console.log("Sign out completed successfully");
-                            } catch (error) {
-                              console.error("Sign out error:", error);
-                            }
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
-                        >
-                          <LogOut className="w-4 h-4 mr-3 text-[#e27447]" />
-                          Sign Out
-                        </button>
+                              if (!signOut) {
+                                console.error(
+                                  "signOut function is not available!"
+                                );
+                                return;
+                              }
+
+                              try {
+                                setIsUserDropdownOpen(false);
+                                console.log("Calling signOut function...");
+                                await signOut();
+                                console.log("Sign out completed successfully");
+                              } catch (error) {
+                                console.error("Sign out error:", error);
+                              }
+                            }}
+                            className="flex items-center w-full px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                          >
+                            <LogOut className="w-4 h-4 mr-3 text-[#e27447]" />
+                            Sign Out
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               </>
             ) : (

@@ -3,6 +3,23 @@
 @import "katex/dist/katex.min.css";
 @import "react-querybuilder/dist/query-builder.css";
 
+/* Notification Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
 /* Enhanced Math Rendering - Larger Fractions */
 .katex-math {
   font-size: 1.1em !important;

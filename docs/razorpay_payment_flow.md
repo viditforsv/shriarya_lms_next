@@ -1,42 +1,51 @@
 # Razorpay Payment Integration - User Flow
 
 ## Overview
+
 Users can now pay for courses using Razorpay and get automatically enrolled upon successful payment.
 
 ## Payment Flow
 
 ### 1. Browse Courses
+
 - User visits course page: `/courses/[slug]`
 - Sees course price and "Buy Now" button
 
 ### 2. Initiate Payment
+
 - User clicks "Buy Now"
 - Redirected to: `/courses/[slug]/payment`
 
 ### 3. Payment Page
+
 - Shows course details and price
 - "Pay ₹XX" button
 - Clicking opens Razorpay checkout modal
 
 ### 4. Razorpay Checkout
+
 - User enters payment details (Card/UPI/NetBanking/Wallets)
 - Razorpay processes payment securely
 
 ### 5. Payment Verification
+
 - Backend verifies payment signature (HMAC SHA256)
 - Creates enrollment record in database
 - Saves payment record in payments table
 
 ### 6. Success
+
 - User redirected to course page: `/courses/[slug]?enrolled=true`
 - Can now access all lessons
 
 ## API Endpoints
 
 ### `/api/payments/create-razorpay` (POST)
+
 Creates Razorpay order
 
 **Request:**
+
 ```json
 {
   "amount": 999,
@@ -47,6 +56,7 @@ Creates Razorpay order
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -57,9 +67,11 @@ Creates Razorpay order
 ```
 
 ### `/api/payments/verify-razorpay` (POST)
+
 Verifies payment and creates enrollment
 
 **Request:**
+
 ```json
 {
   "orderId": "order_xxxxx",
@@ -70,6 +82,7 @@ Verifies payment and creates enrollment
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -84,6 +97,7 @@ Verifies payment and creates enrollment
 ## Database Records Created
 
 ### 1. courses_enrollments
+
 ```sql
 INSERT INTO courses_enrollments (
   student_id,
@@ -99,6 +113,7 @@ INSERT INTO courses_enrollments (
 ```
 
 ### 2. payments
+
 ```sql
 INSERT INTO payments (
   user_id,
@@ -144,18 +159,22 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_live_xxxxx
 ## Testing
 
 ### Test Mode (Sandbox)
+
 Use test keys: `rzp_test_xxxxx`
 
 **Test Cards:**
+
 - Card: 4111 1111 1111 1111
 - Expiry: Any future date
 - CVV: Any 3 digits
 - Name: Any name
 
 ### Live Mode (Production)
+
 Use live keys: `rzp_live_xxxxx`
 
 **Requirements:**
+
 - KYC verification completed on Razorpay
 - Real payment cards only
 - Actual money will be charged
@@ -167,10 +186,12 @@ Visit `/test-payment` for a simple payment test interface.
 ## Files Changed
 
 1. **Frontend:**
+
    - `/src/app/courses/[slug]/payment/page.tsx` - Course payment page
    - `/src/app/test-payment/page.tsx` - Test payment page
 
 2. **Backend:**
+
    - `/src/app/api/payments/create-razorpay/route.ts` - Order creation
    - `/src/app/api/payments/verify-razorpay/route.ts` - Payment verification
 
@@ -188,4 +209,3 @@ Visit `/test-payment` for a simple payment test interface.
 ---
 
 **Last Updated:** October 23, 2025
-

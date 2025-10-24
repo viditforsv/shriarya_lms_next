@@ -16,6 +16,7 @@ import {
   ArrowRight,
   TrendingUp,
   Users,
+  GraduationCap,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -222,6 +223,44 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Board Cards Section */}
+        <section className="py-20 bg-muted">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center text-foreground mb-12">
+              Explore by Board
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                { name: "CBSE", color: "bg-blue-500" },
+                { name: "ICSE", color: "bg-green-500" },
+                { name: "IBDP", color: "bg-purple-500" },
+                { name: "IGCSE", color: "bg-orange-500" },
+                { name: "GMAT", color: "bg-red-500" },
+                { name: "SAT", color: "bg-indigo-500" },
+              ].map((board) => (
+                <Card
+                  key={board.name}
+                  className="cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 rounded-sm"
+                  onClick={() =>
+                    router.push(`/courses/discover?curriculum=${board.name}`)
+                  }
+                >
+                  <CardContent className="p-6 text-center">
+                    <div
+                      className={`w-12 h-12 ${board.color} rounded-full flex items-center justify-center mx-auto mb-4`}
+                    >
+                      <GraduationCap className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-foreground">
+                      {board.name}
+                    </h3>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
@@ -317,6 +356,44 @@ export default function Home() {
                 </CardDescription>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Board Cards Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-foreground mb-12">
+            Explore by Board
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { name: "CBSE", color: "bg-blue-500" },
+              { name: "ICSE", color: "bg-green-500" },
+              { name: "IBDP", color: "bg-purple-500" },
+              { name: "IGCSE", color: "bg-orange-500" },
+              { name: "GMAT", color: "bg-red-500" },
+              { name: "SAT", color: "bg-indigo-500" },
+            ].map((board) => (
+              <Card
+                key={board.name}
+                className="cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 rounded-sm"
+                onClick={() =>
+                  router.push(`/courses/discover?curriculum=${board.name}`)
+                }
+              >
+                <CardContent className="p-6 text-center">
+                  <div
+                    className={`w-12 h-12 ${board.color} rounded-full flex items-center justify-center mx-auto mb-4`}
+                  >
+                    <GraduationCap className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">
+                    {board.name}
+                  </h3>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

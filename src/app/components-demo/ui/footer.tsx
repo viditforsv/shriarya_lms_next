@@ -180,16 +180,28 @@ export function Footer() {
             </div>
             <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-xs sm:text-sm text-[#1e293b]">
               <Link
-                href="/privacy"
+                href="https://shrividhya.in/privacy-policy/"
                 className="hover:text-[#e27447] transition-colors whitespace-nowrap"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Privacy Policy
               </Link>
               <Link
-                href="/terms"
+                href="https://shrividhya.in/terms-of-use/"
                 className="hover:text-[#e27447] transition-colors whitespace-nowrap"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Terms of Service
+              </Link>
+              <Link
+                href="https://shrividhya.in/refund-policy/"
+                className="hover:text-[#e27447] transition-colors whitespace-nowrap"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Refund Policy
               </Link>
             </div>
           </div>

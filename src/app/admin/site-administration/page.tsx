@@ -11,6 +11,7 @@ import {
 } from "@/app/components-demo/ui/ui-components/card";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   Users,
   BookOpen,
@@ -169,6 +170,16 @@ export default function SiteAdministrationPage() {
     <AdminOnly>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
+          {/* Breadcrumbs */}
+          <div className="mb-6">
+            <Breadcrumb
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Site Administration", isActive: true },
+              ]}
+            />
+          </div>
+
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">

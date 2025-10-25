@@ -10,6 +10,7 @@ import {
 } from "@/app/components-demo/ui/ui-components/card";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import { createClient } from "@/lib/supabase/client";
 import { Save } from "lucide-react";
 
@@ -270,6 +271,17 @@ export default function LessonMapperPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Breadcrumbs */}
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Admin", href: "/admin/site-administration" },
+            { label: "Lesson Mapper", isActive: true },
+          ]}
+        />
+      </div>
+
       {/* Header Card */}
       <Card className="mb-6 rounded-sm">
         <CardHeader>

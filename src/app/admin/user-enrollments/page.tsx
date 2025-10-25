@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/app/components-demo/ui/ui-components/card";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
 import {
@@ -296,6 +297,17 @@ export default function UserEnrollmentsPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <div className="mb-6">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Admin", href: "/admin/site-administration" },
+              { label: "User Enrollments", isActive: true },
+            ]}
+          />
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">

@@ -66,50 +66,6 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-
-            <div className="mt-4">
-              <h5 className="text-sm font-medium text-[#1e293b] mb-2">
-                Boards
-              </h5>
-              <div className="grid grid-cols-2 gap-1 text-xs text-[#1e293b]">
-                <Link
-                  href="/courses/discover?curriculum=CBSE"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  CBSE
-                </Link>
-                <Link
-                  href="/courses/discover?curriculum=ICSE"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  ICSE
-                </Link>
-                <Link
-                  href="/courses/discover?curriculum=IBDP"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  IBDP
-                </Link>
-                <Link
-                  href="/courses/discover?curriculum=IGCSE"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  IGCSE
-                </Link>
-                <Link
-                  href="/courses/discover?curriculum=GMAT"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  GMAT
-                </Link>
-                <Link
-                  href="/courses/discover?curriculum=SAT"
-                  className="hover:text-[#e27447] transition-colors"
-                >
-                  SAT
-                </Link>
-              </div>
-            </div>
           </div>
 
           {/* Company */}
@@ -180,26 +136,20 @@ export function Footer() {
             </div>
             <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 text-xs sm:text-sm text-[#1e293b]">
               <Link
-                href="https://shrividhya.in/privacy-policy/"
+                href="/privacy-policy"
                 className="hover:text-[#e27447] transition-colors whitespace-nowrap"
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 Privacy Policy
               </Link>
               <Link
-                href="https://shrividhya.in/terms-of-use/"
+                href="/terms-of-use"
                 className="hover:text-[#e27447] transition-colors whitespace-nowrap"
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 Terms of Service
               </Link>
               <Link
-                href="https://shrividhya.in/refund-policy/"
+                href="/refund-policy"
                 className="hover:text-[#e27447] transition-colors whitespace-nowrap"
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 Refund Policy
               </Link>

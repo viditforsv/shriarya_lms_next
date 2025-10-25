@@ -11,6 +11,7 @@ import {
 } from "@/app/components-demo/ui/ui-components/card";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   Users,
   BookOpen,
@@ -163,17 +164,19 @@ export default function AdminDashboard() {
     <AdminOnly>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
+          {/* Breadcrumbs */}
+          <div className="mb-6">
+            <Breadcrumb
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Admin", href: "/admin/site-administration" },
+                { label: "Dashboard", isActive: true },
+              ]}
+            />
+          </div>
+
           {/* Header */}
           <div className="mb-8">
-            <div className="mb-4">
-              <Link
-                href="/admin/site-administration"
-                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Site Administration
-              </Link>
-            </div>
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-foreground">

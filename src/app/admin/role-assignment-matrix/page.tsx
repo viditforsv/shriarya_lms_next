@@ -19,6 +19,7 @@ import {
 } from "@/app/components-demo/ui/table";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   ChevronDown,
   ChevronRight,
@@ -285,13 +286,13 @@ export default function RoleAssignmentMatrixPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Breadcrumbs */}
         <div className="mb-8">
-          <Link
-            href="/admin"
-            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Admin Panel
-          </Link>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Admin", href: "/admin/site-administration" },
+              { label: "Role Assignment Matrix", isActive: true },
+            ]}
+          />
         </div>
 
         {/* Page Header */}

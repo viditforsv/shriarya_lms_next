@@ -13,6 +13,7 @@ import {
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   Select,
   SelectContent,
@@ -196,15 +197,20 @@ export default function AdminLessonEditorPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Breadcrumbs */}
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Admin", href: "/admin/site-administration" },
+            { label: "Lesson Editor", isActive: true },
+          ]}
+        />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <Link href="/admin">
-            <Button variant="outline" size="sm" className="rounded-sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Admin
-            </Button>
-          </Link>
           <div>
             <h1 className="text-3xl font-bold">Lesson Content Editor</h1>
             <p className="text-muted-foreground">

@@ -10,6 +10,7 @@ import {
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   Tabs,
   TabsContent,
@@ -1256,6 +1257,17 @@ export default function CourseCreatorPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Breadcrumbs */}
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Admin", href: "/admin/site-administration" },
+            { label: "Course Creator", isActive: true },
+          ]}
+        />
+      </div>
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
           Course Creator

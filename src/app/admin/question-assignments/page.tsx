@@ -2,6 +2,7 @@
 
 import QuestionAssignmentManager from "@/components/QuestionAssignmentManager";
 import BulkAssignmentManager from "@/components/BulkAssignmentManager";
+import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
 import {
   Tabs,
   TabsContent,
@@ -12,6 +13,17 @@ import {
 export default function QuestionAssignmentsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
+      {/* Breadcrumbs */}
+      <div className="mb-6">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Admin", href: "/admin/site-administration" },
+            { label: "Question Assignments", isActive: true },
+          ]}
+        />
+      </div>
+
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Question Assignment Management</h1>
         <p className="text-muted-foreground mt-2">

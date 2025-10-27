@@ -1255,6 +1255,18 @@ export default function CourseCreatorPage() {
     loadExistingCourses();
   }, []);
 
+  // Auto-load course from URL parameter
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const courseId = searchParams.get("courseId");
+      if (courseId && !isEditing) {
+        loadCourseForEditing(courseId);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumbs */}

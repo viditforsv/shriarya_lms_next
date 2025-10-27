@@ -283,9 +283,9 @@ export default function Home() {
             <Button
               size="lg"
               className="bg-accent hover:bg-accent/90"
-              onClick={() => router.push("/auth?tab=signup")}
+              onClick={() => router.push("/courses/discover")}
             >
-              Get Started
+              Browse Courses
             </Button>
             <Button
               size="lg"
@@ -394,26 +394,6 @@ export default function Home() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <h3 className="text-4xl font-bold text-accent mb-2">100+</h3>
-              <p className="text-muted-foreground">Courses Available</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold text-green-600 mb-2">10K+</h3>
-              <p className="text-muted-foreground">Active Students</p>
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold text-purple-600 mb-2">50+</h3>
-              <p className="text-muted-foreground">Expert Instructors</p>
-            </div>
           </div>
         </div>
       </section>

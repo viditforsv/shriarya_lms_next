@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Card, CardContent } from '@/app/components-demo/ui/ui-components/card'
-import { AlertTriangle, Home, RefreshCw, HelpCircle } from 'lucide-react'
+import Link from "next/link";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
+import { AlertTriangle, Home, RefreshCw, HelpCircle } from "lucide-react";
 
 export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   return (
     <html>
@@ -22,10 +22,15 @@ export default function GlobalError({
               <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="w-12 h-12 text-red-600" />
               </div>
-              <h1 className="text-4xl font-bold text-red-800 mb-4">Something went wrong!</h1>
-              <h2 className="text-2xl font-semibold text-red-700 mb-4">An unexpected error occurred</h2>
+              <h1 className="text-4xl font-bold text-red-800 mb-4">
+                Something went wrong!
+              </h1>
+              <h2 className="text-2xl font-semibold text-red-700 mb-4">
+                An unexpected error occurred
+              </h2>
               <p className="text-lg text-red-600 max-w-2xl mx-auto">
-                We apologize for the inconvenience. Our team has been notified and is working to fix this issue.
+                We apologize for the inconvenience. Our team has been notified
+                and is working to fix this issue.
               </p>
             </div>
           </div>
@@ -36,10 +41,12 @@ export default function GlobalError({
               {/* Error Details */}
               <Card className="mb-8 border-red-200">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-red-800 mb-4">Error Details</h3>
+                  <h3 className="text-lg font-semibold text-red-800 mb-4">
+                    Error Details
+                  </h3>
                   <div className="bg-red-50 p-4 rounded-sm border border-red-200">
                     <p className="text-sm text-red-700 font-mono break-all">
-                      {error.message || 'Unknown error occurred'}
+                      {error.message || "Unknown error occurred"}
                     </p>
                     {error.digest && (
                       <p className="text-xs text-red-600 mt-2">
@@ -53,9 +60,9 @@ export default function GlobalError({
               {/* Primary Actions */}
               <div className="text-center mb-16">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                  <Button 
+                  <Button
                     onClick={reset}
-                    size="lg" 
+                    size="lg"
                     className="bg-red-600 hover:bg-red-700"
                   >
                     <RefreshCw className="w-5 h-5 mr-2" />
@@ -78,16 +85,27 @@ export default function GlobalError({
                   <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <HelpCircle className="w-10 h-10 text-red-600" />
                   </div>
-                  <h3 className="text-2xl font-bold text-red-800 mb-4">Need Help?</h3>
+                  <h3 className="text-2xl font-bold text-red-800 mb-4">
+                    Need Help?
+                  </h3>
                   <p className="text-red-700 mb-6 max-w-2xl mx-auto">
-                    If this error persists, please contact our support team with the error details above.
-                    We&apos;ll help you resolve this issue as quickly as possible.
+                    If this error persists, please contact our support team with
+                    the error details above. We&apos;ll help you resolve this
+                    issue as quickly as possible.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button asChild variant="outline" className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                    >
                       <Link href="/contact">Contact Support</Link>
                     </Button>
-                    <Button asChild variant="outline" className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                    >
                       <Link href="/help">Help Center</Link>
                     </Button>
                   </div>
@@ -101,7 +119,7 @@ export default function GlobalError({
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   <Button asChild variant="outline" size="sm">
-                    <Link href="/courses">Courses</Link>
+                    <Link href="/courses/discover">Courses</Link>
                   </Button>
                   <Button asChild variant="outline" size="sm">
                     <Link href="/templates">Templates</Link>
@@ -119,5 +137,5 @@ export default function GlobalError({
         </div>
       </body>
     </html>
-  )
+  );
 }

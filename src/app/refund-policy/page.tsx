@@ -33,18 +33,18 @@ export default function RefundPolicy() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-[#1e293b] mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1e293b] mb-4">
               Refund Policy
             </h1>
           </div>
 
           {/* Content */}
-          <div className="bg-white rounded-sm shadow-sm border border-[#feefea] p-8 lg:p-12">
-            <div className="prose prose-lg max-w-none">
+          <div className="bg-white rounded-sm shadow-sm border border-[#feefea] p-6 md:p-8 lg:p-12">
+            <div className="prose prose-sm md:prose-lg max-w-none">
               {/* Introduction */}
-              <section className="mb-8">
-                <p className="text-lg text-[#1e293b] leading-relaxed mb-6">
+              <section className="mb-6 md:mb-8">
+                <p className="text-base md:text-lg text-[#1e293b] leading-relaxed mb-4 md:mb-6">
                   At{" "}
                   <span className="font-semibold text-[#e27447]">
                     Shrividhya Institute
@@ -56,12 +56,12 @@ export default function RefundPolicy() {
               </section>
 
               {/* Eligibility for Refund */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-[#1e293b] mb-4">
+              <section className="mb-6 md:mb-8">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#1e293b] mb-3 md:mb-4">
                   Refund Policy
                 </h2>
-                <div className="bg-green-50 border-l-4 border-green-400 p-6 rounded-sm mb-6">
-                  <p className="text-lg text-[#1e293b] leading-relaxed">
+                <div className="bg-green-50 border-l-4 border-green-400 p-4 md:p-6 rounded-sm mb-4 md:mb-6">
+                  <p className="text-base md:text-lg text-[#1e293b] leading-relaxed">
                     <strong className="text-[#e27447]">100% Refund:</strong> We
                     offer a full refund on a pro-rated basis within 7 working
                     days of your request. No questions asked. Feedback and
@@ -71,11 +71,11 @@ export default function RefundPolicy() {
               </section>
 
               {/* How to Request a Refund */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-[#1e293b] mb-4">
+              <section className="mb-6 md:mb-8">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#1e293b] mb-3 md:mb-4">
                   How to Request a Refund
                 </h2>
-                <p className="text-[#1e293b] leading-relaxed mb-6">
+                <p className="text-base md:text-lg text-[#1e293b] leading-relaxed mb-4 md:mb-6">
                   To request a refund, please contact our support team at{" "}
                   <a
                     href="mailto:contact@shrividhya.in"
@@ -90,11 +90,11 @@ export default function RefundPolicy() {
               </section>
 
               {/* Contact Information */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-[#1e293b] mb-4">
+              <section className="mb-6 md:mb-8">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#1e293b] mb-3 md:mb-4">
                   Contact Information
                 </h2>
-                <p className="text-[#1e293b] leading-relaxed mb-6">
+                <p className="text-base md:text-lg text-[#1e293b] leading-relaxed mb-4 md:mb-6">
                   For any questions regarding our refund policy, please contact
                   us at{" "}
                   <a
@@ -114,9 +114,9 @@ export default function RefundPolicy() {
               </section>
 
               {/* Important Notes */}
-              <section className="mb-8">
-                <div className="bg-blue-50 border-l-4 border-[#feefea]lue-400 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-blue-900 mb-3">
+              <section className="mb-6 md:mb-8">
+                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 md:p-6 rounded-lg">
+                  <h3 className="text-base md:text-lg font-semibold text-blue-900 mb-3">
                     Important Information
                   </h3>
                   <ul className="text-blue-800 space-y-2">
@@ -137,16 +137,16 @@ export default function RefundPolicy() {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center mt-12">
-            <div className="bg-gradient-to-r from-[#e27447] to-[#d1653a] rounded-sm p-8">
-              <h3 className="text-2xl font-bold text-white mb-4">
+          <div className="text-center mt-8 md:mt-12">
+            <div className="bg-gradient-to-r from-[#e27447] to-[#d1653a] rounded-sm p-6 md:p-8">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">
                 Need Help with Your Refund?
               </h3>
-              <p className="text-white/90 mb-6">
+              <p className="text-white/90 mb-4 md:mb-6 text-sm md:text-base">
                 Our support team is here to help you with any refund-related
                 questions or concerns.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
                 <a
                   href="/contact"
                   className="inline-flex items-center bg-white text-[#e27447] hover:bg-gray-100 font-semibold py-3 px-6 rounded-sm transition-colors duration-200"

@@ -900,7 +900,7 @@ export default function DynamicLessonPage({
         {/* Course Breadcrumb */}
         <div className="mb-6 px-6">
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/courses" className="hover:text-foreground">
+            <Link href="/courses/discover" className="hover:text-foreground">
               Courses
             </Link>
             <span>/</span>

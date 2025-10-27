@@ -26,9 +26,11 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function ContactPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -408,6 +410,7 @@ export default function ContactPage() {
                 <Button
                   size="lg"
                   className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                  onClick={() => router.push("/courses/discover")}
                 >
                   <BookOpen className="w-5 h-5 mr-2" />
                   Browse Courses

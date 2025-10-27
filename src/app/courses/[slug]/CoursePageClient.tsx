@@ -539,7 +539,7 @@ export function CoursePageClient({
           <p className="text-muted-foreground mb-6">
             {error || "The course you are looking for does not exist."}
           </p>
-          <Link href="/courses">
+          <Link href="/courses/discover">
             <Button>Browse Courses</Button>
           </Link>
         </div>

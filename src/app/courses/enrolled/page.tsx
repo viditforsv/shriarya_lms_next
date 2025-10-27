@@ -375,7 +375,7 @@ export default function EnrolledCoursesPage() {
             <p className="text-muted-foreground mb-6">
               Start your learning journey by enrolling in a course
             </p>
-            <Link href="/courses">
+            <Link href="/courses/discover">
               <Button>
                 Browse Courses
                 <ArrowRight className="w-4 h-4 ml-2" />

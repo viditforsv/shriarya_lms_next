@@ -148,6 +148,12 @@ export default function CoursePaymentPage() {
       const createData = await createResponse.json();
 
       if (!createResponse.ok || !createData.success) {
+        // Provide better error messages
+        if (createData.error?.includes("not configured")) {
+          throw new Error(
+            "Payment system is currently being configured. Please try again later or contact support."
+          );
+        }
         throw new Error(createData.error || "Failed to create order");
       }
 

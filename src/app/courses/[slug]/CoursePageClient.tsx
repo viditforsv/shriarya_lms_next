@@ -136,20 +136,12 @@ export function CoursePageClient({
     });
   };
 
-  // Authentication check - redirect if not logged in
+  // Allow public access - skip auth check
   useEffect(() => {
-    // Wait for auth context to initialize
+    // Auth context is ready (user can be null for public access)
     if (user === undefined) return;
-
-    if (!user) {
-      // User is not logged in, redirect to auth page
-      const redirectUrl = encodeURIComponent(`/courses/${courseParams.slug}`);
-      router.push(`/auth?redirect=${redirectUrl}`);
-      return;
-    }
-
     setAuthChecked(true);
-  }, [user, router, courseParams.slug]);
+  }, [user]);
 
   // Load course data
   useEffect(() => {
@@ -183,9 +175,9 @@ export function CoursePageClient({
         setCourse(data.rendered);
         setTemplate(data.template);
 
-        // Check enrollment status
+        // Check enrollment status (only if user is logged in)
+        const supabase = createClient();
         if (user && courseId) {
-          const supabase = createClient();
           const { data: enrollment } = await supabase
             .from("courses_enrollments")
             .select("*")
@@ -244,8 +236,6 @@ export function CoursePageClient({
           setIsLoading(false);
           return;
         }
-
-        const supabase = createClient();
 
         // Fetch units for this course
         const { data: unitsData, error: unitsError } = await supabase
@@ -421,6 +411,13 @@ export function CoursePageClient({
 
   const handleAddToCart = () => {
     if (!course) return;
+
+    if (!user) {
+      // Redirect to login with return URL
+      const returnUrl = encodeURIComponent(`/courses/${courseParams.slug}`);
+      router.push(`/auth?redirect=${returnUrl}`);
+      return;
+    }
 
     addToCart({
       courseId: course.id,

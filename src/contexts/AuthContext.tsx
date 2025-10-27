@@ -123,6 +123,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           last_name: lastName,
           email: email,
           role: role,
+          avatar_url:
+            user.user_metadata?.avatar_url ||
+            user.user_metadata?.picture ||
+            null,
         };
 
         console.log(
@@ -218,6 +222,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           last_name: lastName || null,
           email: email || null,
           role: role,
+          avatar_url:
+            user.user_metadata?.avatar_url ||
+            user.user_metadata?.picture ||
+            null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
@@ -271,7 +279,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const fetchPromise = supabase
           .from("profiles")
           .select(
-            "id, first_name, last_name, email, role, created_at, updated_at"
+            "id, first_name, last_name, email, role, created_at, updated_at, avatar_url"
           )
           .eq("id", userId)
           .single();

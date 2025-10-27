@@ -6,15 +6,30 @@ export async function GET() {
     console.log("=== RAZORPAY TEST ENDPOINT ===");
 
     // Check environment variables
+    const hasKeyId = !!process.env.RAZORPAY_KEY_ID;
+    const hasKeySecret = !!process.env.RAZORPAY_KEY_SECRET;
+    const hasPublicKeyId = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
     console.log("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID);
     console.log(
       "RAZORPAY_KEY_SECRET:",
-      process.env.RAZORPAY_KEY_SECRET ? "***SET***" : "NOT SET"
+      hasKeySecret ? "***SET***" : "NOT SET"
     );
-    console.log(
-      "NEXT_PUBLIC_RAZORPAY_KEY_ID:",
-      process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
-    );
+    console.log("NEXT_PUBLIC_RAZORPAY_KEY_ID:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
+
+    // Quick check if credentials are configured
+    if (!hasKeyId || !hasKeySecret) {
+      return NextResponse.json({
+        success: false,
+        configured: false,
+        message: "Razorpay credentials are missing",
+        envCheck: {
+          keyId: hasKeyId,
+          keySecret: hasKeySecret,
+          publicKeyId: hasPublicKeyId,
+        },
+      });
+    }
 
     // Try to create Razorpay instance
     try {
@@ -34,6 +49,7 @@ export async function GET() {
 
       return NextResponse.json({
         success: true,
+        configured: true,
         message: "Razorpay integration working!",
         orderId: order.id,
         envCheck: {
@@ -47,6 +63,7 @@ export async function GET() {
       return NextResponse.json(
         {
           success: false,
+          configured: false,
           error: "Razorpay API error",
           details:
             razorpayError instanceof Error
@@ -66,6 +83,7 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
+        configured: false,
         error: "Test endpoint failed",
         details: error instanceof Error ? error.message : "Unknown error",
       },

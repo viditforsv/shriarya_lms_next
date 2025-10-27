@@ -60,13 +60,9 @@ export function PaymentMethodSelector({
 
   const testConnection = async () => {
     try {
-      console.log("Testing connection to test endpoint...");
-      const response = await fetch("/api/test-payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ test: "connection test" }),
+      console.log("Testing Razorpay connection...");
+      const response = await fetch("/api/test-razorpay", {
+        method: "GET",
       });
 
       if (!response.ok) {
@@ -74,12 +70,17 @@ export function PaymentMethodSelector({
       }
 
       const data = await response.json();
-      console.log("Test endpoint response:", data);
-      alert("Connection test successful!");
+      console.log("Razorpay test response:", data);
+      
+      if (data.configured) {
+        alert("✅ Razorpay is configured and working!");
+      } else {
+        alert("⚠️ Razorpay credentials are missing. Please check environment variables.");
+      }
     } catch (error) {
       console.error("Connection test failed:", error);
       alert(
-        `Connection test failed: ${
+        `❌ Connection test failed: ${
           error instanceof Error ? error.message : "Unknown error"
         }`
       );
@@ -221,7 +222,7 @@ export function PaymentMethodSelector({
           variant="outline"
           className="border-gray-300"
         >
-          Test Connection
+          Test Razorpay
         </Button>
         <Button
           onClick={handleCreatePayment}

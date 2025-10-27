@@ -180,8 +180,20 @@ export function Header() {
                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                     className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
                   >
-                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                      <User className="w-4 h-4 text-accent" />
+                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center overflow-hidden">
+                      {profile?.avatar_url ? (
+                        <img
+                          src={profile.avatar_url}
+                          alt={profile?.first_name || user.email || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs font-semibold text-[#e27447]">
+                          {profile?.first_name && profile?.last_name
+                            ? `${profile.first_name[0]}${profile.last_name[0]}`
+                            : user.email?.[0].toUpperCase() || "U"}
+                        </span>
+                      )}
                     </div>
                     <span className="hidden md:block">
                       {profile?.first_name && profile?.last_name

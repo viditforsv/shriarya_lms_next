@@ -15,6 +15,7 @@ import { Label } from "@/app/components-demo/ui/ui-components/label";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
 import { User, Mail, Shield, Calendar, Edit, Save, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { AvatarUpload } from "@/components/AvatarUpload";
 
 export default function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -213,15 +214,22 @@ export default function ProfilePage() {
               )}
 
               {/* Avatar Section */}
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
-                  <User className="w-8 h-8 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
+              <div className="flex items-start space-x-4">
+                <AvatarUpload
+                  currentAvatar={profile.avatar_url}
+                  userName={`${profile.first_name} ${profile.last_name}`}
+                  userId={profile.id}
+                  onAvatarUpdate={() => refreshProfile()}
+                  size="md"
+                />
+                <div className="flex-1 pt-2">
+                  <h3 className="font-semibold text-foreground text-lg">
                     {profile.first_name} {profile.last_name}
                   </h3>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Click to choose from 56 unique avatars
+                  </p>
                 </div>
               </div>
 

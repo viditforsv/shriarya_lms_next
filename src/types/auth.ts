@@ -9,6 +9,7 @@ export interface UserProfile {
   last_name: string | null;
   email: string | null;
   role: UserRole;
+  avatar_url: string | null;
   created_at: string;
   updated_at: string;
 }

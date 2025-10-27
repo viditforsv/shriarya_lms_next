@@ -1,7 +1,8 @@
 import { CoursePageClient } from "./CoursePageClient";
 import type { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://courses.shrividhya.in";
+const baseUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "https://courses.shrividhya.in";
 
 export async function generateMetadata({
   params,
@@ -13,7 +14,9 @@ export async function generateMetadata({
   try {
     // Fetch course data for metadata
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || baseUrl}/api/courses/${slug}/with-template`,
+      `${
+        process.env.NEXT_PUBLIC_APP_URL || baseUrl
+      }/api/courses/${slug}/with-template`,
       {
         cache: "no-store",
         next: { revalidate: 0 },

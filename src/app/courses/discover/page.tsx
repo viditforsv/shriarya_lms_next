@@ -744,25 +744,26 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
               </div>
             </div>
             <div className="flex-1">
-              <div className="flex items-start justify-between mb-2">
+              <div className="mb-2">
+                {course.status === "draft" && (
+                  <Badge
+                    variant="outline"
+                    className="border-yellow-500 text-yellow-700 bg-yellow-50 mb-1"
+                  >
+                    Draft
+                  </Badge>
+                )}
                 <div>
                   <h3 className="text-lg font-semibold mb-1">{course.title}</h3>
+                  <Badge
+                    variant={course.price === 0 ? "secondary" : "default"}
+                    className="mb-2"
+                  >
+                    {course.price === 0 ? "Free" : `₹${course.price}`}
+                  </Badge>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {course.description}
                   </p>
-                </div>
-                <div className="flex items-center gap-2 ml-4">
-                  {course.status === "draft" && (
-                    <Badge
-                      variant="outline"
-                      className="border-yellow-500 text-yellow-700 bg-yellow-50"
-                    >
-                      Draft
-                    </Badge>
-                  )}
-                  <Badge variant={course.price === 0 ? "secondary" : "default"}>
-                    {course.price === 0 ? "Free" : `₹${course.price}`}
-                  </Badge>
                 </div>
               </div>
               <div className="space-y-2 mb-4">
@@ -782,9 +783,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="w-4 h-4" />
                   <span>
-                    {course.price === 0
-                      ? "Free Course"
-                      : `Paid Course - ₹${course.price}`}
+                    {course.price === 0 ? "Free Course" : "Paid Course"}
                   </span>
                 </div>
               </div>
@@ -867,23 +866,24 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             <BookOpen className="w-12 h-12 text-white" />
           </div>
         </div>
-        <div className="flex items-start justify-between mb-2">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors">
+        <div className="mb-2">
+          {course.status === "draft" && (
+            <Badge
+              variant="outline"
+              className="border-yellow-500 text-yellow-700 bg-yellow-50 mb-2"
+            >
+              Draft
+            </Badge>
+          )}
+          <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors mb-2">
             {course.title}
           </CardTitle>
-          <div className="flex items-center gap-2">
-            {course.status === "draft" && (
-              <Badge
-                variant="outline"
-                className="border-yellow-500 text-yellow-700 bg-yellow-50"
-              >
-                Draft
-              </Badge>
-            )}
-            <Badge variant={course.price === 0 ? "secondary" : "default"}>
-              {course.price === 0 ? "Free" : `₹${course.price}`}
-            </Badge>
-          </div>
+          <Badge
+            variant={course.price === 0 ? "secondary" : "default"}
+            className="mb-2"
+          >
+            {course.price === 0 ? "Free" : `₹${course.price}`}
+          </Badge>
         </div>
         <CardDescription className="line-clamp-3">
           {course.description}
@@ -907,11 +907,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Star className="w-4 h-4" />
-              <span>
-                {course.price === 0
-                  ? "Free Course"
-                  : `Paid Course - ₹${course.price}`}
-              </span>
+              <span>{course.price === 0 ? "Free Course" : "Paid Course"}</span>
             </div>
           </div>
 

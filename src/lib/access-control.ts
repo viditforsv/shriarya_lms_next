@@ -28,6 +28,7 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   // Public routes (accessible to everyone)
   { path: "/", accessLevel: "public" },
   { path: "/courses", accessLevel: "public" },
+  { path: "/courses/discover", accessLevel: "public" },
   { path: "/courses/free", accessLevel: "public" },
   { path: "/courses/cbse-mathematics-class-10", accessLevel: "public" },
   { path: "/courses/cbse", accessLevel: "public" },
@@ -45,6 +46,9 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: "/auth/forgot-password", accessLevel: "public" },
   { path: "/auth/reset-password", accessLevel: "public" },
   { path: "/faq", accessLevel: "public" },
+  { path: "/refund-policy", accessLevel: "public" },
+  { path: "/privacy-policy", accessLevel: "public" },
+  { path: "/terms-of-use", accessLevel: "public" },
 
   // Authenticated routes (require login)
   { path: "/profile", accessLevel: "authenticated" },

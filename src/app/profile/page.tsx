@@ -220,7 +220,11 @@ export default function ProfilePage() {
                   userName={`${profile.first_name} ${profile.last_name}`}
                   userId={profile.id}
                   userEmail={user.email}
-                  googleAvatar={user.user_metadata?.avatar_url || user.user_metadata?.picture || null}
+                  googleAvatar={
+                    user.user_metadata?.avatar_url ||
+                    user.user_metadata?.picture ||
+                    null
+                  }
                   onAvatarUpdate={() => refreshProfile()}
                   size="md"
                 />

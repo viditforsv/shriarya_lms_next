@@ -431,17 +431,30 @@ export function CoursePageClient({
   };
 
   const handlePreviewCourse = () => {
-    // Expand all units to show lessons
-    const allUnitIds = units.map((_, index) => `unit-${index}`);
-    setExpandedUnits(new Set(allUnitIds));
+    // Find the first lesson that has preview access
+    const firstPreviewLesson = lessons.find((lesson) => lesson.isPreview);
 
-    // Scroll to content section
-    const contentSection = document.querySelector('[value="content"]');
-    if (contentSection) {
-      contentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      // Click the content tab to show course structure
-      const contentTab = contentSection as HTMLElement;
-      contentTab.click();
+    if (firstPreviewLesson) {
+      // Navigate directly to the first preview lesson
+      router.push(
+        `/courses/${courseParams.slug}/lesson/${firstPreviewLesson.slug}`
+      );
+    } else {
+      // If no preview lesson exists, show a message and expand content to show what's available
+      alert("No preview lessons available for this course.");
+
+      // Expand all units to show lessons
+      const allUnitIds = units.map((_, index) => `unit-${index}`);
+      setExpandedUnits(new Set(allUnitIds));
+
+      // Scroll to content section
+      const contentSection = document.querySelector('[value="content"]');
+      if (contentSection) {
+        contentSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Click the content tab to show course structure
+        const contentTab = contentSection as HTMLElement;
+        contentTab.click();
+      }
     }
   };
 

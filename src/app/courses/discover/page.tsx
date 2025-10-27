@@ -176,9 +176,9 @@ export default function CourseDiscoveryPage() {
             if (c.slug.includes("class-11")) return "Class 11";
             if (c.slug.includes("class-12")) return "Class 12";
             if (c.slug.includes("hl")) return "Higher Level";
-            return "Other";
+            return null; // Return null for unknown grades instead of "Other"
           })
-          .filter(Boolean)
+          .filter((grade) => grade !== null && grade !== "Other") // Filter out null and "Other"
       ),
     ];
 
@@ -190,9 +190,9 @@ export default function CourseDiscoveryPage() {
             // Fallback to slug-based detection
             if (c.slug.includes("hl")) return "Higher Level";
             if (c.slug.includes("sl")) return "Standard Level";
-            return "Standard";
+            return null; // Return null for unknown levels
           })
-          .filter(Boolean)
+          .filter((level) => level !== null && level !== undefined) // Filter out null and undefined
       ),
     ];
 
@@ -362,6 +362,7 @@ export default function CourseDiscoveryPage() {
       value !== "all" &&
       value !== "desc" &&
       value !== "grid" &&
+      value !== "list" &&
       value !== "" &&
       key !== "sortBy"
   ).length;
@@ -710,7 +711,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
       <Card className="hover:shadow-md transition-shadow">
         <CardContent className="p-6">
           <div className="flex gap-6">
-            <div className="w-32 h-24 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <div className="w-64 h-32 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
               {thumbnailUrl.includes("/api/cdn-proxy") ? (
                 <img
                   src={thumbnailUrl}
@@ -728,8 +729,8 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                 <Image
                   src={thumbnailUrl}
                   alt={`${course.title} thumbnail`}
-                  width={128}
-                  height={96}
+                  width={256}
+                  height={128}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     // Fallback to gradient if image fails to load

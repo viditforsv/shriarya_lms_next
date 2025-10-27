@@ -9,7 +9,12 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@/app/components-demo/ui/avatar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/app/components-demo/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/app/components-demo/ui/tabs";
 import { cn } from "@/lib/utils";
 
 interface AvatarPickerProps {
@@ -108,7 +113,9 @@ export function AvatarPicker({
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"default" | "google" | "dicebear">("default");
+  const [activeTab, setActiveTab] = useState<"default" | "google" | "dicebear">(
+    "default"
+  );
   const supabase = createClient();
 
   const sizeClasses = {
@@ -154,7 +161,7 @@ export function AvatarPicker({
 
       onAvatarUpdate?.(previewUrl || "");
       setSuccess("Avatar saved successfully!");
-      
+
       // Close after a short delay to show success message
       setTimeout(() => {
         onClose();
@@ -168,7 +175,10 @@ export function AvatarPicker({
   };
 
   // Handle selection for each option type
-  const handleOptionSelect = (type: "default" | "google" | "dicebear", value: string) => {
+  const handleOptionSelect = (
+    type: "default" | "google" | "dicebear",
+    value: string
+  ) => {
     setSelectedAvatar(value);
     setPreviewUrl(value);
     setError(null);
@@ -280,17 +290,24 @@ export function AvatarPicker({
             </div>
 
             {/* Avatar Options with Tabs */}
-            <Tabs value={activeTab} onValueChange={(v) => {
-              setActiveTab(v as "default" | "google" | "dicebear");
-              setSelectedAvatar(null);
-              setPreviewUrl(null);
-            }}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(v) => {
+                setActiveTab(v as "default" | "google" | "dicebear");
+                setSelectedAvatar(null);
+                setPreviewUrl(null);
+              }}
+            >
               <TabsList className="grid w-full grid-cols-3 rounded-sm mb-4">
                 <TabsTrigger value="default" className="rounded-sm">
                   <User className="w-4 h-4 mr-2" />
                   Default
                 </TabsTrigger>
-                <TabsTrigger value="google" className="rounded-sm" disabled={!googleAvatar}>
+                <TabsTrigger
+                  value="google"
+                  className="rounded-sm"
+                  disabled={!googleAvatar}
+                >
                   <Mail className="w-4 h-4 mr-2" />
                   Google
                 </TabsTrigger>
@@ -313,7 +330,8 @@ export function AvatarPicker({
                     }}
                     className={cn(
                       "w-full p-4 border-2 rounded-sm transition-all hover:bg-accent/10",
-                      previewUrl === "" && selectedAvatar === "default" &&
+                      previewUrl === "" &&
+                        selectedAvatar === "default" &&
                         "border-[#e27447] bg-accent/20"
                     )}
                   >
@@ -372,7 +390,8 @@ export function AvatarPicker({
                   ) : (
                     <div className="p-8 text-center">
                       <p className="text-sm text-muted-foreground">
-                        No Google photo available. Sign in with Google to use this option.
+                        No Google photo available. Sign in with Google to use
+                        this option.
                       </p>
                     </div>
                   )}
@@ -424,7 +443,9 @@ export function AvatarPicker({
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={(activeTab === "dicebear" && !selectedAvatar) || isUpdating}
+                disabled={
+                  (activeTab === "dicebear" && !selectedAvatar) || isUpdating
+                }
                 className="flex-1 bg-[#e27447] hover:bg-[#d1653a] text-white rounded-sm"
               >
                 {isUpdating ? "Saving..." : "Save Avatar"}

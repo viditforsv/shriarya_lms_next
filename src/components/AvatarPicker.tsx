@@ -193,7 +193,7 @@ export function AvatarPicker({
               </p>
             </div>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={onClose}
               className="rounded-sm"

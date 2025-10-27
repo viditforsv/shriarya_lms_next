@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "ShriArya LMS",
     images: [
       {
-        url: `${baseUrl}/images/main_logo.png`,
+        url: `${baseUrl}/images/main_logo.jpg`,
         width: 1080,
         height: 1080,
         alt: "ShriArya LMS Logo",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: "ShriArya LMS - Learning Management System",
     description:
       "A modern learning management system built with Next.js and Supabase",
-    images: [`${baseUrl}/images/main_logo.png`],
+    images: [`${baseUrl}/images/main_logo.jpg`],
   },
 };
 

@@ -2,19 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { X } from "lucide-react";
+import { X, User, Mail, Sparkles } from "lucide-react";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
 } from "@/app/components-demo/ui/avatar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/app/components-demo/ui/tabs";
 import { cn } from "@/lib/utils";
 
 interface AvatarPickerProps {
   currentAvatar?: string | null;
   userName: string;
   userId: string;
+  userEmail?: string;
+  googleAvatar?: string | null;
   onAvatarUpdate?: (avatarUrl: string) => void;
   size?: "sm" | "md" | "lg";
   isOpen: boolean;
@@ -94,6 +97,8 @@ export function AvatarPicker({
   currentAvatar,
   userName,
   userId,
+  userEmail,
+  googleAvatar,
   onAvatarUpdate,
   size = "md",
   isOpen,
@@ -103,6 +108,7 @@ export function AvatarPicker({
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"default" | "google" | "dicebear">("default");
   const supabase = createClient();
 
   const sizeClasses = {
@@ -129,13 +135,14 @@ export function AvatarPicker({
   };
 
   const handleSave = async () => {
-    if (!selectedAvatar || !previewUrl) return;
+    if (!previewUrl && activeTab === "dicebear") return;
+    if (!selectedAvatar && activeTab === "dicebear") return;
 
     setIsUpdating(true);
     setError(null);
 
     try {
-      // Update profile with selected avatar URL
+      // Update profile with selected avatar URL (null for default initials)
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ avatar_url: previewUrl })
@@ -145,9 +152,9 @@ export function AvatarPicker({
         throw new Error("Failed to save avatar");
       }
 
-      onAvatarUpdate?.(previewUrl);
+      onAvatarUpdate?.(previewUrl || "");
       setSuccess("Avatar saved successfully!");
-
+      
       // Close after a short delay to show success message
       setTimeout(() => {
         onClose();
@@ -160,6 +167,13 @@ export function AvatarPicker({
     }
   };
 
+  // Handle selection for each option type
+  const handleOptionSelect = (type: "default" | "google" | "dicebear", value: string) => {
+    setSelectedAvatar(value);
+    setPreviewUrl(value);
+    setError(null);
+  };
+
   const [success, setSuccess] = useState<string | null>(null);
 
   // Reset state when modal opens/closes
@@ -169,6 +183,7 @@ export function AvatarPicker({
       setPreviewUrl(null);
       setError(null);
       setSuccess(null);
+      setActiveTab("default");
     }
   }, [isOpen]);
 
@@ -264,33 +279,136 @@ export function AvatarPicker({
               )}
             </div>
 
-            {/* DiceBear Avatar Grid */}
-            <div>
-              <p className="text-sm font-medium text-muted-foreground mb-3">
-                Select an Avatar
-              </p>
-              <div className="grid grid-cols-8 gap-2">
-                {AVATAR_SEEDS.map((seed, index) => (
+            {/* Avatar Options with Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => {
+              setActiveTab(v as "default" | "google" | "dicebear");
+              setSelectedAvatar(null);
+              setPreviewUrl(null);
+            }}>
+              <TabsList className="grid w-full grid-cols-3 rounded-sm mb-4">
+                <TabsTrigger value="default" className="rounded-sm">
+                  <User className="w-4 h-4 mr-2" />
+                  Default
+                </TabsTrigger>
+                <TabsTrigger value="google" className="rounded-sm" disabled={!googleAvatar}>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Google
+                </TabsTrigger>
+                <TabsTrigger value="dicebear" className="rounded-sm">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  DiceBear
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Default Initials Option */}
+              <TabsContent value="default" className="mt-0">
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Use your initials as your avatar
+                  </p>
                   <button
-                    key={index}
-                    onClick={() => handleAvatarSelect(seed)}
-                    disabled={isUpdating}
+                    onClick={() => {
+                      setPreviewUrl(""); // Empty string to clear avatar
+                      setSelectedAvatar("default");
+                    }}
                     className={cn(
-                      "aspect-square rounded-full overflow-hidden transition-all hover:scale-110 active:scale-95 disabled:opacity-50 border-2 border-transparent",
-                      selectedAvatar === seed &&
-                        "ring-2 ring-[#e27447] border-[#e27447]"
+                      "w-full p-4 border-2 rounded-sm transition-all hover:bg-accent/10",
+                      previewUrl === "" && selectedAvatar === "default" &&
+                        "border-[#e27447] bg-accent/20"
                     )}
                   >
-                    <img
-                      src={`https://api.dicebear.com/7.x/micah/svg?seed=${seed}`}
-                      alt={seed}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <div className="flex items-center space-x-4">
+                      <Avatar className={cn(sizeClasses[size])}>
+                        <AvatarFallback className="bg-[#e27447] text-white text-lg font-semibold">
+                          {getInitials(userName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="text-left">
+                        <p className="font-medium">{userName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Initials only
+                        </p>
+                      </div>
+                    </div>
                   </button>
-                ))}
-              </div>
-            </div>
+                </div>
+              </TabsContent>
+
+              {/* Google Photo Option */}
+              <TabsContent value="google" className="mt-0">
+                <div className="space-y-4">
+                  {googleAvatar ? (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        Use your Google profile picture
+                      </p>
+                      <button
+                        onClick={() => {
+                          setPreviewUrl(googleAvatar);
+                          setSelectedAvatar("google");
+                        }}
+                        className={cn(
+                          "w-full p-4 border-2 rounded-sm transition-all hover:bg-accent/10",
+                          previewUrl === googleAvatar &&
+                            "border-[#e27447] bg-accent/20"
+                        )}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <Avatar className={cn(sizeClasses[size])}>
+                            <AvatarImage src={googleAvatar} alt="Google" />
+                            <AvatarFallback className="bg-[#e27447] text-white text-lg font-semibold">
+                              {getInitials(userName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="text-left">
+                            <p className="font-medium">{userName}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Google photo
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="p-8 text-center">
+                      <p className="text-sm text-muted-foreground">
+                        No Google photo available. Sign in with Google to use this option.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* DiceBear Avatar Grid */}
+              <TabsContent value="dicebear" className="mt-0">
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Choose from our collection of avatars
+                  </p>
+                  <div className="grid grid-cols-8 gap-2">
+                    {AVATAR_SEEDS.map((seed, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleAvatarSelect(seed)}
+                        disabled={isUpdating}
+                        className={cn(
+                          "aspect-square rounded-full overflow-hidden transition-all hover:scale-110 active:scale-95 disabled:opacity-50 border-2 border-transparent",
+                          selectedAvatar === seed &&
+                            "ring-2 ring-[#e27447] border-[#e27447]"
+                        )}
+                      >
+                        <img
+                          src={`https://api.dicebear.com/7.x/micah/svg?seed=${seed}`}
+                          alt={seed}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Footer with Save Button */}
@@ -306,25 +424,14 @@ export function AvatarPicker({
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={!selectedAvatar || isUpdating}
+                disabled={(activeTab === "dicebear" && !selectedAvatar) || isUpdating}
                 className="flex-1 bg-[#e27447] hover:bg-[#d1653a] text-white rounded-sm"
               >
                 {isUpdating ? "Saving..." : "Save Avatar"}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              💡 Select an avatar and click Save to update your profile picture
-            </p>
-            <p className="text-xs text-muted-foreground text-center">
-              Powered by{" "}
-              <a
-                href="https://dicebear.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#e27447] hover:underline"
-              >
-                DiceBear
-              </a>
+              💡 Choose an option and click Save to update your profile picture
             </p>
           </div>
         </div>

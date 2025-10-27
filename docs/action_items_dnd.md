@@ -5,6 +5,9 @@
 3. Payment & course access flow
 4. Enhanced search (AND/OR logic)
 5. Certificates/gamification
+6. Allow file to be uploaded to bunny cdn and the URL to be accessible via supabase - automatically
+7. Avatars - custom image setup ecosystem
+8.
 
 ## Content Management
 

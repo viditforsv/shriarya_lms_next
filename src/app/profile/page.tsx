@@ -219,6 +219,8 @@ export default function ProfilePage() {
                   currentAvatar={profile.avatar_url}
                   userName={`${profile.first_name} ${profile.last_name}`}
                   userId={profile.id}
+                  userEmail={user.email}
+                  googleAvatar={user.user_metadata?.avatar_url || user.user_metadata?.picture || null}
                   onAvatarUpdate={() => refreshProfile()}
                   size="md"
                 />
@@ -228,7 +230,7 @@ export default function ProfilePage() {
                   </h3>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Click to choose from 56 unique avatars
+                    Click to choose from multiple avatar options
                   </p>
                 </div>
               </div>

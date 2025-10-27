@@ -15,6 +15,8 @@ interface AvatarUploadProps {
   currentAvatar?: string | null;
   userName: string;
   userId: string;
+  userEmail?: string;
+  googleAvatar?: string | null;
   onAvatarUpdate?: (avatarUrl: string) => void;
   size?: "sm" | "md" | "lg";
 }
@@ -23,6 +25,8 @@ export function AvatarUpload({
   currentAvatar,
   userName,
   userId,
+  userEmail,
+  googleAvatar,
   onAvatarUpdate,
   size = "lg",
 }: AvatarUploadProps) {
@@ -94,6 +98,8 @@ export function AvatarUpload({
         currentAvatar={avatar}
         userName={userName}
         userId={userId}
+        userEmail={userEmail}
+        googleAvatar={googleAvatar}
         onAvatarUpdate={(newAvatar) => {
           setAvatar(newAvatar);
           onAvatarUpdate?.(newAvatar);

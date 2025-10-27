@@ -357,9 +357,13 @@ export default function CourseDiscoveryPage() {
     });
   };
 
-  const activeFiltersCount = Object.values(filters).filter(
-    (value) =>
-      value !== "all" && value !== "desc" && value !== "grid" && value !== ""
+  const activeFiltersCount = Object.entries(filters).filter(
+    ([key, value]) =>
+      value !== "all" &&
+      value !== "desc" &&
+      value !== "grid" &&
+      value !== "" &&
+      key !== "sortBy"
   ).length;
 
   return (

@@ -51,6 +51,12 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: "/courses/enrolled", accessLevel: "authenticated" },
   { path: "/onboarding", accessLevel: "authenticated" },
 
+  // Student-only routes
+  { path: "/student", accessLevel: "student", requiredRole: "student" },
+
+  // Teacher-only routes
+  { path: "/teacher", accessLevel: "authenticated", requiredRole: "teacher" },
+
   // Admin-only routes
   { path: "/admin", accessLevel: "admin", requiredRole: "admin" },
   {
@@ -248,9 +254,13 @@ export function getRedirectPath(
   switch (route.accessLevel) {
     case "authenticated":
       return isAuthenticated ? null : "/auth";
+    case "student":
+      if (!isAuthenticated) return "/auth";
+      if (userRole !== "student") return "/courses/enrolled";
+      return null;
     case "admin":
       if (!isAuthenticated) return "/auth";
-      if (userRole !== "admin") return "/dashboard"; // Better default for authenticated non-admin users
+      if (userRole !== "admin") return "/courses/enrolled";
       return null;
     default:
       return null;
@@ -266,6 +276,7 @@ export const NAVIGATION_MENU = {
     { label: "FAQ", href: "/faq" },
   ],
   student: [
+    { label: "Dashboard", href: "/student" },
     { label: "My Courses & Progress", href: "/courses/enrolled" },
     { label: "Profile", href: "/profile" },
   ],

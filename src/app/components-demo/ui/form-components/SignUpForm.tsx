@@ -17,7 +17,8 @@ import { Chrome, Mail, Lock, User } from "lucide-react";
 export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { signUp, signInWithGoogle } = useAuth();
@@ -27,10 +28,15 @@ export function SignUpForm() {
     setLoading(true);
     setError("");
 
-    console.log("🔵 SignUpForm - Starting signup process", { email, fullName });
+    console.log("🔵 SignUpForm - Starting signup process", {
+      email,
+      firstName,
+      lastName,
+    });
 
     try {
       // All new users are automatically registered as students
+      const fullName = `${firstName} ${lastName}`.trim();
       await signUp(email, password, fullName, "student");
       console.log("✅ SignUpForm - Signup completed successfully");
     } catch (err) {
@@ -106,19 +112,36 @@ export function SignUpForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
-              <Input
-                id="fullName"
-                type="text"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="pl-10"
-                required
-              />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-[#94a3b8]" />
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
             </div>
           </div>
 

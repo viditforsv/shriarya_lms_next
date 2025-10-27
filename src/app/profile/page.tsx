@@ -1,100 +1,104 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Input } from '@/app/components-demo/ui/ui-components/input'
-import { Label } from '@/app/components-demo/ui/ui-components/label'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
-import { User, Mail, Shield, Calendar, Edit, Save, X } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { User, Mail, Shield, Calendar, Edit, Save, X } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ProfilePage() {
-  const { user, profile, refreshProfile } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  
+  const { user, profile, refreshProfile } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   // Form state
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: ''
-  })
+    first_name: "",
+    last_name: "",
+    email: "",
+  });
 
   // Initialize form data when profile loads
   useEffect(() => {
     if (profile) {
       setFormData({
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        email: user?.email || ''
-      })
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        email: user?.email || "",
+      });
     }
-  }, [profile, user])
-
-
+  }, [profile, user]);
 
   const handleEdit = () => {
-    setIsEditing(true)
-    setError('')
-    setSuccess('')
-  }
+    setIsEditing(true);
+    setError("");
+    setSuccess("");
+  };
 
   const handleCancel = () => {
-    setIsEditing(false)
+    setIsEditing(false);
     setFormData({
-      first_name: profile?.first_name || '',
-      last_name: profile?.last_name || '',
-      email: user?.email || ''
-    })
-    setError('')
-    setSuccess('')
-  }
+      first_name: profile?.first_name || "",
+      last_name: profile?.last_name || "",
+      email: user?.email || "",
+    });
+    setError("");
+    setSuccess("");
+  };
 
   const handleSave = async () => {
-    if (!profile) return
+    if (!profile) return;
 
-    setLoading(true)
-    setError('')
-    setSuccess('')
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
-      const supabase = createClient()
-      
+      const supabase = createClient();
+
       const { error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({
           first_name: formData.first_name,
           last_name: formData.last_name,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', profile.id)
+        .eq("id", profile.id);
 
       if (error) {
-        throw error
+        throw error;
       }
 
-      setSuccess('Profile updated successfully!')
-      setIsEditing(false)
-      
+      setSuccess("Profile updated successfully!");
+      setIsEditing(false);
+
       // Refresh profile data
-      await refreshProfile()
+      await refreshProfile();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile')
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   if (!user) {
     return (
@@ -104,22 +108,28 @@ export default function ProfilePage() {
             <div className="w-32 h-32 bg-muted rounded-full mx-auto flex items-center justify-center mb-6">
               <User className="w-16 h-16 text-muted-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-4">Profile Access Required</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              Profile Access Required
+            </h1>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              You need to be signed in to view and manage your profile. Please sign in to continue.
+              You need to be signed in to view and manage your profile. Please
+              sign in to continue.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button onClick={() => window.location.href = '/auth'}>
+              <Button onClick={() => (window.location.href = "/auth")}>
                 Sign In
               </Button>
-              <Button variant="outline" onClick={() => window.location.href = '/'}>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = "/")}
+              >
                 Go Home
               </Button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!profile) {
@@ -129,12 +139,14 @@ export default function ProfilePage() {
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-muted-foreground">Loading profile...</p>
-            <p className="text-sm text-muted-foreground mt-2">User: {user.email}</p>
-            <Button 
+            <p className="text-sm text-muted-foreground mt-2">
+              User: {user.email}
+            </p>
+            <Button
               onClick={async () => {
-                console.log('Manual profile refresh...')
-                await refreshProfile()
-              }} 
+                console.log("Manual profile refresh...");
+                await refreshProfile();
+              }}
               className="mt-4"
               variant="outline"
             >
@@ -143,7 +155,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -152,7 +164,9 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Profile</h1>
-          <p className="text-muted-foreground">Manage your account settings and preferences</p>
+          <p className="text-muted-foreground">
+            Manage your account settings and preferences
+          </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -162,7 +176,9 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-xl">Profile Information</CardTitle>
-                  <CardDescription>Your personal details and account information</CardDescription>
+                  <CardDescription>
+                    Your personal details and account information
+                  </CardDescription>
                 </div>
                 {!isEditing ? (
                   <Button onClick={handleEdit} size="sm" variant="outline">
@@ -173,7 +189,7 @@ export default function ProfilePage() {
                   <div className="flex space-x-2">
                     <Button onClick={handleSave} size="sm" disabled={loading}>
                       <Save className="w-4 h-4 mr-2" />
-                      {loading ? 'Saving...' : 'Save'}
+                      {loading ? "Saving..." : "Save"}
                     </Button>
                     <Button onClick={handleCancel} size="sm" variant="outline">
                       <X className="w-4 h-4 mr-2" />
@@ -189,7 +205,7 @@ export default function ProfilePage() {
                   {error}
                 </div>
               )}
-              
+
               {success && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-sm text-green-600 text-sm">
                   {success}
@@ -218,28 +234,32 @@ export default function ProfilePage() {
                       <Input
                         id="first_name"
                         value={formData.first_name}
-                        onChange={(e) => handleInputChange('first_name', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("first_name", e.target.value)
+                        }
                         placeholder="Enter first name"
                       />
                     ) : (
                       <div className="p-3 bg-muted rounded-sm">
-                        {profile.first_name || 'Not set'}
+                        {profile.first_name || "Not set"}
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="last_name">Last Name</Label>
                     {isEditing ? (
                       <Input
                         id="last_name"
                         value={formData.last_name}
-                        onChange={(e) => handleInputChange('last_name', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("last_name", e.target.value)
+                        }
                         placeholder="Enter last name"
                       />
                     ) : (
                       <div className="p-3 bg-muted rounded-sm">
-                        {profile.last_name || 'Not set'}
+                        {profile.last_name || "Not set"}
                       </div>
                     )}
                   </div>
@@ -251,7 +271,9 @@ export default function ProfilePage() {
                     <Mail className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm">{user.email}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Email cannot be changed</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Email cannot be changed
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -261,7 +283,9 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">Account Details</CardTitle>
-              <CardDescription>Your account status and role information</CardDescription>
+              <CardDescription>
+                Your account status and role information
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Role */}
@@ -270,11 +294,29 @@ export default function ProfilePage() {
                   <Shield className="w-5 h-5 text-accent" />
                   <div>
                     <p className="font-medium text-foreground">Role</p>
-                    <p className="text-sm text-muted-foreground">Your account permissions</p>
+                    <p className="text-sm text-muted-foreground">
+                      Your account permissions
+                    </p>
                   </div>
                 </div>
-                <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'}>
-                  {profile.role === 'admin' ? 'Administrator' : 'Student'}
+                <Badge
+                  variant={
+                    profile.role === "admin"
+                      ? "default"
+                      : profile.role === "teacher"
+                      ? "coral"
+                      : profile.role === "content_manager"
+                      ? "loadMore"
+                      : "secondary"
+                  }
+                >
+                  {profile.role === "admin"
+                    ? "Administrator"
+                    : profile.role === "teacher"
+                    ? "Teacher"
+                    : profile.role === "content_manager"
+                    ? "Content Manager"
+                    : "Student"}
                 </Badge>
               </div>
 
@@ -283,11 +325,18 @@ export default function ProfilePage() {
                 <div className="flex items-center space-x-3">
                   <User className="w-5 h-5 text-accent" />
                   <div>
-                    <p className="font-medium text-foreground">Account Status</p>
-                    <p className="text-sm text-muted-foreground">Your account verification status</p>
+                    <p className="font-medium text-foreground">
+                      Account Status
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Your account verification status
+                    </p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-green-600 border-green-600">
+                <Badge
+                  variant="outline"
+                  className="text-green-600 border-green-600"
+                >
                   Verified
                 </Badge>
               </div>
@@ -298,7 +347,9 @@ export default function ProfilePage() {
                   <Calendar className="w-5 h-5 text-accent" />
                   <div>
                     <p className="font-medium text-foreground">Member Since</p>
-                    <p className="text-sm text-muted-foreground">When you joined</p>
+                    <p className="text-sm text-muted-foreground">
+                      When you joined
+                    </p>
                   </div>
                 </div>
                 <span className="text-sm text-muted-foreground">
@@ -312,7 +363,9 @@ export default function ProfilePage() {
                   <Calendar className="w-5 h-5 text-accent" />
                   <div>
                     <p className="font-medium text-foreground">Last Updated</p>
-                    <p className="text-sm text-muted-foreground">Profile last modified</p>
+                    <p className="text-sm text-muted-foreground">
+                      Profile last modified
+                    </p>
                   </div>
                 </div>
                 <span className="text-sm text-muted-foreground">
@@ -324,5 +377,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

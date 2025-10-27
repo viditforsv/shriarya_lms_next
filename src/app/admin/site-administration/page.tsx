@@ -21,6 +21,7 @@ import {
   Palette,
   Plus,
   BarChart3,
+  UserCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -89,6 +90,19 @@ export default function SiteAdministrationPage() {
           href: "/admin/user-enrollments",
           icon: Users,
           description: "Manage student enrollments",
+        },
+        {
+          name: "Student-Teacher Assignment",
+          href: "/admin/student-teacher-assignment",
+          icon: UserCheck,
+          description:
+            "Assign teachers to students for personalized instruction",
+        },
+        {
+          name: "Teacher Management",
+          href: "/admin/teacher-management",
+          icon: UserCheck,
+          description: "Promote users to teacher role for grading",
         },
       ],
     },

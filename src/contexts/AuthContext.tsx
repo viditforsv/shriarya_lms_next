@@ -673,12 +673,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("🔵 signUp - Full name:", fullName);
       console.log("🔵 signUp - Role:", role);
 
+      // Split full name into first and last name
+      const nameParts = fullName.trim().split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
+            first_name: firstName,
+            last_name: lastName,
             role: role,
           },
         },

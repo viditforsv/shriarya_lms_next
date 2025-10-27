@@ -23,7 +23,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("signin");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const code = searchParams.get("code");
   const next = searchParams.get("next");
   const error = searchParams.get("error");
@@ -36,15 +36,23 @@ export default function AuthPage() {
     }
   }, [tab]);
 
-  // Redirect authenticated users to enrolled courses
+  // Redirect authenticated users based on role
   useEffect(() => {
-    if (!loading && user) {
-      // Check for redirect parameter first, then next parameter, then default
+    if (!loading && user && profile) {
+      // Check for redirect parameter first, then next parameter, then role-based default
       const redirectParam = searchParams.get("redirect");
-      const redirectUrl = redirectParam || next || "/courses/enrolled";
+      const roleBasedPath =
+        profile.role === "student"
+          ? "/student"
+          : profile.role === "teacher"
+          ? "/teacher/dashboard"
+          : profile.role === "admin"
+          ? "/admin"
+          : "/courses/enrolled";
+      const redirectUrl = redirectParam || next || roleBasedPath;
       router.push(redirectUrl);
     }
-  }, [user, loading, router, next, searchParams]);
+  }, [user, profile, loading, router, next, searchParams]);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -62,13 +70,31 @@ export default function AuthPage() {
             return;
           }
 
+          const {
+            data: { user: authUser },
+          } = await supabase.auth.getUser();
+          const { data: userProfile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", authUser?.id)
+            .single();
+
+          const roleBasedPath =
+            userProfile?.role === "student"
+              ? "/student"
+              : userProfile?.role === "teacher"
+              ? "/teacher/dashboard"
+              : userProfile?.role === "admin"
+              ? "/admin"
+              : "/courses/enrolled";
+
           console.log(
             "Auth page - OAuth success, redirecting to:",
-            next || "/courses/enrolled"
+            roleBasedPath
           );
-          // Check for redirect parameter first, then next parameter, then default
+          // Check for redirect parameter first, then next parameter, then role-based default
           const redirectParam = searchParams.get("redirect");
-          const redirectUrl = redirectParam || next || "/courses/enrolled";
+          const redirectUrl = redirectParam || next || roleBasedPath;
           router.push(redirectUrl);
         } catch (err) {
           console.error("Auth page - OAuth callback exception:", err);

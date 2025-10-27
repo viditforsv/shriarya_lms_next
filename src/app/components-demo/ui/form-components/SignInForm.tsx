@@ -20,20 +20,36 @@ export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { signIn, signInWithGoogle, user, loading: authLoading } = useAuth();
+  const {
+    signIn,
+    signInWithGoogle,
+    user,
+    profile,
+    loading: authLoading,
+  } = useAuth();
   const router = useRouter();
 
   // Redirect when user becomes authenticated - with better logging
   useEffect(() => {
     console.log("🔄 SignInForm - Auth state:", {
       user: user?.email,
+      profile: profile?.role,
       authLoading,
     });
-    if (user && !authLoading) {
-      console.log("✅ SignInForm - Redirecting to /courses/enrolled");
-      router.push("/courses/enrolled");
+    if (user && profile && !authLoading) {
+      // Redirect based on role
+      let redirectPath = "/courses/enrolled";
+      if (profile.role === "student") {
+        redirectPath = "/student";
+      } else if (profile.role === "teacher") {
+        redirectPath = "/teacher/dashboard";
+      } else if (profile.role === "admin") {
+        redirectPath = "/admin";
+      }
+      console.log(`✅ SignInForm - Redirecting to ${redirectPath}`);
+      router.push(redirectPath);
     }
-  }, [user, authLoading, router]);
+  }, [user, profile, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

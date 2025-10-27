@@ -14,6 +14,8 @@ import {
   FileText,
   CheckCircle,
   Clock,
+  Lock,
+  Unlock,
   Play,
   Download,
 } from "lucide-react";
@@ -37,6 +39,7 @@ interface PDFAssignmentSidebarProps {
   assignments?: Assignment[];
   courseTitle?: string;
   overallProgress?: number;
+  isEnrolled?: boolean;
 }
 
 export function PDFAssignmentSidebar({
@@ -45,6 +48,7 @@ export function PDFAssignmentSidebar({
   assignments = [],
   courseTitle = "PDF Assignments",
   overallProgress = 0,
+  isEnrolled = false,
 }: PDFAssignmentSidebarProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -189,7 +193,12 @@ export function PDFAssignmentSidebar({
       case "completed":
         return <CheckCircle className="w-4 h-4 text-green-600" />;
       case "pending":
-        return <Clock className="w-4 h-4 text-gray-400" />;
+        // Show unlocked icon if student is enrolled, otherwise lock icon
+        return isEnrolled ? (
+          <Unlock className="w-4 h-4 text-gray-600" />
+        ) : (
+          <Lock className="w-4 h-4 text-gray-400" />
+        );
       default:
         return <FileText className="w-4 h-4 text-gray-500" />;
     }

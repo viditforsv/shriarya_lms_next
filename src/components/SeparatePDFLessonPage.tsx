@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { PDFAssignmentSidebar } from "@/components/PDFAssignmentSidebar";
+import { createClient } from "@/lib/supabase/client";
 import {
   Sheet,
   SheetContent,
@@ -77,6 +78,7 @@ export function SeparatePDFLessonPage({
   >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [authChecked, setAuthChecked] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   // Authentication check - redirect if not logged in
   useEffect(() => {
@@ -94,6 +96,36 @@ export function SeparatePDFLessonPage({
 
     setAuthChecked(true);
   }, [user, router, courseSlug, assignmentId]);
+
+  // Check enrollment status
+  useEffect(() => {
+    if (!authChecked || !user) return;
+
+    const checkEnrollment = async () => {
+      const supabase = createClient();
+
+      // Get course ID from slug
+      const { data: course } = await supabase
+        .from("courses")
+        .select("id")
+        .eq("slug", courseSlug)
+        .single();
+
+      if (course) {
+        const { data: enrollment } = await supabase
+          .from("courses_enrollments")
+          .select("*")
+          .eq("student_id", user.id)
+          .eq("course_id", course.id)
+          .eq("is_active", true)
+          .maybeSingle();
+
+        setIsEnrolled(!!enrollment);
+      }
+    };
+
+    checkEnrollment();
+  }, [authChecked, user, courseSlug]);
 
   // Find current assignment
   useEffect(() => {
@@ -258,6 +290,7 @@ export function SeparatePDFLessonPage({
                 assignments.length) *
                 100
             )}
+            isEnrolled={isEnrolled}
           />
         </SheetContent>
       </Sheet>
@@ -273,6 +306,7 @@ export function SeparatePDFLessonPage({
             assignments.length) *
             100
         )}
+        isEnrolled={isEnrolled}
       />
 
       {/* Main Content */}

@@ -12,3 +12,11 @@
 2. Content organization
 3. Student delivery
 4. Quality management
+
+## P1 Tasks
+
+- Student assignment upload
+- Teacher Correction upload
+- Student Teacher Mapping
+- After user is logged in the icon must change from locked to unlocked
+- After the lesson is marked complete, then the button should be turned to complete.

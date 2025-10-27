@@ -31,6 +31,8 @@ import {
   Bookmark,
   MessageCircle,
   Eye,
+  Upload,
+  Download,
 } from "lucide-react";
 import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
@@ -138,6 +140,15 @@ export default function DynamicLessonPage({
   >({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [isMarkingComplete, setIsMarkingComplete] = useState(false);
+  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
+  const [submissionError, setSubmissionError] = useState<string>("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
 
   // Load questions for the lesson
   const { questions, loading: questionsLoading } = useQuestionsForLesson(
@@ -288,8 +299,9 @@ export default function DynamicLessonPage({
         setLesson(lessonData as unknown as Lesson);
         console.log("Lesson loaded:", lessonData.title);
 
-        // 6. Check if lesson is already completed
+        // 6. Check if lesson is already completed and fetch all completed lessons
         if (user) {
+          // Check current lesson completion status
           const { data: progressData } = await supabase
             .from("user_progress")
             .select("is_completed")
@@ -299,6 +311,21 @@ export default function DynamicLessonPage({
 
           if (progressData?.is_completed) {
             setIsCompleted(true);
+          }
+
+          // Fetch all completed lessons for this course
+          const { data: completedLessonsData } = await supabase
+            .from("user_progress")
+            .select("lesson_id")
+            .eq("user_id", user.id)
+            .eq("course_id", course.id)
+            .eq("is_completed", true);
+
+          if (completedLessonsData) {
+            const completedIds = new Set(
+              completedLessonsData.map((p) => p.lesson_id)
+            );
+            setCompletedLessonIds(completedIds);
           }
         }
       } catch (err) {
@@ -404,6 +431,8 @@ export default function DynamicLessonPage({
       }
 
       setIsCompleted(true);
+      // Update completed lessons set
+      setCompletedLessonIds((prev) => new Set(prev).add(lesson.id));
       showNotification(
         "Lesson Completed! 🎉",
         `Great job completing "${lesson.title}"! Keep up the good work.`,
@@ -418,6 +447,66 @@ export default function DynamicLessonPage({
       );
     } finally {
       setIsMarkingComplete(false);
+    }
+  };
+
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !lesson || !course || !user) return;
+
+    // Reset states
+    setSubmissionError("");
+    setSubmissionStatus("idle");
+
+    // Validation
+    if (file.type !== "application/pdf") {
+      setSubmissionError("Please upload a PDF file only.");
+      setSubmissionStatus("error");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setSubmissionError("File size must be less than 5MB.");
+      setSubmissionStatus("error");
+      return;
+    }
+
+    setUploadedFile(file);
+    setSubmissionStatus("uploading");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("assignmentId", lesson.id);
+      formData.append("courseSlug", course.slug);
+
+      const response = await fetch("/api/assignments/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Upload failed");
+      }
+
+      const result = await response.json();
+      setSubmissionStatus("success");
+      setUploadedFile(null);
+
+      showNotification(
+        "Assignment Submitted! ✅",
+        "Your assignment has been submitted successfully. Your teacher will review it soon.",
+        "success"
+      );
+    } catch (error) {
+      console.error("Upload error:", error);
+      setSubmissionStatus("error");
+      setSubmissionError(
+        error instanceof Error ? error.message : "Upload failed"
+      );
     }
   };
 
@@ -832,6 +921,8 @@ export default function DynamicLessonPage({
             currentLessonSlug={lesson.slug}
             courseSlug={resolvedParams?.slug || ""}
             lessons={allLessons}
+            isEnrolled={isEnrolled}
+            completedLessonIds={completedLessonIds}
           />
 
           {/* Main Content */}
@@ -1270,6 +1361,61 @@ export default function DynamicLessonPage({
                             allow="autoplay; fullscreen"
                             sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                           />
+                        </div>
+
+                        {/* Upload Section */}
+                        <div className="border-t pt-4 mt-4">
+                          <h3 className="text-lg font-semibold mb-3">
+                            Submit Your Work
+                          </h3>
+                          <div className="space-y-4">
+                            <div>
+                              <label
+                                htmlFor="assignment-file"
+                                className="block text-sm font-medium mb-2"
+                              >
+                                Upload your completed assignment (PDF only, max
+                                5MB)
+                              </label>
+                              <div className="flex items-center gap-3">
+                                <input
+                                  id="assignment-file"
+                                  type="file"
+                                  accept=".pdf"
+                                  onChange={handleFileUpload}
+                                  className="hidden"
+                                />
+                                <label
+                                  htmlFor="assignment-file"
+                                  className="flex items-center gap-2 px-4 py-2 border rounded-sm cursor-pointer hover:bg-gray-50 transition-colors"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                  Choose PDF File
+                                </label>
+                                {uploadedFile && (
+                                  <span className="text-sm text-muted-foreground">
+                                    Selected: {uploadedFile.name}
+                                  </span>
+                                )}
+                              </div>
+                              {submissionError && (
+                                <p className="text-sm text-red-600 mt-2">
+                                  {submissionError}
+                                </p>
+                              )}
+                              {submissionStatus === "success" && (
+                                <p className="text-sm text-green-600 mt-2">
+                                  Assignment submitted successfully! Your
+                                  teacher will review it.
+                                </p>
+                              )}
+                              {submissionStatus === "uploading" && (
+                                <p className="text-sm text-blue-600 mt-2">
+                                  Uploading...
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         </div>
 
                         {/* Assignment Actions */}

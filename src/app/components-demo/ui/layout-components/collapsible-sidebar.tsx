@@ -15,6 +15,7 @@ import {
   Clock,
   Eye,
   Lock,
+  Unlock,
   Play,
 } from "lucide-react";
 
@@ -42,12 +43,16 @@ interface CollapsibleSidebarProps {
   currentLessonSlug?: string;
   courseSlug: string;
   lessons?: Lesson[];
+  isEnrolled?: boolean;
+  completedLessonIds?: Set<string>;
 }
 
 export function CollapsibleSidebar({
   currentLessonSlug,
   courseSlug,
   lessons = [],
+  isEnrolled = false,
+  completedLessonIds = new Set(),
 }: CollapsibleSidebarProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -194,19 +199,27 @@ export function CollapsibleSidebar({
   };
 
   const getLessonStatus = (lesson: Lesson) => {
+    // Check if lesson is completed first
+    if (completedLessonIds.has(lesson.id)) return "completed";
     if (lesson.is_preview) return "preview";
     if (lesson.slug === currentLessonSlug) return "current";
+    // If student is enrolled, show as unlocked instead of locked
+    if (isEnrolled) return "unlocked";
     return "locked";
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
+      case "completed":
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
       case "current":
         return <Play className="w-4 h-4 text-[#e27447]" />;
       case "preview":
         return <Eye className="w-4 h-4 text-blue-600" />;
       case "locked":
         return <Lock className="w-4 h-4 text-gray-400" />;
+      case "unlocked":
+        return <Unlock className="w-4 h-4 text-gray-600" />;
       default:
         return <FileText className="w-4 h-4 text-gray-500" />;
     }
@@ -214,12 +227,16 @@ export function CollapsibleSidebar({
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "completed":
+        return "text-green-700 font-medium";
       case "current":
         return "text-[#e27447] font-semibold";
       case "preview":
         return "text-blue-600";
       case "locked":
         return "text-gray-500";
+      case "unlocked":
+        return "text-gray-700";
       default:
         return "text-gray-600";
     }
@@ -362,10 +379,12 @@ export function CollapsibleSidebar({
                                 <Link
                                   key={lesson.id}
                                   href={`/courses/${courseSlug}/lesson/${lesson.slug}`}
-                                  className={`flex items-center justify-between p-3 pl-16 hover:bg-[#feefea]/40 transition-colors ${
-                                    isCurrent
-                                      ? "bg-[#feefea]/60 border-r-2 border-[#e27447]"
-                                      : ""
+                                  className={`flex items-center justify-between p-3 pl-16 transition-colors ${
+                                    status === "completed"
+                                      ? "bg-green-50/50 hover:bg-green-100"
+                                      : isCurrent
+                                      ? "bg-[#feefea]/60 border-r-2 border-[#e27447] hover:bg-[#feefea]/80"
+                                      : "hover:bg-[#feefea]/40"
                                   }`}
                                 >
                                   <div className="flex items-center space-x-3">

@@ -61,66 +61,63 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchLessons = async () => {
+    const fetchCourseStructure = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/lessons?course_slug=${courseSlug}`);
-        if (!response.ok) {
+        // Fetch all units with chapters for the course
+        const unitsResponse = await fetch(
+          `/api/courses/units?course_slug=${courseSlug}`
+        );
+        if (!unitsResponse.ok) {
+          throw new Error("Failed to fetch units");
+        }
+        const unitsData = await unitsResponse.json();
+        const allUnits = unitsData.units || [];
+
+        // Fetch lessons for the course
+        const lessonsResponse = await fetch(
+          `/api/lessons?course_slug=${courseSlug}`
+        );
+        if (!lessonsResponse.ok) {
           throw new Error("Failed to fetch lessons");
         }
+        const lessonsData = await lessonsResponse.json();
+        const lessons: Lesson[] = lessonsData.lessons || [];
 
-        const data = await response.json();
-        const lessons: Lesson[] = data.lessons;
-
-        // Group lessons by unit and chapter
-        const unitMap = new Map<string, Map<string, Lesson[]>>();
-
+        // Group lessons by chapter
+        const lessonsByChapter = new Map<string, Lesson[]>();
         lessons.forEach((lesson) => {
-          if (!lesson.chapter?.unit?.unit_name || !lesson.chapter?.chapter_name)
-            return;
-
-          const unitName = lesson.chapter.unit.unit_name;
-          const chapterName = lesson.chapter.chapter_name;
-
-          if (!unitMap.has(unitName)) {
-            unitMap.set(unitName, new Map());
+          if (lesson.chapter?.id) {
+            const chapterId = lesson.chapter.id;
+            if (!lessonsByChapter.has(chapterId)) {
+              lessonsByChapter.set(chapterId, []);
+            }
+            lessonsByChapter.get(chapterId)!.push(lesson);
           }
-
-          const chapterMap = unitMap.get(unitName)!;
-          if (!chapterMap.has(chapterName)) {
-            chapterMap.set(chapterName, []);
-          }
-
-          chapterMap.get(chapterName)!.push(lesson);
         });
 
-        // Convert to the structure we need
-        const unitsArray: Unit[] = Array.from(unitMap.entries()).map(
-          ([unitName, chapterMap]) => ({
-            name: unitName,
-            chapters: Array.from(chapterMap.entries())
-              .map(([chapterName, chapterLessons]) => ({
-                name: chapterName,
-                lessons: chapterLessons.sort(
-                  (a, b) => a.lesson_order - b.lesson_order
-                ),
-                chapter_order: chapterLessons[0]?.chapter?.chapter_order || 0,
-              }))
-              .sort((a, b) => a.chapter_order - b.chapter_order),
-          })
-        );
+        // Build the complete course structure
+        const unitsArray: Unit[] = allUnits
+          .sort((a: any, b: any) => a.unit_order - b.unit_order)
+          .map((unit: any) => {
+            const unitChapters = (unit.chapters || [])
+              .sort((a: any, b: any) => a.chapter_order - b.chapter_order)
+              .map((chapter: any) => ({
+                name: chapter.chapter_name,
+                lessons:
+                  lessonsByChapter
+                    .get(chapter.id)
+                    ?.sort((a, b) => a.lesson_order - b.lesson_order) || [],
+                chapter_order: chapter.chapter_order,
+              }));
 
-        // Sort units by their unit_order from database
-        // Find the first lesson in each unit to get its order
-        unitsArray.sort((a, b) => {
-          const aFirstLesson = a.chapters[0]?.lessons[0];
-          const bFirstLesson = b.chapters[0]?.lessons[0];
-          const aOrder = aFirstLesson?.chapter?.unit?.unit_order || 0;
-          const bOrder = bFirstLesson?.chapter?.unit?.unit_order || 0;
-          return aOrder - bOrder;
-        });
+            return {
+              name: unit.unit_name,
+              chapters: unitChapters,
+            };
+          });
 
         setUnits(unitsArray);
 
@@ -129,14 +126,14 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
           setExpandedUnits(new Set([unitsArray[0].name]));
         }
       } catch (err) {
-        console.error("Error fetching lessons:", err);
+        console.error("Error fetching course structure:", err);
         setError("Failed to load course structure");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLessons();
+    fetchCourseStructure();
   }, [courseSlug]);
 
   const toggleUnit = (unitName: string) => {
@@ -282,40 +279,53 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
                             <CollapsibleContent>
                               <CardContent className="pt-0">
                                 <div className="space-y-2">
-                                  {chapter.lessons.map((lesson) => (
-                                    <div
-                                      key={lesson.id}
-                                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
-                                      onClick={() => handleLessonClick(lesson)}
-                                    >
-                                      <div className="flex items-center space-x-3">
-                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                                          {lesson.lesson_order}
-                                        </div>
-                                        <div>
-                                          <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
-                                            {lesson.title}
-                                          </h4>
-                                          <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                                            <Clock className="h-3 w-3" />
-                                            <span>45 min</span>
-                                            {lesson.is_preview && (
-                                              <Badge
-                                                variant="secondary"
-                                                className="text-xs"
-                                              >
-                                                Preview
-                                              </Badge>
-                                            )}
+                                  {chapter.lessons.length > 0 ? (
+                                    chapter.lessons.map((lesson) => (
+                                      <div
+                                        key={lesson.id}
+                                        className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer group"
+                                        onClick={() =>
+                                          handleLessonClick(lesson)
+                                        }
+                                      >
+                                        <div className="flex items-center space-x-3">
+                                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                                            {lesson.lesson_order}
+                                          </div>
+                                          <div>
+                                            <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
+                                              {lesson.title}
+                                            </h4>
+                                            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                                              <Clock className="h-3 w-3" />
+                                              <span>45 min</span>
+                                              {lesson.is_preview && (
+                                                <Badge
+                                                  variant="secondary"
+                                                  className="text-xs"
+                                                >
+                                                  Preview
+                                                </Badge>
+                                              )}
+                                            </div>
                                           </div>
                                         </div>
+                                        <div className="flex items-center space-x-2">
+                                          <Play className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                        </div>
                                       </div>
-                                      <div className="flex items-center space-x-2">
-                                        <Play className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="p-4 text-center text-muted-foreground">
+                                      <p className="text-sm">
+                                        No lessons available yet
+                                      </p>
+                                      <p className="text-xs mt-1">
+                                        Content coming soon
+                                      </p>
                                     </div>
-                                  ))}
+                                  )}
                                 </div>
                               </CardContent>
                             </CollapsibleContent>

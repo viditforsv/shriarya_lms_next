@@ -38,10 +38,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File size must be less than 10MB" },
+        { error: "File size must be less than 5MB" },
         { status: 400 }
       );
     }
@@ -57,9 +57,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    // Create unique filename
+    // Get student name for filename
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("id", user.id)
+      .single();
+
+    const studentName = profile
+      ? `${profile.first_name}_${profile.last_name}`
+          .replace(/\s+/g, "_")
+          .replace(/[^a-zA-Z0-9_]/g, "")
+      : "student";
+
+    // Create unique filename with student name
     const timestamp = Date.now();
-    const fileName = `${assignmentId}_${user.id}_${timestamp}.pdf`;
+    const safeAssignmentId = assignmentId.substring(0, 20); // Limit length
+    const fileName = `${safeAssignmentId}_${studentName}_${timestamp}.pdf`;
     const filePath = `assignments/${courseSlug}/${fileName}`;
 
     // Upload file to Supabase Storage
@@ -73,7 +87,11 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       console.error("Upload error:", uploadError);
       return NextResponse.json(
-        { error: "Failed to upload file" },
+        {
+          error: `Failed to upload file: ${
+            uploadError.message || "Storage error"
+          }`,
+        },
         { status: 500 }
       );
     }

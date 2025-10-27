@@ -70,8 +70,10 @@ interface Enrollment {
   course_id: string;
   is_active: boolean;
   enrolled_at: string;
+  assigned_teacher_id?: string;
   user?: User;
   course?: Course;
+  assigned_teacher?: User;
 }
 
 export default function UserEnrollmentsPage() {
@@ -154,7 +156,8 @@ export default function UserEnrollmentsPage() {
           `
           *,
           user:student_id (id, email, first_name, last_name, role, created_at),
-          course:course_id (id, title, slug, price, status)
+          course:course_id (id, title, slug, price, status),
+          assigned_teacher:assigned_teacher_id (id, email, first_name, last_name, role, created_at)
         `
         )
         .order("enrolled_at", { ascending: false });
@@ -166,6 +169,9 @@ export default function UserEnrollmentsPage() {
         ...e,
         user: Array.isArray(e.user) ? e.user[0] : e.user,
         course: Array.isArray(e.course) ? e.course[0] : e.course,
+        assigned_teacher: Array.isArray(e.assigned_teacher)
+          ? e.assigned_teacher[0]
+          : e.assigned_teacher,
       }));
 
       setEnrollments(transformedEnrollments);
@@ -241,6 +247,38 @@ export default function UserEnrollmentsPage() {
     } catch (err) {
       console.error("Error unenrolling user:", err);
       setError(err instanceof Error ? err.message : "Failed to unenroll user");
+    }
+  };
+
+  const handleAssignTeacher = async (
+    enrollmentId: string,
+    teacherId: string
+  ) => {
+    // Don't assign if teacherId is empty
+    if (!teacherId) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/enrollments/assign-teacher", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ enrollmentId, teacherId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to assign teacher");
+      }
+
+      setSuccess("Teacher assigned successfully!");
+      loadData(); // Refresh data
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      console.error("Error assigning teacher:", err);
+      setError(err instanceof Error ? err.message : "Failed to assign teacher");
     }
   };
 
@@ -570,6 +608,9 @@ export default function UserEnrollmentsPage() {
                       <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
                         Enrolled
                       </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                        Assigned Teacher
+                      </th>
                       <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
                         Actions
                       </th>
@@ -629,6 +670,35 @@ export default function UserEnrollmentsPage() {
                               day: "numeric",
                             })}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <Select
+                              value={enrollment.assigned_teacher_id || ""}
+                              onValueChange={(teacherId) =>
+                                handleAssignTeacher(enrollment.id, teacherId)
+                              }
+                            >
+                              <SelectTrigger className="w-[200px] rounded-sm">
+                                <SelectValue placeholder="Select teacher" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {users
+                                  .filter(
+                                    (u) =>
+                                      u.role === "teacher" || u.role === "admin"
+                                  )
+                                  .map((teacher) => (
+                                    <SelectItem
+                                      key={teacher.id}
+                                      value={teacher.id}
+                                    >
+                                      {teacher.first_name} {teacher.last_name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-right">
                           {enrollment.is_active && (
@@ -695,7 +765,7 @@ export default function UserEnrollmentsPage() {
                               }
                               size="sm"
                               onClick={() => setCurrentPage(page)}
-                              className="rounded-sm min-w-[2.5rem]"
+                              className="rounded-sm min-w-10"
                             >
                               {page}
                             </Button>

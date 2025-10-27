@@ -1,7 +1,7 @@
 import { CoursePageClient } from "./CoursePageClient";
 import type { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://shrividhya.in";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://courses.shrividhya.in";
 
 export async function generateMetadata({
   params,
@@ -13,9 +13,7 @@ export async function generateMetadata({
   try {
     // Fetch course data for metadata
     const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_APP_URL || "https://shrividhya.in"
-      }/api/courses/${slug}/with-template`,
+      `${process.env.NEXT_PUBLIC_APP_URL || baseUrl}/api/courses/${slug}/with-template`,
       {
         cache: "no-store",
         next: { revalidate: 0 },
@@ -56,6 +54,7 @@ export async function generateMetadata({
       price: price.toString(),
       thumbnail: thumbnail || "",
     });
+    // Use absolute URL for OG images to work across all domains
     const ogImageUrl = `${baseUrl}/api/og-image?${ogImageParams.toString()}`;
 
     return {

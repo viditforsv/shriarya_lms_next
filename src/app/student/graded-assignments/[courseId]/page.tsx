@@ -232,7 +232,7 @@ export default function GradedAssignmentsPage({
                     {/* Actions */}
                     <div className="flex items-center gap-4 pt-4 border-t">
                       <Button
-                        variant="default"
+                        variant="primary"
                         onClick={() => handleDownload(submission)}
                         className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
                       >

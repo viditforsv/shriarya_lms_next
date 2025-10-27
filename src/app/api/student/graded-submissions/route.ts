@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         let gradedDownloadUrl = null;
 
         if (submission.graded_file_path) {
-          const { data: gradedUrlData } = supabase.storage
+          const { data: gradedUrlData } = await supabase.storage
             .from("course-assignments")
             .createSignedUrl(submission.graded_file_path, 3600);
 

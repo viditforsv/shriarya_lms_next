@@ -302,11 +302,11 @@ export default function ProfilePage() {
                 <Badge
                   variant={
                     profile.role === "admin"
-                      ? "default"
+                      ? "secondary"
                       : profile.role === "teacher"
-                      ? "coral"
+                      ? "outline"
                       : profile.role === "content_manager"
-                      ? "loadMore"
+                      ? "destructive"
                       : "secondary"
                   }
                 >

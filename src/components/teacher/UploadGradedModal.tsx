@@ -132,7 +132,7 @@ export function UploadGradedModal({
                         Max size: 5MB
                       </p>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={(e) => {
                           e.preventDefault();

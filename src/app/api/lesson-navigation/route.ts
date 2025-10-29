@@ -36,7 +36,7 @@ export async function GET(request: Request) {
         slug,
         lesson_order,
         is_preview,
-        video_thumbnail,
+        video_thumbnail_url,
         unit_name,
         chapter_name
       `

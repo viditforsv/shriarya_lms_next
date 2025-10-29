@@ -33,6 +33,7 @@ import {
   Eye,
   Upload,
   Download,
+  Loader2,
 } from "lucide-react";
 import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
@@ -40,6 +41,9 @@ import { LessonPageSkeleton } from "@/components/skeletons";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { IBDPMathLessonPage } from "@/components/IBDPMathTemplate";
+import { UnifiedLessonPage } from "@/components/UnifiedLessonPage";
+import { UnifiedCourseStructure } from "@/components/UnifiedCourseStructure";
+import { renderMixedContent } from "@/components/MathRenderer";
 
 // Function to load questions for a lesson (client-side)
 function useQuestionsForLesson(lessonId: string) {
@@ -88,15 +92,14 @@ interface Lesson {
   id: string;
   title: string;
   slug: string;
-  content_html?: string;
   content?: string;
   lesson_order: number;
   is_preview: boolean;
   created_at: string;
   course_id: string;
-  key_points?: string[];
   video_url?: string;
-  video_thumbnail?: string;
+  video_thumbnail_url?: string;
+  topic_badge?: string;
   pdf_url?: string;
   solution_url?: string;
   quiz_id?: string;
@@ -128,7 +131,7 @@ export default function DynamicLessonPage({
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "video" | "notes" | "keypoints" | "quiz" | "assignment" | "solution"
+    "video" | "notes" | "quiz" | "assignment" | "solution"
   >("video");
   const [resolvedParams, setResolvedParams] = useState<{
     slug: string;
@@ -247,7 +250,9 @@ export default function DynamicLessonPage({
             slug,
             lesson_order,
             is_preview,
-            video_thumbnail,
+            video_thumbnail_url,
+            topic_number,
+            topic_badge,
             chapter_id,
             chapter:courses_chapters(
               id,
@@ -275,7 +280,26 @@ export default function DynamicLessonPage({
           .from("courses_lessons")
           .select(
             `
-            *,
+            id,
+            title,
+            slug,
+            lesson_order,
+            is_preview,
+            content,
+            topic_badge,
+            video_url,
+            video_thumbnail_url,
+            pdf_url,
+            solution_url,
+            quiz_id,
+            topic_number,
+            topic_id,
+            concept_title,
+            concept_content,
+            formula_title,
+            formula_content,
+            chapter_id,
+            course_id,
             chapter:courses_chapters(
               id,
               chapter_name,
@@ -298,6 +322,8 @@ export default function DynamicLessonPage({
 
         setLesson(lessonData as unknown as Lesson);
         console.log("Lesson loaded:", lessonData.title);
+        console.log("Lesson content:", lessonData.content);
+        console.log("Lesson topic_badge:", lessonData.topic_badge);
 
         // 6. Check if lesson is already completed and fetch all completed lessons
         if (user) {
@@ -376,6 +402,7 @@ export default function DynamicLessonPage({
     if (!user || !lesson || !course) return;
 
     setIsMarkingComplete(true);
+    const newCompletionStatus = !isCompleted;
 
     try {
       const supabase = createClient();
@@ -391,53 +418,78 @@ export default function DynamicLessonPage({
       let progressError;
 
       if (existingProgress) {
-        // Update existing record
+        // Update existing record - toggle completion status
+        const updateData: Record<string, unknown> = {
+          completion_percentage: newCompletionStatus ? 100 : 0,
+          is_completed: newCompletionStatus,
+          last_accessed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        if (newCompletionStatus) {
+          updateData.completed_at = new Date().toISOString();
+        } else {
+          updateData.completed_at = null;
+        }
+
         const { error } = await supabase
           .from("user_progress")
-          .update({
+          .update(updateData)
+          .eq("id", existingProgress.id);
+        progressError = error;
+      } else {
+        // Insert new record only if marking as complete
+        if (newCompletionStatus) {
+          const { error } = await supabase.from("user_progress").insert({
+            user_id: user.id,
+            course_id: course.id,
+            lesson_id: lesson.id,
+            lesson_slug: lesson.slug,
+            lesson_order: lesson.lesson_order,
             completion_percentage: 100,
             is_completed: true,
             completed_at: new Date().toISOString(),
             last_accessed_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-          })
-          .eq("id", existingProgress.id);
-        progressError = error;
-      } else {
-        // Insert new record
-        const { error } = await supabase.from("user_progress").insert({
-          user_id: user.id,
-          course_id: course.id,
-          lesson_id: lesson.id,
-          lesson_slug: lesson.slug,
-          lesson_order: lesson.lesson_order,
-          completion_percentage: 100,
-          is_completed: true,
-          completed_at: new Date().toISOString(),
-          last_accessed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-        progressError = error;
+          });
+          progressError = error;
+        }
       }
 
       if (progressError) {
-        console.error("Error marking lesson complete:", progressError);
+        console.error("Error toggling lesson completion:", progressError);
         showNotification(
           "Error",
-          "Failed to mark lesson as complete. Please try again.",
+          `Failed to ${
+            newCompletionStatus ? "mark" : "unmark"
+          } lesson. Please try again.`,
           "error"
         );
         return;
       }
 
-      setIsCompleted(true);
+      setIsCompleted(newCompletionStatus);
+
       // Update completed lessons set
-      setCompletedLessonIds((prev) => new Set(prev).add(lesson.id));
-      showNotification(
-        "Lesson Completed! 🎉",
-        `Great job completing "${lesson.title}"! Keep up the good work.`,
-        "success"
-      );
+      if (newCompletionStatus) {
+        setCompletedLessonIds((prev) => new Set(prev).add(lesson.id));
+        showNotification(
+          "Lesson Completed! 🎉",
+          `Great job completing "${lesson.title}"! Keep up the good work.`,
+          "success"
+        );
+      } else {
+        setCompletedLessonIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(lesson.id);
+          return newSet;
+        });
+        showNotification(
+          "Lesson Unmarked",
+          `"${lesson.title}" has been marked as incomplete.`,
+          "success"
+        );
+      }
     } catch (error) {
       console.error("Error in handleMarkComplete:", error);
       showNotification(
@@ -723,6 +775,137 @@ export default function DynamicLessonPage({
   // Check if this is an IBDP Mathematics course - use specialized template
   const isIBDPMathCourse = resolvedParams?.slug?.includes("ibdp-mathematics");
 
+  // Check if this course should use unified template (CBSE Class 10 for pilot)
+  const useUnifiedTemplate =
+    resolvedParams?.slug === "cbse-mathematics-class-10";
+
+  if (useUnifiedTemplate && lesson && course) {
+    // Use unified lesson page for CBSE Class 10 - Matching CBSE Class 9 design
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header - Matching CBSE Class 9 */}
+        <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
+          <div className="px-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Link
+                  href={`/courses/${resolvedParams?.slug}`}
+                  className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Course
+                </Link>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBookmarkToggle}
+                  className="rounded-sm"
+                >
+                  <Bookmark
+                    className={`w-4 h-4 mr-2 ${
+                      isBookmarked ? "fill-current" : ""
+                    }`}
+                  />
+                  {isBookmarked ? "Bookmarked" : "Bookmark"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full px-0 py-8">
+          {/* Course Breadcrumb - Matching CBSE Class 9 */}
+          <div className="mb-6 px-6">
+            <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Link href="/courses/discover" className="hover:text-foreground">
+                Courses
+              </Link>
+              <span>/</span>
+              <Link
+                href={`/courses/${resolvedParams?.slug}`}
+                className="hover:text-foreground"
+              >
+                {course.title}
+              </Link>
+              <span>/</span>
+              <span className="text-foreground">{lesson.title}</span>
+            </nav>
+          </div>
+
+          <div className="flex">
+            {/* Left Sidebar - Using CollapsibleSidebar like CBSE Class 9 */}
+            <CollapsibleSidebar
+              currentLessonSlug={lesson.slug}
+              courseSlug={resolvedParams?.slug || ""}
+              lessons={allLessons}
+              isEnrolled={isEnrolled}
+              completedLessonIds={completedLessonIds}
+              courseId={course?.id}
+            />
+
+            {/* Main Content - Matching CBSE Class 9 layout */}
+            <div className="flex-1 px-6">
+              <UnifiedLessonPage
+                lesson={{
+                  id: lesson.id,
+                  title: lesson.title,
+                  slug: lesson.slug,
+                  topic_number: lesson.topic_number,
+                  lesson_order: lesson.lesson_order,
+                  is_preview: lesson.is_preview,
+                  video_url: lesson.video_url,
+                  video_thumbnail_url: lesson.video_thumbnail_url,
+                  topic_badge: lesson.topic_badge,
+                  pdf_url: lesson.pdf_url,
+                  solution_url: lesson.solution_url,
+                  quiz_id: lesson.quiz_id,
+                  content: lesson.content,
+                  concept_title: lesson.concept_title,
+                  concept_content: lesson.concept_content,
+                  formula_title: lesson.formula_title,
+                  formula_content: lesson.formula_content,
+                }}
+                courseSlug={resolvedParams.slug}
+                showTopicNumber={true}
+                onMarkComplete={handleMarkComplete}
+                onFileUpload={handleFileUpload}
+                isCompleted={isCompleted}
+                isMarkingComplete={isMarkingComplete}
+                uploadedFile={uploadedFile}
+                submissionStatus={submissionStatus}
+                submissionError={submissionError}
+                allLessons={allLessons.map((l) => ({
+                  id: l.id,
+                  title: l.title,
+                  slug: l.slug,
+                  lesson_order: l.lesson_order,
+                }))}
+                onNavigateLesson={(direction) => {
+                  if (direction === "next") {
+                    getNextLesson();
+                  } else {
+                    getPreviousLesson();
+                  }
+                }}
+                isAdmin={profile?.role === "admin"}
+                onLessonUpdate={(updatedLesson) => {
+                  // Update local state if needed
+                  if (updatedLesson) {
+                    setLesson((prev) =>
+                      prev ? { ...prev, ...updatedLesson } : null
+                    );
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isIBDPMathCourse && lesson && course) {
     // Transform lessons data to IBDP template format
     interface IBDPUnit {
@@ -923,6 +1106,7 @@ export default function DynamicLessonPage({
             lessons={allLessons}
             isEnrolled={isEnrolled}
             completedLessonIds={completedLessonIds}
+            courseId={course?.id}
           />
 
           {/* Main Content */}
@@ -937,9 +1121,6 @@ export default function DynamicLessonPage({
                   <h1 className="text-4xl font-bold text-[#1e293b] mb-2">
                     {lesson.title}
                   </h1>
-                  <p className="text-muted-foreground text-xl">
-                    Learn important concepts and practice problems
-                  </p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
@@ -994,7 +1175,7 @@ export default function DynamicLessonPage({
                 </TabsList>
               ) : (
                 // Default template - Multiple tabs
-                <TabsList className="grid w-full grid-cols-4 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
+                <TabsList className="grid w-full grid-cols-3 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
                   <TabsTrigger
                     value="video"
                     className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
@@ -1008,13 +1189,6 @@ export default function DynamicLessonPage({
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Notes
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="keypoints"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
-                  >
-                    <Bookmark className="w-4 h-4 mr-2" />
-                    Key Points
                   </TabsTrigger>
                   <TabsTrigger
                     value="quiz"
@@ -1093,14 +1267,24 @@ export default function DynamicLessonPage({
                             : "bg-[#e27447] hover:bg-[#e27447]/90"
                         }`}
                         onClick={handleMarkComplete}
-                        disabled={isCompleted || isMarkingComplete}
+                        disabled={isMarkingComplete}
                       >
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        {isMarkingComplete
-                          ? "Saving..."
-                          : isCompleted
-                          ? "Completed ✓"
-                          : "Mark as Complete"}
+                        {isMarkingComplete ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : isCompleted ? (
+                          <>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Mark as Incomplete
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Mark as Complete
+                          </>
+                        )}
                       </Button>
                     </div>
                   </CardContent>
@@ -1121,19 +1305,9 @@ export default function DynamicLessonPage({
                   </CardHeader>
                   <CardContent className="space-y-6 p-6">
                     {/* Lesson Content */}
-                    {lesson.content_html ? (
+                    {lesson.content ? (
                       <div className="prose prose-sm max-w-none leading-relaxed">
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: lesson.content_html,
-                          }}
-                        />
-                      </div>
-                    ) : lesson.content ? (
-                      <div className="prose prose-sm max-w-none leading-relaxed">
-                        <div
-                          dangerouslySetInnerHTML={{ __html: lesson.content }}
-                        />
+                        {renderMixedContent(lesson.content)}
                       </div>
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
@@ -1162,52 +1336,6 @@ export default function DynamicLessonPage({
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Key Points Tab */}
-              <TabsContent value="keypoints" className="mt-6">
-                <Card className="rounded-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Bookmark className="w-5 h-5 text-[#e27447]" />
-                      <span>Key Points</span>
-                    </CardTitle>
-                    <CardDescription>
-                      Important concepts and takeaways from this lesson
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      {lesson.key_points && lesson.key_points.length > 0 ? (
-                        <div className="prose prose-sm max-w-none">
-                          <h4 className="text-lg font-semibold text-[#1e293b] mb-3">
-                            🔑 Key Points:
-                          </h4>
-                          <ul className="space-y-2">
-                            {lesson.key_points.map((point, index) => (
-                              <li
-                                key={index}
-                                className="flex items-start space-x-2"
-                              >
-                                <span className="text-[#e27447] font-bold">
-                                  •
-                                </span>
-                                <span className="text-muted-foreground">
-                                  {point}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <Bookmark className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                          <p>Key points will be available soon</p>
-                        </div>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -1446,14 +1574,24 @@ export default function DynamicLessonPage({
                                   : "bg-[#e27447] hover:bg-[#e27447]/90"
                               }`}
                               onClick={handleMarkComplete}
-                              disabled={isCompleted || isMarkingComplete}
+                              disabled={isMarkingComplete}
                             >
-                              <CheckCircle className="w-4 h-4 mr-2" />
-                              {isMarkingComplete
-                                ? "Saving..."
-                                : isCompleted
-                                ? "Completed ✓"
-                                : "Mark as Complete"}
+                              {isMarkingComplete ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Saving...
+                                </>
+                              ) : isCompleted ? (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Incomplete
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Complete
+                                </>
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -1522,17 +1660,27 @@ export default function DynamicLessonPage({
                               className={`rounded-sm ${
                                 isCompleted
                                   ? "bg-green-600 hover:bg-green-700"
-                                  : "bg-green-600 hover:bg-green-700"
+                                  : "bg-[#e27447] hover:bg-[#e27447]/90"
                               }`}
                               onClick={handleMarkComplete}
-                              disabled={isCompleted || isMarkingComplete}
+                              disabled={isMarkingComplete}
                             >
-                              <CheckCircle className="w-4 h-4 mr-2" />
-                              {isMarkingComplete
-                                ? "Saving..."
-                                : isCompleted
-                                ? "Completed ✓"
-                                : "Mark as Complete"}
+                              {isMarkingComplete ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Saving...
+                                </>
+                              ) : isCompleted ? (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Incomplete
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Complete
+                                </>
+                              )}
                             </Button>
                           </div>
                         </div>

@@ -156,6 +156,12 @@ export default function SiteAdministrationPage() {
           icon: Shield,
           description: "Assign questions to content managers",
         },
+        {
+          name: "Question Types",
+          href: "/admin/question-types",
+          icon: FileText,
+          description: "Manage question types and categories",
+        },
       ],
     },
     {

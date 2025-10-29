@@ -29,6 +29,9 @@ import {
   Edit3,
   ChevronDown,
   ChevronRight,
+  Search,
+  Layers,
+  ArrowLeft,
 } from "lucide-react";
 import {
   DndContext,
@@ -298,16 +301,30 @@ const SortableLesson = React.memo(function SortableLesson({
           ))}
         </select>
         <Button
-          onClick={() =>
-            setEditingLesson({
-              unitId: unit.id,
-              chapterId: chapter.id,
-              lessonId: lesson.id,
-            })
-          }
+          onClick={(e) => {
+            e.stopPropagation();
+            // Check if lesson has a real database ID (UUID format, not temporary ID)
+            const isRealLesson = lesson.id && !lesson.id.startsWith("lesson-");
+            if (isRealLesson) {
+              // Open in new tab for existing lessons
+              window.open(`/admin/lesson-editor/${lesson.id}`, "_blank");
+            } else {
+              // Use modal for new/unsaved lessons
+              setEditingLesson({
+                unitId: unit.id,
+                chapterId: chapter.id,
+                lessonId: lesson.id,
+              });
+            }
+          }}
           size="sm"
           variant="outline"
           className="rounded-sm text-xs"
+          title={
+            lesson.id && !lesson.id.startsWith("lesson-")
+              ? "Edit lesson in new tab"
+              : "Edit lesson"
+          }
         >
           <Edit3 className="w-3 h-3" />
         </Button>
@@ -399,6 +416,23 @@ export default function CourseCreatorPage() {
   );
   const [existingCourses, setExistingCourses] = useState<any[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+  const [coursesWithStats, setCoursesWithStats] = useState<
+    Array<{
+      id: string;
+      title: string;
+      slug: string;
+      created_at: string;
+      hierarchy: {
+        units: number;
+        chapters: number;
+        topics: number;
+        lessons: number;
+        tags: number;
+      };
+    }>
+  >([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   const [activeTab, setActiveTab] = useState("basic-info");
   const [editingUnit, setEditingUnit] = useState<string | null>(null);
@@ -994,15 +1028,13 @@ export default function CourseCreatorPage() {
               course_id: courseId,
               title: lesson.title,
               slug: `${course.slug}-${lesson.slug}`,
-              notes: lesson.description || null,
+              topic_badge: lesson.description || null,
               lesson_order: lessonOrder,
               is_preview: lesson.isPreview,
-              content_html: lesson.embedHtml || null,
-              content: lesson.content || null,
+              content: lesson.content || lesson.embedHtml || null,
               video_url: lesson.videoUrl || null,
-              video_thumbnail: null, // Can be added later
+              video_thumbnail_url: null, // Can be added later
               pdf_url: lesson.documentUrl || null,
-              key_points: null, // Can be added later as JSON
               unit_name: unit.title,
               chapter_name: chapter.title,
               quiz_id: null, // Can be linked later
@@ -1098,6 +1130,116 @@ export default function CourseCreatorPage() {
     }
   };
 
+  // Load course structure dynamically from database
+  const loadCourseStructure = async (courseSlug: string) => {
+    try {
+      // Fetch units
+      const unitsResponse = await fetch(
+        `/api/courses/units?course_slug=${courseSlug}`
+      );
+      if (!unitsResponse.ok) {
+        throw new Error("Failed to fetch units");
+      }
+      const unitsData = await unitsResponse.json();
+      const allUnits = unitsData.units || [];
+
+      // Fetch chapters
+      const chaptersResponse = await fetch(
+        `/api/courses/chapters?course_slug=${courseSlug}`
+      );
+      if (!chaptersResponse.ok) {
+        throw new Error("Failed to fetch chapters");
+      }
+      const chaptersData = await chaptersResponse.json();
+      const allChapters = chaptersData.chapters || [];
+
+      // Fetch lessons
+      const lessonsResponse = await fetch(
+        `/api/lessons?course_slug=${courseSlug}`
+      );
+      if (!lessonsResponse.ok) {
+        throw new Error("Failed to fetch lessons");
+      }
+      const lessonsData = await lessonsResponse.json();
+      const allLessons = lessonsData.lessons || [];
+
+      // Transform database structure to component format
+      const units = allUnits
+        .sort((a: any, b: any) => a.unit_order - b.unit_order)
+        .map((unit: any) => {
+          // Get chapters for this unit
+          const unitChapters = allChapters
+            .filter((ch: any) => ch.unit_id === unit.id)
+            .sort((a: any, b: any) => a.chapter_order - b.chapter_order)
+            .map((chapter: any) => {
+              // Get lessons for this chapter
+              const chapterLessons = allLessons
+                .filter((lesson: any) => lesson.chapter?.id === chapter.id)
+                .sort((a: any, b: any) => a.lesson_order - b.lesson_order)
+                .map((lesson: any) => {
+                  // Determine lesson type based on content
+                  let lessonType: "video" | "document" | "quiz" | "assignment" =
+                    "video";
+                  if (lesson.video_url) {
+                    lessonType = "video";
+                  } else if (lesson.pdf_url || lesson.content) {
+                    lessonType = "document";
+                  } else if (lesson.quiz_id) {
+                    lessonType = "quiz";
+                  } else if (lesson.pdf_url && lesson.solution_url) {
+                    lessonType = "assignment";
+                  }
+
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    slug: lesson.slug,
+                    description: lesson.topic_badge || lesson.description || "",
+                    content: lesson.content || "",
+                    contentUrl: lesson.content_url,
+                    videoUrl: lesson.video_url,
+                    documentUrl: lesson.pdf_url,
+                    embedHtml: lesson.content,
+                    duration: lesson.duration || "45 min",
+                    type: lessonType,
+                    isPreview: lesson.is_preview || false,
+                    order: lesson.lesson_order,
+                  };
+                });
+
+              return {
+                id: chapter.id,
+                title: chapter.chapter_name,
+                slug:
+                  chapter.chapter_name?.toLowerCase().replace(/\s+/g, "-") ||
+                  "",
+                description: chapter.description || "",
+                lessons: chapterLessons,
+                order: chapter.chapter_order,
+              };
+            });
+
+          return {
+            id: unit.id,
+            title: unit.unit_name,
+            slug: unit.unit_name?.toLowerCase().replace(/\s+/g, "-") || "",
+            description: unit.description || "",
+            chapters: unitChapters,
+            order: unit.unit_order,
+          };
+        });
+
+      setCourse((prev) => ({ ...prev, units }));
+    } catch (error) {
+      console.error("Error loading course structure:", error);
+      alert(
+        `Failed to load course structure: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  };
+
   const loadCourseForEditing = async (courseId: string) => {
     try {
       console.log("Loading course with ID:", courseId);
@@ -1110,6 +1252,7 @@ export default function CourseCreatorPage() {
         const courseData = data.course;
 
         // Load course basic info
+        const loadedPrice = courseData.price || 0;
         setCourse({
           id: courseData.id,
           title: courseData.title,
@@ -1119,10 +1262,11 @@ export default function CourseCreatorPage() {
           subject: courseData.subject || "",
           grade: courseData.grade || "",
           level: courseData.level || "",
-          price: courseData.price || 0,
+          price: loadedPrice,
+          isFree: loadedPrice === 0,
           duration: courseData.duration || "",
           validityDays: courseData.validity_days || 365,
-          units: courseData.template_data?.units || [],
+          units: [], // Will be loaded dynamically
           tags: courseData.template_data?.tags || [],
           learningOutcomes: courseData.template_data?.learningOutcomes || [],
           prerequisites: courseData.template_data?.prerequisites || [],
@@ -1131,80 +1275,8 @@ export default function CourseCreatorPage() {
           textbookName: courseData.template_data?.textbookName || "",
         });
 
-        // Load lessons
-        const lessonsResponse = await fetch(
-          `/api/lessons?course_id=${courseId}`
-        );
-        const lessonsData = await lessonsResponse.json();
-
-        if (lessonsResponse.ok && lessonsData.lessons) {
-          // Convert lessons back to units/chapters structure
-          const lessonsByUnit: Record<string, Record<string, Lesson[]>> = {};
-
-          lessonsData.lessons.forEach((lesson: any) => {
-            const unitName = lesson.unit_name || "General";
-            const chapterName = lesson.chapter_name || "Other";
-
-            if (!lessonsByUnit[unitName]) {
-              lessonsByUnit[unitName] = {};
-            }
-            if (!lessonsByUnit[unitName][chapterName]) {
-              lessonsByUnit[unitName][chapterName] = [];
-            }
-
-            // Determine lesson type based on content
-            let lessonType: "video" | "document" | "quiz" | "assignment" =
-              "video";
-            if (lesson.video_url) {
-              lessonType = "video";
-            } else if (lesson.pdf_url || lesson.content_html) {
-              lessonType = "document";
-            } else if (lesson.content?.toLowerCase().includes("quiz")) {
-              lessonType = "quiz";
-            } else if (lesson.content?.toLowerCase().includes("assignment")) {
-              lessonType = "assignment";
-            }
-
-            lessonsByUnit[unitName][chapterName].push({
-              id: lesson.id,
-              title: lesson.title,
-              slug: lesson.slug,
-              description: lesson.notes || "",
-              content: lesson.content || "",
-              contentUrl: lesson.content_url,
-              videoUrl: lesson.video_url,
-              documentUrl: lesson.pdf_url,
-              embedHtml: lesson.content_html,
-              duration: lesson.duration || "45 min",
-              type: lessonType,
-              isPreview: lesson.is_preview || false,
-              order: lesson.lesson_order,
-            });
-          });
-
-          // Convert back to units/chapters structure
-          const units = Object.entries(lessonsByUnit).map(
-            ([unitName, chapters], unitIndex) => ({
-              id: `unit-${unitIndex}`,
-              title: unitName,
-              slug: unitName.toLowerCase().replace(/\s+/g, "-"),
-              description: "",
-              chapters: Object.entries(chapters).map(
-                ([chapterName, lessons], chapterIndex) => ({
-                  id: `chapter-${unitIndex}-${chapterIndex}`,
-                  title: chapterName,
-                  slug: chapterName.toLowerCase().replace(/\s+/g, "-"),
-                  description: "",
-                  lessons: lessons,
-                  order: chapterIndex + 1,
-                })
-              ),
-              order: unitIndex + 1,
-            })
-          );
-
-          setCourse((prev) => ({ ...prev, units }));
-        }
+        // Load course structure dynamically from database
+        await loadCourseStructure(courseData.slug);
 
         setCourseStatus(courseData.status || "draft");
         setIsEditing(true);
@@ -1253,7 +1325,32 @@ export default function CourseCreatorPage() {
   // Load courses on component mount
   useEffect(() => {
     loadExistingCourses();
+    loadCoursesWithStats();
   }, []);
+
+  const loadCoursesWithStats = async () => {
+    try {
+      setIsLoadingStats(true);
+      const response = await fetch("/api/courses/hierarchy-stats");
+      if (response.ok) {
+        const data = await response.json();
+        setCoursesWithStats(data.courses || []);
+      }
+    } catch (error) {
+      console.error("Error loading course hierarchy stats:", error);
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
+  // Filter courses based on search query
+  const filteredCourses = coursesWithStats.filter((course) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      course.title.toLowerCase().includes(searchLower) ||
+      course.slug.toLowerCase().includes(searchLower)
+    );
+  });
 
   // Auto-load course from URL parameter
   useEffect(() => {
@@ -1267,6 +1364,1084 @@ export default function CourseCreatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Load course structure when Structure tab is active and course is loaded
+  useEffect(() => {
+    if (
+      isEditing &&
+      activeTab === "structure" &&
+      course.slug &&
+      course.units.length === 0
+    ) {
+      loadCourseStructure(course.slug);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, isEditing, course.slug]);
+
+  // If editing, show the editing interface
+  if (isEditing) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <div className="mb-6">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Admin", href: "/admin/site-administration" },
+              { label: "Course Creator", href: "/admin/course-creator" },
+              { label: "Edit Course", isActive: true },
+            ]}
+          />
+        </div>
+
+        <div className="mb-6 flex items-center gap-4">
+          <Button
+            onClick={() => {
+              setIsEditing(false);
+              setSelectedCourseId("");
+              setCourse({
+                title: "",
+                slug: "",
+                description: "",
+                curriculum: "CBSE",
+                subject: "Mathematics",
+                grade: "Class 9",
+                level: "",
+                price: 0,
+                isFree: true,
+                duration: "40 hours",
+                validityDays: 365,
+                units: [],
+                tags: [],
+                learningOutcomes: [],
+                prerequisites: [],
+                examBoard: "CBSE",
+                academicYear: "2025-26",
+                textbookName: "NCERT",
+              });
+            }}
+            variant="outline"
+            className="rounded-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Courses
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+              Editing: {course.title}
+            </h1>
+            <p className="text-muted-foreground">
+              Edit course content with an intuitive drag-and-drop interface
+            </p>
+          </div>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
+            <TabsTrigger
+              value="basic-info"
+              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            >
+              Basic Info
+            </TabsTrigger>
+            <TabsTrigger
+              value="structure"
+              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            >
+              Structure & Content
+            </TabsTrigger>
+            <TabsTrigger
+              value="preview"
+              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            >
+              Preview & Publish
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="basic-info" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Course Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Course Title
+                    </label>
+                    <Input
+                      value={course.title}
+                      onChange={(e) => {
+                        setCourse((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                          slug: generateSlug(e.target.value),
+                        }));
+                      }}
+                      placeholder="e.g., CBSE Mathematics Class 9"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Course Slug
+                    </label>
+                    <Input
+                      value={course.slug}
+                      onChange={(e) =>
+                        setCourse((prev) => ({ ...prev, slug: e.target.value }))
+                      }
+                      placeholder="e.g., cbse-mathematics-class-9"
+                      className="rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Description
+                  </label>
+                  <textarea
+                    value={course.description}
+                    onChange={(e) =>
+                      setCourse((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                    placeholder="Describe your course..."
+                    className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Curriculum
+                    </label>
+                    <select
+                      value={course.curriculum}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          curriculum: e.target.value,
+                        }))
+                      }
+                      className="w-full border rounded-sm px-3 py-2"
+                    >
+                      <option value="CBSE">CBSE</option>
+                      <option value="ICSE">ICSE</option>
+                      <option value="IBDP">IBDP</option>
+                      <option value="IGCSE">IGCSE</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Subject
+                    </label>
+                    <Input
+                      value={course.subject}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          subject: e.target.value,
+                        }))
+                      }
+                      placeholder="Mathematics"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Grade
+                    </label>
+                    <Input
+                      value={course.grade}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          grade: e.target.value,
+                        }))
+                      }
+                      placeholder="Class 9"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Level
+                    </label>
+                    <Input
+                      value={course.level || ""}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          level: e.target.value,
+                        }))
+                      }
+                      placeholder="HL/SL (optional)"
+                      className="rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Exam Board
+                    </label>
+                    <Input
+                      value={course.examBoard || ""}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          examBoard: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g., CBSE, IBO, Cambridge"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Academic Year
+                    </label>
+                    <Input
+                      value={course.academicYear || ""}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          academicYear: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g., 2025-26"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Textbook Name
+                    </label>
+                    <Input
+                      value={course.textbookName || ""}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          textbookName: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g., NCERT, IB Textbook"
+                      className="rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Price (₹)
+                    </label>
+                    <Input
+                      type="number"
+                      value={course.price}
+                      onChange={(e) => {
+                        const price = Number(e.target.value);
+                        setCourse((prev) => ({
+                          ...prev,
+                          price: price,
+                          isFree: price === 0,
+                        }));
+                      }}
+                      placeholder="Enter price in Rupees"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Duration
+                    </label>
+                    <Input
+                      value={course.duration}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          duration: e.target.value,
+                        }))
+                      }
+                      placeholder="40 hours"
+                      className="rounded-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Validity (Days)
+                    </label>
+                    <Input
+                      type="number"
+                      value={course.validityDays}
+                      onChange={(e) =>
+                        setCourse((prev) => ({
+                          ...prev,
+                          validityDays: Number(e.target.value),
+                        }))
+                      }
+                      placeholder="365"
+                      className="rounded-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {course.validityDays} days (
+                      {Math.round(course.validityDays / 30)} months)
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Status
+                    </label>
+                    <select
+                      value={courseStatus}
+                      onChange={(e) =>
+                        setCourseStatus(e.target.value as "draft" | "published")
+                      }
+                      className="w-full border rounded-sm px-3 py-2"
+                    >
+                      <option value="draft">📝 Draft</option>
+                      <option value="published">🚀 Published</option>
+                    </select>
+                  </div>
+                  <div className="flex items-end">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={course.isFree ?? false}
+                        onChange={(e) => {
+                          const isFree = e.target.checked;
+                          setCourse((prev) => ({
+                            ...prev,
+                            isFree: isFree,
+                            price: isFree ? 0 : prev.price,
+                          }));
+                        }}
+                      />
+                      <span className="text-sm">Free Course</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Course Tags
+                  </label>
+                  <TagInput
+                    tags={course.tags}
+                    onChange={(tags) =>
+                      setCourse((prev) => ({
+                        ...prev,
+                        tags: tags,
+                      }))
+                    }
+                    placeholder="e.g., Board Preparation, Advanced, Problem Solving"
+                    maxTags={8}
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    These will appear as badges on the course page
+                  </p>
+                </div>
+
+                {/* Learning Outcomes */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Learning Outcomes (one per line)
+                  </label>
+                  <textarea
+                    value={course.learningOutcomes.join("\n")}
+                    onChange={(e) =>
+                      setCourse((prev) => ({
+                        ...prev,
+                        learningOutcomes: e.target.value
+                          .split("\n")
+                          .map((line) => line.trim())
+                          .filter((line) => line.length > 0),
+                      }))
+                    }
+                    placeholder="e.g.,&#10;Master all concepts thoroughly&#10;Solve complex problems with confidence&#10;Excel in board examinations"
+                    className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
+                  />
+                </div>
+
+                {/* Prerequisites */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Prerequisites (one per line)
+                  </label>
+                  <textarea
+                    value={course.prerequisites.join("\n")}
+                    onChange={(e) =>
+                      setCourse((prev) => ({
+                        ...prev,
+                        prerequisites: e.target.value
+                          .split("\n")
+                          .map((line) => line.trim())
+                          .filter((line) => line.length > 0),
+                      }))
+                    }
+                    placeholder="e.g.,&#10;Basic understanding of algebra&#10;Completed previous grade mathematics"
+                    className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
+                  />
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <Button
+                    onClick={goToPreviousTab}
+                    variant="outline"
+                    className="rounded-sm"
+                    disabled={currentTabIndex === 0}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={goToNextTab}
+                    className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                    disabled={
+                      !canProceedToNext() || currentTabIndex === tabs.length - 1
+                    }
+                  >
+                    Next
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="structure" className="mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Course Structure</CardTitle>
+                  <div className="flex gap-2">
+                    {course.slug && (
+                      <Button
+                        onClick={() => loadCourseStructure(course.slug)}
+                        variant="outline"
+                        className="rounded-sm"
+                      >
+                        🔄 Refresh from Database
+                      </Button>
+                    )}
+                    <Button
+                      onClick={addUnit}
+                      className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Unit
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {course.units.map((unit, unitIndex) => (
+                    <Card key={unit.id} className="border-2">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <GripVertical className="w-5 h-5 text-gray-400" />
+                            <button
+                              onClick={() => toggleUnitCollapse(unit.id)}
+                              className="p-1 hover:bg-gray-100 rounded-sm"
+                            >
+                              {collapsedUnits.has(unit.id) ? (
+                                <ChevronRight className="w-5 h-5" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5" />
+                              )}
+                            </button>
+                            <div className="flex-1">
+                              {editingUnit === unit.id ? (
+                                <Input
+                                  value={unit.title}
+                                  onChange={(e) =>
+                                    updateUnit(unit.id, "title", e.target.value)
+                                  }
+                                  className="rounded-sm font-medium"
+                                  onBlur={() => setEditingUnit(null)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") setEditingUnit(null);
+                                  }}
+                                  autoFocus
+                                />
+                              ) : (
+                                <h3
+                                  className="text-lg font-medium cursor-pointer hover:bg-gray-50 p-2 rounded-sm -m-2"
+                                  onClick={() => setEditingUnit(unit.id)}
+                                >
+                                  Unit {unitIndex + 1}: {unit.title}
+                                </h3>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              onClick={() => addChapter(unit.id)}
+                              size="sm"
+                              variant="outline"
+                              className="rounded-sm"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Chapter
+                            </Button>
+                            <Button
+                              onClick={() => deleteUnit(unit.id)}
+                              size="sm"
+                              variant="outline"
+                              className="rounded-sm text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        {!collapsedUnits.has(unit.id) && (
+                          <div className="space-y-3 ml-8">
+                            {/* Lesson drag and drop context - at unit level for cross-chapter dragging */}
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={(e) => handleLessonDragEnd(e, unit.id)}
+                            >
+                              <SortableContext
+                                items={unit.chapters.flatMap((c) =>
+                                  c.lessons.map((l) => l.id)
+                                )}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {/* Chapter drag and drop context */}
+                                <DndContext
+                                  sensors={sensors}
+                                  collisionDetection={closestCenter}
+                                  onDragEnd={(e) =>
+                                    handleChapterDragEnd(e, unit.id)
+                                  }
+                                >
+                                  <SortableContext
+                                    items={unit.chapters.map((c) => c.id)}
+                                    strategy={verticalListSortingStrategy}
+                                  >
+                                    {unit.chapters.map(
+                                      (chapter, chapterIndex) => (
+                                        <SortableChapter
+                                          key={chapter.id}
+                                          chapter={chapter}
+                                          unit={unit}
+                                          chapterIndex={chapterIndex}
+                                          editingChapter={editingChapter}
+                                          setEditingChapter={setEditingChapter}
+                                          updateChapter={updateChapter}
+                                          addLesson={addLesson}
+                                          deleteChapter={deleteChapter}
+                                          collapsedChapters={collapsedChapters}
+                                          toggleChapterCollapse={
+                                            toggleChapterCollapse
+                                          }
+                                          allUnits={course.units}
+                                          moveChapterToUnit={moveChapterToUnit}
+                                        >
+                                          <ChapterLessons
+                                            chapter={chapter}
+                                            unit={unit}
+                                            collapsedChapters={
+                                              collapsedChapters
+                                            }
+                                            setEditingLesson={setEditingLesson}
+                                            deleteLesson={deleteLesson}
+                                            allChapters={unit.chapters}
+                                            moveLessonToChapter={
+                                              moveLessonToChapter
+                                            }
+                                          />
+                                        </SortableChapter>
+                                      )
+                                    )}
+                                  </SortableContext>
+                                </DndContext>
+                              </SortableContext>
+                            </DndContext>
+
+                            {unit.chapters.length === 0 && (
+                              <p className="text-sm text-gray-500 italic ml-8">
+                                No chapters yet
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {course.units.length === 0 && (
+                    <div className="text-center py-12">
+                      <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 mb-4">No units created yet</p>
+                      <Button
+                        onClick={addUnit}
+                        className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Unit
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <Button
+                    onClick={goToPreviousTab}
+                    variant="outline"
+                    className="rounded-sm"
+                    disabled={currentTabIndex === 0}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={goToNextTab}
+                    className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                    disabled={
+                      !canProceedToNext() || currentTabIndex === tabs.length - 1
+                    }
+                  >
+                    Next
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="preview" className="mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Preview & Publish Course</CardTitle>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" className="rounded-sm">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Preview
+                    </Button>
+                    <Button
+                      onClick={saveCourse}
+                      className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Course
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="font-semibold mb-4">Course Overview</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-sm font-medium">Title:</span>
+                        <p className="text-sm">
+                          {course.title || "Untitled Course"}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Curriculum:</span>
+                        <p className="text-sm">
+                          {course.curriculum} {course.grade} {course.subject}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Duration:</span>
+                        <p className="text-sm">{course.duration}</p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Price:</span>
+                        <p className="text-sm">
+                          {course.isFree ? "Free" : `₹${course.price}`}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Validity:</span>
+                        <p className="text-sm">
+                          {course.validityDays} days (
+                          {Math.round(course.validityDays / 30)} months)
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Status:</span>
+                        <p className="text-sm">
+                          {courseStatus === "draft"
+                            ? "📝 Draft"
+                            : "🚀 Published"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-4">Structure Summary</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm">Units:</span>
+                        <span className="text-sm font-medium">
+                          {course.units.length}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Chapters:</span>
+                        <span className="text-sm font-medium">
+                          {course.units.reduce(
+                            (sum, unit) => sum + unit.chapters.length,
+                            0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Lessons:</span>
+                        <span className="text-sm font-medium">
+                          {course.units.reduce(
+                            (sum, unit) =>
+                              sum +
+                              unit.chapters.reduce(
+                                (chSum, chapter) =>
+                                  chSum + chapter.lessons.length,
+                                0
+                              ),
+                            0
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <Button
+                    onClick={goToPreviousTab}
+                    variant="outline"
+                    className="rounded-sm"
+                    disabled={currentTabIndex === 0}
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex space-x-2">
+                    <Button
+                      onClick={goToNextTab}
+                      className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                      disabled={
+                        !canProceedToNext() ||
+                        currentTabIndex === tabs.length - 1
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Lesson Editor Modal */}
+        {editingLesson && getCurrentLesson() && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
+                <h2 className="text-xl font-bold">Edit Lesson</h2>
+                <Button
+                  onClick={() => setEditingLesson(null)}
+                  variant="outline"
+                  className="rounded-sm"
+                >
+                  ✕
+                </Button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Lesson Title */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Lesson Title
+                  </label>
+                  <Input
+                    value={getCurrentLesson()?.title || ""}
+                    onChange={(e) =>
+                      updateLesson(
+                        editingLesson.unitId,
+                        editingLesson.chapterId,
+                        editingLesson.lessonId,
+                        "title",
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g., Introduction to Real Numbers"
+                    className="rounded-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Slug: {getCurrentLesson()?.slug}
+                  </p>
+                </div>
+
+                {/* Lesson Description */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Description
+                  </label>
+                  <textarea
+                    value={getCurrentLesson()?.description || ""}
+                    onChange={(e) =>
+                      updateLesson(
+                        editingLesson.unitId,
+                        editingLesson.chapterId,
+                        editingLesson.lessonId,
+                        "description",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Brief description of the lesson..."
+                    className="w-full border rounded-sm px-3 py-2 min-h-[80px]"
+                  />
+                </div>
+
+                {/* Lesson Type and Duration */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Lesson Type
+                    </label>
+                    <select
+                      value={getCurrentLesson()?.type || "video"}
+                      onChange={(e) =>
+                        updateLesson(
+                          editingLesson.unitId,
+                          editingLesson.chapterId,
+                          editingLesson.lessonId,
+                          "type",
+                          e.target.value as
+                            | "video"
+                            | "document"
+                            | "quiz"
+                            | "assignment"
+                        )
+                      }
+                      className="w-full border rounded-sm px-3 py-2"
+                    >
+                      <option value="video">📹 Video Lesson</option>
+                      <option value="document">📄 Document/Reading</option>
+                      <option value="quiz">✅ Quiz/Assessment</option>
+                      <option value="assignment">
+                        📝 Assignment (Submit Work)
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Duration
+                    </label>
+                    <Input
+                      value={getCurrentLesson()?.duration || ""}
+                      onChange={(e) =>
+                        updateLesson(
+                          editingLesson.unitId,
+                          editingLesson.chapterId,
+                          editingLesson.lessonId,
+                          "duration",
+                          e.target.value
+                        )
+                      }
+                      placeholder="e.g., 45 min"
+                      className="rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* URL Fields based on type */}
+                {getCurrentLesson()?.type === "video" && (
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Video URL
+                    </label>
+                    <Input
+                      value={getCurrentLesson()?.videoUrl || ""}
+                      onChange={(e) =>
+                        updateLesson(
+                          editingLesson.unitId,
+                          editingLesson.chapterId,
+                          editingLesson.lessonId,
+                          "videoUrl",
+                          e.target.value
+                        )
+                      }
+                      placeholder="e.g., https://www.youtube.com/watch?v=..."
+                      className="rounded-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Supports: YouTube, Vimeo, Wistia, or direct video URLs
+                    </p>
+                  </div>
+                )}
+
+                {getCurrentLesson()?.type === "document" && (
+                  <>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">
+                        Document URL
+                      </label>
+                      <Input
+                        value={getCurrentLesson()?.documentUrl || ""}
+                        onChange={(e) =>
+                          updateLesson(
+                            editingLesson.unitId,
+                            editingLesson.chapterId,
+                            editingLesson.lessonId,
+                            "documentUrl",
+                            e.target.value
+                          )
+                        }
+                        placeholder="e.g., https://drive.google.com/file/... or PDF URL"
+                        className="rounded-sm"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Supports: PDF URLs, Google Docs (public), or direct
+                        document links
+                      </p>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium block">
+                          Custom HTML Embed (Advanced)
+                        </label>
+                        <Badge variant="outline" className="text-xs">
+                          Optional
+                        </Badge>
+                      </div>
+                      <textarea
+                        value={getCurrentLesson()?.embedHtml || ""}
+                        onChange={(e) =>
+                          updateLesson(
+                            editingLesson.unitId,
+                            editingLesson.chapterId,
+                            editingLesson.lessonId,
+                            "embedHtml",
+                            e.target.value
+                          )
+                        }
+                        placeholder="<div id='adobe-dc-view'></div>&#10;<script src='https://acrobatservices.adobe.com/...'></script>&#10;<script type='text/javascript'>&#10;  // Your Adobe PDF Embed code&#10;</script>"
+                        className="w-full border rounded-sm px-3 py-2 min-h-[120px] font-mono text-xs"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        ✨ Paste HTML embed code (Adobe PDF Embed API, iframes,
+                        etc.)
+                        <br />
+                        💡 If provided, this will be used instead of the URL
+                        above
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {(getCurrentLesson()?.type === "quiz" ||
+                  getCurrentLesson()?.type === "assignment") && (
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      External Content URL (Optional)
+                    </label>
+                    <Input
+                      value={getCurrentLesson()?.contentUrl || ""}
+                      onChange={(e) =>
+                        updateLesson(
+                          editingLesson.unitId,
+                          editingLesson.chapterId,
+                          editingLesson.lessonId,
+                          "contentUrl",
+                          e.target.value
+                        )
+                      }
+                      placeholder="e.g., Google Forms, Typeform, external platform..."
+                      className="rounded-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Link to external quiz/assignment platform (e.g., Google
+                      Forms, Kahoot)
+                    </p>
+                  </div>
+                )}
+
+                {/* Preview Access */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isPreview"
+                    checked={getCurrentLesson()?.isPreview || false}
+                    onChange={(e) =>
+                      updateLesson(
+                        editingLesson.unitId,
+                        editingLesson.chapterId,
+                        editingLesson.lessonId,
+                        "isPreview",
+                        e.target.checked
+                      )
+                    }
+                    className="rounded"
+                  />
+                  <label htmlFor="isPreview" className="text-sm">
+                    Allow preview access (free for non-enrolled users)
+                  </label>
+                </div>
+
+                {/* Lesson Content */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Lesson Content
+                  </label>
+                  <textarea
+                    value={getCurrentLesson()?.content || ""}
+                    onChange={(e) =>
+                      updateLesson(
+                        editingLesson.unitId,
+                        editingLesson.chapterId,
+                        editingLesson.lessonId,
+                        "content",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Lesson content (markdown supported)..."
+                    className="w-full border rounded-sm px-3 py-2 min-h-[200px] font-mono text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    You can use Markdown formatting
+                  </p>
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 bg-gray-50 border-t p-6 flex justify-end space-x-2">
+                <Button
+                  onClick={() => setEditingLesson(null)}
+                  variant="outline"
+                  className="rounded-sm"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={saveLessonEdits}
+                  className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+                >
+                  Save Lesson
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Default view: Table of all courses with hierarchy stats
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumbs */}
@@ -1281,1053 +2456,190 @@ export default function CourseCreatorPage() {
       </div>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
-          Course Creator
-        </h1>
-        <p className="text-muted-foreground">
-          Create and organize your course content with an intuitive
-          drag-and-drop interface
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+              Course Creator
+            </h1>
+            <p className="text-muted-foreground">
+              View and edit courses with 5-tier hierarchy structure
+            </p>
+          </div>
+          <Button
+            onClick={loadCoursesWithStats}
+            variant="outline"
+            className="rounded-sm"
+            disabled={isLoadingStats}
+          >
+            Refresh
+          </Button>
+        </div>
       </div>
 
-      {/* Course Selector */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Course Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex-1 min-w-[300px]">
-              <label className="text-sm font-medium mb-2 block">
-                {isEditing ? "Currently Editing" : "Load Existing Course"}
-              </label>
-              <div className="flex gap-2">
-                <select
-                  value={selectedCourseId}
-                  onChange={(e) => {
-                    console.log("Course selected:", e.target.value);
-                    if (e.target.value) {
-                      loadCourseForEditing(e.target.value);
-                    }
-                  }}
-                  className="flex-1 border rounded-sm px-3 py-2"
-                  disabled={isEditing}
-                >
-                  <option value="">Select a course to edit...</option>
-                  {existingCourses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.title} ({course.status})
-                    </option>
-                  ))}
-                </select>
-                <Button
-                  onClick={loadExistingCourses}
-                  variant="outline"
-                  className="rounded-sm"
-                >
-                  Refresh
-                </Button>
-              </div>
-            </div>
-            <Button
-              onClick={createNewCourse}
-              className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Course
-            </Button>
+      {/* Search and Filter */}
+      <Card className="mb-6 rounded-sm">
+        <CardContent className="pt-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search courses by name or slug..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 rounded-sm"
+            />
           </div>
-
-          {isEditing && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-sm">
-              <p className="text-sm text-blue-800">
-                📝 <strong>Editing:</strong> {course.title}
-                <br />
-                <span className="text-xs">Course ID: {selectedCourseId}</span>
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
-          <TabsTrigger
-            value="basic-info"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-          >
-            Basic Info
-          </TabsTrigger>
-          <TabsTrigger
-            value="structure"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-          >
-            Structure & Content
-          </TabsTrigger>
-          <TabsTrigger
-            value="preview"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
-          >
-            Preview & Publish
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="basic-info" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Course Title
-                  </label>
-                  <Input
-                    value={course.title}
-                    onChange={(e) => {
-                      setCourse((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                        slug: generateSlug(e.target.value),
-                      }));
-                    }}
-                    placeholder="e.g., CBSE Mathematics Class 9"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Course Slug
-                  </label>
-                  <Input
-                    value={course.slug}
-                    onChange={(e) =>
-                      setCourse((prev) => ({ ...prev, slug: e.target.value }))
-                    }
-                    placeholder="e.g., cbse-mathematics-class-9"
-                    className="rounded-sm"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Description
-                </label>
-                <textarea
-                  value={course.description}
-                  onChange={(e) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  placeholder="Describe your course..."
-                  className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Curriculum
-                  </label>
-                  <select
-                    value={course.curriculum}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        curriculum: e.target.value,
-                      }))
-                    }
-                    className="w-full border rounded-sm px-3 py-2"
-                  >
-                    <option value="CBSE">CBSE</option>
-                    <option value="ICSE">ICSE</option>
-                    <option value="IBDP">IBDP</option>
-                    <option value="IGCSE">IGCSE</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Subject
-                  </label>
-                  <Input
-                    value={course.subject}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        subject: e.target.value,
-                      }))
-                    }
-                    placeholder="Mathematics"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Grade
-                  </label>
-                  <Input
-                    value={course.grade}
-                    onChange={(e) =>
-                      setCourse((prev) => ({ ...prev, grade: e.target.value }))
-                    }
-                    placeholder="Class 9"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Level
-                  </label>
-                  <Input
-                    value={course.level || ""}
-                    onChange={(e) =>
-                      setCourse((prev) => ({ ...prev, level: e.target.value }))
-                    }
-                    placeholder="HL/SL (optional)"
-                    className="rounded-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Exam Board
-                  </label>
-                  <Input
-                    value={course.examBoard || ""}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        examBoard: e.target.value,
-                      }))
-                    }
-                    placeholder="e.g., CBSE, IBO, Cambridge"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Academic Year
-                  </label>
-                  <Input
-                    value={course.academicYear || ""}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        academicYear: e.target.value,
-                      }))
-                    }
-                    placeholder="e.g., 2025-26"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Textbook Name
-                  </label>
-                  <Input
-                    value={course.textbookName || ""}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        textbookName: e.target.value,
-                      }))
-                    }
-                    placeholder="e.g., NCERT, IB Textbook"
-                    className="rounded-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Price (₹)
-                  </label>
-                  <Input
-                    type="number"
-                    value={course.price}
-                    onChange={(e) => {
-                      const price = Number(e.target.value);
-                      setCourse((prev) => ({
-                        ...prev,
-                        price: price,
-                        isFree: price === 0,
-                      }));
-                    }}
-                    placeholder="Enter price in Rupees"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Duration
-                  </label>
-                  <Input
-                    value={course.duration}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        duration: e.target.value,
-                      }))
-                    }
-                    placeholder="40 hours"
-                    className="rounded-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Validity (Days)
-                  </label>
-                  <Input
-                    type="number"
-                    value={course.validityDays}
-                    onChange={(e) =>
-                      setCourse((prev) => ({
-                        ...prev,
-                        validityDays: Number(e.target.value),
-                      }))
-                    }
-                    placeholder="365"
-                    className="rounded-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {course.validityDays} days (
-                    {Math.round(course.validityDays / 30)} months)
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Status
-                  </label>
-                  <select
-                    value={courseStatus}
-                    onChange={(e) =>
-                      setCourseStatus(e.target.value as "draft" | "published")
-                    }
-                    className="w-full border rounded-sm px-3 py-2"
-                  >
-                    <option value="draft">📝 Draft</option>
-                    <option value="published">🚀 Published</option>
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={course.isFree}
-                      onChange={(e) => {
-                        const isFree = e.target.checked;
-                        setCourse((prev) => ({
-                          ...prev,
-                          isFree: isFree,
-                          price: isFree ? 0 : prev.price,
-                        }));
-                      }}
-                    />
-                    <span className="text-sm">Free Course</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Tags */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Course Tags
-                </label>
-                <TagInput
-                  tags={course.tags}
-                  onChange={(tags) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      tags: tags,
-                    }))
-                  }
-                  placeholder="e.g., Board Preparation, Advanced, Problem Solving"
-                  maxTags={8}
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                  These will appear as badges on the course page
-                </p>
-              </div>
-
-              {/* Learning Outcomes */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Learning Outcomes (one per line)
-                </label>
-                <textarea
-                  value={course.learningOutcomes.join("\n")}
-                  onChange={(e) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      learningOutcomes: e.target.value
-                        .split("\n")
-                        .map((line) => line.trim())
-                        .filter((line) => line.length > 0),
-                    }))
-                  }
-                  placeholder="e.g.,&#10;Master all concepts thoroughly&#10;Solve complex problems with confidence&#10;Excel in board examinations"
-                  className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
-                />
-              </div>
-
-              {/* Prerequisites */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Prerequisites (one per line)
-                </label>
-                <textarea
-                  value={course.prerequisites.join("\n")}
-                  onChange={(e) =>
-                    setCourse((prev) => ({
-                      ...prev,
-                      prerequisites: e.target.value
-                        .split("\n")
-                        .map((line) => line.trim())
-                        .filter((line) => line.length > 0),
-                    }))
-                  }
-                  placeholder="e.g.,&#10;Basic understanding of algebra&#10;Completed previous grade mathematics"
-                  className="w-full border rounded-sm px-3 py-2 min-h-[100px]"
-                />
-              </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
-                <Button
-                  onClick={goToPreviousTab}
-                  variant="outline"
-                  className="rounded-sm"
-                  disabled={currentTabIndex === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={goToNextTab}
-                  className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                  disabled={
-                    !canProceedToNext() || currentTabIndex === tabs.length - 1
-                  }
-                >
-                  Next
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="structure" className="mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Course Structure</CardTitle>
-                <Button
-                  onClick={addUnit}
-                  className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Unit
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {course.units.map((unit, unitIndex) => (
-                  <Card key={unit.id} className="border-2">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <GripVertical className="w-5 h-5 text-gray-400" />
-                          <button
-                            onClick={() => toggleUnitCollapse(unit.id)}
-                            className="p-1 hover:bg-gray-100 rounded-sm"
-                          >
-                            {collapsedUnits.has(unit.id) ? (
-                              <ChevronRight className="w-5 h-5" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5" />
-                            )}
-                          </button>
-                          <div className="flex-1">
-                            {editingUnit === unit.id ? (
-                              <Input
-                                value={unit.title}
-                                onChange={(e) =>
-                                  updateUnit(unit.id, "title", e.target.value)
-                                }
-                                className="rounded-sm font-medium"
-                                onBlur={() => setEditingUnit(null)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") setEditingUnit(null);
-                                }}
-                                autoFocus
-                              />
-                            ) : (
-                              <h3
-                                className="text-lg font-medium cursor-pointer hover:bg-gray-50 p-2 rounded-sm -m-2"
-                                onClick={() => setEditingUnit(unit.id)}
-                              >
-                                Unit {unitIndex + 1}: {unit.title}
-                              </h3>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            onClick={() => addChapter(unit.id)}
-                            size="sm"
-                            variant="outline"
-                            className="rounded-sm"
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            Chapter
-                          </Button>
-                          <Button
-                            onClick={() => deleteUnit(unit.id)}
-                            size="sm"
-                            variant="outline"
-                            className="rounded-sm text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      {!collapsedUnits.has(unit.id) && (
-                        <div className="space-y-3 ml-8">
-                          {/* Lesson drag and drop context - at unit level for cross-chapter dragging */}
-                          <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={(e) => handleLessonDragEnd(e, unit.id)}
-                          >
-                            <SortableContext
-                              items={unit.chapters.flatMap((c) =>
-                                c.lessons.map((l) => l.id)
-                              )}
-                              strategy={verticalListSortingStrategy}
-                            >
-                              {/* Chapter drag and drop context */}
-                              <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={(e) =>
-                                  handleChapterDragEnd(e, unit.id)
-                                }
-                              >
-                                <SortableContext
-                                  items={unit.chapters.map((c) => c.id)}
-                                  strategy={verticalListSortingStrategy}
-                                >
-                                  {unit.chapters.map(
-                                    (chapter, chapterIndex) => (
-                                      <SortableChapter
-                                        key={chapter.id}
-                                        chapter={chapter}
-                                        unit={unit}
-                                        chapterIndex={chapterIndex}
-                                        editingChapter={editingChapter}
-                                        setEditingChapter={setEditingChapter}
-                                        updateChapter={updateChapter}
-                                        addLesson={addLesson}
-                                        deleteChapter={deleteChapter}
-                                        collapsedChapters={collapsedChapters}
-                                        toggleChapterCollapse={
-                                          toggleChapterCollapse
-                                        }
-                                        allUnits={course.units}
-                                        moveChapterToUnit={moveChapterToUnit}
-                                      >
-                                        <ChapterLessons
-                                          chapter={chapter}
-                                          unit={unit}
-                                          collapsedChapters={collapsedChapters}
-                                          setEditingLesson={setEditingLesson}
-                                          deleteLesson={deleteLesson}
-                                          allChapters={unit.chapters}
-                                          moveLessonToChapter={
-                                            moveLessonToChapter
-                                          }
-                                        />
-                                      </SortableChapter>
-                                    )
-                                  )}
-                                </SortableContext>
-                              </DndContext>
-                            </SortableContext>
-                          </DndContext>
-
-                          {unit.chapters.length === 0 && (
-                            <p className="text-sm text-gray-500 italic ml-8">
-                              No chapters yet
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-                {course.units.length === 0 && (
-                  <div className="text-center py-12">
-                    <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 mb-4">No units created yet</p>
-                    <Button
-                      onClick={addUnit}
-                      className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Your First Unit
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
-                <Button
-                  onClick={goToPreviousTab}
-                  variant="outline"
-                  className="rounded-sm"
-                  disabled={currentTabIndex === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={goToNextTab}
-                  className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                  disabled={
-                    !canProceedToNext() || currentTabIndex === tabs.length - 1
-                  }
-                >
-                  Next
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="preview" className="mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Preview & Publish Course</CardTitle>
-                <div className="flex space-x-2">
-                  <Button variant="outline" className="rounded-sm">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview
-                  </Button>
-                  <Button
-                    onClick={saveCourse}
-                    className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Course
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-4">Course Overview</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <span className="text-sm font-medium">Title:</span>
-                      <p className="text-sm">
-                        {course.title || "Untitled Course"}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium">Curriculum:</span>
-                      <p className="text-sm">
-                        {course.curriculum} {course.grade} {course.subject}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium">Duration:</span>
-                      <p className="text-sm">{course.duration}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium">Price:</span>
-                      <p className="text-sm">
-                        {course.isFree ? "Free" : `₹${course.price}`}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium">Validity:</span>
-                      <p className="text-sm">
-                        {course.validityDays} days (
-                        {Math.round(course.validityDays / 30)} months)
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium">Status:</span>
-                      <p className="text-sm">
-                        {courseStatus === "draft" ? "📝 Draft" : "🚀 Published"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-4">Structure Summary</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Units:</span>
-                      <span className="text-sm font-medium">
-                        {course.units.length}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Chapters:</span>
-                      <span className="text-sm font-medium">
-                        {course.units.reduce(
-                          (sum, unit) => sum + unit.chapters.length,
-                          0
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Lessons:</span>
-                      <span className="text-sm font-medium">
-                        {course.units.reduce(
-                          (sum, unit) =>
-                            sum +
-                            unit.chapters.reduce(
-                              (chSum, chapter) =>
-                                chSum + chapter.lessons.length,
-                              0
-                            ),
-                          0
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8">
-                <Button
-                  onClick={goToPreviousTab}
-                  variant="outline"
-                  className="rounded-sm"
-                  disabled={currentTabIndex === 0}
-                >
-                  Previous
-                </Button>
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={goToNextTab}
-                    className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-                    disabled={
-                      !canProceedToNext() || currentTabIndex === tabs.length - 1
-                    }
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Lesson Editor Modal */}
-      {editingLesson && getCurrentLesson() && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
-              <h2 className="text-xl font-bold">Edit Lesson</h2>
-              <Button
-                onClick={() => setEditingLesson(null)}
-                variant="outline"
-                className="rounded-sm"
-              >
-                ✕
-              </Button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* Lesson Title */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Lesson Title
-                </label>
-                <Input
-                  value={getCurrentLesson()?.title || ""}
-                  onChange={(e) =>
-                    updateLesson(
-                      editingLesson.unitId,
-                      editingLesson.chapterId,
-                      editingLesson.lessonId,
-                      "title",
-                      e.target.value
-                    )
-                  }
-                  placeholder="e.g., Introduction to Real Numbers"
-                  className="rounded-sm"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Slug: {getCurrentLesson()?.slug}
-                </p>
-              </div>
-
-              {/* Lesson Description */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Description
-                </label>
-                <textarea
-                  value={getCurrentLesson()?.description || ""}
-                  onChange={(e) =>
-                    updateLesson(
-                      editingLesson.unitId,
-                      editingLesson.chapterId,
-                      editingLesson.lessonId,
-                      "description",
-                      e.target.value
-                    )
-                  }
-                  placeholder="Brief description of the lesson..."
-                  className="w-full border rounded-sm px-3 py-2 min-h-[80px]"
-                />
-              </div>
-
-              {/* Lesson Type and Duration */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Lesson Type
-                  </label>
-                  <select
-                    value={getCurrentLesson()?.type || "video"}
-                    onChange={(e) =>
-                      updateLesson(
-                        editingLesson.unitId,
-                        editingLesson.chapterId,
-                        editingLesson.lessonId,
-                        "type",
-                        e.target.value as
-                          | "video"
-                          | "document"
-                          | "quiz"
-                          | "assignment"
-                      )
-                    }
-                    className="w-full border rounded-sm px-3 py-2"
-                  >
-                    <option value="video">📹 Video Lesson</option>
-                    <option value="document">📄 Document/Reading</option>
-                    <option value="quiz">✅ Quiz/Assessment</option>
-                    <option value="assignment">
-                      📝 Assignment (Submit Work)
-                    </option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Duration
-                  </label>
-                  <Input
-                    value={getCurrentLesson()?.duration || ""}
-                    onChange={(e) =>
-                      updateLesson(
-                        editingLesson.unitId,
-                        editingLesson.chapterId,
-                        editingLesson.lessonId,
-                        "duration",
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g., 45 min"
-                    className="rounded-sm"
-                  />
-                </div>
-              </div>
-
-              {/* URL Fields based on type */}
-              {getCurrentLesson()?.type === "video" && (
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Video URL
-                  </label>
-                  <Input
-                    value={getCurrentLesson()?.videoUrl || ""}
-                    onChange={(e) =>
-                      updateLesson(
-                        editingLesson.unitId,
-                        editingLesson.chapterId,
-                        editingLesson.lessonId,
-                        "videoUrl",
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g., https://www.youtube.com/watch?v=..."
-                    className="rounded-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Supports: YouTube, Vimeo, Wistia, or direct video URLs
-                  </p>
-                </div>
-              )}
-
-              {getCurrentLesson()?.type === "document" && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Document URL
-                    </label>
-                    <Input
-                      value={getCurrentLesson()?.documentUrl || ""}
-                      onChange={(e) =>
-                        updateLesson(
-                          editingLesson.unitId,
-                          editingLesson.chapterId,
-                          editingLesson.lessonId,
-                          "documentUrl",
-                          e.target.value
-                        )
-                      }
-                      placeholder="e.g., https://drive.google.com/file/... or PDF URL"
-                      className="rounded-sm"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Supports: PDF URLs, Google Docs (public), or direct
-                      document links
-                    </p>
-                  </div>
-
-                  <div className="border-t pt-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-sm font-medium block">
-                        Custom HTML Embed (Advanced)
-                      </label>
-                      <Badge variant="outline" className="text-xs">
-                        Optional
-                      </Badge>
-                    </div>
-                    <textarea
-                      value={getCurrentLesson()?.embedHtml || ""}
-                      onChange={(e) =>
-                        updateLesson(
-                          editingLesson.unitId,
-                          editingLesson.chapterId,
-                          editingLesson.lessonId,
-                          "embedHtml",
-                          e.target.value
-                        )
-                      }
-                      placeholder="<div id='adobe-dc-view'></div>&#10;<script src='https://acrobatservices.adobe.com/...'></script>&#10;<script type='text/javascript'>&#10;  // Your Adobe PDF Embed code&#10;</script>"
-                      className="w-full border rounded-sm px-3 py-2 min-h-[120px] font-mono text-xs"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      ✨ Paste HTML embed code (Adobe PDF Embed API, iframes,
-                      etc.)
-                      <br />
-                      💡 If provided, this will be used instead of the URL above
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {(getCurrentLesson()?.type === "quiz" ||
-                getCurrentLesson()?.type === "assignment") && (
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    External Content URL (Optional)
-                  </label>
-                  <Input
-                    value={getCurrentLesson()?.contentUrl || ""}
-                    onChange={(e) =>
-                      updateLesson(
-                        editingLesson.unitId,
-                        editingLesson.chapterId,
-                        editingLesson.lessonId,
-                        "contentUrl",
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g., Google Forms, Typeform, external platform..."
-                    className="rounded-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Link to external quiz/assignment platform (e.g., Google
-                    Forms, Kahoot)
-                  </p>
-                </div>
-              )}
-
-              {/* Preview Access */}
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="isPreview"
-                  checked={getCurrentLesson()?.isPreview || false}
-                  onChange={(e) =>
-                    updateLesson(
-                      editingLesson.unitId,
-                      editingLesson.chapterId,
-                      editingLesson.lessonId,
-                      "isPreview",
-                      e.target.checked
-                    )
-                  }
-                  className="rounded"
-                />
-                <label htmlFor="isPreview" className="text-sm">
-                  Allow preview access (free for non-enrolled users)
-                </label>
-              </div>
-
-              {/* Lesson Content */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Lesson Content
-                </label>
-                <textarea
-                  value={getCurrentLesson()?.content || ""}
-                  onChange={(e) =>
-                    updateLesson(
-                      editingLesson.unitId,
-                      editingLesson.chapterId,
-                      editingLesson.lessonId,
-                      "content",
-                      e.target.value
-                    )
-                  }
-                  placeholder="Lesson content (markdown supported)..."
-                  className="w-full border rounded-sm px-3 py-2 min-h-[200px] font-mono text-sm"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  You can use Markdown formatting
-                </p>
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 bg-gray-50 border-t p-6 flex justify-end space-x-2">
-              <Button
-                onClick={() => setEditingLesson(null)}
-                variant="outline"
-                className="rounded-sm"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={saveLessonEdits}
-                className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
-              >
-                Save Lesson
-              </Button>
-            </div>
+      {/* 5-Tier Hierarchy Summary Info */}
+      <Card className="mb-6 rounded-sm bg-[#feefea]/30 border-[#e27447]/20">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Layers className="w-5 h-5 text-[#e27447]" />
+            <CardTitle className="text-[#1e293b]">
+              5-Tier Hierarchy Flow
+            </CardTitle>
           </div>
-        </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Badge variant="outline" className="rounded-sm">
+              Units
+            </Badge>
+            <span>→</span>
+            <Badge variant="outline" className="rounded-sm">
+              Chapters
+            </Badge>
+            <span>→</span>
+            <Badge variant="outline" className="rounded-sm">
+              Topics
+            </Badge>
+            <span>→</span>
+            <Badge variant="outline" className="rounded-sm">
+              Lessons
+            </Badge>
+            <span>→</span>
+            <Badge variant="outline" className="rounded-sm">
+              Tags
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Courses Table */}
+      {isLoadingStats ? (
+        <Card className="rounded-sm">
+          <CardContent className="p-12 text-center">
+            <p className="text-muted-foreground">Loading courses...</p>
+          </CardContent>
+        </Card>
+      ) : filteredCourses.length === 0 ? (
+        <Card className="rounded-sm">
+          <CardContent className="p-12 text-center">
+            <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No courses found</h3>
+            <p className="text-muted-foreground">
+              {searchQuery
+                ? "Try adjusting your search query"
+                : "No courses available"}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                    Course Title
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                    Slug
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
+                    Units
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
+                    Chapters
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
+                    Topics
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
+                    Lessons
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
+                    Tags
+                  </th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCourses.map((courseWithStats) => (
+                  <tr
+                    key={courseWithStats.id}
+                    className="border-b last:border-0 hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-4 py-3">
+                      <div>
+                        <p className="font-medium text-sm">
+                          {courseWithStats.title}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-sm">
+                        {courseWithStats.slug}
+                      </code>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="outline" className="rounded-sm">
+                        {courseWithStats.hierarchy.units}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="outline" className="rounded-sm">
+                        {courseWithStats.hierarchy.chapters}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="outline" className="rounded-sm">
+                        {courseWithStats.hierarchy.topics}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="outline" className="rounded-sm">
+                        {courseWithStats.hierarchy.lessons}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="outline" className="rounded-sm">
+                        {courseWithStats.hierarchy.tags}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCourseId(courseWithStats.id);
+                          loadCourseForEditing(courseWithStats.id);
+                        }}
+                        className="rounded-sm"
+                      >
+                        <Edit3 className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </div>
   );

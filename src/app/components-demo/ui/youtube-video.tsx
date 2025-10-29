@@ -1,40 +1,44 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Play, ExternalLink, Download } from 'lucide-react'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Card, CardContent } from '@/app/components-demo/ui/ui-components/card'
+import { useState, useEffect } from "react";
+import { Play, ExternalLink, Download } from "lucide-react";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
 
 interface YouTubeVideoProps {
-  videoId: string
-  title: string
-  description?: string
-  className?: string
-  showControls?: boolean
+  videoId: string;
+  title: string;
+  description?: string;
+  className?: string;
+  showControls?: boolean;
+  thumbnail?: string;
 }
 
-export function YouTubeVideo({ 
-  videoId, 
-  title, 
-  description, 
+export function YouTubeVideo({
+  videoId,
+  title,
+  description,
   className = "",
-  showControls = true 
+  showControls = true,
+  thumbnail,
 }: YouTubeVideoProps) {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [showEmbed, setShowEmbed] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [showEmbed, setShowEmbed] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState(false);
 
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`
-  const watchUrl = `https://www.youtube.com/watch?v=${videoId}`
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  const thumbnailUrl =
+    thumbnail || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   const handlePlay = () => {
-    setShowEmbed(true)
-    setIsLoaded(true)
-  }
+    setShowEmbed(true);
+    setIsLoaded(true);
+  };
 
   const handleOpenYouTube = () => {
-    window.open(watchUrl, '_blank', 'noopener,noreferrer')
-  }
+    window.open(watchUrl, "_blank", "noopener,noreferrer");
+  };
 
   if (showEmbed && isLoaded) {
     return (
@@ -47,19 +51,35 @@ export function YouTubeVideo({
           allowFullScreen
         />
       </div>
-    )
+    );
   }
 
   return (
     <Card className={className}>
       <CardContent className="p-0">
-        <div className="aspect-video bg-gray-100 rounded-sm relative overflow-hidden group">
+        <div className="aspect-video bg-black rounded-sm relative overflow-hidden group">
           {/* Thumbnail */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-            style={{ backgroundImage: `url(${thumbnailUrl})` }}
-          />
-          
+          {thumbnailUrl && !thumbnailError && (
+            <img
+              src={thumbnailUrl}
+              alt={`${title} thumbnail`}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={() => setThumbnailError(true)}
+              onLoad={() => setThumbnailError(false)}
+              loading="lazy"
+            />
+          )}
+
+          {/* Fallback to YouTube default thumbnail if custom thumbnail fails */}
+          {thumbnailError && (
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+              style={{
+                backgroundImage: `url(https://img.youtube.com/vi/${videoId}/maxresdefault.jpg)`,
+              }}
+            />
+          )}
+
           {/* Overlay */}
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <div className="text-center text-white">
@@ -101,65 +121,73 @@ export function YouTubeVideo({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Component for displaying video resources
 interface VideoResourceProps {
   resource: {
-    id: string
-    type: string
-    url: string
-    title: string
-    description?: string
-    duration?: number
-    isYouTube?: boolean
-    youtubeId?: string
-  }
-  className?: string
+    id: string;
+    type: string;
+    url: string;
+    title: string;
+    description?: string;
+    duration?: number;
+    isYouTube?: boolean;
+    youtubeId?: string;
+    thumbnail?: string;
+  };
+  className?: string;
 }
 
-export function VideoResource({ resource, className = "" }: VideoResourceProps) {
-  const [signedUrl, setSignedUrl] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export function VideoResource({
+  resource,
+  className = "",
+}: VideoResourceProps) {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Generate signed URL for Bunny CDN videos
   useEffect(() => {
     const generateSignedUrl = async () => {
-      if (!resource.url || resource.isYouTube) return
+      if (!resource.url || resource.isYouTube) return;
 
       // Check if it's a Bunny CDN URL that needs token authentication
-      if (resource.url.includes('b-cdn.net')) {
-        setIsLoading(true)
-        setError(null)
-        
+      if (resource.url.includes("b-cdn.net")) {
+        setIsLoading(true);
+        setError(null);
+
         try {
           // Extract filename from URL for signed URL generation
-          const fileName = resource.url.split('/').pop() || ''
-          
+          const fileName = resource.url.split("/").pop() || "";
+
           // Get signed URL for the video
-          const response = await fetch(`/api/signed-url?file=/${fileName}`)
-          const data = await response.json()
+          const response = await fetch(`/api/signed-url?file=/${fileName}`);
+          const data = await response.json();
 
           if (response.ok) {
-            setSignedUrl(data.url)
+            setSignedUrl(data.url);
           } else {
-            setError(`Error: ${data.error || 'Failed to get video access'}`)
+            setError(`Error: ${data.error || "Failed to get video access"}`);
           }
         } catch (err) {
-          setError(`Error: ${err instanceof Error ? err.message : 'Failed to access video'}`)
+          setError(
+            `Error: ${
+              err instanceof Error ? err.message : "Failed to access video"
+            }`
+          );
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       } else {
         // For non-Bunny CDN videos, use the URL directly
-        setSignedUrl(resource.url)
+        setSignedUrl(resource.url);
       }
-    }
+    };
 
-    generateSignedUrl()
-  }, [resource.url, resource.isYouTube])
+    generateSignedUrl();
+  }, [resource.url, resource.isYouTube]);
 
   if (resource.isYouTube && resource.youtubeId) {
     return (
@@ -168,19 +196,20 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
         title={resource.title}
         description={resource.description}
         className={className}
+        thumbnail={resource.thumbnail}
       />
-    )
+    );
   }
 
   // Check if it's a direct video URL
-  const isDirectVideo = resource.url && (
-    resource.url.includes('.mp4') || 
-    resource.url.includes('.webm') || 
-    resource.url.includes('.ogg') ||
-    resource.url.includes('b-cdn.net') ||
-    resource.url.includes('youtube.com') ||
-    resource.url.includes('youtu.be')
-  )
+  const isDirectVideo =
+    resource.url &&
+    (resource.url.includes(".mp4") ||
+      resource.url.includes(".webm") ||
+      resource.url.includes(".ogg") ||
+      resource.url.includes("b-cdn.net") ||
+      resource.url.includes("youtube.com") ||
+      resource.url.includes("youtu.be"));
 
   if (isDirectVideo && !resource.isYouTube) {
     if (isLoading) {
@@ -195,7 +224,7 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
             </div>
           </CardContent>
         </Card>
-      )
+      );
     }
 
     if (error) {
@@ -205,16 +234,21 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
             <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
               <div className="text-center">
                 <Play className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">{resource.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  {resource.title}
+                </h3>
                 <p className="text-red-500 mb-4">{error}</p>
-                <Button variant="outline" onClick={() => window.location.reload()}>
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.reload()}
+                >
                   Retry
                 </Button>
               </div>
             </div>
           </CardContent>
         </Card>
-      )
+      );
     }
 
     if (!signedUrl) {
@@ -224,13 +258,15 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
             <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
               <div className="text-center">
                 <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">{resource.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  {resource.title}
+                </h3>
                 <p className="text-muted-foreground mb-4">Preparing video...</p>
               </div>
             </div>
           </CardContent>
         </Card>
-      )
+      );
     }
 
     return (
@@ -250,16 +286,23 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
             </video>
           </div>
           <div className="p-4">
-            <h3 className="font-semibold text-gray-700 mb-2">{resource.title}</h3>
+            <h3 className="font-semibold text-gray-700 mb-2">
+              {resource.title}
+            </h3>
             {resource.description && (
-              <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                {resource.description}
+              </p>
             )}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 {resource.duration && (
                   <span className="flex items-center space-x-1">
                     <Play className="w-4 h-4" />
-                    <span>{Math.floor(resource.duration / 60)}:{(resource.duration % 60).toString().padStart(2, '0')}</span>
+                    <span>
+                      {Math.floor(resource.duration / 60)}:
+                      {(resource.duration % 60).toString().padStart(2, "0")}
+                    </span>
                   </span>
                 )}
                 <span className="flex items-center space-x-1">
@@ -274,7 +317,7 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // Fallback for regular video files
@@ -284,8 +327,12 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
         <div className="aspect-video bg-gray-100 rounded-sm flex items-center justify-center">
           <div className="text-center">
             <Play className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">{resource.title}</h3>
-            <p className="text-muted-foreground mb-4">Video content will be displayed here</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              {resource.title}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Video content will be displayed here
+            </p>
             <Button variant="outline">
               <Download className="w-4 h-4 mr-2" />
               Download Video
@@ -294,5 +341,5 @@ export function VideoResource({ resource, className = "" }: VideoResourceProps) 
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

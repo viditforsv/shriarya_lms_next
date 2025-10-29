@@ -22,7 +22,6 @@ interface Lesson {
   slug: string;
   lesson_order: number;
   is_preview: boolean;
-  content_html?: string;
   content?: string;
   chapter?: {
     id: string;

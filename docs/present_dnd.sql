@@ -1,6 +1,30 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.assignment_submissions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  assignment_id text NOT NULL,
+  course_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  file_name text NOT NULL,
+  file_path text NOT NULL,
+  file_url text NOT NULL,
+  file_size numeric NOT NULL,
+  submitted_at timestamp with time zone DEFAULT now(),
+  status text DEFAULT 'submitted'::text CHECK (status = ANY (ARRAY['submitted'::text, 'under_review'::text, 'graded'::text, 'returned'::text])),
+  graded_file_path text,
+  graded_file_url text,
+  marks_obtained numeric,
+  max_marks numeric,
+  graded_at timestamp with time zone,
+  graded_by uuid,
+  teacher_comments text,
+  grading_status text DEFAULT 'pending'::text CHECK (grading_status = ANY (ARRAY['pending'::text, 'graded'::text, 'returned'::text])),
+  CONSTRAINT assignment_submissions_pkey PRIMARY KEY (id),
+  CONSTRAINT assignment_submissions_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT assignment_submissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT assignment_submissions_graded_by_fkey FOREIGN KEY (graded_by) REFERENCES auth.users(id)
+);
 CREATE TABLE public.course_lesson_content (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   lesson_id uuid NOT NULL,
@@ -70,9 +94,12 @@ CREATE TABLE public.courses_enrollments (
   course_id uuid,
   is_active boolean DEFAULT true,
   enrolled_at timestamp with time zone DEFAULT now(),
+  assigned_teacher_id uuid,
+  enrollment_type text DEFAULT 'student'::text CHECK (enrollment_type = ANY (ARRAY['student'::text, 'teacher'::text])),
   CONSTRAINT courses_enrollments_pkey PRIMARY KEY (id),
   CONSTRAINT enrollments_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id),
-  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+  CONSTRAINT enrollments_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
+  CONSTRAINT courses_enrollments_assigned_teacher_id_fkey FOREIGN KEY (assigned_teacher_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.courses_lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -184,7 +211,7 @@ CREATE TABLE public.profiles (
   id uuid NOT NULL,
   first_name text,
   last_name text,
-  role text DEFAULT 'student'::text CHECK (role = ANY (ARRAY['student'::text, 'admin'::text, 'content_manager'::text])),
+  role text DEFAULT 'student'::text CHECK (role = ANY (ARRAY['student'::text, 'admin'::text, 'content_manager'::text, 'teacher'::text])),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   avatar_url text,

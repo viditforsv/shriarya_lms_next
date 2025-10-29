@@ -45,12 +45,6 @@ interface Lesson {
   lesson_order: number;
   topic_number?: string;
   lesson_code?: string;
-  conceptual_focus?: string;
-  lesson_description?: string;
-  skill_emphasis?: string;
-  assessment_context?: string;
-  difficulty_level?: number;
-  learning_outcome?: string;
   chapter?: {
     id: string;
     chapter_name: string;
@@ -362,48 +356,7 @@ export default function AdminLessonEditorPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {lesson.conceptual_focus && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-600 mb-1">
-                        Conceptual Focus
-                      </h4>
-                      <p className="text-sm text-gray-800">
-                        {lesson.conceptual_focus}
-                      </p>
-                    </div>
-                  )}
-                  {lesson.skill_emphasis && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-600 mb-1">
-                        Skill Emphasis
-                      </h4>
-                      <p className="text-sm text-gray-800">
-                        {lesson.skill_emphasis}
-                      </p>
-                    </div>
-                  )}
-                  {lesson.difficulty_level && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-600 mb-1">
-                        Difficulty Level
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-[#e27447] h-2 rounded-full"
-                            style={{
-                              width: `${(lesson.difficulty_level / 10) * 100}%`,
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium">
-                          {lesson.difficulty_level}/10
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                {/* Metadata fields removed to reduce noise */}
               </CardContent>
             </Card>
           ))}

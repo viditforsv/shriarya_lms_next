@@ -24,6 +24,11 @@ import {
   ShoppingCart,
   Eye,
   CheckCircle,
+  Users,
+  Edit,
+  Save,
+  X,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,6 +38,7 @@ import { createClient } from "@/lib/supabase/client";
 
 // @ts-ignore - TypeScript module resolution issue
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
+import { UnifiedCourseStructure } from "@/components/UnifiedCourseStructure";
 import { useCart } from "@/contexts/CartContext";
 
 // Unit interface
@@ -119,9 +125,125 @@ export function CoursePageClient({
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(
     new Set()
   );
+  const [courseStats, setCourseStats] = useState<{
+    totalStudents: number;
+    activeStudents: number;
+    recentEnrollments: number;
+    participants: Array<{
+      enrollmentId: string;
+      enrolledAt: string;
+      isActive: boolean;
+      student: {
+        id: string;
+        email: string;
+        first_name: string | null;
+        last_name: string | null;
+        role: string;
+        created_at: string;
+      } | null;
+    }>;
+  } | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+
+  // Inline editing state for admins
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState<{
+    title?: string;
+    description?: string;
+    price?: number;
+    thumbnail_url?: string;
+  }>({});
+  const [saving, setSaving] = useState(false);
+
+  // Check if user is admin
+  const isAdmin = profile?.role === "admin";
+
+  // Debug: Log admin status (can be removed later)
+  useEffect(() => {
+    if (profile) {
+      console.log("Profile role:", profile.role, "isAdmin:", isAdmin);
+    }
+  }, [profile, isAdmin]);
 
   // Check if this is an IBDP Mathematics course
   const isIBDPMathCourse = courseParams.slug?.includes("ibdp-mathematics");
+
+  // Check if this course should use unified template (CBSE Class 10 for pilot)
+  const useUnifiedTemplate = courseParams.slug === "cbse-mathematics-class-10";
+
+  // Save course field changes (admin only)
+  const handleSaveField = async (field: string) => {
+    if (!isAdmin || !course?.id) return;
+
+    setSaving(true);
+    try {
+      const updateData: Record<string, unknown> = {
+        id: course.id,
+        [field]: editValues[field as keyof typeof editValues],
+      };
+
+      // Convert price string to number if needed
+      if (field === "price" && editValues.price !== undefined) {
+        updateData.price =
+          typeof editValues.price === "string"
+            ? parseFloat(editValues.price) || 0
+            : editValues.price;
+      }
+
+      const response = await fetch("/api/courses", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update course");
+      }
+
+      const { course: updatedCourse } = await response.json();
+
+      // Update local state
+      setCourse((prev) => (prev ? { ...prev, ...updatedCourse } : null));
+
+      // Reset editing state
+      setEditingField(null);
+      setEditValues({});
+
+      // Optionally reload the page to reflect all changes
+      window.location.reload();
+    } catch (err) {
+      console.error("Error saving field:", err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Failed to save changes. Please try again."
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Start editing a field
+  const handleStartEdit = (field: string) => {
+    if (!isAdmin || !course) return;
+
+    setEditingField(field);
+    setEditValues({
+      [field]:
+        field === "price"
+          ? course.price || 0
+          : course[field as keyof ExtendedCourse] || "",
+    });
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setEditValues({});
+  };
 
   // Toggle unit expansion
   const toggleUnit = (unitId: string) => {
@@ -278,7 +400,6 @@ export function CoursePageClient({
             id,
             slug,
             title,
-            content_html,
             content,
             lesson_order,
             is_preview,
@@ -316,9 +437,7 @@ export function CoursePageClient({
             id: lesson.id as string,
             slug: lesson.slug as string,
             title: lesson.title as string,
-            description: (lesson.content_html ||
-              lesson.content ||
-              "") as string,
+            description: (lesson.content || "") as string,
             duration: "45 minutes",
             type: "video",
             isPreview: Boolean(lesson.is_preview),
@@ -397,6 +516,26 @@ export function CoursePageClient({
         } catch (error) {
           console.error("Error fetching last lesson:", error);
         }
+
+        // Fetch course stats if user is admin
+        if (profile?.role === "admin" && courseId) {
+          try {
+            setLoadingStats(true);
+            const statsResponse = await fetch(
+              `/api/courses/${courseParams.slug}/stats`
+            );
+            if (statsResponse.ok) {
+              const statsData = await statsResponse.json();
+              setCourseStats(statsData);
+            } else {
+              console.error("Failed to fetch course stats");
+            }
+          } catch (error) {
+            console.error("Error fetching course stats:", error);
+          } finally {
+            setLoadingStats(false);
+          }
+        }
       } catch (err) {
         console.error("Error loading course:", err);
         setError("Course not found");
@@ -407,7 +546,7 @@ export function CoursePageClient({
 
     loadCourse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseParams.slug, user?.id, authChecked]);
+  }, [courseParams.slug, user?.id, authChecked, profile?.role]);
 
   const handleAddToCart = () => {
     if (!course) return;
@@ -565,18 +704,123 @@ export function CoursePageClient({
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
-                <h1 className="text-4xl font-bold text-[#1e293b]">
-                  {course.title}
-                </h1>
+                {editingField === "title" ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="text"
+                      value={editValues.title || ""}
+                      onChange={(e) =>
+                        setEditValues({ ...editValues, title: e.target.value })
+                      }
+                      className="text-4xl font-bold text-[#1e293b] border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1"
+                      autoFocus
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => handleSaveField("title")}
+                      disabled={saving}
+                      className="rounded-sm bg-green-600 hover:bg-green-700"
+                    >
+                      {saving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      disabled={saving}
+                      variant="outline"
+                      className="rounded-sm"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 flex-1">
+                    <h1 className="text-4xl font-bold text-[#1e293b]">
+                      {course.title}
+                    </h1>
+                    {profile?.role === "admin" && (
+                      <button
+                        onClick={() => handleStartEdit("title")}
+                        className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                        title="Edit title"
+                      >
+                        <Edit className="w-4 h-4 text-[#e27447]" />
+                      </button>
+                    )}
+                    {/* Debug indicator - remove later */}
+                    {process.env.NODE_ENV === "development" && (
+                      <span className="text-xs text-gray-500">
+                        (Admin: {profile?.role || "none"}, isAdmin:{" "}
+                        {isAdmin ? "true" : "false"})
+                      </span>
+                    )}
+                  </div>
+                )}
                 {profile?.role === "admin" && (
                   <Badge className="bg-purple-600 text-white rounded-sm">
                     Admin Access
                   </Badge>
                 )}
               </div>
-              <p className="text-xl text-muted-foreground mb-4">
-                {course.description || "No description available"}
-              </p>
+              {editingField === "description" ? (
+                <div className="mb-4">
+                  <div className="flex items-start gap-2">
+                    <textarea
+                      value={editValues.description || ""}
+                      onChange={(e) =>
+                        setEditValues({
+                          ...editValues,
+                          description: e.target.value,
+                        })
+                      }
+                      className="text-xl text-muted-foreground border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1 min-h-[100px]"
+                      autoFocus
+                    />
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleSaveField("description")}
+                        disabled={saving}
+                        className="rounded-sm bg-green-600 hover:bg-green-700"
+                      >
+                        {saving ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={handleCancelEdit}
+                        disabled={saving}
+                        variant="outline"
+                        className="rounded-sm"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-4 relative">
+                  <p className="text-xl text-muted-foreground">
+                    {course.description || "No description available"}
+                  </p>
+                  {profile?.role === "admin" && (
+                    <button
+                      onClick={() => handleStartEdit("description")}
+                      className="absolute top-0 right-0 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                      title="Edit description"
+                    >
+                      <Edit className="w-4 h-4 text-[#e27447]" />
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="flex items-center flex-wrap gap-2">
                 {isEnrolled && (
                   <Badge
@@ -654,11 +898,67 @@ export function CoursePageClient({
             <div className="ml-6">
               {!isEnrolled ? (
                 <div className="text-right space-y-3">
-                  {(course.price || 0) > 0 && (
-                    <div className="text-2xl font-bold text-[#e27447] mb-2">
-                      ₹{course.price?.toLocaleString()}
-                    </div>
-                  )}
+                  {(course.price || 0) > 0 || isAdmin ? (
+                    editingField === "price" ? (
+                      <div className="flex items-center justify-end gap-2 mb-2">
+                        <span className="text-2xl font-bold text-[#e27447]">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
+                          value={editValues.price || 0}
+                          onChange={(e) =>
+                            setEditValues({
+                              ...editValues,
+                              price: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="text-2xl font-bold text-[#e27447] border-2 border-[#e27447] rounded-sm px-3 py-2 w-32 text-right"
+                          autoFocus
+                          min="0"
+                          step="0.01"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => handleSaveField("price")}
+                          disabled={saving}
+                          className="rounded-sm bg-green-600 hover:bg-green-700"
+                        >
+                          {saving ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Save className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleCancelEdit}
+                          disabled={saving}
+                          variant="outline"
+                          className="rounded-sm"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="text-right mb-2 relative">
+                        {(course.price || 0) > 0 && (
+                          <div className="text-2xl font-bold text-[#e27447]">
+                            ₹{course.price?.toLocaleString()}
+                          </div>
+                        )}
+                        {profile?.role === "admin" && (
+                          <button
+                            onClick={() => handleStartEdit("price")}
+                            className="absolute -top-1 -left-8 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                            title="Edit price"
+                          >
+                            <Edit className="w-4 h-4 text-[#e27447]" />
+                          </button>
+                        )}
+                      </div>
+                    )
+                  ) : null}
                   <div className="flex flex-col gap-2">
                     {/* Admin Access Button - Only for admins */}
                     {user && profile?.role === "admin" && (
@@ -746,8 +1046,12 @@ export function CoursePageClient({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList
+                className={`grid w-full rounded-sm bg-[#feefea] p-1 ${
+                  isAdmin ? "grid-cols-3" : "grid-cols-2"
+                }`}
+              >
                 <TabsTrigger
                   value="overview"
                   className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
@@ -760,6 +1064,15 @@ export function CoursePageClient({
                 >
                   Content
                 </TabsTrigger>
+                {isAdmin && (
+                  <TabsTrigger
+                    value="participants"
+                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Participants
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               <TabsContent value="overview" className="mt-6">
@@ -879,7 +1192,12 @@ export function CoursePageClient({
                     <CardDescription>{lessons.length} lessons</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {isIBDPMathCourse ? (
+                    {useUnifiedTemplate ? (
+                      <UnifiedCourseStructure
+                        courseSlug={courseParams.slug}
+                        showTopicNumbers={true}
+                      />
+                    ) : isIBDPMathCourse ? (
                       <IBDPCourseStructure courseSlug={courseParams.slug} />
                     ) : units.length > 0 ? (
                       <div className="space-y-2">
@@ -1078,6 +1396,203 @@ export function CoursePageClient({
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              {isAdmin && (
+                <TabsContent value="participants" className="mt-6">
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Course Statistics</CardTitle>
+                        <CardDescription>
+                          Enrollment and student participation data
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {loadingStats ? (
+                          <div className="text-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
+                            <p className="mt-4 text-sm text-muted-foreground">
+                              Loading statistics...
+                            </p>
+                          </div>
+                        ) : courseStats ? (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                              <CardHeader className="pb-3">
+                                <CardTitle className="text-lg font-semibold">
+                                  Total Students
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-3xl font-bold text-[#e27447]">
+                                  {courseStats.totalStudents}
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  All enrollments
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                              <CardHeader className="pb-3">
+                                <CardTitle className="text-lg font-semibold">
+                                  Active Students
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-3xl font-bold text-[#e27447]">
+                                  {courseStats.activeStudents}
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  Currently enrolled
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                              <CardHeader className="pb-3">
+                                <CardTitle className="text-lg font-semibold">
+                                  Recent Enrollments
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-3xl font-bold text-[#e27447]">
+                                  {courseStats.recentEnrollments}
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  Last 30 days
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <p>No statistics available</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Participants List */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Enrolled Students</CardTitle>
+                        <CardDescription>
+                          {courseStats?.participants?.length || 0} active
+                          students enrolled in this course
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {loadingStats ? (
+                          <div className="text-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
+                            <p className="mt-4 text-sm text-muted-foreground">
+                              Loading participants...
+                            </p>
+                          </div>
+                        ) : courseStats?.participants &&
+                          courseStats.participants.length > 0 ? (
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b bg-muted/50">
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                    Student Name
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                    Email
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                    Role
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                    Enrolled Date
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                    Status
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {courseStats.participants.map((participant) => (
+                                  <tr
+                                    key={participant.enrollmentId}
+                                    className="border-b last:border-0 hover:bg-muted/30 transition-colors"
+                                  >
+                                    <td className="px-4 py-3">
+                                      <div className="font-medium text-sm">
+                                        {participant.student?.first_name || ""}{" "}
+                                        {participant.student?.last_name || ""}
+                                        {!participant.student?.first_name &&
+                                          !participant.student?.last_name && (
+                                            <span className="text-muted-foreground italic">
+                                              No name
+                                            </span>
+                                          )}
+                                      </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <span className="text-sm text-muted-foreground">
+                                        {participant.student?.email || "N/A"}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <Badge
+                                        variant="outline"
+                                        className="rounded-sm capitalize"
+                                      >
+                                        {participant.student?.role || "student"}
+                                      </Badge>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <span className="text-sm">
+                                        {participant.enrolledAt
+                                          ? new Date(
+                                              participant.enrolledAt
+                                            ).toLocaleDateString("en-US", {
+                                              year: "numeric",
+                                              month: "short",
+                                              day: "numeric",
+                                            })
+                                          : "N/A"}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <Badge
+                                        variant={
+                                          participant.isActive
+                                            ? "default"
+                                            : "secondary"
+                                        }
+                                        className="rounded-sm"
+                                      >
+                                        {participant.isActive
+                                          ? "Active"
+                                          : "Inactive"}
+                                      </Badge>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p className="font-medium mb-2">
+                              No students enrolled yet
+                            </p>
+                            <p className="text-sm">
+                              Students will appear here once they enroll in this
+                              course.
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              )}
             </Tabs>
           </div>
 

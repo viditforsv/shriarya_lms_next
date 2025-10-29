@@ -23,7 +23,26 @@ export async function GET(
       .from("courses_lessons")
       .select(
         `
-        *,
+        id,
+        title,
+        slug,
+        lesson_order,
+        is_preview,
+        content,
+        quiz_id,
+        video_url,
+        pdf_url,
+        solution_url,
+        video_thumbnail_url,
+        topic_badge,
+        topic_number,
+        concept_title,
+        concept_content,
+        formula_title,
+        formula_content,
+        created_at,
+        chapter_id,
+        course_id,
         chapter:courses_chapters(
           id,
           chapter_name,

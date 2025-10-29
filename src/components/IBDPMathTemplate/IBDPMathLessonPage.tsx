@@ -496,7 +496,6 @@ export function IBDPMathLessonPage({
                           `Understanding ${currentLesson.title}`,
                         content:
                           lessonContent.concepts[0]?.content ||
-                          lessonContent.concepts[0]?.content_html ||
                           `This lesson covers the fundamental concepts of ${currentLesson.title}.`,
                         keyPoints: lessonContent.concepts[0]?.metadata
                           ?.keyPoints || [
@@ -518,7 +517,7 @@ export function IBDPMathLessonPage({
                 formulas={lessonContent.formulas.map((formula) => ({
                   id: formula.id,
                   title: formula.title,
-                  formula: formula.content || formula.content_html || "",
+                  formula: formula.content || "",
                   description: formula.metadata?.description || "",
                 }))}
                 recommendedQuestions={

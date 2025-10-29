@@ -23,12 +23,13 @@ import {
 import {
   ArrowLeft,
   Save,
-  Plus,
-  Trash2,
-  Edit,
+  FileText,
+  Video,
+  FileCheck,
   Lightbulb,
   Calculator,
-  FileText,
+  BookOpen,
+  Hash,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -37,14 +38,19 @@ interface Lesson {
   title: string;
   slug: string;
   lesson_order: number;
+  is_preview: boolean;
+  content?: string;
+  quiz_id?: string;
+  video_url?: string;
+  pdf_url?: string;
+  solution_url?: string;
+  video_thumbnail_url?: string;
+  topic_badge?: string;
   topic_number?: string;
-  lesson_code?: string;
-  conceptual_focus?: string;
-  lesson_description?: string;
-  skill_emphasis?: string;
-  assessment_context?: string;
-  difficulty_level?: number;
-  learning_outcome?: string;
+  concept_title?: string;
+  concept_content?: string;
+  formula_title?: string;
+  formula_content?: string;
   chapter?: {
     id: string;
     chapter_name: string;
@@ -57,19 +63,7 @@ interface Lesson {
   };
 }
 
-interface LessonContent {
-  id: string;
-  lesson_id: string;
-  content_type: "concepts" | "formulas";
-  title: string;
-  content: string;
-  content_html: string;
-  metadata: any;
-  order_index: number;
-  is_active: boolean;
-}
-
-export default function AdminLessonContentEditorPage({
+export default function AdminLessonEditorPage({
   params,
 }: {
   params: Promise<{ lessonId: string }>;
@@ -77,16 +71,13 @@ export default function AdminLessonContentEditorPage({
   const router = useRouter();
   const { user, profile } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [lessonContent, setLessonContent] = useState<{
-    concepts: LessonContent[];
-    formulas: LessonContent[];
-  }>({ concepts: [], formulas: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resolvedParams, setResolvedParams] = useState<{
     lessonId: string;
   } | null>(null);
+  const [activeTab, setActiveTab] = useState("basic");
 
   // Resolve params
   useEffect(() => {
@@ -112,22 +103,12 @@ export default function AdminLessonContentEditorPage({
       setIsLoading(true);
       setError(null);
 
-      // Load lesson details
       const lessonResponse = await fetch(`/api/lessons/${lessonId}`);
       if (!lessonResponse.ok) {
         throw new Error("Failed to load lesson");
       }
       const lessonData = await lessonResponse.json();
       setLesson(lessonData.lesson);
-
-      // Load lesson content
-      const contentResponse = await fetch(
-        `/api/lesson-content?lesson_id=${lessonId}`
-      );
-      if (contentResponse.ok) {
-        const contentData = await contentResponse.json();
-        setLessonContent(contentData.content);
-      }
     } catch (error) {
       console.error("Error loading lesson data:", error);
       setError("Failed to load lesson data");
@@ -136,106 +117,56 @@ export default function AdminLessonContentEditorPage({
     }
   };
 
-  const saveContent = async (
-    content: LessonContent,
-    isNew: boolean = false
-  ) => {
+  const handleSave = async () => {
+    if (!lesson || !resolvedParams?.lessonId) return;
+
     try {
       setIsSaving(true);
+      setError(null);
 
-      const url = "/api/lesson-content";
-      const method = isNew ? "POST" : "PUT";
-      const body = isNew
-        ? {
-            lesson_id: resolvedParams?.lessonId,
-            content_type: content.content_type,
-            title: content.title,
-            content: content.content,
-            content_html: content.content_html,
-            metadata: content.metadata,
-            order_index: content.order_index,
-          }
-        : {
-            id: content.id,
-            title: content.title,
-            content: content.content,
-            content_html: content.content_html,
-            metadata: content.metadata,
-            order_index: content.order_index,
-            is_active: content.is_active,
-          };
-
-      const response = await fetch(url, {
-        method,
+      const response = await fetch(`/api/lessons/${resolvedParams.lessonId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          title: lesson.title,
+          slug: lesson.slug,
+          is_preview: lesson.is_preview,
+          content: lesson.content,
+          quiz_id: lesson.quiz_id || null,
+          video_url: lesson.video_url || null,
+          pdf_url: lesson.pdf_url || null,
+          solution_url: lesson.solution_url || null,
+          video_thumbnail_url: lesson.video_thumbnail_url || null,
+          topic_badge: lesson.topic_badge || null,
+          concept_title: lesson.concept_title || null,
+          concept_content: lesson.concept_content || null,
+          formula_title: lesson.formula_title || null,
+          formula_content: lesson.formula_content || null,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to ${isNew ? "create" : "update"} content`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save lesson");
       }
 
-      // Reload lesson content
-      await loadLessonData(resolvedParams?.lessonId || "");
+      const data = await response.json();
+      setLesson(data.lesson);
+      alert("Lesson saved successfully!");
     } catch (error) {
-      console.error("Error saving content:", error);
-      setError(`Failed to ${isNew ? "create" : "update"} content`);
+      console.error("Error saving lesson:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to save lesson"
+      );
     } finally {
       setIsSaving(false);
     }
   };
 
-  const deleteContent = async (contentId: string) => {
-    try {
-      const response = await fetch(`/api/lesson-content?id=${contentId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete content");
-      }
-
-      // Reload lesson content
-      await loadLessonData(resolvedParams?.lessonId || "");
-    } catch (error) {
-      console.error("Error deleting content:", error);
-      setError("Failed to delete content");
-    }
-  };
-
-  const addNewContent = (type: "concepts" | "formulas") => {
-    const newContent: LessonContent = {
-      id: "",
-      lesson_id: resolvedParams?.lessonId || "",
-      content_type: type,
-      title: "",
-      content: "",
-      content_html: "",
-      metadata: type === "concepts" ? { keyPoints: [] } : { description: "" },
-      order_index: lessonContent[type].length,
-      is_active: true,
-    };
-
-    setLessonContent((prev) => ({
-      ...prev,
-      [type]: [...prev[type], newContent],
-    }));
-  };
-
-  const updateContent = (
-    type: "concepts" | "formulas",
-    index: number,
-    field: keyof LessonContent,
-    value: any
-  ) => {
-    setLessonContent((prev) => ({
-      ...prev,
-      [type]: prev[type].map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
-      ),
-    }));
+  const updateField = (field: keyof Lesson, value: any) => {
+    setLesson((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
   if (profile?.role !== "admin") {
@@ -265,7 +196,7 @@ export default function AdminLessonContentEditorPage({
     );
   }
 
-  if (error || !lesson) {
+  if (error && !lesson) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
@@ -279,26 +210,47 @@ export default function AdminLessonContentEditorPage({
     );
   }
 
+  if (!lesson) {
+    return null;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <Link href="/admin/lesson-editor">
-            <Button variant="outline" size="sm" className="rounded-sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Lessons
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold">Edit Lesson Content</h1>
-            <p className="text-muted-foreground">
-              Manage concepts and formulas for this lesson
-            </p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <Link href="/admin/lesson-editor">
+              <Button variant="outline" size="sm" className="rounded-sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Lessons
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold">Edit Lesson</h1>
+              <p className="text-muted-foreground">
+                {lesson.chapter?.unit?.unit_name} →{" "}
+                {lesson.chapter?.chapter_name}
+              </p>
+            </div>
           </div>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="rounded-sm bg-[#e27447] hover:bg-[#d1653a]"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isSaving ? "Saving..." : "Save Lesson"}
+          </Button>
         </div>
 
-        {/* Lesson Info */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-sm">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
+
+        {/* Lesson Info Badge */}
         <Card className="rounded-sm mb-6">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
@@ -310,295 +262,313 @@ export default function AdminLessonContentEditorPage({
                   {lesson.topic_number}
                 </Badge>
               )}
+              {lesson.topic_badge && (
+                <Badge variant="outline" className="rounded-sm">
+                  {lesson.topic_badge}
+                </Badge>
+              )}
             </div>
             <CardTitle className="text-xl">{lesson.title}</CardTitle>
-            <CardDescription>
-              {lesson.chapter?.unit?.unit_name} → {lesson.chapter?.chapter_name}
-            </CardDescription>
           </CardHeader>
         </Card>
       </div>
 
-      {/* Content Editor */}
-      <Tabs defaultValue="concepts" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
+      {/* Editor Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 rounded-sm bg-[#feefea] p-1">
           <TabsTrigger
-            value="concepts"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            value="basic"
+            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
           >
-            <Lightbulb className="w-4 h-4 mr-2" />
-            Concepts
+            <BookOpen className="w-4 h-4 mr-2" />
+            Basic Info
           </TabsTrigger>
           <TabsTrigger
-            value="formulas"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            value="content"
+            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
           >
-            <Calculator className="w-4 h-4 mr-2" />
-            Formulas
+            <FileText className="w-4 h-4 mr-2" />
+            Content
+          </TabsTrigger>
+          <TabsTrigger
+            value="media"
+            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+          >
+            <Video className="w-4 h-4 mr-2" />
+            Media & Files
+          </TabsTrigger>
+          <TabsTrigger
+            value="concepts"
+            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+          >
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Concepts & Formulas
           </TabsTrigger>
         </TabsList>
 
-        {/* Concepts Tab */}
-        <TabsContent value="concepts" className="mt-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Concepts</h2>
-              <Button
-                onClick={() => addNewContent("concepts")}
-                size="sm"
-                className="rounded-sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Concept
-              </Button>
-            </div>
+        {/* Basic Info Tab */}
+        <TabsContent value="basic" className="mt-6">
+          <Card className="rounded-sm">
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Title *
+                  </label>
+                  <Input
+                    value={lesson.title}
+                    onChange={(e) => updateField("title", e.target.value)}
+                    placeholder="Lesson title"
+                    className="rounded-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Slug *
+                  </label>
+                  <Input
+                    value={lesson.slug}
+                    onChange={(e) => updateField("slug", e.target.value)}
+                    placeholder="lesson-slug"
+                    className="rounded-sm"
+                  />
+                </div>
+              </div>
 
-            {lessonContent.concepts.map((concept, index) => (
-              <Card key={index} className="rounded-sm">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      Concept {index + 1}
-                    </CardTitle>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => saveContent(concept, !concept.id)}
-                        disabled={isSaving}
-                        size="sm"
-                        className="rounded-sm"
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        {concept.id ? "Update" : "Save"}
-                      </Button>
-                      {concept.id && (
-                        <Button
-                          onClick={() => deleteContent(concept.id)}
-                          variant="destructive"
-                          size="sm"
-                          className="rounded-sm"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Title
-                    </label>
-                    <Input
-                      value={concept.title}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Topic Badge
+                  </label>
+                  <Input
+                    value={lesson.topic_badge || ""}
+                    onChange={(e) => updateField("topic_badge", e.target.value)}
+                    placeholder="e.g., Topic 1, Section A"
+                    className="rounded-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Displayed as badge with topic number
+                  </p>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={lesson.is_preview || false}
                       onChange={(e) =>
-                        updateContent(
-                          "concepts",
-                          index,
-                          "title",
-                          e.target.value
-                        )
+                        updateField("is_preview", e.target.checked)
                       }
-                      placeholder="Concept title..."
                       className="rounded-sm"
                     />
-                  </div>
+                    <span className="text-sm font-medium">Is Preview</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Allow preview access for non-enrolled users
+                  </p>
+                </div>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Content (Raw Text)
-                    </label>
-                    <Textarea
-                      value={concept.content}
-                      onChange={(e) =>
-                        updateContent(
-                          "concepts",
-                          index,
-                          "content",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter concept description..."
-                      rows={4}
-                      className="rounded-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Content (HTML)
-                    </label>
-                    <Textarea
-                      value={concept.content_html}
-                      onChange={(e) =>
-                        updateContent(
-                          "concepts",
-                          index,
-                          "content_html",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter HTML content (optional)..."
-                      rows={4}
-                      className="rounded-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Key Points (JSON)
-                    </label>
-                    <Textarea
-                      value={JSON.stringify(
-                        concept.metadata?.keyPoints || [],
-                        null,
-                        2
-                      )}
-                      onChange={(e) => {
-                        try {
-                          const keyPoints = JSON.parse(e.target.value);
-                          updateContent("concepts", index, "metadata", {
-                            ...concept.metadata,
-                            keyPoints,
-                          });
-                        } catch (error) {
-                          // Invalid JSON, don't update
-                        }
-                      }}
-                      placeholder='["Key point 1", "Key point 2", ...]'
-                      rows={3}
-                      className="rounded-sm font-mono text-sm"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Quiz ID
+                </label>
+                <Input
+                  value={lesson.quiz_id || ""}
+                  onChange={(e) => updateField("quiz_id", e.target.value)}
+                  placeholder="UUID of quiz"
+                  className="rounded-sm"
+                />
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* Formulas Tab */}
-        <TabsContent value="formulas" className="mt-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Formulas</h2>
-              <Button
-                onClick={() => addNewContent("formulas")}
-                size="sm"
-                className="rounded-sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Formula
-              </Button>
-            </div>
+        {/* Content Tab */}
+        <TabsContent value="content" className="mt-6">
+          <Card className="rounded-sm">
+            <CardHeader>
+              <CardTitle>Lesson Content</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Content (LaTeX/Text)
+                </label>
+                <Textarea
+                  value={lesson.content || ""}
+                  onChange={(e) => updateField("content", e.target.value)}
+                  placeholder="Enter lesson notes with LaTeX support (use $ for inline math, $$ for display math)"
+                  rows={8}
+                  className="rounded-sm"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  LaTeX math: use $ for inline math (e.g., $x^2$) and $$ for
+                  display math (e.g., $$\\int_0^1 x dx$$)
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            {lessonContent.formulas.map((formula, index) => (
-              <Card key={index} className="rounded-sm">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      Formula {index + 1}
-                    </CardTitle>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => saveContent(formula, !formula.id)}
-                        disabled={isSaving}
-                        size="sm"
-                        className="rounded-sm"
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        {formula.id ? "Update" : "Save"}
-                      </Button>
-                      {formula.id && (
-                        <Button
-                          onClick={() => deleteContent(formula.id)}
-                          variant="destructive"
-                          size="sm"
-                          className="rounded-sm"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Title
-                    </label>
-                    <Input
-                      value={formula.title}
-                      onChange={(e) =>
-                        updateContent(
-                          "formulas",
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Formula title..."
-                      className="rounded-sm"
-                    />
-                  </div>
+        {/* Media & Files Tab */}
+        <TabsContent value="media" className="mt-6">
+          <Card className="rounded-sm">
+            <CardHeader>
+              <CardTitle>Media & Files</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Video URL
+                </label>
+                <Input
+                  value={lesson.video_url || ""}
+                  onChange={(e) => updateField("video_url", e.target.value)}
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="rounded-sm"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  YouTube, Vimeo, or direct video URL
+                </p>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Formula (Raw Text)
-                    </label>
-                    <Textarea
-                      value={formula.content}
-                      onChange={(e) =>
-                        updateContent(
-                          "formulas",
-                          index,
-                          "content",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter formula (LaTeX supported)..."
-                      rows={3}
-                      className="rounded-sm font-mono"
-                    />
-                  </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Video Thumbnail URL
+                </label>
+                <Input
+                  value={lesson.video_thumbnail_url || ""}
+                  onChange={(e) =>
+                    updateField("video_thumbnail_url", e.target.value)
+                  }
+                  placeholder="https://example.com/thumbnail.jpg"
+                  className="rounded-sm"
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Formula (HTML)
-                    </label>
-                    <Textarea
-                      value={formula.content_html}
-                      onChange={(e) =>
-                        updateContent(
-                          "formulas",
-                          index,
-                          "content_html",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter HTML formula (optional)..."
-                      rows={3}
-                      className="rounded-sm"
-                    />
-                  </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  PDF URL (Assignment)
+                </label>
+                <Input
+                  value={lesson.pdf_url || ""}
+                  onChange={(e) => updateField("pdf_url", e.target.value)}
+                  placeholder="https://example.com/assignment.pdf"
+                  className="rounded-sm"
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Description
-                    </label>
-                    <Input
-                      value={formula.metadata?.description || ""}
-                      onChange={(e) =>
-                        updateContent("formulas", index, "metadata", {
-                          ...formula.metadata,
-                          description: e.target.value,
-                        })
-                      }
-                      placeholder="Formula description..."
-                      className="rounded-sm"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Solution URL
+                </label>
+                <Input
+                  value={lesson.solution_url || ""}
+                  onChange={(e) => updateField("solution_url", e.target.value)}
+                  placeholder="https://example.com/solution.pdf"
+                  className="rounded-sm"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Concepts & Formulas Tab */}
+        <TabsContent value="concepts" className="mt-6">
+          <div className="space-y-6">
+            {/* Concept Section */}
+            <Card className="rounded-sm">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-[#e27447]" />
+                  <CardTitle>Concept</CardTitle>
+                </div>
+                <CardDescription>
+                  Main concept covered in this lesson
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Concept Title
+                  </label>
+                  <Input
+                    value={lesson.concept_title || ""}
+                    onChange={(e) =>
+                      updateField("concept_title", e.target.value)
+                    }
+                    placeholder="e.g., Introduction to Algebra"
+                    className="rounded-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Concept Content
+                  </label>
+                  <Textarea
+                    value={lesson.concept_content || ""}
+                    onChange={(e) =>
+                      updateField("concept_content", e.target.value)
+                    }
+                    placeholder="Concept explanation (HTML or text supported)"
+                    rows={6}
+                    className="rounded-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    HTML or plain text. If empty, concept section won't appear.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Formula Section */}
+            <Card className="rounded-sm">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Calculator className="w-5 h-5 text-[#e27447]" />
+                  <CardTitle>Formula</CardTitle>
+                </div>
+                <CardDescription>
+                  Main formula taught in this lesson
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Formula Title
+                  </label>
+                  <Input
+                    value={lesson.formula_title || ""}
+                    onChange={(e) =>
+                      updateField("formula_title", e.target.value)
+                    }
+                    placeholder="e.g., Quadratic Formula"
+                    className="rounded-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Formula Content
+                  </label>
+                  <Textarea
+                    value={lesson.formula_content || ""}
+                    onChange={(e) =>
+                      updateField("formula_content", e.target.value)
+                    }
+                    placeholder="Formula content (LaTeX, HTML, or text supported)"
+                    rows={6}
+                    className="rounded-sm font-mono"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    LaTeX, HTML, or plain text. If empty, formula section won't
+                    appear.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>

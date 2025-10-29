@@ -1,0 +1,1679 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components-demo/ui/ui-components/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/components-demo/ui/tabs";
+import {
+  BookOpen,
+  FileText,
+  Video,
+  FileCheck,
+  CheckCircle2,
+  CheckCircle,
+  Upload,
+  Clock,
+  Unlock,
+  Eye,
+  ArrowLeft,
+  ArrowRight,
+  Lightbulb,
+  Calculator,
+  MessageCircle,
+  Send,
+  Edit,
+  Save,
+  X,
+  Loader2,
+} from "lucide-react";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Textarea } from "@/app/components-demo/ui/textarea";
+import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { VideoResource } from "@/app/components-demo/ui/youtube-video";
+import { renderMixedContent } from "@/components/MathRenderer";
+import { Switch } from "@/app/components-demo/ui/switch";
+import { Label } from "@/app/components-demo/ui/ui-components/label";
+
+interface LessonContent {
+  id: string;
+  content_type: "concepts" | "formulas";
+  title: string;
+  content: string;
+  order_index: number;
+}
+
+interface Lesson {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  topic_number?: string;
+  lesson_order?: number;
+  is_preview?: boolean;
+  video_url?: string;
+  video_thumbnail_url?: string;
+  topic_badge?: string;
+  pdf_url?: string;
+  solution_url?: string;
+  quiz_id?: string;
+  content?: string;
+  concept_title?: string;
+  concept_content?: string;
+  formula_title?: string;
+  formula_content?: string;
+  course_lesson_content?: LessonContent[];
+}
+
+interface UnifiedLessonPageProps {
+  lesson: Lesson;
+  courseSlug: string;
+  showTopicNumber?: boolean;
+  onMarkComplete?: () => void;
+  onFileUpload?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isCompleted?: boolean;
+  isMarkingComplete?: boolean;
+  uploadedFile?: File | null;
+  submissionStatus?: "idle" | "uploading" | "success" | "error";
+  submissionError?: string;
+  allLessons?: Lesson[];
+  onNavigateLesson?: (direction: "prev" | "next") => void;
+  isAdmin?: boolean;
+  onLessonUpdate?: (updatedLesson: Partial<Lesson>) => void;
+}
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+}
+
+export function UnifiedLessonPage({
+  lesson,
+  courseSlug,
+  showTopicNumber = true,
+  onMarkComplete,
+  onFileUpload,
+  isCompleted = false,
+  isMarkingComplete = false,
+  uploadedFile = null,
+  submissionStatus = "idle",
+  submissionError = "",
+  allLessons = [],
+  onNavigateLesson,
+  isAdmin = false,
+  onLessonUpdate,
+}: UnifiedLessonPageProps) {
+  const [lessonContent, setLessonContent] = useState<LessonContent[]>([]);
+  const [loadingContent, setLoadingContent] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("");
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      role: "assistant",
+      content: `Hello! I'm your AI tutor. I'm here to help you with "${lesson.title}". Ask me questions about this lesson or request practice problems!`,
+      timestamp: new Date(),
+    },
+  ]);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [isAITyping, setIsAITyping] = useState(false);
+  const [isAssignmentTabActive, setIsAssignmentTabActive] = useState(false);
+  const [isSolutionTabActive, setIsSolutionTabActive] = useState(false);
+
+  // Inline editing state for admins
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState<Record<string, unknown>>({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchLessonContent = async () => {
+      try {
+        setLoadingContent(true);
+        const response = await fetch(`/api/lessons/${lesson.id}/content`);
+        if (response.ok) {
+          const data = await response.json();
+          setLessonContent(data.content || []);
+        }
+      } catch (error) {
+        console.error("Error fetching lesson content:", error);
+      } finally {
+        setLoadingContent(false);
+      }
+    };
+
+    if (lesson.id) {
+      fetchLessonContent();
+    }
+  }, [lesson.id]);
+
+  // Save lesson field changes (admin only)
+  const handleSaveField = async (field: string) => {
+    if (!isAdmin || !lesson?.id) return;
+
+    setSaving(true);
+    try {
+      const updateData: Record<string, unknown> = {
+        [field]: editValues[field],
+      };
+
+      const response = await fetch(`/api/lessons/${lesson.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update lesson");
+      }
+
+      const { lesson: updatedLesson } = await response.json();
+
+      // Call update callback if provided
+      if (onLessonUpdate) {
+        onLessonUpdate(updatedLesson);
+      }
+
+      // Reset editing state
+      setEditingField(null);
+      setEditValues({});
+
+      // Reload page to reflect changes
+      window.location.reload();
+    } catch (err) {
+      console.error("Error saving field:", err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Failed to save changes. Please try again."
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Start editing a field
+  const handleStartEdit = (field: string) => {
+    if (!isAdmin || !lesson) return;
+
+    setEditingField(field);
+    const currentValue = lesson[field as keyof Lesson];
+    setEditValues({
+      [field]: currentValue || "",
+    });
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingField(null);
+    setEditValues({});
+  };
+
+  // Helper function to extract YouTube video ID
+  const extractYouTubeId = (url: string): string | null => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
+
+  // Determine which tabs to show based on available content
+  const hasConcepts = lessonContent.some((c) => c.content_type === "concepts");
+  const hasFormulas = lessonContent.some((c) => c.content_type === "formulas");
+  const hasVideo = !!lesson.video_url;
+  const hasPDFAssignment = !!lesson.pdf_url;
+  const hasPDFSolution = !!lesson.solution_url;
+  const hasQuiz = !!lesson.quiz_id;
+  // Check for notes - can be in content, concept, or formula fields
+  const hasNotes = !!(
+    lesson.content ||
+    lesson.concept_title ||
+    lesson.concept_content ||
+    lesson.formula_title ||
+    lesson.formula_content
+  );
+
+  // Build tabs array dynamically
+  const availableTabs = [];
+  if (hasConcepts || hasFormulas) {
+    availableTabs.push({
+      id: "content",
+      label: "Concepts & Formulas",
+      icon: BookOpen,
+    });
+  }
+  if (hasVideo) {
+    availableTabs.push({ id: "video", label: "Video", icon: Video });
+  }
+  if (hasNotes) {
+    availableTabs.push({ id: "notes", label: "Concepts", icon: FileText });
+  }
+  if (hasPDFAssignment) {
+    availableTabs.push({
+      id: "assignment",
+      label: "Assignment",
+      icon: FileText,
+    });
+  }
+  if (hasPDFSolution) {
+    availableTabs.push({
+      id: "solution",
+      label: "Solution",
+      icon: CheckCircle2,
+    });
+  }
+  if (hasQuiz) {
+    availableTabs.push({ id: "quiz", label: "Quiz", icon: FileCheck });
+  }
+
+  const defaultTab = availableTabs[0]?.id || "content";
+
+  // Initialize PDF tab states based on current tab
+  useEffect(() => {
+    const currentTab = activeTab || defaultTab;
+    setIsAssignmentTabActive(currentTab === "assignment");
+    setIsSolutionTabActive(currentTab === "solution");
+  }, [activeTab, defaultTab]);
+
+  // Set default tab on mount
+  useEffect(() => {
+    if (!activeTab && availableTabs.length > 0) {
+      setActiveTab(defaultTab);
+    }
+  }, [activeTab, availableTabs.length, defaultTab]);
+
+  const getNextLesson = () => {
+    if (!lesson || !allLessons.length || !onNavigateLesson) return;
+    const currentIndex = allLessons.findIndex((l) => l.slug === lesson.slug);
+    if (currentIndex < allLessons.length - 1) {
+      onNavigateLesson("next");
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!currentMessage.trim()) return;
+
+    // Add user message
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: currentMessage,
+      timestamp: new Date(),
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
+    const messageText = currentMessage;
+    setCurrentMessage("");
+    setIsAITyping(true);
+
+    // Simulate AI response (replace with actual API call later)
+    setTimeout(() => {
+      const aiMessage: ChatMessage = {
+        role: "assistant",
+        content: `I understand you're asking about "${messageText}". This is related to ${lesson.title}. Here's a helpful explanation... [AI response would go here. This is a placeholder - integrate with your AI service when ready.]`,
+        timestamp: new Date(),
+      };
+      setChatMessages((prev) => [...prev, aiMessage]);
+      setIsAITyping(false);
+    }, 1500);
+  };
+
+  const getPreviousLesson = () => {
+    if (!lesson || !allLessons.length || !onNavigateLesson) return;
+    const currentIndex = allLessons.findIndex((l) => l.slug === lesson.slug);
+    if (currentIndex > 0) {
+      onNavigateLesson("prev");
+    }
+  };
+
+  return (
+    <div>
+      {/* Lesson Header - Clean and elegant like IBDP */}
+      <div className="mb-6">
+        {editingField === "title" ? (
+          <div className="flex items-center gap-2 mb-2">
+            <input
+              type="text"
+              value={(editValues.title as string) || ""}
+              onChange={(e) =>
+                setEditValues({ ...editValues, title: e.target.value })
+              }
+              className="text-3xl font-bold text-[#1e293b] border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1"
+              autoFocus
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSaveField("title")}
+              disabled={saving}
+              className="rounded-sm bg-green-600 hover:bg-green-700"
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleCancelEdit}
+              disabled={saving}
+              variant="outline"
+              className="rounded-sm"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-[#1e293b]">
+              {lesson.title}
+            </h1>
+            {isAdmin && (
+              <button
+                onClick={() => handleStartEdit("title")}
+                className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                title="Edit title"
+              >
+                <Edit className="w-4 h-4 text-[#e27447]" />
+              </button>
+            )}
+          </div>
+        )}
+        {editingField === "topic_badge" ? (
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={(editValues.topic_badge as string) || ""}
+              onChange={(e) =>
+                setEditValues({ ...editValues, topic_badge: e.target.value })
+              }
+              className="text-muted-foreground border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1 max-w-xs"
+              placeholder={`Topic ${lesson.topic_number || ""}`}
+              autoFocus
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSaveField("topic_badge")}
+              disabled={saving}
+              className="rounded-sm bg-green-600 hover:bg-green-700"
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleCancelEdit}
+              disabled={saving}
+              variant="outline"
+              className="rounded-sm"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          showTopicNumber &&
+          lesson.topic_number && (
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground">
+                {lesson.topic_badge || `Topic ${lesson.topic_number}`}
+              </p>
+              {isAdmin && (
+                <button
+                  onClick={() => handleStartEdit("topic_badge")}
+                  className="p-1 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                  title="Edit topic badge"
+                >
+                  <Edit className="w-3 h-3 text-[#e27447]" />
+                </button>
+              )}
+            </div>
+          )
+        )}
+      </div>
+
+      {/* Dynamic Lesson Tabs */}
+      {availableTabs.length > 0 ? (
+        <Tabs
+          value={activeTab || defaultTab}
+          onValueChange={(value) => {
+            setActiveTab(value);
+            // Force PDF iframes to reload when tab becomes active
+            setIsAssignmentTabActive(value === "assignment");
+            setIsSolutionTabActive(value === "solution");
+          }}
+          className="w-full"
+        >
+          <TabsList
+            className={`grid w-full rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200 ${
+              availableTabs.length === 1
+                ? "grid-cols-1"
+                : availableTabs.length === 2
+                ? "grid-cols-2"
+                : availableTabs.length === 3
+                ? "grid-cols-3"
+                : availableTabs.length === 4
+                ? "grid-cols-4"
+                : availableTabs.length === 5
+                ? "grid-cols-5"
+                : "grid-cols-6"
+            }`}
+          >
+            {availableTabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+              >
+                <tab.icon className="w-4 h-4 mr-2" />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* Concepts & Formulas Tab */}
+          {(hasConcepts || hasFormulas) && (
+            <TabsContent value="content" className="mt-6 space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Concepts & Formulas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {loadingContent ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
+                    </div>
+                  ) : lessonContent.length > 0 ? (
+                    <div className="space-y-6">
+                      {lessonContent
+                        .sort((a, b) => a.order_index - b.order_index)
+                        .map((content) => (
+                          <div
+                            key={content.id}
+                            className="border rounded-sm p-4"
+                          >
+                            <h3 className="font-semibold mb-2 flex items-center space-x-2">
+                              <Badge variant="secondary" className="capitalize">
+                                {content.content_type}
+                              </Badge>
+                              <span>{content.title}</span>
+                            </h3>
+                            <div
+                              className="prose max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html: content.content || "",
+                              }}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-center py-8">
+                      No content available yet.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* PDF Assignment Tab */}
+          {hasPDFAssignment && (
+            <TabsContent value="assignment" className="mt-6 space-y-4">
+              <Card className="rounded-sm">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center space-x-2">
+                        <FileText className="w-5 h-5 text-[#e27447]" />
+                        <span>Assignment</span>
+                      </CardTitle>
+                      <CardDescription>
+                        Complete this assignment to test your understanding
+                      </CardDescription>
+                    </div>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleStartEdit("pdf_url")}
+                        className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                        title="Edit PDF URL"
+                      >
+                        <Edit className="w-4 h-4 text-[#e27447]" />
+                      </button>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {editingField === "pdf_url" ? (
+                    <div className="mb-6 space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">
+                          Assignment PDF URL
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="url"
+                            value={(editValues.pdf_url as string) || ""}
+                            onChange={(e) =>
+                              setEditValues({
+                                ...editValues,
+                                pdf_url: e.target.value,
+                              })
+                            }
+                            placeholder="https://..."
+                            className="flex-1"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleSaveField("pdf_url")}
+                            disabled={saving}
+                            className="rounded-sm bg-green-600 hover:bg-green-700"
+                          >
+                            {saving ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Save className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleCancelEdit}
+                            disabled={saving}
+                            variant="outline"
+                            className="rounded-sm"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : lesson.pdf_url ? (
+                    <div className="space-y-4">
+                      {/* Assignment PDF Embedder - Full height like CBSE Class 9 */}
+                      <div className="w-full h-[800px] border-2 border-[#feefea] rounded-sm overflow-hidden bg-gray-50">
+                        {isAssignmentTabActive && (
+                          <iframe
+                            key={`assignment-${lesson.id}-${lesson.pdf_url}`}
+                            src={lesson.pdf_url}
+                            className="w-full h-full"
+                            title={`${lesson.title} - Assignment`}
+                            allow="autoplay; fullscreen"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                          />
+                        )}
+                        {!isAssignmentTabActive && (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <p className="text-muted-foreground">
+                              Loading PDF...
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Submit Your Work Section */}
+                      {(onFileUpload || onMarkComplete) && (
+                        <div className="border-t pt-4 mt-4">
+                          <h3 className="text-lg font-semibold mb-3">
+                            Submit Your Work
+                          </h3>
+                          <div className="space-y-4">
+                            {onFileUpload && (
+                              <div>
+                                <label
+                                  htmlFor="assignment-file"
+                                  className="block text-sm font-medium mb-2"
+                                >
+                                  Upload your completed assignment (PDF only,
+                                  max 5MB)
+                                </label>
+                                <div className="flex items-center gap-3">
+                                  <input
+                                    id="assignment-file"
+                                    type="file"
+                                    accept=".pdf"
+                                    onChange={onFileUpload}
+                                    className="hidden"
+                                    disabled={submissionStatus === "uploading"}
+                                  />
+                                  <label
+                                    htmlFor="assignment-file"
+                                    className="flex items-center gap-2 px-4 py-2 border rounded-sm cursor-pointer hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Upload className="w-4 h-4" />
+                                    Choose PDF File
+                                  </label>
+                                  {uploadedFile && (
+                                    <span className="text-sm text-muted-foreground">
+                                      Selected: {uploadedFile.name}
+                                    </span>
+                                  )}
+                                </div>
+                                {submissionError && (
+                                  <p className="text-sm text-red-600 mt-2">
+                                    {submissionError}
+                                  </p>
+                                )}
+                                {submissionStatus === "success" && (
+                                  <p className="text-sm text-green-600 mt-2">
+                                    Assignment submitted successfully! Your
+                                    teacher will review it.
+                                  </p>
+                                )}
+                                {submissionStatus === "uploading" && (
+                                  <p className="text-sm text-blue-600 mt-2">
+                                    Uploading...
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Assignment Actions */}
+                      <div className="flex items-center justify-between mt-4">
+                        <Button
+                          variant="outline"
+                          className="rounded-sm"
+                          onClick={() => window.open(lesson.pdf_url, "_blank")}
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Open in New Tab
+                        </Button>
+                        <div className="flex items-center space-x-3">
+                          {hasPDFSolution && (
+                            <Button
+                              variant="outline"
+                              className="rounded-sm"
+                              onClick={() => {
+                                setActiveTab("solution");
+                                setIsSolutionTabActive(true);
+                                setIsAssignmentTabActive(false);
+                              }}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              View Solution
+                            </Button>
+                          )}
+                          {onMarkComplete && (
+                            <div className="flex items-center space-x-3">
+                              <Label
+                                htmlFor="complete-toggle"
+                                className="text-sm font-medium"
+                              >
+                                {isCompleted ? "Completed" : "Mark as Complete"}
+                              </Label>
+                              <div className="relative">
+                                <Switch
+                                  id="complete-toggle"
+                                  checked={isCompleted}
+                                  onCheckedChange={(checked) => {
+                                    if (!isMarkingComplete && onMarkComplete) {
+                                      // Only call if state is changing
+                                      if (checked !== isCompleted) {
+                                        onMarkComplete();
+                                      }
+                                    }
+                                  }}
+                                  disabled={isMarkingComplete}
+                                  className="data-[state=checked]:bg-green-600"
+                                />
+                                {isMarkingComplete && (
+                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <Loader2 className="w-3 h-3 animate-spin text-white" />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg mb-2">Assignment not available</p>
+                      <p className="text-sm">
+                        The assignment for this lesson will be available soon
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* PDF Solution Tab */}
+          {hasPDFSolution && (
+            <TabsContent value="solution" className="mt-6 space-y-4">
+              <Card className="rounded-sm">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center space-x-2">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <span>Solution</span>
+                      </CardTitle>
+                      <CardDescription>
+                        Check your answers with the complete solution
+                      </CardDescription>
+                    </div>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleStartEdit("solution_url")}
+                        className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                        title="Edit Solution URL"
+                      >
+                        <Edit className="w-4 h-4 text-[#e27447]" />
+                      </button>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {editingField === "solution_url" ? (
+                    <div className="mb-6 space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">
+                          Solution PDF URL
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="url"
+                            value={(editValues.solution_url as string) || ""}
+                            onChange={(e) =>
+                              setEditValues({
+                                ...editValues,
+                                solution_url: e.target.value,
+                              })
+                            }
+                            placeholder="https://..."
+                            className="flex-1"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleSaveField("solution_url")}
+                            disabled={saving}
+                            className="rounded-sm bg-green-600 hover:bg-green-700"
+                          >
+                            {saving ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Save className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleCancelEdit}
+                            disabled={saving}
+                            variant="outline"
+                            className="rounded-sm"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : lesson.solution_url ? (
+                    <div className="space-y-4">
+                      {/* Solution PDF Embedder - Full height like CBSE Class 9 */}
+                      <div className="w-full h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
+                        <iframe
+                          src={lesson.solution_url}
+                          className="w-full h-full"
+                          title={`${lesson.title} - Solution`}
+                          allow="autoplay; fullscreen"
+                          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                        />
+                      </div>
+
+                      {/* Solution Actions */}
+                      <div className="flex items-center justify-between">
+                        <Button
+                          variant="outline"
+                          className="rounded-sm"
+                          onClick={() =>
+                            window.open(lesson.solution_url, "_blank")
+                          }
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Open in New Tab
+                        </Button>
+                        <div className="flex items-center space-x-3">
+                          {hasPDFAssignment && (
+                            <Button
+                              variant="outline"
+                              className="rounded-sm"
+                              onClick={() => {
+                                setActiveTab("assignment");
+                                setIsAssignmentTabActive(true);
+                                setIsSolutionTabActive(false);
+                              }}
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              Back to Assignment
+                            </Button>
+                          )}
+                          {onMarkComplete && (
+                            <Button
+                              className={`rounded-sm ${
+                                isCompleted
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : "bg-[#e27447] hover:bg-[#e27447]/90"
+                              }`}
+                              onClick={onMarkComplete}
+                              disabled={isMarkingComplete}
+                            >
+                              {isMarkingComplete ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Saving...
+                                </>
+                              ) : isCompleted ? (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Incomplete
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Mark as Complete
+                                </>
+                              )}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <CheckCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg mb-2">Solution not available</p>
+                      <p className="text-sm">
+                        The solution for this lesson will be available soon
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Video Tab */}
+          {hasVideo && (
+            <TabsContent value="video" className="mt-6 space-y-4">
+              <Card className="rounded-sm">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center space-x-2">
+                        <Video className="w-5 h-5 text-[#e27447]" />
+                        <span>Video Lesson</span>
+                      </CardTitle>
+                      <CardDescription>
+                        Watch the complete lesson video with explanations and
+                        examples
+                      </CardDescription>
+                    </div>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleStartEdit("video_url")}
+                        className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                        title="Edit video URL"
+                      >
+                        <Edit className="w-4 h-4 text-[#e27447]" />
+                      </button>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {editingField === "video_url" ? (
+                    <div className="mb-6 space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">
+                          Video URL
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="url"
+                            value={(editValues.video_url as string) || ""}
+                            onChange={(e) =>
+                              setEditValues({
+                                ...editValues,
+                                video_url: e.target.value,
+                              })
+                            }
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            className="flex-1"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleSaveField("video_url")}
+                            disabled={saving}
+                            className="rounded-sm bg-green-600 hover:bg-green-700"
+                          >
+                            {saving ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Save className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleCancelEdit}
+                            disabled={saving}
+                            variant="outline"
+                            className="rounded-sm"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : lesson.video_url ? (
+                    <div className="mb-6">
+                      <VideoResource
+                        resource={{
+                          id: lesson.id,
+                          type: "video",
+                          url: lesson.video_url,
+                          title: lesson.title,
+                          description: "",
+                          duration: 0,
+                          isYouTube:
+                            lesson.video_url.includes("youtube.com") ||
+                            lesson.video_url.includes("youtu.be"),
+                          youtubeId: lesson.video_url
+                            ? extractYouTubeId(lesson.video_url)
+                            : undefined,
+                          thumbnail: lesson.video_thumbnail_url,
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-center py-8">
+                      Video not available.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Notes Tab with nested tabs for Concepts & Formulas */}
+          {hasNotes && (
+            <TabsContent value="notes" className="mt-6 space-y-4">
+              {/* Context Breadcrumb */}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                <BookOpen className="w-4 h-4" />
+                <span>{lesson.title}</span>
+              </div>
+
+              {/* Nested Tabs for Concepts, Formulas, Notes, AI Tutor */}
+              {(() => {
+                const hasConceptTab =
+                  lesson.concept_title || lesson.concept_content;
+                const hasFormulaTab =
+                  lesson.formula_title || lesson.formula_content;
+                const hasNotesTab = lesson.content;
+                const hasAITutorTab = true; // Always available
+                const nestedTabCount =
+                  (hasConceptTab ? 1 : 0) +
+                  (hasFormulaTab ? 1 : 0) +
+                  (hasNotesTab ? 1 : 0) +
+                  (hasAITutorTab ? 1 : 0);
+
+                return (
+                  <Tabs
+                    defaultValue={
+                      hasConceptTab
+                        ? "concepts"
+                        : hasFormulaTab
+                        ? "formulas"
+                        : hasNotesTab
+                        ? "notes"
+                        : "ai-tutor"
+                    }
+                    className="w-full"
+                  >
+                    <TabsList
+                      className={`grid w-full rounded-sm bg-white p-1 shadow-sm border border-gray-200 gap-1 ${
+                        nestedTabCount === 1
+                          ? "grid-cols-1"
+                          : nestedTabCount === 2
+                          ? "grid-cols-2"
+                          : nestedTabCount === 3
+                          ? "grid-cols-3"
+                          : nestedTabCount === 4
+                          ? "grid-cols-4"
+                          : "grid-cols-4"
+                      }`}
+                    >
+                      {hasConceptTab && (
+                        <TabsTrigger
+                          value="concepts"
+                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                        >
+                          Concepts
+                        </TabsTrigger>
+                      )}
+                      {hasFormulaTab && (
+                        <TabsTrigger
+                          value="formulas"
+                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                        >
+                          Formulas
+                        </TabsTrigger>
+                      )}
+                      {hasNotesTab && (
+                        <TabsTrigger
+                          value="notes"
+                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                        >
+                          Notes
+                        </TabsTrigger>
+                      )}
+                      {hasAITutorTab && (
+                        <TabsTrigger
+                          value="ai-tutor"
+                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                        >
+                          AI Tutor
+                        </TabsTrigger>
+                      )}
+                    </TabsList>
+
+                    {/* Concepts Sub-Tab */}
+                    {(lesson.concept_title ||
+                      lesson.concept_content ||
+                      isAdmin) && (
+                      <TabsContent value="concepts" className="space-y-4 mt-6">
+                        <Card className="rounded-sm">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                {editingField === "concept_title" ? (
+                                  <div className="flex items-center gap-2">
+                                    <Lightbulb className="w-5 h-5 text-[#e27447]" />
+                                    <Input
+                                      type="text"
+                                      value={
+                                        (editValues.concept_title as string) ||
+                                        ""
+                                      }
+                                      onChange={(e) =>
+                                        setEditValues({
+                                          ...editValues,
+                                          concept_title: e.target.value,
+                                        })
+                                      }
+                                      className="flex-1"
+                                      placeholder="Concept title"
+                                      autoFocus
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() =>
+                                        handleSaveField("concept_title")
+                                      }
+                                      disabled={saving}
+                                      className="rounded-sm bg-green-600 hover:bg-green-700"
+                                    >
+                                      {saving ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                      ) : (
+                                        <Save className="w-4 h-4" />
+                                      )}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      onClick={handleCancelEdit}
+                                      disabled={saving}
+                                      variant="outline"
+                                      className="rounded-sm"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <CardTitle className="flex items-center gap-2">
+                                    <Lightbulb className="w-5 h-5 text-[#e27447]" />
+                                    {lesson.concept_title ||
+                                      "Understanding Concepts"}
+                                    {isAdmin && (
+                                      <button
+                                        onClick={() =>
+                                          handleStartEdit("concept_title")
+                                        }
+                                        className="ml-2 p-1 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                                        title="Edit concept title"
+                                      >
+                                        <Edit className="w-3 h-3 text-[#e27447]" />
+                                      </button>
+                                    )}
+                                  </CardTitle>
+                                )}
+                                <CardDescription>
+                                  Key concepts and principles for this lesson
+                                </CardDescription>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {editingField === "concept_content" ? (
+                              <div className="space-y-2">
+                                <Textarea
+                                  value={
+                                    (editValues.concept_content as string) || ""
+                                  }
+                                  onChange={(e) =>
+                                    setEditValues({
+                                      ...editValues,
+                                      concept_content: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter concept content (HTML or markdown supported)"
+                                  className="min-h-[300px] font-mono text-sm"
+                                  autoFocus
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      handleSaveField("concept_content")
+                                    }
+                                    disabled={saving}
+                                    className="rounded-sm bg-green-600 hover:bg-green-700"
+                                  >
+                                    {saving ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Save className="w-4 h-4" />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={handleCancelEdit}
+                                    disabled={saving}
+                                    variant="outline"
+                                    className="rounded-sm"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : lesson.concept_content ? (
+                              <div className="relative group">
+                                <div className="text-base leading-relaxed text-gray-700 prose prose-sm max-w-none">
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: lesson.concept_content,
+                                    }}
+                                  />
+                                </div>
+                                {isAdmin && (
+                                  <button
+                                    onClick={() =>
+                                      handleStartEdit("concept_content")
+                                    }
+                                    className="absolute top-0 right-0 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm opacity-0 group-hover:opacity-100"
+                                    title="Edit concept content"
+                                  >
+                                    <Edit className="w-4 h-4 text-[#e27447]" />
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-center py-8 text-muted-foreground relative">
+                                <Lightbulb className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                <p>Concept content will be available soon</p>
+                                {isAdmin && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      handleStartEdit("concept_content")
+                                    }
+                                    className="mt-4 rounded-sm"
+                                    variant="outline"
+                                  >
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Add Content
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    )}
+
+                    {/* Formulas Sub-Tab */}
+                    {(lesson.formula_title ||
+                      lesson.formula_content ||
+                      isAdmin) && (
+                      <TabsContent value="formulas" className="space-y-4 mt-6">
+                        <Card className="rounded-sm">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                {editingField === "formula_title" ? (
+                                  <div className="flex items-center gap-2">
+                                    <Calculator className="w-5 h-5 text-[#e27447]" />
+                                    <Input
+                                      type="text"
+                                      value={
+                                        (editValues.formula_title as string) ||
+                                        ""
+                                      }
+                                      onChange={(e) =>
+                                        setEditValues({
+                                          ...editValues,
+                                          formula_title: e.target.value,
+                                        })
+                                      }
+                                      className="flex-1"
+                                      placeholder="Formula title"
+                                      autoFocus
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() =>
+                                        handleSaveField("formula_title")
+                                      }
+                                      disabled={saving}
+                                      className="rounded-sm bg-green-600 hover:bg-green-700"
+                                    >
+                                      {saving ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                      ) : (
+                                        <Save className="w-4 h-4" />
+                                      )}
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      onClick={handleCancelEdit}
+                                      disabled={saving}
+                                      variant="outline"
+                                      className="rounded-sm"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <CardTitle className="flex items-center gap-2">
+                                    <Calculator className="w-5 h-5 text-[#e27447]" />
+                                    {lesson.formula_title || "Key Formulas"}
+                                    {isAdmin && (
+                                      <button
+                                        onClick={() =>
+                                          handleStartEdit("formula_title")
+                                        }
+                                        className="ml-2 p-1 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                                        title="Edit formula title"
+                                      >
+                                        <Edit className="w-3 h-3 text-[#e27447]" />
+                                      </button>
+                                    )}
+                                  </CardTitle>
+                                )}
+                                <CardDescription>
+                                  Essential formulas for this lesson
+                                </CardDescription>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {editingField === "formula_content" ? (
+                              <div className="space-y-2">
+                                <Textarea
+                                  value={
+                                    (editValues.formula_content as string) || ""
+                                  }
+                                  onChange={(e) =>
+                                    setEditValues({
+                                      ...editValues,
+                                      formula_content: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter formula content (HTML or markdown supported)"
+                                  className="min-h-[300px] font-mono text-sm"
+                                  autoFocus
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      handleSaveField("formula_content")
+                                    }
+                                    disabled={saving}
+                                    className="rounded-sm bg-green-600 hover:bg-green-700"
+                                  >
+                                    {saving ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Save className="w-4 h-4" />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={handleCancelEdit}
+                                    disabled={saving}
+                                    variant="outline"
+                                    className="rounded-sm"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : lesson.formula_content ? (
+                              <div className="relative group">
+                                <div className="p-4 bg-gray-50 rounded-sm border border-gray-200">
+                                  <div className="text-xl prose prose-sm max-w-none">
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: lesson.formula_content,
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                {isAdmin && (
+                                  <button
+                                    onClick={() =>
+                                      handleStartEdit("formula_content")
+                                    }
+                                    className="absolute top-2 right-2 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm opacity-0 group-hover:opacity-100"
+                                    title="Edit formula content"
+                                  >
+                                    <Edit className="w-4 h-4 text-[#e27447]" />
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-center py-8 text-muted-foreground relative">
+                                <Calculator className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                                <p>
+                                  No formulas available for this lesson yet.
+                                </p>
+                                {isAdmin && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      handleStartEdit("formula_content")
+                                    }
+                                    className="mt-4 rounded-sm"
+                                    variant="outline"
+                                  >
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Add Content
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    )}
+
+                    {/* Notes Sub-Tab */}
+                    {(lesson.content || isAdmin) && (
+                      <TabsContent value="notes" className="space-y-4 mt-6">
+                        <Card className="rounded-sm">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <CardTitle className="flex items-center gap-2">
+                                  <FileText className="w-5 h-5 text-[#e27447]" />
+                                  Lesson Notes
+                                </CardTitle>
+                                <CardDescription>
+                                  Comprehensive notes from this lesson
+                                </CardDescription>
+                              </div>
+                              {!editingField && isAdmin && (
+                                <button
+                                  onClick={() => {
+                                    setEditingField("content");
+                                    setEditValues({
+                                      content: lesson.content || "",
+                                    });
+                                  }}
+                                  className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                                  title="Edit notes"
+                                >
+                                  <Edit className="w-4 h-4 text-[#e27447]" />
+                                </button>
+                              )}
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            {editingField === "content" ? (
+                              <div className="space-y-2">
+                                <Textarea
+                                  value={(editValues.content as string) || ""}
+                                  onChange={(e) =>
+                                    setEditValues({
+                                      ...editValues,
+                                      content: e.target.value,
+                                    })
+                                  }
+                                  placeholder="Enter lesson notes (LaTeX supported: use $ for inline math, $$ for display math)"
+                                  className="min-h-[400px] font-mono text-sm"
+                                  autoFocus
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSaveField("content")}
+                                    disabled={saving}
+                                    className="rounded-sm bg-green-600 hover:bg-green-700"
+                                  >
+                                    {saving ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Save className="w-4 h-4" />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={handleCancelEdit}
+                                    disabled={saving}
+                                    variant="outline"
+                                    className="rounded-sm"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : lesson.content ? (
+                              <div className="prose prose-sm max-w-none leading-relaxed">
+                                {renderMixedContent(lesson.content)}
+                              </div>
+                            ) : (
+                              <div className="text-center py-8 text-muted-foreground relative">
+                                <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                                <p>No notes available for this lesson yet.</p>
+                                {isAdmin && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      setEditingField("content");
+                                      setEditValues({
+                                        content: "",
+                                      });
+                                    }}
+                                    className="mt-4 rounded-sm"
+                                    variant="outline"
+                                  >
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Add Notes
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    )}
+
+                    {/* AI Tutor Sub-Tab */}
+                    {hasAITutorTab && (
+                      <TabsContent value="ai-tutor" className="space-y-4 mt-6">
+                        <Card className="rounded-sm">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <MessageCircle className="w-5 h-5 text-[#e27447]" />
+                              AI Tutor
+                            </CardTitle>
+                            <CardDescription>
+                              Ask questions about {lesson.title} or request
+                              practice problems
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {/* Messages */}
+                            <div className="h-96 overflow-y-auto space-y-3 p-4 bg-gray-50 rounded-sm border border-gray-200">
+                              {chatMessages.map((message, index) => (
+                                <div
+                                  key={index}
+                                  className={`flex ${
+                                    message.role === "user"
+                                      ? "justify-end"
+                                      : "justify-start"
+                                  }`}
+                                >
+                                  <div
+                                    className={`max-w-[80%] p-3 rounded-sm ${
+                                      message.role === "user"
+                                        ? "bg-[#e27447] text-white"
+                                        : "bg-white border border-gray-200 text-gray-800"
+                                    }`}
+                                  >
+                                    <p className="text-sm leading-relaxed">
+                                      {message.content}
+                                    </p>
+                                    <p
+                                      className={`text-xs mt-1 ${
+                                        message.role === "user"
+                                          ? "text-white/70"
+                                          : "text-gray-400"
+                                      }`}
+                                    >
+                                      {message.timestamp.toLocaleTimeString()}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                              {isAITyping && (
+                                <div className="flex justify-start">
+                                  <div className="bg-white border border-gray-200 p-3 rounded-sm">
+                                    <p className="text-sm text-gray-500">
+                                      AI is typing...
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Input */}
+                            <div className="flex gap-2">
+                              <Input
+                                placeholder="Ask a question about this lesson..."
+                                value={currentMessage}
+                                onChange={(e) =>
+                                  setCurrentMessage(e.target.value)
+                                }
+                                onKeyPress={(e) =>
+                                  e.key === "Enter" && handleSendMessage()
+                                }
+                                className="rounded-sm"
+                              />
+                              <Button
+                                onClick={handleSendMessage}
+                                disabled={!currentMessage.trim() || isAITyping}
+                                className="rounded-sm bg-[#e27447] hover:bg-[#e27447]/90"
+                              >
+                                <Send className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    )}
+                  </Tabs>
+                );
+              })()}
+            </TabsContent>
+          )}
+
+          {/* Quiz Tab */}
+          {hasQuiz && (
+            <TabsContent value="quiz" className="mt-6 space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quiz</CardTitle>
+                  <CardDescription>
+                    Test your understanding with this quiz
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground text-center py-8">
+                    Quiz interface will be available here.
+                    {/* TODO: Integrate quiz component */}
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+        </Tabs>
+      ) : (
+        <Card>
+          <CardContent className="text-center py-8 text-muted-foreground">
+            <p>No lesson content available yet.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Navigation Buttons - Like CBSE Class 9 */}
+      {allLessons.length > 0 && (
+        <div className="flex items-center justify-between mt-8">
+          <Button
+            variant="outline"
+            className="rounded-sm"
+            onClick={getPreviousLesson}
+            disabled={
+              !allLessons.find(
+                (l) => l.lesson_order === (lesson.lesson_order || 0) - 1
+              )
+            }
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Previous Lesson
+          </Button>
+          <Button
+            className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+            onClick={getNextLesson}
+            disabled={
+              !allLessons.find(
+                (l) => l.lesson_order === (lesson.lesson_order || 0) + 1
+              )
+            }
+          >
+            Next Lesson
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}

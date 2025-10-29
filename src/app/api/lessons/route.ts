@@ -5,27 +5,19 @@ import { z } from "zod";
 // Validation schemas
 const LessonSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  notes: z.string().nullable().optional(),
+  topic_badge: z.string().nullable().optional(),
   content: z.string().nullable().optional(),
-  content_html: z.string().nullable().optional(),
   lesson_order: z.number().min(1, "Lesson order is required"),
   slug: z.string().min(1, "Slug is required"),
   is_preview: z.boolean().default(false),
   video_url: z.string().nullable().optional(),
-  video_thumbnail: z.string().nullable().optional(),
+  video_thumbnail_url: z.string().nullable().optional(),
   pdf_url: z.string().nullable().optional(),
-  key_points: z.any().nullable().optional(),
   chapter_id: z.string().uuid().nullable().optional(),
   quiz_id: z.string().nullable().optional(),
   course_id: z.string().min(1, "Course ID is required"),
   topic_number: z.string().nullable().optional(),
   lesson_code: z.string().nullable().optional(),
-  conceptual_focus: z.string().nullable().optional(),
-  lesson_description: z.string().nullable().optional(),
-  skill_emphasis: z.string().nullable().optional(),
-  assessment_context: z.string().nullable().optional(),
-  difficulty_level: z.number().int().min(1).max(10).nullable().optional(),
-  learning_outcome: z.string().nullable().optional(),
 });
 
 // Helper function to get authenticated user
@@ -104,6 +96,8 @@ export async function GET(request: Request) {
       .select(
         `
         *,
+        topic_badge,
+        video_thumbnail_url,
         chapter:courses_chapters (
           id,
           chapter_name,

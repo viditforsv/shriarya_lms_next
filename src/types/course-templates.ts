@@ -77,12 +77,23 @@ export interface ValidationRules {
 
 export interface TemplateSettings {
   defaultValues?: Record<string, unknown>;
+  rendering?: {
+    hierarchy?: "5-tier"; // Units → Chapters → Topics → Lessons → Tags
+    sidebarStructure?: "units-chapters-lessons"; // 3-level display
+    showTopicNumber?: boolean; // Display topic number with lessons
+    dynamicTabs?: boolean; // Show only tabs with content
+  };
+  lessonContent?: {
+    supportedTypes?: string[]; // ["concepts", "formulas", "pdf-assignment", "pdf-solution", "video", "quiz"]
+    tabOrder?: string[]; // Order of tabs to display
+  };
   ui?: {
     showProgress?: boolean;
     showEnrollment?: boolean;
     showFacts?: boolean;
     showSyllabus?: boolean;
     showTags?: boolean;
+    showParticipantsTab?: boolean; // Admin/Instructor feature
   };
   layout?: {
     sidebar?: boolean;

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/app/components-demo/ui/ui-components/button";
 import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Input } from "@/app/components-demo/ui/ui-components/input";
 import {
   ChevronDown,
   ChevronRight,
@@ -17,7 +18,10 @@ import {
   Lock,
   Unlock,
   Play,
+  Search,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Lesson {
   id: string;
@@ -45,6 +49,7 @@ interface CollapsibleSidebarProps {
   lessons?: Lesson[];
   isEnrolled?: boolean;
   completedLessonIds?: Set<string>;
+  courseId?: string;
 }
 
 export function CollapsibleSidebar({
@@ -53,8 +58,16 @@ export function CollapsibleSidebar({
   lessons = [],
   isEnrolled = false,
   completedLessonIds = new Set(),
+  courseId,
 }: CollapsibleSidebarProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [courseProgress, setCourseProgress] = useState({
+    completed: 0,
+    total: 0,
+    percentage: 0,
+  });
+  const { user } = useAuth();
 
   // Initialize expanded sections from localStorage
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
@@ -85,8 +98,64 @@ export function CollapsibleSidebar({
     return new Set();
   });
 
+  // Fetch course progress dynamically
+  useEffect(() => {
+    const fetchCourseProgress = async () => {
+      if (!user || !courseId) {
+        setCourseProgress({
+          completed: 0,
+          total: lessons.length,
+          percentage: 0,
+        });
+        return;
+      }
+
+      try {
+        const supabase = createClient();
+
+        // Get total lessons count
+        const total = lessons.length || 0;
+
+        // Get completed lessons count
+        const { count: completedCount, error } = await supabase
+          .from("user_progress")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("course_id", courseId)
+          .eq("is_completed", true);
+
+        if (error) {
+          console.error("Error fetching course progress:", error);
+          return;
+        }
+
+        const completed = completedCount || 0;
+        const percentage =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        setCourseProgress({ completed, total, percentage });
+      } catch (error) {
+        console.error("Error fetching course progress:", error);
+      }
+    };
+
+    fetchCourseProgress();
+  }, [user, courseId, lessons.length, completedLessonIds.size]);
+
+  // Filter lessons based on search query
+  const filteredLessons = lessons.filter((lesson) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      lesson.title.toLowerCase().includes(query) ||
+      lesson.chapter?.chapter_name?.toLowerCase().includes(query) ||
+      lesson.chapter?.unit?.unit_name?.toLowerCase().includes(query) ||
+      lesson.topic_number?.toString().includes(query)
+    );
+  });
+
   // Group lessons by unit and chapter from database
-  const groupedLessons = lessons.reduce((acc, lesson) => {
+  const groupedLessons = filteredLessons.reduce((acc, lesson) => {
     // Use database structure (chapter.unit.unit_name and chapter.chapter_name)
     const unit = lesson.chapter?.unit?.unit_name || "Uncategorized";
     const chapter = lesson.chapter?.chapter_name || "Other";
@@ -274,9 +343,9 @@ export function CollapsibleSidebar({
   }
 
   return (
-    <div className="w-80 bg-white border-r border-[#feefea] flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-[#feefea]">
+    <div className="w-80 bg-white border-r border-[#feefea] flex flex-col h-screen overflow-hidden">
+      {/* Header - Fixed */}
+      <div className="p-4 border-b border-[#feefea] flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-[#1e293b]">
             Course Content
@@ -290,6 +359,43 @@ export function CollapsibleSidebar({
             <ChevronLeft className="w-4 h-4" />
           </Button>
         </div>
+
+        {/* Search */}
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Input
+            placeholder="Search lessons..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 rounded-sm"
+          />
+        </div>
+
+        {/* Course Progress Meter */}
+        {user && isEnrolled && (
+          <div className="mb-3 p-3 bg-[#feefea] rounded-sm border border-[#e27447]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-[#1e293b]">
+                Course Progress
+              </span>
+              <span className="text-sm text-[#e27447] font-semibold">
+                {courseProgress.percentage}%
+              </span>
+            </div>
+            <div className="w-full bg-white rounded-full h-2 mb-2">
+              <div
+                className="bg-[#e27447] h-2 rounded-full transition-all duration-300"
+                style={{ width: `${courseProgress.percentage}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs text-gray-600">
+              <span>
+                <CheckCircle className="w-3 h-3 inline mr-1 text-green-600" />
+                {courseProgress.completed} / {courseProgress.total} completed
+              </span>
+            </div>
+          </div>
+        )}
 
         <Button
           variant="outline"
@@ -312,8 +418,8 @@ export function CollapsibleSidebar({
         </Button>
       </div>
 
-      {/* Course Content Section */}
-      <div className="space-y-4 flex-1 overflow-y-auto">
+      {/* Course Content Section - Scrollable */}
+      <div className="flex-1 overflow-y-auto space-y-4 p-4">
         {Object.entries(sortedGroupedLessons).map(([sectionKey, chapters]) => (
           <div
             key={sectionKey}
@@ -379,7 +485,7 @@ export function CollapsibleSidebar({
                                 <Link
                                   key={lesson.id}
                                   href={`/courses/${courseSlug}/lesson/${lesson.slug}`}
-                                  className={`flex items-center justify-between p-3 pl-16 transition-colors ${
+                                  className={`block p-3 pl-16 transition-colors ${
                                     status === "completed"
                                       ? "bg-green-50/50 hover:bg-green-100"
                                       : isCurrent
@@ -387,20 +493,22 @@ export function CollapsibleSidebar({
                                       : "hover:bg-[#feefea]/40"
                                   }`}
                                 >
-                                  <div className="flex items-center space-x-3">
-                                    {getStatusIcon(status)}
+                                  <div className="flex items-start space-x-3">
+                                    <div className="shrink-0 mt-0.5">
+                                      {getStatusIcon(status)}
+                                    </div>
                                     <div className="flex-1 min-w-0">
                                       <p
                                         className={`text-sm ${getStatusColor(
                                           status
-                                        )} truncate`}
+                                        )} leading-tight break-words`}
                                       >
                                         {lesson.topic_number
                                           ? `${lesson.topic_number}: `
                                           : ""}
                                         {lesson.title}
                                       </p>
-                                      <div className="flex items-center space-x-2 mt-1">
+                                      <div className="flex items-center space-x-2 mt-1 flex-wrap gap-1">
                                         <span className="text-xs text-gray-500">
                                           Lesson {lesson.lesson_order}
                                         </span>

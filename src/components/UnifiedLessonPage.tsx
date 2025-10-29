@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -35,6 +35,9 @@ import {
   Save,
   X,
   Loader2,
+  AlertCircle,
+  Flag,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Input } from "@/app/components-demo/ui/ui-components/input";
 import { Textarea } from "@/app/components-demo/ui/textarea";
@@ -44,6 +47,14 @@ import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { renderMixedContent } from "@/components/MathRenderer";
 import { Switch } from "@/app/components-demo/ui/switch";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components-demo/ui/dialog";
 
 interface LessonContent {
   id: string;
@@ -133,6 +144,18 @@ export function UnifiedLessonPage({
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackType, setFeedbackType] = useState<
+    "mistake" | "suggestion" | null
+  >(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [feedbackImage, setFeedbackImage] = useState<File | null>(null);
+  const [feedbackImagePreview, setFeedbackImagePreview] = useState<
+    string | null
+  >(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchLessonContent = async () => {
@@ -220,12 +243,24 @@ export function UnifiedLessonPage({
     setEditValues({});
   };
 
-  // Helper function to extract YouTube video ID
+  // Helper function to extract YouTube video ID (improved regex)
   const extractYouTubeId = (url: string): string | null => {
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+    if (!url) return null;
+
+    // More comprehensive YouTube URL patterns
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^#&\?]{11})/,
+      /^([a-zA-Z0-9_-]{11})$/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1] && match[1].length === 11) {
+        return match[1];
+      }
+    }
+
+    return null;
   };
 
   // Determine which tabs to show based on available content
@@ -333,6 +368,123 @@ export function UnifiedLessonPage({
     const currentIndex = allLessons.findIndex((l) => l.slug === lesson.slug);
     if (currentIndex > 0) {
       onNavigateLesson("prev");
+    }
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert("Image size must be less than 10MB");
+      return;
+    }
+
+    setFeedbackImage(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFeedbackImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setFeedbackImage(null);
+    setFeedbackImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!feedbackType || !feedbackMessage.trim()) return;
+
+    setSubmittingFeedback(true);
+    let imageUrl: string | null = null;
+
+    try {
+      // Upload image if selected
+      if (feedbackImage) {
+        setUploadingImage(true);
+        const formData = new FormData();
+        formData.append("file", feedbackImage);
+        formData.append("type", "feedback-image");
+        formData.append("title", `Feedback Image - ${feedbackImage.name}`);
+
+        const authToken = localStorage.getItem("supabase.auth.token");
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+          headers: authToken
+            ? {
+                Authorization: `Bearer ${authToken}`,
+              }
+            : {},
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          if (uploadData.success && uploadData.url) {
+            imageUrl = uploadData.url;
+          }
+        } else {
+          const errorData = await uploadResponse.json();
+          throw new Error(errorData.error || "Image upload failed");
+        }
+        setUploadingImage(false);
+      }
+
+      // Submit feedback to API
+      const response = await fetch("/api/lesson-feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lesson_id: lesson.id,
+          lesson_slug: lesson.slug,
+          course_slug: courseSlug,
+          feedback_type: feedbackType,
+          message: feedbackMessage,
+          image_url: imageUrl,
+        }),
+      });
+
+      if (response.ok) {
+        // Reset form and close modal
+        setFeedbackMessage("");
+        setFeedbackType(null);
+        setFeedbackImage(null);
+        setFeedbackImagePreview(null);
+        setShowFeedbackModal(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        alert("Thank you for your feedback! We'll review it soon.");
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data.error || "Failed to submit feedback"}`);
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert(
+        `Failed to submit feedback: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setSubmittingFeedback(false);
+      setUploadingImage(false);
     }
   };
 
@@ -989,7 +1141,7 @@ export function UnifiedLessonPage({
                           type: "video",
                           url: lesson.video_url,
                           title: lesson.title,
-                          description: "",
+                          description: lesson.description || "",
                           duration: 0,
                           isYouTube:
                             lesson.video_url.includes("youtube.com") ||
@@ -998,6 +1150,12 @@ export function UnifiedLessonPage({
                             ? extractYouTubeId(lesson.video_url)
                             : undefined,
                           thumbnail: lesson.video_thumbnail_url,
+                        }}
+                        lessonId={lesson.id}
+                        courseSlug={courseSlug}
+                        onProgressUpdate={(progress) => {
+                          // Video progress can be tracked here if needed
+                          console.log("Video progress:", progress);
                         }}
                       />
                     </div>
@@ -1644,9 +1802,40 @@ export function UnifiedLessonPage({
         </Card>
       )}
 
+      {/* Feedback Section - Suggest Changes */}
+      <div className="mt-8 mb-6">
+        <Card className="rounded-sm border-2 border-dashed border-gray-300 bg-gray-50/50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-[#e27447]/10 rounded-sm">
+                  <AlertCircle className="w-5 h-5 text-[#e27447]" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-[#1e293b]">
+                    Found an issue?
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Help us improve by reporting mistakes or suggesting changes
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="rounded-sm border-[#e27447] text-[#e27447] hover:bg-[#feefea]"
+                onClick={() => setShowFeedbackModal(true)}
+              >
+                <Flag className="w-4 h-4 mr-2" />
+                Report Issue
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Navigation Buttons - Like CBSE Class 9 */}
       {allLessons.length > 0 && (
-        <div className="flex items-center justify-between mt-8">
+        <div className="flex items-center justify-between mt-4">
           <Button
             variant="outline"
             className="rounded-sm"
@@ -1674,6 +1863,179 @@ export function UnifiedLessonPage({
           </Button>
         </div>
       )}
+
+      {/* Feedback Modal */}
+      <Dialog open={showFeedbackModal} onOpenChange={setShowFeedbackModal}>
+        <DialogContent className="rounded-sm max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Flag className="w-5 h-5 text-[#e27447]" />
+              Report an Issue or Suggest Changes
+            </DialogTitle>
+            <DialogDescription>
+              Help us improve this lesson by reporting mistakes or suggesting
+              improvements.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Feedback Type Selection */}
+            <div>
+              <Label className="mb-2 block">
+                What would you like to report?
+              </Label>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant={feedbackType === "mistake" ? "default" : "outline"}
+                  className={`rounded-sm ${
+                    feedbackType === "mistake"
+                      ? "bg-red-600 hover:bg-red-700 text-white"
+                      : ""
+                  }`}
+                  onClick={() => setFeedbackType("mistake")}
+                >
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  Found a Mistake
+                </Button>
+                <Button
+                  variant={
+                    feedbackType === "suggestion" ? "default" : "outline"
+                  }
+                  className={`rounded-sm ${
+                    feedbackType === "suggestion"
+                      ? "bg-[#e27447] hover:bg-[#e27447]/90 text-white"
+                      : ""
+                  }`}
+                  onClick={() => setFeedbackType("suggestion")}
+                >
+                  <Flag className="w-4 h-4 mr-2" />
+                  Suggest Changes
+                </Button>
+              </div>
+            </div>
+
+            {/* Feedback Message */}
+            <div>
+              <Label htmlFor="feedback-message" className="mb-2 block">
+                Your feedback *
+              </Label>
+              <Textarea
+                id="feedback-message"
+                value={feedbackMessage}
+                onChange={(e) => setFeedbackMessage(e.target.value)}
+                placeholder="Describe the mistake or your suggestion in detail..."
+                className="min-h-[120px] rounded-sm"
+                rows={5}
+              />
+            </div>
+
+            {/* Image Attachment */}
+            <div>
+              <Label className="mb-2 block">Attach an image (optional)</Label>
+              {!feedbackImagePreview ? (
+                <div className="border-2 border-dashed border-gray-300 rounded-sm p-4">
+                  <div className="flex flex-col items-center justify-center space-y-3">
+                    <div className="p-2 bg-gray-100 rounded-sm">
+                      <ImageIcon className="w-6 h-6 text-gray-500" />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-1">
+                        Upload a screenshot or image to help explain your
+                        feedback
+                      </p>
+                      <p className="text-xs text-gray-400">Max size: 10MB</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingImage}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Select Image
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="relative border rounded-sm overflow-hidden">
+                    <img
+                      src={feedbackImagePreview}
+                      alt="Feedback preview"
+                      className="w-full h-48 object-contain bg-gray-50"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 rounded-sm"
+                      onClick={handleRemoveImage}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {feedbackImage?.name}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Lesson: <strong>{lesson.title}</strong>
+              <br />
+              Course: <strong>{courseSlug}</strong>
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowFeedbackModal(false);
+                setFeedbackMessage("");
+                setFeedbackType(null);
+                setFeedbackImage(null);
+                setFeedbackImagePreview(null);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
+              }}
+              className="rounded-sm"
+              disabled={submittingFeedback}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmitFeedback}
+              disabled={
+                !feedbackType || !feedbackMessage.trim() || submittingFeedback
+              }
+              className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+            >
+              {submittingFeedback ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Submit Feedback
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

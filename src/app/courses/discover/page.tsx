@@ -708,225 +708,229 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
 
   if (viewMode === "list") {
     return (
-      <Card className="hover:shadow-md transition-shadow">
-        <CardContent className="p-6">
-          <div className="flex gap-6">
-            <div className="w-64 h-32 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-              {thumbnailUrl.includes("/api/cdn-proxy") ? (
-                <img
-                  src={thumbnailUrl}
-                  alt={`${course.title} thumbnail`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback to gradient if image fails to load
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = "flex";
-                  }}
-                />
-              ) : (
-                <Image
-                  src={thumbnailUrl}
-                  alt={`${course.title} thumbnail`}
-                  width={256}
-                  height={128}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback to gradient if image fails to load
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = "flex";
-                  }}
-                />
-              )}
-              <div
-                className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center"
-                style={{ display: "none" }}
-              >
-                <BookOpen className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <div className="mb-2">
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">{course.title}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge
-                      variant={course.price === 0 ? "secondary" : "default"}
-                    >
-                      {course.price === 0 ? "Free" : `₹${course.price}`}
-                    </Badge>
-                    {course.status === "draft" && (
-                      <Badge
-                        variant="outline"
-                        className="border-yellow-500 text-yellow-700 bg-yellow-50"
-                      >
-                        Draft
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {course.description}
-                  </p>
+      <Link href={`/courses/${course.slug}`} className="block">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardContent className="p-6">
+            <div className="flex gap-6">
+              <div className="w-64 h-32 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                {thumbnailUrl.includes("/api/cdn-proxy") ? (
+                  <img
+                    src={thumbnailUrl}
+                    alt={`${course.title} thumbnail`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to gradient if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = "none";
+                      const fallback = target.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.style.display = "flex";
+                    }}
+                  />
+                ) : (
+                  <Image
+                    src={thumbnailUrl}
+                    alt={`${course.title} thumbnail`}
+                    width={256}
+                    height={128}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to gradient if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = "none";
+                      const fallback = target.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.style.display = "flex";
+                    }}
+                  />
+                )}
+                <div
+                  className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center"
+                  style={{ display: "none" }}
+                >
+                  <BookOpen className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
+              <div className="flex-1">
+                <div className="mb-2">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">
+                      {course.title}
+                    </h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge
+                        variant={course.price === 0 ? "secondary" : "default"}
+                      >
+                        {course.price === 0 ? "Free" : `₹${course.price}`}
+                      </Badge>
+                      {course.status === "draft" && (
+                        <Badge
+                          variant="outline"
+                          className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                        >
+                          Draft
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {course.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>
+                        Created:{" "}
+                        {new Date(course.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      <span className="capitalize">{course.status}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Star className="w-4 h-4" />
                     <span>
-                      Created:{" "}
-                      {new Date(course.created_at).toLocaleDateString()}
+                      {course.price === 0 ? "Free Course" : "Paid Course"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="w-4 h-4" />
-                    <span className="capitalize">{course.status}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {course.curriculum ||
+                        (course.slug.includes("cbse")
+                          ? "CBSE"
+                          : course.slug.includes("ibdp")
+                          ? "IBDP"
+                          : course.slug.includes("icse")
+                          ? "ICSE"
+                          : course.slug.includes("igcse")
+                          ? "IGCSE"
+                          : course.slug.includes("gmat")
+                          ? "GMAT"
+                          : course.slug.includes("sat")
+                          ? "SAT"
+                          : "Other")}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {course.subject ||
+                        (course.title.toLowerCase().includes("mathematics")
+                          ? "Mathematics"
+                          : "Other")}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {course.price === 0 ? "Free" : "Paid"}
+                    </Badge>
                   </div>
-                </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Star className="w-4 h-4" />
-                  <span>
-                    {course.price === 0 ? "Free Course" : "Paid Course"}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2">
-                  <Badge variant="outline" className="text-xs">
-                    {course.curriculum ||
-                      (course.slug.includes("cbse")
-                        ? "CBSE"
-                        : course.slug.includes("ibdp")
-                        ? "IBDP"
-                        : course.slug.includes("icse")
-                        ? "ICSE"
-                        : course.slug.includes("igcse")
-                        ? "IGCSE"
-                        : course.slug.includes("gmat")
-                        ? "GMAT"
-                        : course.slug.includes("sat")
-                        ? "SAT"
-                        : "Other")}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {course.subject ||
-                      (course.title.toLowerCase().includes("mathematics")
-                        ? "Mathematics"
-                        : "Other")}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {course.price === 0 ? "Free" : "Paid"}
-                  </Badge>
-                </div>
-                <Link href={`/courses/${course.slug}`}>
                   <Button size="sm">View Course</Button>
-                </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </Link>
     );
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow group">
-      <CardHeader className="pb-4">
-        <div className="w-full h-32 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
-          {thumbnailUrl.includes("/api/cdn-proxy") ? (
-            <img
-              src={thumbnailUrl}
-              alt={`${course.title} thumbnail`}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback to gradient if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = "flex";
-              }}
-            />
-          ) : (
-            <Image
-              src={thumbnailUrl}
-              alt={`${course.title} thumbnail`}
-              width={400}
-              height={128}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback to gradient if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = "flex";
-              }}
-            />
-          )}
-          <div
-            className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center absolute inset-0"
-            style={{ display: "none" }}
-          >
-            <BookOpen className="w-12 h-12 text-white" />
-          </div>
-        </div>
-        <div className="mb-2">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors mb-2">
-            {course.title}
-          </CardTitle>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant={course.price === 0 ? "secondary" : "default"}>
-              {course.price === 0 ? "Free" : `₹${course.price}`}
-            </Badge>
-            {course.status === "draft" && (
-              <Badge
-                variant="outline"
-                className="border-yellow-500 text-yellow-700 bg-yellow-50"
-              >
-                Draft
-              </Badge>
+    <Link href={`/courses/${course.slug}`} className="block">
+      <Card className="hover:shadow-md transition-shadow group cursor-pointer">
+        <CardHeader className="pb-4">
+          <div className="w-full h-32 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
+            {thumbnailUrl.includes("/api/cdn-proxy") ? (
+              <img
+                src={thumbnailUrl}
+                alt={`${course.title} thumbnail`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to gradient if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+              />
+            ) : (
+              <Image
+                src={thumbnailUrl}
+                alt={`${course.title} thumbnail`}
+                width={400}
+                height={128}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to gradient if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+              />
             )}
+            <div
+              className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center absolute inset-0"
+              style={{ display: "none" }}
+            >
+              <BookOpen className="w-12 h-12 text-white" />
+            </div>
           </div>
-        </div>
-        <CardDescription className="line-clamp-3">
-          {course.description}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          {/* Course Info */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
+          <div className="mb-2">
+            <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors mb-2">
+              {course.title}
+            </CardTitle>
+            <div className="flex items-center gap-2 mb-2">
+              <Badge variant={course.price === 0 ? "secondary" : "default"}>
+                {course.price === 0 ? "Free" : `₹${course.price}`}
+              </Badge>
+              {course.status === "draft" && (
+                <Badge
+                  variant="outline"
+                  className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                >
+                  Draft
+                </Badge>
+              )}
+            </div>
+          </div>
+          <CardDescription className="line-clamp-3">
+            {course.description}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-4">
+            {/* Course Info */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  <span>
+                    Created: {new Date(course.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span className="capitalize">{course.status}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Star className="w-4 h-4" />
                 <span>
-                  Created: {new Date(course.created_at).toLocaleDateString()}
+                  {course.price === 0 ? "Free Course" : "Paid Course"}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span className="capitalize">{course.status}</span>
-              </div>
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Star className="w-4 h-4" />
-              <span>{course.price === 0 ? "Free Course" : "Paid Course"}</span>
-            </div>
-          </div>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2"></div>
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2"></div>
 
-          {/* Action Button */}
-          <Link href={`/courses/${course.slug}`} className="block">
+            {/* Action Button */}
             <Button className="w-full group-hover:bg-[#e27447] group-hover:text-white transition-colors">
               View Course
             </Button>
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

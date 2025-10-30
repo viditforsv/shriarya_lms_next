@@ -1517,7 +1517,12 @@ export function CoursePageClient({
                                 {courseStats.participants.map((participant) => (
                                   <tr
                                     key={participant.enrollmentId}
-                                    className="border-b last:border-0 hover:bg-muted/30 transition-colors"
+                                    className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                                    onClick={() => {
+                                      if (participant.student?.id) {
+                                        router.push(`/admin/student-progress/${course?.id}/${participant.student.id}`);
+                                      }
+                                    }}
                                   >
                                     <td className="px-4 py-3">
                                       <div className="font-medium text-sm">
@@ -1558,18 +1563,35 @@ export function CoursePageClient({
                                       </span>
                                     </td>
                                     <td className="px-4 py-3">
-                                      <Badge
-                                        variant={
-                                          participant.isActive
-                                            ? "default"
-                                            : "secondary"
-                                        }
-                                        className="rounded-sm"
-                                      >
-                                        {participant.isActive
-                                          ? "Active"
-                                          : "Inactive"}
-                                      </Badge>
+                                      <div className="flex items-center gap-2">
+                                        <Badge
+                                          variant={
+                                            participant.isActive
+                                              ? "default"
+                                              : "secondary"
+                                          }
+                                          className="rounded-sm"
+                                        >
+                                          {participant.isActive
+                                            ? "Active"
+                                            : "Inactive"}
+                                        </Badge>
+                                        {participant.student?.id && (
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="rounded-sm text-xs"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (participant.student?.id) {
+                                                router.push(`/admin/student-progress/${course?.id}/${participant.student.id}`);
+                                              }
+                                            }}
+                                          >
+                                            View Progress
+                                          </Button>
+                                        )}
+                                      </div>
                                     </td>
                                   </tr>
                                 ))}

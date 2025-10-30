@@ -168,8 +168,8 @@ export function CoursePageClient({
   // Check if this is an IBDP Mathematics course
   const isIBDPMathCourse = courseParams.slug?.includes("ibdp-mathematics");
 
-  // Check if this course should use unified template (CBSE Class 10 for pilot)
-  const useUnifiedTemplate = courseParams.slug === "cbse-mathematics-class-10";
+  // Use unified template as default for all courses (except IBDP which has specialized template)
+  const useUnifiedTemplate = !isIBDPMathCourse;
 
   // Save course field changes (admin only)
   const handleSaveField = async (field: string) => {

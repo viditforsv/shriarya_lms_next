@@ -100,15 +100,20 @@ interface Lesson {
   video_url?: string;
   video_thumbnail_url?: string;
   topic_badge?: string;
+  topic_number?: string;
   pdf_url?: string;
   solution_url?: string;
   quiz_id?: string;
   chapter_id?: string;
+  concept_title?: string;
+  concept_content?: string;
+  formula_title?: string;
+  formula_content?: string;
   chapter?: {
     id: string;
     chapter_name: string;
     chapter_order: number;
-    unit: {
+    unit?: {
       id: string;
       unit_name: string;
       unit_order: number;
@@ -131,7 +136,7 @@ export default function DynamicLessonPage({
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "video" | "notes" | "quiz" | "assignment" | "solution"
+    "video" | "notes" | "quiz" | "assignment" | "solution" | "keypoints"
   >("video");
   const [resolvedParams, setResolvedParams] = useState<{
     slug: string;
@@ -241,7 +246,7 @@ export default function DynamicLessonPage({
         }
 
         // 4. Fetch all lessons with unit/chapter structure
-        const { data: lessonsData, error: lessonsError } = await supabase
+        let { data: lessonsData, error: lessonsError } = await supabase
           .from("courses_lessons")
           .select(
             `
@@ -269,10 +274,97 @@ export default function DynamicLessonPage({
           .eq("course_id", course.id)
           .order("lesson_order");
 
+        // Fallback: If nested query doesn't return chapter data, fetch separately
+        if (!lessonsError && lessonsData && lessonsData.length > 0) {
+          const lessonsWithChapterIds = lessonsData.filter((l) => l.chapter_id);
+          const chapterIds = [
+            ...new Set(
+              lessonsWithChapterIds.map((l) => l.chapter_id).filter(Boolean)
+            ),
+          ];
+
+          // Check if chapter data is missing and we have chapter_ids
+          const needsManualJoin =
+            chapterIds.length > 0 &&
+            (!lessonsData[0]?.chapter || lessonsData[0]?.chapter === null);
+
+          if (needsManualJoin) {
+            console.log(
+              "⚠️ Nested query didn't return chapter data, fetching separately...",
+              { chapterIds }
+            );
+
+            // Fetch chapters separately with their units
+            const { data: chaptersData } = await supabase
+              .from("courses_chapters")
+              .select(
+                `
+                id,
+                chapter_name,
+                chapter_order,
+                unit_id,
+                unit:courses_units(
+                  id,
+                  unit_name,
+                  unit_order
+                )
+              `
+              )
+              .in("id", chapterIds);
+
+            // Manually attach chapter data to lessons
+            if (chaptersData) {
+              const chaptersMap = new Map(
+                chaptersData.map((c) => {
+                  // Normalize unit data (Supabase might return it as array or single object)
+                  const unitData = Array.isArray(c.unit) ? c.unit[0] : c.unit;
+                  return [
+                    c.id,
+                    {
+                      id: c.id,
+                      chapter_name: c.chapter_name,
+                      chapter_order: c.chapter_order,
+                      unit: unitData
+                        ? {
+                            id: unitData.id,
+                            unit_name: unitData.unit_name,
+                            unit_order: unitData.unit_order,
+                          }
+                        : undefined,
+                    },
+                  ];
+                })
+              );
+              lessonsData = lessonsData.map((lesson) => ({
+                ...lesson,
+                chapter: lesson.chapter_id
+                  ? chaptersMap.get(lesson.chapter_id) || null
+                  : null,
+              })) as any;
+              console.log("✅ Manually joined chapter/unit data to lessons", {
+                chaptersMapSize: chaptersMap.size,
+              });
+            }
+          }
+        }
+
         if (lessonsError) {
-          console.error("Error fetching lessons:", lessonsError);
+          console.error("❌ Error fetching lessons:", lessonsError);
         } else {
-          setAllLessons((lessonsData as unknown as Lesson[]) || []);
+          const lessonsArray = (lessonsData as unknown as Lesson[]) || [];
+          console.log("📚 Fetched lessons for sidebar:", {
+            count: lessonsArray.length,
+            sampleLesson: lessonsArray[0]
+              ? {
+                  title: lessonsArray[0].title,
+                  chapter_id: lessonsArray[0].chapter_id,
+                  chapter: lessonsArray[0].chapter,
+                  hasChapter: !!lessonsArray[0].chapter,
+                  hasUnit: !!lessonsArray[0].chapter?.unit,
+                }
+              : "No lessons",
+          });
+          setAllLessons(lessonsArray);
         }
 
         // 5. Fetch current lesson content
@@ -775,12 +867,11 @@ export default function DynamicLessonPage({
   // Check if this is an IBDP Mathematics course - use specialized template
   const isIBDPMathCourse = resolvedParams?.slug?.includes("ibdp-mathematics");
 
-  // Check if this course should use unified template (CBSE Class 10 for pilot)
-  const useUnifiedTemplate =
-    resolvedParams?.slug === "cbse-mathematics-class-10";
+  // Use unified template as default for all courses (except IBDP which has specialized template)
+  const useUnifiedTemplate = !isIBDPMathCourse;
 
   if (useUnifiedTemplate && lesson && course) {
-    // Use unified lesson page for CBSE Class 10 - Matching CBSE Class 9 design
+    // Use unified lesson page - Default template for all courses
     return (
       <div className="min-h-screen bg-background">
         {/* Header - Matching CBSE Class 9 */}
@@ -839,7 +930,7 @@ export default function DynamicLessonPage({
             <CollapsibleSidebar
               currentLessonSlug={lesson.slug}
               courseSlug={resolvedParams?.slug || ""}
-              lessons={allLessons}
+              lessons={allLessons as any}
               isEnrolled={isEnrolled}
               completedLessonIds={completedLessonIds}
               courseId={course?.id}
@@ -866,8 +957,9 @@ export default function DynamicLessonPage({
                   concept_content: lesson.concept_content,
                   formula_title: lesson.formula_title,
                   formula_content: lesson.formula_content,
+                  chapter: lesson.chapter,
                 }}
-                courseSlug={resolvedParams.slug}
+                courseSlug={resolvedParams?.slug || ""}
                 showTopicNumber={true}
                 onMarkComplete={handleMarkComplete}
                 onFileUpload={handleFileUpload}

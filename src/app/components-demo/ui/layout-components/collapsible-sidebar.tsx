@@ -35,7 +35,7 @@ interface Lesson {
     id: string;
     chapter_name: string;
     chapter_order: number;
-    unit: {
+    unit?: {
       id: string;
       unit_name: string;
       unit_order: number;
@@ -166,6 +166,21 @@ export function CollapsibleSidebar({
     return acc;
   }, {} as Record<string, Record<string, Lesson[]>>);
 
+  // Debug logging to check lesson data structure
+  console.log("📋 CollapsibleSidebar - Lessons data:", {
+    totalLessons: lessons.length,
+    filteredLessons: filteredLessons.length,
+    sampleLesson: filteredLessons[0]
+      ? {
+          title: filteredLessons[0].title,
+          chapter: filteredLessons[0].chapter,
+          hasChapter: !!filteredLessons[0].chapter,
+          hasUnit: !!filteredLessons[0].chapter?.unit,
+        }
+      : "No lessons",
+    groupedLessons,
+  });
+
   // Sort units and chapters by their order
   const sortedGroupedLessons = Object.keys(groupedLessons)
     .sort((a, b) => {
@@ -210,7 +225,7 @@ export function CollapsibleSidebar({
       const currentLesson = lessons.find(
         (lesson) => lesson.slug === currentLessonSlug
       );
-      if (currentLesson && currentLesson.chapter) {
+      if (currentLesson && currentLesson.chapter && currentLesson.chapter.unit) {
         const unit = currentLesson.chapter.unit.unit_name;
         const chapter = currentLesson.chapter.chapter_name;
 

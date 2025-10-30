@@ -25,21 +25,6 @@ CREATE TABLE public.assignment_submissions (
   CONSTRAINT assignment_submissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
   CONSTRAINT assignment_submissions_graded_by_fkey FOREIGN KEY (graded_by) REFERENCES auth.users(id)
 );
-CREATE TABLE public.course_lesson_content (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  lesson_id uuid NOT NULL,
-  content_type text NOT NULL CHECK (content_type = ANY (ARRAY['concepts'::text, 'formulas'::text])),
-  title text NOT NULL,
-  content text,
-  content_html text,
-  metadata jsonb DEFAULT '{}'::jsonb,
-  order_index integer DEFAULT 0,
-  is_active boolean DEFAULT true,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT course_lesson_content_pkey PRIMARY KEY (id),
-  CONSTRAINT course_lesson_content_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
-);
 CREATE TABLE public.course_template_fields (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   template_id uuid NOT NULL,
@@ -104,33 +89,31 @@ CREATE TABLE public.courses_enrollments (
 CREATE TABLE public.courses_lessons (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   title text NOT NULL,
-  notes text,
+  topic_badge text,
   created_at timestamp without time zone DEFAULT now(),
   course_id uuid,
   slug text UNIQUE,
   lesson_order integer,
   is_preview boolean DEFAULT false,
-  content_html text,
   content text,
   quiz_id uuid,
   video_url text,
-  video_thumbnail text,
+  video_thumbnail_url text,
   pdf_url text,
-  key_points jsonb,
   chapter_id uuid,
   solution_url text,
   topic_number text,
   lesson_code text,
-  conceptual_focus text,
-  lesson_description text,
-  skill_emphasis text,
-  assessment_context text,
-  difficulty_level integer CHECK (difficulty_level >= 1 AND difficulty_level <= 10),
-  learning_outcome text,
+  topic_id uuid,
+  concept_title text,
+  concept_content text,
+  formula_title text,
+  formula_content text,
   CONSTRAINT courses_lessons_pkey PRIMARY KEY (id),
   CONSTRAINT lessons_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
   CONSTRAINT lessons_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id),
-  CONSTRAINT courses_lessons_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.courses_chapters(id)
+  CONSTRAINT courses_lessons_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.courses_chapters(id),
+  CONSTRAINT courses_lessons_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public.courses_topics(id)
 );
 CREATE TABLE public.courses_templates (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -151,6 +134,18 @@ CREATE TABLE public.courses_templates (
   CONSTRAINT courses_templates_pkey PRIMARY KEY (id),
   CONSTRAINT course_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
 );
+CREATE TABLE public.courses_topics (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  chapter_id uuid NOT NULL,
+  topic_name text NOT NULL,
+  topic_number text NOT NULL,
+  topic_order integer NOT NULL DEFAULT 0,
+  description text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT courses_topics_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_topics_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.courses_chapters(id)
+);
 CREATE TABLE public.courses_units (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   course_id uuid NOT NULL,
@@ -161,6 +156,33 @@ CREATE TABLE public.courses_units (
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT courses_units_pkey PRIMARY KEY (id),
   CONSTRAINT courses_units_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+);
+CREATE TABLE public.lesson_feedback (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  lesson_id uuid NOT NULL,
+  lesson_slug text NOT NULL,
+  course_slug text NOT NULL,
+  user_id uuid,
+  feedback_type text NOT NULL CHECK (feedback_type = ANY (ARRAY['mistake'::text, 'suggestion'::text])),
+  message text NOT NULL,
+  image_url text,
+  status text DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewed'::text, 'resolved'::text, 'dismissed'::text])),
+  admin_notes text,
+  reviewed_by uuid,
+  reviewed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT lesson_feedback_pkey PRIMARY KEY (id),
+  CONSTRAINT lesson_feedback_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id),
+  CONSTRAINT lesson_feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT lesson_feedback_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES auth.users(id)
+);
+CREATE TABLE public.lesson_tags (
+  lesson_id uuid NOT NULL,
+  tag_name text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT lesson_tags_pkey PRIMARY KEY (lesson_id, tag_name),
+  CONSTRAINT lesson_tags_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
 );
 CREATE TABLE public.payments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

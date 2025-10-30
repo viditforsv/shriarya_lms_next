@@ -750,22 +750,23 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             </div>
             <div className="flex-1">
               <div className="mb-2">
-                {course.status === "draft" && (
-                  <Badge
-                    variant="outline"
-                    className="border-yellow-500 text-yellow-700 bg-yellow-50 mb-1"
-                  >
-                    Draft
-                  </Badge>
-                )}
                 <div>
                   <h3 className="text-lg font-semibold mb-1">{course.title}</h3>
-                  <Badge
-                    variant={course.price === 0 ? "secondary" : "default"}
-                    className="mb-2"
-                  >
-                    {course.price === 0 ? "Free" : `₹${course.price}`}
-                  </Badge>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge
+                      variant={course.price === 0 ? "secondary" : "default"}
+                    >
+                      {course.price === 0 ? "Free" : `₹${course.price}`}
+                    </Badge>
+                    {course.status === "draft" && (
+                      <Badge
+                        variant="outline"
+                        className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                      >
+                        Draft
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {course.description}
                   </p>
@@ -872,23 +873,22 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
           </div>
         </div>
         <div className="mb-2">
-          {course.status === "draft" && (
-            <Badge
-              variant="outline"
-              className="border-yellow-500 text-yellow-700 bg-yellow-50 mb-2"
-            >
-              Draft
-            </Badge>
-          )}
           <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors mb-2">
             {course.title}
           </CardTitle>
-          <Badge
-            variant={course.price === 0 ? "secondary" : "default"}
-            className="mb-2"
-          >
-            {course.price === 0 ? "Free" : `₹${course.price}`}
-          </Badge>
+          <div className="flex items-center gap-2 mb-2">
+            <Badge variant={course.price === 0 ? "secondary" : "default"}>
+              {course.price === 0 ? "Free" : `₹${course.price}`}
+            </Badge>
+            {course.status === "draft" && (
+              <Badge
+                variant="outline"
+                className="border-yellow-500 text-yellow-700 bg-yellow-50"
+              >
+                Draft
+              </Badge>
+            )}
+          </div>
         </div>
         <CardDescription className="line-clamp-3">
           {course.description}

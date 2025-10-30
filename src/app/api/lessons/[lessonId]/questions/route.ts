@@ -22,13 +22,22 @@ export async function GET(
     // Get lesson details first
     const { data: lesson, error: lessonError } = await supabase
       .from("courses_lessons")
-      .select("title, topic_number, lesson_code")
+      .select("title, topic_number, lesson_code, course_id")
       .eq("id", lessonId)
       .single();
 
     if (lessonError || !lesson) {
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
     }
+
+    // Get course slug
+    const { data: course, error: courseError } = await supabase
+      .from("courses")
+      .select("slug")
+      .eq("id", lesson.course_id)
+      .single();
+
+    const courseSlug = course?.slug || "";
 
     // For now, let's use a simple approach - return some sample questions
     // In production, you'd have a proper question-lesson linking table
@@ -55,13 +64,20 @@ export async function GET(
       },
     ];
 
-    // Filter questions based on lesson content
+    // Filter questions based on lesson content or course
     let questions = sampleQuestions;
-    if (
+    const isCBSE10Course = courseSlug === "cbse-mathematics-class-10";
+    const isArithmeticLesson =
       lesson.title.toLowerCase().includes("arithmetic") ||
-      lesson.title.toLowerCase().includes("sequence")
-    ) {
-      // Keep all questions for arithmetic sequences lesson
+      lesson.title.toLowerCase().includes("sequence") ||
+      lesson.title.toLowerCase().includes("progression") ||
+      lesson.title.toLowerCase().includes("ap");
+
+    if (isArithmeticLesson) {
+      // Return questions for arithmetic-related lessons
+      questions = sampleQuestions;
+    } else if (isCBSE10Course) {
+      // For CBSE Class 10, return questions for all lessons (for testing)
       questions = sampleQuestions;
     } else {
       // Return empty for other lessons

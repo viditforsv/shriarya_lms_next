@@ -362,7 +362,7 @@ export default function QuestionTypesPage() {
     ) {
       setMatches({
         ...matches,
-        [active.id]: over.id,
+        [active.id.toString()]: over.id.toString(),
       });
     }
   };

@@ -62,7 +62,7 @@ export async function GET(request: Request) {
       .select(
         `
         *,
-        unit:courses_units(
+        unit:courses_units!inner(
           id,
           unit_name,
           unit_order,

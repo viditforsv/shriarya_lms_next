@@ -47,6 +47,7 @@ import { VideoResource } from "@/app/components-demo/ui/youtube-video";
 import { renderMixedContent } from "@/components/MathRenderer";
 import { Switch } from "@/app/components-demo/ui/switch";
 import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { IBDPQuestionSession } from "@/components/IBDPMathTemplate/IBDPQuestionSession";
 import {
   Dialog,
   DialogContent,
@@ -84,6 +85,16 @@ interface Lesson {
   formula_title?: string;
   formula_content?: string;
   course_lesson_content?: LessonContent[];
+  chapter?: {
+    id: string;
+    chapter_name: string;
+    chapter_order: number;
+    unit?: {
+      id: string;
+      unit_name: string;
+      unit_order: number;
+    };
+  };
 }
 
 interface UnifiedLessonPageProps {
@@ -128,6 +139,17 @@ export function UnifiedLessonPage({
   const [lessonContent, setLessonContent] = useState<LessonContent[]>([]);
   const [loadingContent, setLoadingContent] = useState(true);
   const [activeTab, setActiveTab] = useState<string>("");
+  const [questions, setQuestions] = useState<
+    Array<{
+      id: string;
+      question_text: string;
+      tags: string[];
+      marks: number;
+      solution?: string;
+      difficulty?: number;
+    }>
+  >([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
@@ -175,6 +197,28 @@ export function UnifiedLessonPage({
 
     if (lesson.id) {
       fetchLessonContent();
+    }
+  }, [lesson.id]);
+
+  // Fetch questions for the lesson
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setLoadingQuestions(true);
+        const response = await fetch(`/api/lessons/${lesson.id}/questions`);
+        if (response.ok) {
+          const data = await response.json();
+          setQuestions(data.questions || []);
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setLoadingQuestions(false);
+      }
+    };
+
+    if (lesson.id) {
+      fetchQuestions();
     }
   }, [lesson.id]);
 
@@ -270,6 +314,7 @@ export function UnifiedLessonPage({
   const hasPDFAssignment = !!lesson.pdf_url;
   const hasPDFSolution = !!lesson.solution_url;
   const hasQuiz = !!lesson.quiz_id;
+  const hasQuestions = questions.length > 0;
   // Check for notes - can be in content, concept, or formula fields
   const hasNotes = !!(
     lesson.content ||
@@ -281,6 +326,14 @@ export function UnifiedLessonPage({
 
   // Build tabs array dynamically
   const availableTabs = [];
+  // Questions tab - prioritize it as first tab if available
+  if (hasQuestions) {
+    availableTabs.push({
+      id: "questions",
+      label: "Questions",
+      icon: FileCheck,
+    });
+  }
   if (hasConcepts || hasFormulas) {
     availableTabs.push({
       id: "content",
@@ -526,20 +579,32 @@ export function UnifiedLessonPage({
             </Button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 mb-2">
-            <h1 className="text-3xl font-bold text-[#1e293b]">
-              {lesson.title}
-            </h1>
-            {isAdmin && (
-              <button
-                onClick={() => handleStartEdit("title")}
-                className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
-                title="Edit title"
-              >
-                <Edit className="w-4 h-4 text-[#e27447]" />
-              </button>
-            )}
-          </div>
+          <>
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="text-3xl font-bold text-[#1e293b]">
+                {lesson.title}
+              </h1>
+              {isAdmin && (
+                <button
+                  onClick={() => handleStartEdit("title")}
+                  className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
+                  title="Edit title"
+                >
+                  <Edit className="w-4 h-4 text-[#e27447]" />
+                </button>
+              )}
+            </div>
+            {/* Unit → Chapter Mapping */}
+            {lesson.chapter?.unit?.unit_name &&
+              lesson.chapter?.chapter_name && (
+                <div className="mb-4">
+                  <p className="text-sm text-muted-foreground">
+                    {lesson.chapter.unit.unit_name} →{" "}
+                    {lesson.chapter.chapter_name}
+                  </p>
+                </div>
+              )}
+          </>
         )}
         {editingField === "topic_badge" ? (
           <div className="flex items-center gap-2">
@@ -620,7 +685,9 @@ export function UnifiedLessonPage({
                 ? "grid-cols-4"
                 : availableTabs.length === 5
                 ? "grid-cols-5"
-                : "grid-cols-6"
+                : availableTabs.length === 6
+                ? "grid-cols-6"
+                : "grid-cols-7"
             }`}
           >
             {availableTabs.map((tab) => (
@@ -634,6 +701,43 @@ export function UnifiedLessonPage({
               </TabsTrigger>
             ))}
           </TabsList>
+
+          {/* Questions Tab */}
+          {hasQuestions && (
+            <TabsContent value="questions" className="mt-6 space-y-4">
+              {loadingQuestions ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">
+                      Loading questions...
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <IBDPQuestionSession
+                  questions={questions}
+                  onSessionComplete={(results) => {
+                    console.log("Question session completed:", results);
+                    // Calculate progress based on results
+                    const correctAnswers = results.filter(
+                      (r) => r.result === "correct"
+                    ).length;
+                    const progress =
+                      questions.length > 0
+                        ? (correctAnswers / questions.length) * 100
+                        : 0;
+
+                    // Optionally update lesson progress here
+                    if (onMarkComplete && progress >= 80) {
+                      // Auto-mark as complete if 80%+ correct
+                      // onMarkComplete(); // Uncomment if desired
+                    }
+                  }}
+                />
+              )}
+            </TabsContent>
+          )}
 
           {/* Concepts & Formulas Tab */}
           {(hasConcepts || hasFormulas) && (
@@ -1147,9 +1251,9 @@ export function UnifiedLessonPage({
                             lesson.video_url.includes("youtube.com") ||
                             lesson.video_url.includes("youtu.be"),
                           youtubeId: lesson.video_url
-                            ? extractYouTubeId(lesson.video_url)
+                            ? extractYouTubeId(lesson.video_url) || undefined
                             : undefined,
-                          thumbnail: lesson.video_thumbnail_url,
+                          thumbnail: lesson.video_thumbnail_url || undefined,
                         }}
                         lessonId={lesson.id}
                         courseSlug={courseSlug}
@@ -1886,7 +1990,7 @@ export function UnifiedLessonPage({
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 <Button
-                  variant={feedbackType === "mistake" ? "default" : "outline"}
+                  variant={feedbackType === "mistake" ? "coral" : "outline"}
                   className={`rounded-sm ${
                     feedbackType === "mistake"
                       ? "bg-red-600 hover:bg-red-700 text-white"
@@ -1898,9 +2002,7 @@ export function UnifiedLessonPage({
                   Found a Mistake
                 </Button>
                 <Button
-                  variant={
-                    feedbackType === "suggestion" ? "default" : "outline"
-                  }
+                  variant={feedbackType === "suggestion" ? "coral" : "outline"}
                   className={`rounded-sm ${
                     feedbackType === "suggestion"
                       ? "bg-[#e27447] hover:bg-[#e27447]/90 text-white"

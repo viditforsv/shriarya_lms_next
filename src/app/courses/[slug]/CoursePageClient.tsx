@@ -1520,7 +1520,9 @@ export function CoursePageClient({
                                     className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                                     onClick={() => {
                                       if (participant.student?.id) {
-                                        router.push(`/admin/student-progress/${course?.id}/${participant.student.id}`);
+                                        router.push(
+                                          `/admin/student-progress/${course?.id}/${participant.student.id}`
+                                        );
                                       }
                                     }}
                                   >
@@ -1584,7 +1586,9 @@ export function CoursePageClient({
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               if (participant.student?.id) {
-                                                router.push(`/admin/student-progress/${course?.id}/${participant.student.id}`);
+                                                router.push(
+                                                  `/admin/student-progress/${course?.id}/${participant.student.id}`
+                                                );
                                               }
                                             }}
                                           >

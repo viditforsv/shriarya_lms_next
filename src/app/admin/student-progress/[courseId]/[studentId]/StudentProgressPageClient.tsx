@@ -169,7 +169,8 @@ export function StudentProgressPageClient({
         // Fetch lessons with chapter structure
         const { data: lessonsData, error: lessonsError } = await supabase
           .from("courses_lessons")
-          .select(`
+          .select(
+            `
             id,
             slug,
             title,
@@ -185,40 +186,60 @@ export function StudentProgressPageClient({
                 unit_order
               )
             )
-          `)
+          `
+          )
           .eq("course_id", params.courseId)
           .order("lesson_order");
 
         if (lessonsError) {
           console.error("Error fetching lessons:", lessonsError);
         } else {
-          const formattedLessons: Lesson[] = (lessonsData || []).map((lesson: any) => ({
-            id: lesson.id,
-            slug: lesson.slug,
-            title: lesson.title,
-            lesson_order: lesson.lesson_order,
-            is_preview: lesson.is_preview,
-            chapter: lesson.chapter ? {
-              id: lesson.chapter.id,
-              chapter_name: lesson.chapter.chapter_name,
-              chapter_order: lesson.chapter.chapter_order,
-              unit: Array.isArray(lesson.chapter.unit) ? lesson.chapter.unit[0] : lesson.chapter.unit
-            } : undefined
-          }));
+          const formattedLessons: Lesson[] = (lessonsData || []).map(
+            (lesson: any) => ({
+              id: lesson.id,
+              slug: lesson.slug,
+              title: lesson.title,
+              lesson_order: lesson.lesson_order,
+              is_preview: lesson.is_preview,
+              chapter: lesson.chapter
+                ? {
+                    id: lesson.chapter.id,
+                    chapter_name: lesson.chapter.chapter_name,
+                    chapter_order: lesson.chapter.chapter_order,
+                    unit: Array.isArray(lesson.chapter.unit)
+                      ? lesson.chapter.unit[0]
+                      : lesson.chapter.unit,
+                  }
+                : undefined,
+            })
+          );
           setLessons(formattedLessons);
         }
+
+        // Debug: Check if user_progress table exists and has data
+        console.log("Fetching progress for student:", params.studentId, "course:", params.courseId);
+        
+        // First, let's check if there's any data in user_progress table
+        const { data: debugData, error: debugError } = await supabase
+          .from("user_progress")
+          .select("lesson_id, user_id, course_id")
+          .eq("user_id", params.studentId)
+          .limit(5);
+          
+        console.log("Debug query result:", debugData, "Error:", debugError);
 
         // Fetch student progress data
         const { data: progressData, error: progressError } = await supabase
           .from("user_progress")
-          .select(`
+          .select(
+            `
             lesson_id,
             is_completed,
             last_accessed_at,
             time_spent,
             completion_percentage,
             attempts,
-            lesson:courses_lessons!inner(
+            lesson:courses_lessons(
               slug,
               title,
               chapter:courses_chapters(
@@ -230,41 +251,100 @@ export function StudentProgressPageClient({
                 )
               )
             )
-          `)
+          `
+          )
           .eq("user_id", params.studentId)
           .eq("course_id", params.courseId);
 
         if (progressError) {
           console.error("Error fetching progress:", progressError);
+          console.error("Progress error details:", JSON.stringify(progressError, null, 2));
+          
+          // Fallback: Try a simpler query without joins
+          console.log("Trying fallback query...");
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from("user_progress")
+            .select("lesson_id, is_completed, last_accessed_at, time_spent, completion_percentage, attempts")
+            .eq("user_id", params.studentId)
+            .eq("course_id", params.courseId);
+            
+          if (fallbackError) {
+            console.error("Fallback query also failed:", fallbackError);
+            setProgressData([]);
+          } else {
+            console.log("Fallback data received:", fallbackData);
+            // Create basic progress data without lesson details
+            const basicProgress: ProgressData[] = (fallbackData || []).map((item: any) => ({
+              lesson_id: item.lesson_id,
+              lesson_slug: '',
+              lesson_title: 'Lesson ' + item.lesson_id,
+              is_completed: item.is_completed,
+              last_accessed_at: item.last_accessed_at,
+              time_spent: item.time_spent || 0,
+              completion_percentage: item.completion_percentage || 0,
+              attempts: item.attempts || 0,
+              chapter: undefined,
+            }));
+            setProgressData(basicProgress);
+          }
         } else {
-          const formattedProgress: ProgressData[] = (progressData || []).map((item: any) => ({
-            lesson_id: item.lesson_id,
-            lesson_slug: item.lesson.slug,
-            lesson_title: item.lesson.title,
-            is_completed: item.is_completed,
-            last_accessed_at: item.last_accessed_at,
-            time_spent: item.time_spent || 0,
-            completion_percentage: item.completion_percentage || 0,
-            attempts: item.attempts || 0,
-            chapter: item.lesson.chapter ? {
-              id: item.lesson.chapter.id,
-              chapter_name: item.lesson.chapter.chapter_name,
-              unit: Array.isArray(item.lesson.chapter.unit) ? item.lesson.chapter.unit[0] : item.lesson.chapter.unit
-            } : undefined,
-          }));
+          console.log("Progress data received:", progressData);
+          const formattedProgress: ProgressData[] = (progressData || [])
+            .filter((item: any) => item.lesson) // Filter out items where lesson is null
+            .map((item: any) => ({
+              lesson_id: item.lesson_id,
+              lesson_slug: item.lesson?.slug || '',
+              lesson_title: item.lesson?.title || 'Unknown Lesson',
+              is_completed: item.is_completed,
+              last_accessed_at: item.last_accessed_at,
+              time_spent: item.time_spent || 0,
+              completion_percentage: item.completion_percentage || 0,
+              attempts: item.attempts || 0,
+              chapter: item.lesson?.chapter
+                ? {
+                    id: item.lesson.chapter.id,
+                    chapter_name: item.lesson.chapter.chapter_name,
+                    unit: Array.isArray(item.lesson.chapter.unit)
+                      ? item.lesson.chapter.unit[0]
+                      : item.lesson.chapter.unit,
+                  }
+                : undefined,
+            }));
           setProgressData(formattedProgress);
 
           // Calculate statistics
           const totalLessons = lessonsData?.length || 0;
-          const completedLessons = formattedProgress?.filter((p: ProgressData) => p.is_completed).length || 0;
-          const inProgressLessons = formattedProgress?.filter((p: ProgressData) => !p.is_completed && p.completion_percentage > 0).length || 0;
-          const notStartedLessons = totalLessons - completedLessons - inProgressLessons;
-          const overallProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-          const totalTimeSpent = formattedProgress?.reduce((sum: number, p: ProgressData) => sum + (p.time_spent || 0), 0) || 0;
-          const averageTimePerLesson = completedLessons > 0 ? Math.round(totalTimeSpent / completedLessons) : 0;
-          const lastActivity = formattedProgress?.length > 0 
-            ? Math.max(...formattedProgress.map((p: ProgressData) => new Date(p.last_accessed_at).getTime()))
-            : 0;
+          const completedLessons =
+            formattedProgress?.filter((p: ProgressData) => p.is_completed)
+              .length || 0;
+          const inProgressLessons =
+            formattedProgress?.filter(
+              (p: ProgressData) =>
+                !p.is_completed && p.completion_percentage > 0
+            ).length || 0;
+          const notStartedLessons =
+            totalLessons - completedLessons - inProgressLessons;
+          const overallProgress =
+            totalLessons > 0
+              ? Math.round((completedLessons / totalLessons) * 100)
+              : 0;
+          const totalTimeSpent =
+            formattedProgress?.reduce(
+              (sum: number, p: ProgressData) => sum + (p.time_spent || 0),
+              0
+            ) || 0;
+          const averageTimePerLesson =
+            completedLessons > 0
+              ? Math.round(totalTimeSpent / completedLessons)
+              : 0;
+          const lastActivity =
+            formattedProgress?.length > 0
+              ? Math.max(
+                  ...formattedProgress.map((p: ProgressData) =>
+                    new Date(p.last_accessed_at).getTime()
+                  )
+                )
+              : 0;
 
           // Get enrollment date
           const { data: enrollmentData } = await supabase
@@ -282,12 +362,16 @@ export function StudentProgressPageClient({
             overallProgress,
             totalTimeSpent,
             averageTimePerLesson,
-            lastActivity: lastActivity > 0 ? new Date(lastActivity).toLocaleDateString() : "Never",
-            enrollmentDate: enrollmentData?.enrolled_at ? new Date(enrollmentData.enrolled_at).toLocaleDateString() : "Unknown",
+            lastActivity:
+              lastActivity > 0
+                ? new Date(lastActivity).toLocaleDateString()
+                : "Never",
+            enrollmentDate: enrollmentData?.enrolled_at
+              ? new Date(enrollmentData.enrolled_at).toLocaleDateString()
+              : "Unknown",
             streakDays: 0, // TODO: Calculate streak
           });
         }
-
       } catch (err) {
         console.error("Error loading student progress:", err);
         setError("Failed to load student progress");
@@ -319,7 +403,9 @@ export function StudentProgressPageClient({
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Error</h1>
-          <p className="text-muted-foreground mb-6">{error || "Student or course not found"}</p>
+          <p className="text-muted-foreground mb-6">
+            {error || "Student or course not found"}
+          </p>
           <Link href="/admin">
             <Button>Back to Admin</Button>
           </Link>
@@ -364,7 +450,8 @@ export function StudentProgressPageClient({
               <div>
                 <h4 className="font-semibold mb-2">Personal Details</h4>
                 <p className="text-sm text-muted-foreground">
-                  <strong>Name:</strong> {student.first_name} {student.last_name}
+                  <strong>Name:</strong> {student.first_name}{" "}
+                  {student.last_name}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Email:</strong> {student.email}
@@ -417,7 +504,8 @@ export function StudentProgressPageClient({
                 </div>
                 <Progress value={stats.overallProgress} className="h-2" />
                 <p className="text-sm text-muted-foreground mt-2">
-                  {stats.completedLessons} of {stats.totalLessons} lessons completed
+                  {stats.completedLessons} of {stats.totalLessons} lessons
+                  completed
                 </p>
               </CardContent>
             </Card>
@@ -467,9 +555,7 @@ export function StudentProgressPageClient({
                 <div className="text-3xl font-bold text-purple-500 mb-2">
                   {stats.notStartedLessons}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Not started yet
-                </p>
+                <p className="text-sm text-muted-foreground">Not started yet</p>
               </CardContent>
             </Card>
           </div>
@@ -512,9 +598,12 @@ export function StudentProgressPageClient({
               <CardContent>
                 <div className="space-y-4">
                   {lessons.map((lesson) => {
-                    const progress = progressData.find(p => p.lesson_id === lesson.id);
+                    const progress = progressData.find(
+                      (p) => p.lesson_id === lesson.id
+                    );
                     const isCompleted = progress?.is_completed || false;
-                    const completionPercentage = progress?.completion_percentage || 0;
+                    const completionPercentage =
+                      progress?.completion_percentage || 0;
                     const timeSpent = progress?.time_spent || 0;
                     const attempts = progress?.attempts || 0;
 
@@ -544,7 +633,8 @@ export function StudentProgressPageClient({
                               <h4 className="font-semibold">{lesson.title}</h4>
                               {lesson.chapter && (
                                 <p className="text-sm text-muted-foreground">
-                                  {lesson.chapter.unit.unit_name} → {lesson.chapter.chapter_name}
+                                  {lesson.chapter.unit.unit_name} →{" "}
+                                  {lesson.chapter.chapter_name}
                                 </p>
                               )}
                             </div>
@@ -555,11 +645,19 @@ export function StudentProgressPageClient({
                                 {completionPercentage}% Complete
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {timeSpent > 0 ? `${Math.round(timeSpent / 60)}m spent` : "Not started"}
+                                {timeSpent > 0
+                                  ? `${Math.round(timeSpent / 60)}m spent`
+                                  : "Not started"}
                               </div>
                             </div>
                             <Badge
-                              variant={isCompleted ? "default" : completionPercentage > 0 ? "secondary" : "outline"}
+                              variant={
+                                isCompleted
+                                  ? "default"
+                                  : completionPercentage > 0
+                                  ? "secondary"
+                                  : "outline"
+                              }
                               className={
                                 isCompleted
                                   ? "bg-green-100 text-green-700"
@@ -568,12 +666,19 @@ export function StudentProgressPageClient({
                                   : ""
                               }
                             >
-                              {isCompleted ? "Completed" : completionPercentage > 0 ? "In Progress" : "Not Started"}
+                              {isCompleted
+                                ? "Completed"
+                                : completionPercentage > 0
+                                ? "In Progress"
+                                : "Not Started"}
                             </Badge>
                           </div>
                         </div>
                         {completionPercentage > 0 && (
-                          <Progress value={completionPercentage} className="h-2" />
+                          <Progress
+                            value={completionPercentage}
+                            className="h-2"
+                          />
                         )}
                         {attempts > 0 && (
                           <p className="text-xs text-muted-foreground mt-2">

@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ courseId: string; studentId: string }>;
+  params: Promise<{ courseSlug: string; studentHash: string }>;
 }): Promise<Metadata> {
-  const { courseId, studentId } = await params;
+  const { courseSlug, studentHash } = await params;
 
   return {
     title: "Student Progress - Admin Dashboard",
@@ -17,7 +17,7 @@ export async function generateMetadata({
 export default async function StudentProgressPage({
   params,
 }: {
-  params: Promise<{ courseId: string; studentId: string }>;
+  params: Promise<{ courseSlug: string; studentHash: string }>;
 }) {
   const resolvedParams = await params;
 

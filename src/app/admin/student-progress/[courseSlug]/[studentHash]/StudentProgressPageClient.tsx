@@ -37,6 +37,11 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import {
+  createStudentHash,
+  findStudentByHash,
+  isValidStudentHash,
+} from "@/lib/student-utils";
 
 interface Student {
   id: string;
@@ -110,9 +115,9 @@ interface StudentProgressStats {
 export function StudentProgressPageClient({
   params,
 }: {
-  params: { courseId: string; studentId: string };
+  params: { courseSlug: string; studentHash: string };
 }) {
-  const { profile } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [student, setStudent] = useState<Student | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
@@ -126,8 +131,20 @@ export function StudentProgressPageClient({
   const isAdmin = profile?.role === "admin";
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking admin status
+    if (authLoading) {
+      return;
+    }
+
     if (!isAdmin) {
       router.push("/admin");
+      return;
+    }
+
+    // Validate student hash format
+    if (!isValidStudentHash(params.studentHash)) {
+      setError("Invalid student identifier");
+      setIsLoading(false);
       return;
     }
 
@@ -138,25 +155,11 @@ export function StudentProgressPageClient({
 
         const supabase = createClient();
 
-        // Fetch student data
-        const { data: studentData, error: studentError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", params.studentId)
-          .single();
-
-        if (studentError || !studentData) {
-          setError("Student not found");
-          return;
-        }
-
-        setStudent(studentData);
-
-        // Fetch course data
+        // Fetch course data by slug
         const { data: courseData, error: courseError } = await supabase
           .from("courses")
           .select("id, title, slug, description, curriculum, subject, grade")
-          .eq("id", params.courseId)
+          .eq("slug", params.courseSlug)
           .single();
 
         if (courseError || !courseData) {
@@ -165,6 +168,43 @@ export function StudentProgressPageClient({
         }
 
         setCourse(courseData);
+
+        // Fetch all students enrolled in this course
+        const { data: enrollmentData, error: enrollmentError } = await supabase
+          .from("courses_enrollments")
+          .select(
+            `
+            student_id,
+            student:profiles!inner(
+              id,
+              email,
+              first_name,
+              last_name,
+              role,
+              created_at
+            )
+          `
+          )
+          .eq("course_id", courseData.id)
+          .eq("is_active", true);
+
+        if (enrollmentError) {
+          console.error("Error fetching enrollments:", enrollmentError);
+          setError("Failed to load student data");
+          return;
+        }
+
+        // Find student by hash
+        const students =
+          enrollmentData?.map((item) => item.student).filter(Boolean) || [];
+        const foundStudent = findStudentByHash(params.studentHash, students);
+
+        if (!foundStudent) {
+          setError("Student not found or not enrolled in this course");
+          return;
+        }
+
+        setStudent(foundStudent);
 
         // Fetch lessons with chapter structure
         const { data: lessonsData, error: lessonsError } = await supabase
@@ -188,7 +228,7 @@ export function StudentProgressPageClient({
             )
           `
           )
-          .eq("course_id", params.courseId)
+          .eq("course_id", courseData.id)
           .order("lesson_order");
 
         if (lessonsError) {
@@ -216,18 +256,6 @@ export function StudentProgressPageClient({
           setLessons(formattedLessons);
         }
 
-        // Debug: Check if user_progress table exists and has data
-        console.log("Fetching progress for student:", params.studentId, "course:", params.courseId);
-        
-        // First, let's check if there's any data in user_progress table
-        const { data: debugData, error: debugError } = await supabase
-          .from("user_progress")
-          .select("lesson_id, user_id, course_id")
-          .eq("user_id", params.studentId)
-          .limit(5);
-          
-        console.log("Debug query result:", debugData, "Error:", debugError);
-
         // Fetch student progress data
         const { data: progressData, error: progressError } = await supabase
           .from("user_progress")
@@ -253,48 +281,21 @@ export function StudentProgressPageClient({
             )
           `
           )
-          .eq("user_id", params.studentId)
-          .eq("course_id", params.courseId);
+          .eq("user_id", foundStudent.id)
+          .eq("course_id", courseData.id);
 
         if (progressError) {
           console.error("Error fetching progress:", progressError);
-          console.error("Progress error details:", JSON.stringify(progressError, null, 2));
-          
-          // Fallback: Try a simpler query without joins
-          console.log("Trying fallback query...");
-          const { data: fallbackData, error: fallbackError } = await supabase
-            .from("user_progress")
-            .select("lesson_id, is_completed, last_accessed_at, time_spent, completion_percentage, attempts")
-            .eq("user_id", params.studentId)
-            .eq("course_id", params.courseId);
-            
-          if (fallbackError) {
-            console.error("Fallback query also failed:", fallbackError);
-            setProgressData([]);
-          } else {
-            console.log("Fallback data received:", fallbackData);
-            // Create basic progress data without lesson details
-            const basicProgress: ProgressData[] = (fallbackData || []).map((item: any) => ({
-              lesson_id: item.lesson_id,
-              lesson_slug: '',
-              lesson_title: 'Lesson ' + item.lesson_id,
-              is_completed: item.is_completed,
-              last_accessed_at: item.last_accessed_at,
-              time_spent: item.time_spent || 0,
-              completion_percentage: item.completion_percentage || 0,
-              attempts: item.attempts || 0,
-              chapter: undefined,
-            }));
-            setProgressData(basicProgress);
-          }
+          // No progress data available - student hasn't started the course
+          setProgressData([]);
         } else {
           console.log("Progress data received:", progressData);
           const formattedProgress: ProgressData[] = (progressData || [])
             .filter((item: any) => item.lesson) // Filter out items where lesson is null
             .map((item: any) => ({
               lesson_id: item.lesson_id,
-              lesson_slug: item.lesson?.slug || '',
-              lesson_title: item.lesson?.title || 'Unknown Lesson',
+              lesson_slug: item.lesson?.slug || "",
+              lesson_title: item.lesson?.title || "Unknown Lesson",
               is_completed: item.is_completed,
               last_accessed_at: item.last_accessed_at,
               time_spent: item.time_spent || 0,
@@ -311,67 +312,66 @@ export function StudentProgressPageClient({
                 : undefined,
             }));
           setProgressData(formattedProgress);
-
-          // Calculate statistics
-          const totalLessons = lessonsData?.length || 0;
-          const completedLessons =
-            formattedProgress?.filter((p: ProgressData) => p.is_completed)
-              .length || 0;
-          const inProgressLessons =
-            formattedProgress?.filter(
-              (p: ProgressData) =>
-                !p.is_completed && p.completion_percentage > 0
-            ).length || 0;
-          const notStartedLessons =
-            totalLessons - completedLessons - inProgressLessons;
-          const overallProgress =
-            totalLessons > 0
-              ? Math.round((completedLessons / totalLessons) * 100)
-              : 0;
-          const totalTimeSpent =
-            formattedProgress?.reduce(
-              (sum: number, p: ProgressData) => sum + (p.time_spent || 0),
-              0
-            ) || 0;
-          const averageTimePerLesson =
-            completedLessons > 0
-              ? Math.round(totalTimeSpent / completedLessons)
-              : 0;
-          const lastActivity =
-            formattedProgress?.length > 0
-              ? Math.max(
-                  ...formattedProgress.map((p: ProgressData) =>
-                    new Date(p.last_accessed_at).getTime()
-                  )
-                )
-              : 0;
-
-          // Get enrollment date
-          const { data: enrollmentData } = await supabase
-            .from("courses_enrollments")
-            .select("enrolled_at")
-            .eq("student_id", params.studentId)
-            .eq("course_id", params.courseId)
-            .single();
-
-          setStats({
-            totalLessons,
-            completedLessons,
-            inProgressLessons,
-            notStartedLessons,
-            overallProgress,
-            totalTimeSpent,
-            averageTimePerLesson,
-            lastActivity:
-              lastActivity > 0
-                ? new Date(lastActivity).toLocaleDateString()
-                : "Never",
-            enrollmentDate: enrollmentData?.enrolled_at
-              ? new Date(enrollmentData.enrolled_at).toLocaleDateString()
-              : "Unknown",
-            streakDays: 0, // TODO: Calculate streak
-          });
         }
+
+        // Calculate statistics
+        const totalLessons = lessonsData?.length || 0;
+        const completedLessons =
+          formattedProgress?.filter((p: ProgressData) => p.is_completed)
+            .length || 0;
+        const inProgressLessons =
+          formattedProgress?.filter(
+            (p: ProgressData) => !p.is_completed && p.completion_percentage > 0
+          ).length || 0;
+        const notStartedLessons =
+          totalLessons - completedLessons - inProgressLessons;
+        const overallProgress =
+          totalLessons > 0
+            ? Math.round((completedLessons / totalLessons) * 100)
+            : 0;
+        const totalTimeSpent =
+          formattedProgress?.reduce(
+            (sum: number, p: ProgressData) => sum + (p.time_spent || 0),
+            0
+          ) || 0;
+        const averageTimePerLesson =
+          completedLessons > 0
+            ? Math.round(totalTimeSpent / completedLessons)
+            : 0;
+        const lastActivity =
+          formattedProgress?.length > 0
+            ? Math.max(
+                ...formattedProgress.map((p: ProgressData) =>
+                  new Date(p.last_accessed_at).getTime()
+                )
+              )
+            : 0;
+
+        // Get enrollment date
+        const { data: enrollmentDateData } = await supabase
+          .from("courses_enrollments")
+          .select("enrolled_at")
+          .eq("student_id", foundStudent.id)
+          .eq("course_id", courseData.id)
+          .single();
+
+        setStats({
+          totalLessons,
+          completedLessons,
+          inProgressLessons,
+          notStartedLessons,
+          overallProgress,
+          totalTimeSpent,
+          averageTimePerLesson,
+          lastActivity:
+            lastActivity > 0
+              ? new Date(lastActivity).toLocaleDateString()
+              : "Never",
+          enrollmentDate: enrollmentDateData?.enrolled_at
+            ? new Date(enrollmentDateData.enrolled_at).toLocaleDateString()
+            : "Unknown",
+          streakDays: 0, // TODO: Calculate streak
+        });
       } catch (err) {
         console.error("Error loading student progress:", err);
         setError("Failed to load student progress");
@@ -381,8 +381,21 @@ export function StudentProgressPageClient({
     };
 
     loadStudentProgress();
-  }, [params.courseId, params.studentId, isAdmin, router]);
+  }, [params.courseSlug, params.studentHash, isAdmin, authLoading, router]);
 
+  // Wait for auth to load before proceeding
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not admin, redirect will happen via useEffect, return null to prevent rendering
   if (!isAdmin) {
     return null;
   }

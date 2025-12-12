@@ -35,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { createClient } from "@/lib/supabase/client";
+import { createStudentHash } from "@/lib/student-utils";
 
 // @ts-ignore - TypeScript module resolution issue
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
@@ -1519,9 +1520,16 @@ export function CoursePageClient({
                                     key={participant.enrollmentId}
                                     className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                                     onClick={() => {
-                                      if (participant.student?.id) {
+                                      if (
+                                        participant.student?.id &&
+                                        participant.student?.email &&
+                                        course?.slug
+                                      ) {
+                                        const studentHash = createStudentHash(
+                                          participant.student.email
+                                        );
                                         router.push(
-                                          `/admin/student-progress/${course?.id}/${participant.student.id}`
+                                          `/admin/student-progress/${course.slug}/${studentHash}`
                                         );
                                       }
                                     }}
@@ -1585,9 +1593,17 @@ export function CoursePageClient({
                                             className="rounded-sm text-xs"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              if (participant.student?.id) {
+                                              if (
+                                                participant.student?.id &&
+                                                participant.student?.email &&
+                                                course?.slug
+                                              ) {
+                                                const studentHash =
+                                                  createStudentHash(
+                                                    participant.student.email
+                                                  );
                                                 router.push(
-                                                  `/admin/student-progress/${course?.id}/${participant.student.id}`
+                                                  `/admin/student-progress/${course.slug}/${studentHash}`
                                                 );
                                               }
                                             }}

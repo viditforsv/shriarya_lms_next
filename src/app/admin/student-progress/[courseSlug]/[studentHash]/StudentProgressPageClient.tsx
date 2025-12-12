@@ -195,8 +195,16 @@ export function StudentProgressPageClient({
         }
 
         // Find student by hash
-        const students =
-          enrollmentData?.map((item) => item.student).filter(Boolean) || [];
+        const students: Student[] =
+          enrollmentData
+            ?.map((item) => {
+              // Handle case where student might be an array or single object
+              const student = Array.isArray(item.student)
+                ? item.student[0]
+                : item.student;
+              return student;
+            })
+            .filter((student): student is Student => Boolean(student)) || [];
         const foundStudent = findStudentByHash(params.studentHash, students);
 
         if (!foundStudent) {
@@ -284,13 +292,14 @@ export function StudentProgressPageClient({
           .eq("user_id", foundStudent.id)
           .eq("course_id", courseData.id);
 
+        let formattedProgress: ProgressData[] = [];
         if (progressError) {
           console.error("Error fetching progress:", progressError);
           // No progress data available - student hasn't started the course
           setProgressData([]);
         } else {
           console.log("Progress data received:", progressData);
-          const formattedProgress: ProgressData[] = (progressData || [])
+          formattedProgress = (progressData || [])
             .filter((item: any) => item.lesson) // Filter out items where lesson is null
             .map((item: any) => ({
               lesson_id: item.lesson_id,

@@ -16,14 +16,14 @@ export function Footer() {
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center overflow-hidden flex-shrink-0 shadow-lg p-1">
                 <Image
                   src="/images/preppeo_icon.png"
-                  alt="Preppeo Icon"
+                  alt="Shrividhya Classes Icon"
                   width={40}
                   height={40}
                   className="object-contain"
                 />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white">
-                Preppeo
+                Shrividhya Classes
               </h3>
             </div>
             <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
@@ -76,7 +76,7 @@ export function Footer() {
             <ul className="space-y-2.5 sm:space-y-3 text-sm sm:text-base text-gray-300">
               <li>
                 <Link
-                  href="/about"
+                  href="/contact"
                   className="hover:text-primary transition-colors inline-flex items-center group"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2 group-hover:scale-125 transition-transform"></span>
@@ -115,12 +115,12 @@ export function Footer() {
                     d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                <span className="break-all">contact@preppeo.com</span>
+                <span className="break-all">contact@shrividhya.in</span>
               </p>
               <p className="text-primary font-medium hover:text-primary/80 transition-colors">📞 +91 - 8130711689</p>
               <div className="text-gray-300 mt-4 pt-4 border-t border-gray-700">
                 <p className="font-semibold text-white mb-2">
-                  Preppeo
+                  Shrividhya Classes
                 </p>
                 <p>2919P, Ground Floor</p>
                 <p>Sushant Lok 2, Sector 57</p>

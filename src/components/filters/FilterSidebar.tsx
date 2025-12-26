@@ -353,9 +353,8 @@ export default function FilterSidebar({
                 <SelectItem value="CBSE">CBSE</SelectItem>
                 <SelectItem value="ICSE">ICSE</SelectItem>
                 <SelectItem value="IGCSE">IGCSE</SelectItem>
+                <SelectItem value="MYP">MYP</SelectItem>
                 <SelectItem value="A-Levels">A-Levels</SelectItem>
-                <SelectItem value="SAT">SAT</SelectItem>
-                <SelectItem value="ACT">ACT</SelectItem>
               </SelectContent>
             </Select>
           </div>

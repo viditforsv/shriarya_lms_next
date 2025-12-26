@@ -13,7 +13,7 @@ export function createClient() {
     {
       auth: {
         persistSession: true,
-        storageKey: "preppeo-lms-session", // keep consistent
+        storageKey: "shrividhya-lms-session", // keep consistent
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: "pkce",
@@ -24,7 +24,7 @@ export function createClient() {
         params: { eventsPerSecond: 2 },
       },
       global: {
-        headers: { "X-Client-Info": "preppeo-lms-nextjs" },
+        headers: { "X-Client-Info": "shrividhya-lms-nextjs" },
       },
     }
   );

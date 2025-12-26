@@ -1,4 +1,4 @@
-Name of Portal: Shriarya
+Name of Portal: Shrividhya Classes
 Company name: Shrividhya Classes
 Leagal Name: Shrivyapar Private Limited
 Tagline: Ecosystem of Excellence

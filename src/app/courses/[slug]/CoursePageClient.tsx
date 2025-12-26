@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Card,
   CardContent,
@@ -704,6 +705,15 @@ export function CoursePageClient({
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Browse Courses", href: "/courses/discover" },
+            { label: course?.title || "Course", isActive: true },
+          ]}
+        />
+      </div>
       <div className="container mx-auto px-4 py-8">
         {/* Course Header */}
         <div className="mb-8">

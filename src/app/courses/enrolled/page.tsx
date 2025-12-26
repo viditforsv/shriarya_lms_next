@@ -25,6 +25,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 
 interface EnrolledCourse {
   id: string;
@@ -280,6 +281,14 @@ export default function EnrolledCoursesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-emerald-50">
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "My Courses", isActive: true },
+          ]}
+        />
+      </div>
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">

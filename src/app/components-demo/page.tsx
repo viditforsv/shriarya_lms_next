@@ -1338,7 +1338,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
       <div className="flex">
         <Sidebar
           title="Component Library"
-          subtitle="Preppeo LMS Components"
+          subtitle="Shrividhya Classes Components"
           items={sidebarItems}
           activeItem={activeTab}
           onItemClick={(item) => setActiveTab(item.id)}
@@ -1371,7 +1371,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                 Comprehensive collection of reusable UI components for the
-                Preppeo LMS platform
+                Shrividhya Classes platform
               </p>
             </div>
 

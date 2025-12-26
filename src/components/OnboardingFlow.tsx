@@ -33,7 +33,7 @@ export interface OnboardingStepProps {
 const steps = [
   {
     id: "welcome",
-    title: "Welcome to ShriArya LMS",
+    title: "Welcome to Shrividhya Classes",
     description: "Let's get you started on your learning journey",
     component: WelcomeStep,
     isRequired: false,
@@ -72,7 +72,7 @@ const steps = [
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground mb-2">
-                🎉 Welcome to ShriArya LMS!
+                🎉 Welcome to Shrividhya Classes!
               </h2>
               <p className="text-muted-foreground">
                 You&apos;ve successfully completed the setup process. Your
@@ -218,13 +218,13 @@ export function OnboardingFlow() {
               <div className="w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden">
                 <Image
                   src="/images/main_logo.webp"
-                  alt="ShriArya LMS Logo"
+                  alt="Shrividhya Classes Logo"
                   width={32}
                   height={32}
                 />
               </div>
               <div>
-                <h1 className="text-lg font-semibold">ShriArya LMS</h1>
+                <h1 className="text-lg font-semibold">Shrividhya Classes</h1>
                 <p className="text-sm text-muted-foreground">Getting Started</p>
               </div>
             </div>
@@ -234,7 +234,7 @@ export function OnboardingFlow() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  localStorage.removeItem("shriarya-onboarding");
+                  localStorage.removeItem("shrividhya-onboarding");
                   window.location.reload();
                 }}
                 className="text-muted-foreground hover:text-foreground"

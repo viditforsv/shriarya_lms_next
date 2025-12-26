@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       ? "http://localhost:3000"
       : requestOrigin?.includes("localhost:3001")
       ? "http://localhost:3001"
-      : requestOrigin || "https://courses.preppeo.com";
+      : requestOrigin || "https://courses.shrividhya.in";
 
     const response = await fetch(fileUrl, {
       headers: {

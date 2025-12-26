@@ -20,10 +20,10 @@ export function createStudentHash(email: string): string {
  * @param students - Array of students to search through
  * @returns Student object if found, null otherwise
  */
-export function findStudentByHash(
+export function findStudentByHash<T extends { email: string }>(
   emailHash: string,
-  students: Array<{ email: string; [key: string]: any }>
-): any | null {
+  students: T[]
+): T | null {
   return (
     students.find(
       (student) => createStudentHash(student.email) === emailHash

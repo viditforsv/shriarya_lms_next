@@ -47,7 +47,7 @@
 
 :root {
   --radius: 0.625rem;
-  /* Preppeo Brand Colors - Updated per Plan */
+  /* Shrividhya Classes Brand Colors - Updated per Plan */
   --background: #ffffff;
   --foreground: #1b1919;
   --card: #ffffff;
@@ -87,7 +87,7 @@
 }
 
 .dark {
-  /* Dark mode with Preppeo colors - Updated per Plan */
+  /* Dark mode with Shrividhya Classes colors - Updated per Plan */
   --background: #1b1919;
   --foreground: #ffffff;
   --card: #2a2828;

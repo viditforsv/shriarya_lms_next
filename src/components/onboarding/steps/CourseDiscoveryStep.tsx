@@ -11,7 +11,6 @@ import {
   Star,
   ArrowRight,
   GraduationCap,
-  Briefcase,
 } from "lucide-react";
 import { OnboardingStepProps } from "../../OnboardingFlow";
 
@@ -35,7 +34,6 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
   const [educationalBackground, setEducationalBackground] =
     useState<string>("");
   const [selectedBoard, setSelectedBoard] = useState<string>("");
-  const [selectedExam, setSelectedExam] = useState<string>("");
 
   // All available courses
   const allCourses: Course[] = [
@@ -163,92 +161,13 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       rating: 4.5,
       board: "IGCSE",
     },
-    // Professional Exam Courses
-    {
-      id: "11",
-      title: "SAT Mathematics",
-      description: "Complete SAT Mathematics preparation course",
-      slug: "sat-mathematics",
-      price: 4999,
-      difficulty: "advanced",
-      estimated_duration: 100,
-      student_count: 1200,
-      rating: 4.9,
-      exam: "SAT",
-    },
-    {
-      id: "12",
-      title: "SAT English",
-      description: "Complete SAT English preparation course",
-      slug: "sat-english",
-      price: 4499,
-      difficulty: "advanced",
-      estimated_duration: 80,
-      student_count: 980,
-      rating: 4.7,
-      exam: "SAT",
-    },
-    {
-      id: "13",
-      title: "GMAT Quantitative",
-      description: "Complete GMAT Quantitative reasoning preparation",
-      slug: "gmat-quantitative",
-      price: 5999,
-      difficulty: "advanced",
-      estimated_duration: 120,
-      student_count: 750,
-      rating: 4.8,
-      exam: "GMAT",
-    },
-    {
-      id: "14",
-      title: "GMAT Verbal",
-      description: "Complete GMAT Verbal reasoning preparation",
-      slug: "gmat-verbal",
-      price: 5499,
-      difficulty: "advanced",
-      estimated_duration: 100,
-      student_count: 680,
-      rating: 4.6,
-      exam: "GMAT",
-    },
-    {
-      id: "15",
-      title: "GRE Mathematics",
-      description: "Complete GRE Mathematics preparation course",
-      slug: "gre-mathematics",
-      price: 5499,
-      difficulty: "advanced",
-      estimated_duration: 140,
-      student_count: 920,
-      rating: 4.7,
-      exam: "GRE",
-    },
-    {
-      id: "16",
-      title: "GRE Verbal",
-      description: "Complete GRE Verbal reasoning preparation",
-      slug: "gre-verbal",
-      price: 4999,
-      difficulty: "advanced",
-      estimated_duration: 120,
-      student_count: 850,
-      rating: 4.5,
-      exam: "GRE",
-    },
   ];
 
   // Filter courses based on selection
   const getFilteredCourses = () => {
-    if (!educationalBackground) return [];
-
-    if (educationalBackground === "school") {
-      if (!selectedBoard) return [];
-      return allCourses.filter((course) => course.board === selectedBoard);
-    } else {
-      if (!selectedExam) return [];
-      return allCourses.filter((course) => course.exam === selectedExam);
-    }
+    if (!educationalBackground || educationalBackground !== "school") return [];
+    if (!selectedBoard) return [];
+    return allCourses.filter((course) => course.board === selectedBoard);
   };
 
   const handleCourseSelect = async (courseId: string) => {
@@ -268,13 +187,11 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
           preferences: {
             educationalBackground,
             selectedBoard,
-            selectedExam,
             selectedCourses: newSelectedCourses,
           },
           educationalBackground: {
             background: educationalBackground,
             board: selectedBoard,
-            exam: selectedExam,
           },
           selectedCourses: newSelectedCourses,
         }),
@@ -326,14 +243,13 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       <Card>
         <CardContent className="p-4">
           <h3 className="font-medium text-foreground mb-4">
-            Are you currently in school or a working professional?
+            Are you currently in school?
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <button
               onClick={async () => {
                 setEducationalBackground("school");
                 setSelectedBoard("");
-                setSelectedExam("");
                 setSelectedCourses([]);
 
                 // Save to Supabase
@@ -368,44 +284,6 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
               </div>
             </button>
 
-            <button
-              onClick={async () => {
-                setEducationalBackground("professional");
-                setSelectedBoard("");
-                setSelectedExam("");
-                setSelectedCourses([]);
-
-                // Save to Supabase
-                try {
-                  await fetch("/api/onboarding", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      currentStep: 3,
-                      educationalBackground: { background: "professional" },
-                      preferences: { educationalBackground: "professional" },
-                    }),
-                  });
-                } catch (error) {
-                  console.error("Error saving educational background:", error);
-                }
-              }}
-              className={`p-4 rounded-sm border text-left transition-all duration-200 ${
-                educationalBackground === "professional"
-                  ? "border-[#e27447] bg-[#e27447]/5"
-                  : "border-border hover:border-[#e27447]/50"
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <Briefcase className="w-5 h-5 text-[#e27447]" />
-                <div>
-                  <p className="font-medium text-sm">Working Professional</p>
-                  <p className="text-xs text-muted-foreground">
-                    College graduate or working professional
-                  </p>
-                </div>
-              </div>
-            </button>
           </div>
         </CardContent>
       </Card>
@@ -418,7 +296,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
               Which board are you studying under?
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {["CBSE", "ICSE", "IBDP", "IGCSE"].map((board) => (
+              {["CBSE", "ICSE", "IBDP", "IGCSE", "MYP"].map((board) => (
                 <button
                   key={board}
                   onClick={async () => {
@@ -460,54 +338,6 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
         </Card>
       )}
 
-      {educationalBackground === "professional" && (
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="font-medium text-foreground mb-4">
-              Which exam are you preparing for?
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {["SAT", "GMAT", "GRE"].map((exam) => (
-                <button
-                  key={exam}
-                  onClick={async () => {
-                    setSelectedExam(exam);
-                    setSelectedCourses([]);
-
-                    // Save to Supabase
-                    try {
-                      await fetch("/api/onboarding", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          currentStep: 3,
-                          educationalBackground: {
-                            background: "professional",
-                            exam: exam,
-                          },
-                          preferences: {
-                            educationalBackground: "professional",
-                            selectedExam: exam,
-                          },
-                        }),
-                      });
-                    } catch (error) {
-                      console.error("Error saving exam selection:", error);
-                    }
-                  }}
-                  className={`p-3 rounded-sm border text-center transition-all duration-200 ${
-                    selectedExam === exam
-                      ? "border-[#e27447] bg-[#e27447]/5"
-                      : "border-border hover:border-[#e27447]/50"
-                  }`}
-                >
-                  <p className="font-medium text-sm">{exam}</p>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Course Selection */}
       {filteredCourses.length > 0 && (
@@ -592,22 +422,18 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       )}
 
       {/* No Courses Message */}
-      {educationalBackground &&
-        ((educationalBackground === "school" && !selectedBoard) ||
-          (educationalBackground === "professional" && !selectedExam)) && (
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-center py-6">
-                <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  Please select a{" "}
-                  {educationalBackground === "school" ? "board" : "exam"} to see
-                  available courses.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+      {educationalBackground === "school" && !selectedBoard && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center py-6">
+              <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">
+                Please select a board to see available courses.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-4">

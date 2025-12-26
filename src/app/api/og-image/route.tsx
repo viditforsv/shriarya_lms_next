@@ -6,9 +6,9 @@ export const runtime = "edge";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const title = searchParams.get("title") || "ShriArya LMS Course";
+    const title = searchParams.get("title") || "Shrividhya Classes Course";
     const description =
-      searchParams.get("description") || "Learn with ShriArya LMS";
+      searchParams.get("description") || "Learn with Shrividhya Classes";
     const curriculum = searchParams.get("curriculum") || "";
     const subject = searchParams.get("subject") || "";
     const price = searchParams.get("price") || "0";
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
                   fontWeight: "bold",
                 }}
               >
-                ShriArya LMS
+                Shrividhya Classes
               </div>
             </div>
           </div>

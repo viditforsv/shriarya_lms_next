@@ -1,14 +1,14 @@
 # Components Library
 
-This directory contains all reusable components for both Preppeo.com website and LMS, shared via the design system.
+This directory contains all reusable components for both Shrividhya Classes website and LMS, shared via the design system.
 
 ## Structure
 
 ```
 design-system/components/
 ├── ui/              # shadcn/ui base components
-├── logo.tsx         # Preppeo logo component
-├── mascot-video.tsx # Preppeo mascot video component
+├── logo.tsx         # Shrividhya Classes logo component
+├── mascot-video.tsx # Shrividhya Classes mascot video component
 └── index.ts         # Central export file
 ```
 
@@ -49,11 +49,11 @@ All base UI components are located in `design-system/components/ui/`:
 - **Sheet** - Side sheet component
 - **Sonner** - Toast notification component
 
-## Preppeo-Specific Components
+## Shrividhya Classes-Specific Components
 
 ### Logo
 
-Preppeo logo component with multiple variants and sizes.
+Shrividhya Classes logo component with multiple variants and sizes.
 
 ```tsx
 import { Logo } from "@/design-system/components"
@@ -78,7 +78,7 @@ import { Logo } from "@/design-system/components"
 
 ### MascotVideo
 
-Preppeo mascot animated video component.
+Shrividhya Classes mascot animated video component.
 
 ```tsx
 import { MascotVideo } from "@/design-system/components"
@@ -122,5 +122,5 @@ npx shadcn@latest add [component-name]
 - Use TypeScript interfaces for props
 - Follow the shadcn/ui component patterns
 - Keep components focused and reusable
-- Use Preppeo brand colors from CSS variables in `design-system/globals.css`
+- Use Shrividhya Classes brand colors from CSS variables in `design-system/globals.css`
 

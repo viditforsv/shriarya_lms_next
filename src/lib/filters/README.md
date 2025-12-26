@@ -1,6 +1,6 @@
 # Advanced Filter Plugin System
 
-A reusable, plugin-based advanced filtering system for the ShriArya LMS that supports complex logical operations like "difficulty of 9 OR difficulty of not 8".
+A reusable, plugin-based advanced filtering system for Shrividhya Classes that supports complex logical operations like "difficulty of 9 OR difficulty of not 8".
 
 ## 🏗️ Architecture
 

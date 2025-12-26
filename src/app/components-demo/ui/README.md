@@ -1,6 +1,6 @@
 # Component Library Structure
 
-This directory contains all reusable UI components for the ShriArya LMS platform, organized by category for better maintainability and scalability.
+This directory contains all reusable UI components for Shrividhya Classes platform, organized by category for better maintainability and scalability.
 
 ## 📁 Directory Structure
 

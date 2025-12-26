@@ -1,6 +1,6 @@
 # CLI Scripts
 
-This directory contains command-line tools for managing the Preppeo LMS.
+This directory contains command-line tools for managing Shrividhya Classes LMS.
 
 ## 📋 Available Scripts
 

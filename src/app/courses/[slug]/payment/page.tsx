@@ -205,7 +205,7 @@ export default function CoursePaymentPage() {
         key: razorpayKey,
         amount: course.price * 100, // Convert to paise
         currency: course.currency || "INR",
-        name: "ShriArya LMS",
+        name: "Shrividhya Classes",
         description: course.title,
         order_id: createData.orderId,
         prefill: {

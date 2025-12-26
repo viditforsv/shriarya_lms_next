@@ -39,7 +39,7 @@ export function WelcomeStep({ onNext }: OnboardingStepProps) {
 
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            Welcome to Preppeo LMS!
+            Welcome to Shrividhya Classes!
           </h2>
           <p className="text-muted-foreground">
             We&apos;re excited to have you join our learning community.

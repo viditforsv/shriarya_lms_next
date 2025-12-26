@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/design-system/components/ui/button";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Card,
   CardContent,
@@ -136,6 +137,14 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Profile", isActive: true },
+            ]}
+          />
+        </div>
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
@@ -161,6 +170,14 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Profile", isActive: true },
+          ]}
+        />
+      </div>
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-8">

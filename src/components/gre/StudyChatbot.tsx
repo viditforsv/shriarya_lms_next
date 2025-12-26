@@ -166,8 +166,8 @@ What would you like to know?`,
         size="lg"
       >
         <Image
-          src="/images/preppeo logo package/icon_yellow_wo_bg.png"
-          alt="Preppeo AI Tutor"
+          src="/images/main_logo.png"
+          alt="Shrividhya Classes AI Tutor"
           width={32}
           height={32}
           className="object-contain"
@@ -195,8 +195,8 @@ What would you like to know?`,
       >
         <div className="flex items-center gap-2">
           <Image
-            src="/images/preppeo logo package/icon_yellow_wo_bg.png"
-            alt="Preppeo AI Tutor"
+            src="/images/main_logo.png"
+            alt="Shrividhya Classes AI Tutor"
             width={20}
             height={20}
             className="object-contain"

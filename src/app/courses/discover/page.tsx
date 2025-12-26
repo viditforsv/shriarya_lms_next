@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/design-system/components/ui/card";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import { Button } from "@/design-system/components/ui/button";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Input } from "@/design-system/components/ui/input";
@@ -204,8 +205,7 @@ export default function CourseDiscoveryPage() {
             if (c.slug.includes("ibdp")) return "IBDP";
             if (c.slug.includes("icse")) return "ICSE";
             if (c.slug.includes("igcse")) return "IGCSE";
-            if (c.slug.includes("gmat")) return "GMAT";
-            if (c.slug.includes("sat")) return "SAT";
+            if (c.slug.includes("myp")) return "MYP";
             return "Other";
           })
           .filter(Boolean)
@@ -292,10 +292,8 @@ export default function CourseDiscoveryPage() {
             ? "ICSE"
             : course.slug.includes("igcse")
             ? "IGCSE"
-            : course.slug.includes("gmat")
-            ? "GMAT"
-            : course.slug.includes("sat")
-            ? "SAT"
+            : course.slug.includes("myp")
+            ? "MYP"
             : "Other");
         if (courseCurriculum !== filters.curriculum) {
           return false;
@@ -431,6 +429,14 @@ export default function CourseDiscoveryPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Browse Courses", isActive: true },
+          ]}
+        />
+      </div>
       {/* Header */}
       <div className="bg-gradient-to-r from-white to-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -877,10 +883,8 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                           ? "ICSE"
                           : course.slug.includes("igcse")
                           ? "IGCSE"
-                          : course.slug.includes("gmat")
-                          ? "GMAT"
-                          : course.slug.includes("sat")
-                          ? "SAT"
+                          : course.slug.includes("myp")
+                          ? "MYP"
                           : "Other")}
                     </Badge>
                     <Badge variant="outline" className="text-xs">

@@ -44,32 +44,29 @@ export function Logo({
   const dimensions = logoVariants[variant][size]
   
   const getImagePath = () => {
-    const bgSuffix = showBackground ? "" : "_wo_bg"
-    
+    // Use main_logo for all variants since we have main_logo.png and main_logo.webp
+    // For webp support, we can use main_logo.webp, but default to .png for compatibility
     switch (variant) {
       case "horizontal":
-        return `/images/preppeo logo package/logo_horizontal_color${bgSuffix}.png`
       case "mascot":
-        return `/images/preppeo logo package/logo_mascot_color${bgSuffix}.png`
       case "icon":
-        return `/images/preppeo logo package/icon_yellow${bgSuffix}.png`
       case "color":
       default:
-        return `/images/preppeo logo package/logo_color${bgSuffix}.png`
+        return `/images/main_logo.png`
     }
   }
 
   const getAltText = () => {
     switch (variant) {
       case "horizontal":
-        return "Preppeo logo - Test preparation and admissions consulting services"
+        return "Shrividhya Classes logo - Test preparation and admissions consulting services"
       case "mascot":
-        return "Preppeo mascot logo - Educational platform for test preparation and admissions consulting"
+        return "Shrividhya Classes mascot logo - Educational platform for test preparation and admissions consulting"
       case "icon":
-        return "Preppeo icon - Test prep and admissions consulting"
+        return "Shrividhya Classes icon - Test prep and admissions consulting"
       case "color":
       default:
-        return "Preppeo logo - Test preparation and admissions consulting services"
+        return "Shrividhya Classes logo - Test preparation and admissions consulting services"
     }
   }
 

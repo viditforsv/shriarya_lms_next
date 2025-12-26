@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Card,
   CardContent,
@@ -895,6 +896,16 @@ export default function DynamicLessonPage({
     // Use unified lesson page - Default template for all courses
     return (
       <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Browse Courses", href: "/courses/discover" },
+              { label: course.title || "Course", href: `/courses/${resolvedParams?.slug}` },
+              { label: lesson.title || "Lesson", isActive: true },
+            ]}
+          />
+        </div>
         {/* Header - Matching CBSE Class 9 */}
         <div className="bg-gradient-to-br from-white to-gray-50 border-b border-primary py-4 md:py-6 relative">
           <div className="px-4">

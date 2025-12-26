@@ -91,7 +91,7 @@ export function SignUpForm() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
         <CardDescription>
-          Join Preppeo and start your learning journey
+          Join Shrividhya Classes and start your learning journey
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -6,7 +6,7 @@ export interface CourseTemplate {
   name: string;
   slug: string;
   description?: string;
-  curriculum: "CBSE" | "ICSE" | "IBDP" | "IGCSE";
+  curriculum: "CBSE" | "ICSE" | "IBDP" | "IGCSE" | "MYP";
   subject: string;
   grade?: string;
   level?: string;

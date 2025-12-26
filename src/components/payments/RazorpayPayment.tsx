@@ -56,7 +56,7 @@ export function RazorpayPayment({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: amount * 100, // Convert to paise
         currency: currency,
-        name: "ShriArya LMS",
+        name: "Shrividhya Classes",
         description: "Course Enrollment",
         order_id: orderId,
         prefill: {

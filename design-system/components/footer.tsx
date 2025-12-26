@@ -2,9 +2,6 @@ import Link from "next/link"
 
 const footerLinks = {
   services: [
-    { name: "SAT Preparation", href: "/services/sat" },
-    { name: "GMAT Preparation", href: "/services/gmat" },
-    { name: "GRE Preparation", href: "/services/gre" },
     { name: "Admissions Consulting", href: "/services/admissions" },
   ],
   platforms: [
@@ -12,10 +9,10 @@ const footerLinks = {
     { name: "Self-Learning Hub", href: "/platforms/learning-hub" },
   ],
   company: [
-    { name: "About Us", href: "/about" },
     { name: "Team / Counselors", href: "/team" },
     { name: "Success Stories", href: "/about/success-stories" },
     { name: "Contact", href: "/contact" },
+    { name: "FAQ", href: "/faq" },
   ],
   resources: [
     { name: "Resources / Blog", href: "/resources" },
@@ -130,13 +127,13 @@ export function Footer() {
                 </ul>
               </div>
 
-              {/* About Preppeo - Large Text Block */}
+              {/* About Shrividhya Classes - Large Text Block */}
               <div className="space-y-4 lg:col-span-2">
-                <h3 className="text-sm font-semibold uppercase tracking-wider">About Preppeo</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider">About Shrividhya Classes</h3>
                 <p className="text-sm text-white/80 leading-relaxed max-w-md">
-                  Preppeo is a leading exam preparation platform. Through our comprehensive courses 
+                  Shrividhya Classes is a leading exam preparation platform. Through our comprehensive courses 
                   and resources, thousands of students learn how to excel in their examinations. 
-                  Preppeo offers an engaging and effective curriculum for students preparing for 
+                  Shrividhya Classes offers an engaging and effective curriculum for students preparing for 
                   competitive exams, helping them achieve their academic goals.
                 </p>
               </div>
@@ -147,7 +144,7 @@ export function Footer() {
           <div className="border-t border-white/20 mt-12 pt-8">
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-sm text-white/80">
-                <span>© {new Date().getFullYear()} Preppeo. All rights reserved.</span>
+                <span>© {new Date().getFullYear()} Shrividhya Classes. All rights reserved.</span>
                 <div className="flex gap-4">
                   <Link
                     href="/privacy"

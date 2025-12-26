@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/design-system/components/ui/button";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Card,
   CardContent,
@@ -62,6 +63,14 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Contact", isActive: true },
+          ]}
+        />
+      </div>
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-br from-white via-green-50 to-emerald-50 border-b border-gray-200">
         <div className="container mx-auto px-4 text-center">
@@ -82,7 +91,7 @@ export default function ContactPage() {
                 className="border-primary text-primary px-4 py-2 hover:bg-primary/10 transition-colors"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                contact@preppeo.com
+                contact@shrividhya.in
               </Badge>
               <Badge
                 variant="outline"
@@ -129,7 +138,7 @@ export default function ContactPage() {
                         Email
                       </h4>
                       <p className="text-primary font-medium">
-                        contact@preppeo.com
+                        contact@shrividhya.in
                       </p>
                       <p className="text-sm text-muted-foreground">
                         We&apos;ll respond within 24 hours
@@ -395,7 +404,7 @@ export default function ContactPage() {
               Ready to Start Learning?
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join thousands of students who are already learning with Preppeo
+              Join thousands of students who are already learning with Shrividhya Classes
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

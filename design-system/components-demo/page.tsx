@@ -105,7 +105,7 @@ export default function ComponentsDemo() {
           <Card>
             <CardContent className="pt-6">
               <p className="text-lg">
-                Welcome to <Typewriter words={["Preppeo", "Test Prep", "Success"]} />
+                Welcome to <Typewriter words={["Shrividhya Classes", "Test Prep", "Success"]} />
               </p>
             </CardContent>
           </Card>

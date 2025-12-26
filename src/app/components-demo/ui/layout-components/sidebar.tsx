@@ -118,7 +118,7 @@ export function Sidebar({
       <div className="p-6">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">ShriArya LMS</Badge>
+            <Badge variant="secondary">Shrividhya Classes</Badge>
             {collapsible && (
               <Button
                 variant="outline"

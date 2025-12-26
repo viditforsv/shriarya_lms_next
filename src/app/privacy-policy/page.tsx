@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/design-system/components/breadcrumb";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Preppeo",
+  title: "Privacy Policy | Shrividhya Classes",
   description:
-    "Read our Privacy Policy to understand how Preppeo collects, uses, and protects your personal information. Learn about your privacy rights and data protection.",
+    "Read our Privacy Policy to understand how Shrividhya Classes collects, uses, and protects your personal information. Learn about your privacy rights and data protection.",
   alternates: {
-    canonical: "https://preppeo.com/privacy-policy",
+    canonical: "https://shrividhya.in/privacy-policy",
   },
   robots: {
     index: true,
@@ -51,18 +51,18 @@ export default function PrivacyPolicy() {
                 <p className="text-lg text-foreground leading-relaxed mb-6">
                   At{" "}
                   <span className="font-semibold text-primary">
-                    Preppeo
+                    Shrividhya Classes
                   </span>
                   , operated by <span className="font-semibold">Shrivyapar Private Limited</span>, we are committed to protecting the privacy of our users.
                   This Privacy Policy explains how we collect, use, and disclose
                   personal information from users of our website{" "}
                   <a
-                    href="https://www.preppeo.com"
+                    href="https://www.shrividhya.in"
                     className="text-primary underline hover:text-primary/80 transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.preppeo.com
+                    www.shrividhya.in
                   </a>{" "}
                   (the &ldquo;Site&rdquo;), including all subpages and services.
                   Please read this Privacy Policy carefully before using the
@@ -293,7 +293,7 @@ export default function PrivacyPolicy() {
                   do not knowingly collect personal information from children
                   under 13. If you&apos;re a parent or guardian and believe your
                   child has provided personal information, please contact us at{" "}
-                  <b>contact@preppeo.com</b>. We will promptly delete
+                  <b>contact@shrividhya.in</b>. We will promptly delete
                   any such data.
                 </p>
               </section>
@@ -358,10 +358,10 @@ export default function PrivacyPolicy() {
                 </p>
                 <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
                   <p className="font-semibold text-primary text-lg mb-2">
-                    📧 contact@preppeo.com
+                    📧 contact@shrividhya.in
                   </p>
                   <p className="font-semibold text-primary text-lg">
-                    📧 vidit@preppeo.com
+                    📧 vidit@shrividhya.in
                   </p>
                   <p className="text-muted-foreground mt-4 text-sm">
                     Shrivyapar Private Limited<br />

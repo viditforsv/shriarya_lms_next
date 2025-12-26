@@ -19,7 +19,7 @@ design-system/
 
 ### `globals.css`
 The main CSS file containing:
-- **Design Tokens**: Preppeo brand colors, spacing, typography
+- **Design Tokens**: Shrividhya Classes brand colors, spacing, typography
 - **CSS Variables**: All theme variables (light/dark mode)
 - **Base Styles**: Typography, layout, and utility classes
 - **Tailwind Configuration**: Theme customization

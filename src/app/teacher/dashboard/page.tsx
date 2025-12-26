@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Card,
   CardContent,
@@ -146,14 +147,23 @@ export default function TeacherDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 shrink-0 sticky top-0 h-screen">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Teacher Dashboard", isActive: true },
+          ]}
+        />
+      </div>
+      <div className="min-h-screen bg-background flex">
+        {/* Sidebar */}
+        <aside className="w-64 bg-white border-r border-gray-200 shrink-0 sticky top-0 h-screen">
         <div className="p-6 h-full flex flex-col">
           {/* Header */}
           <div className="mb-8">
             <Badge variant="secondary" className="mb-2 rounded-sm">
-              Preppeo LMS
+              Shrividhya Classes
             </Badge>
             <h2 className="text-xl font-bold text-foreground">
               Teacher Dashboard
@@ -370,6 +380,7 @@ export default function TeacherDashboard() {
           )}
         </div>
       </main>
+      </div>
     </div>
   );
 }

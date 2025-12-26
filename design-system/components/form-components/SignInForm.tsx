@@ -89,7 +89,7 @@ export function SignInForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-        <CardDescription>Sign in to your Preppeo account</CardDescription>
+        <CardDescription>Sign in to your Shrividhya Classes account</CardDescription>
       </CardHeader>
       <CardContent>
         {/* Google Sign In - Prominent and First */}

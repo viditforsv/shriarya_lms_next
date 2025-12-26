@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/design-system/components/breadcrumb";
 
 export const metadata: Metadata = {
-  title: "Refund Policy | Preppeo",
+  title: "Refund Policy | Shrividhya Classes",
   description:
-    "Learn about Preppeo's refund policy. Understand our fair and transparent refund process for our learning services.",
+    "Learn about Shrividhya Classes' refund policy. Understand our fair and transparent refund process for our learning services.",
   alternates: {
-    canonical: "https://preppeo.com/refund-policy",
+    canonical: "https://shrividhya.in/refund-policy",
   },
   robots: {
     index: true,
@@ -47,7 +47,7 @@ export default function RefundPolicy() {
                 <p className="text-base md:text-lg text-foreground leading-relaxed mb-4 md:mb-6">
                   At{" "}
                   <span className="font-semibold text-primary">
-                    Preppeo
+                    Shrividhya Classes
                   </span>
                   , operated by <span className="font-semibold">Shrivyapar Private Limited</span>, we are committed to ensuring the satisfaction of our
                   students. Our refund policy is designed to provide a fair and
@@ -78,10 +78,10 @@ export default function RefundPolicy() {
                 <p className="text-base md:text-lg text-foreground leading-relaxed mb-4 md:mb-6">
                   To request a refund, please contact our support team at{" "}
                   <a
-                    href="mailto:contact@preppeo.com"
+                    href="mailto:contact@shrividhya.in"
                     className="text-primary hover:text-primary/80 underline font-semibold"
                   >
-                    contact@preppeo.com
+                    contact@shrividhya.in
                   </a>{" "}
                   with your order details and the reason for the refund request.
                   Our team will review your request and get back to you within 7
@@ -98,10 +98,10 @@ export default function RefundPolicy() {
                   For any questions regarding our refund policy, please contact
                   us at{" "}
                   <a
-                    href="mailto:contact@preppeo.com"
+                    href="mailto:contact@shrividhya.in"
                     className="text-primary hover:text-primary/80 underline font-semibold"
                   >
-                    contact@preppeo.com
+                    contact@shrividhya.in
                   </a>{" "}
                   or{" "}
                   <a
@@ -154,7 +154,7 @@ export default function RefundPolicy() {
                   Contact Support
                 </a>
                 <a
-                  href="mailto:contact@preppeo.com"
+                  href="mailto:contact@shrividhya.in"
                   className="inline-flex items-center bg-white/20 text-white hover:bg-white/30 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
                 >
                   Email Directly

@@ -114,8 +114,8 @@ export default function Home() {
             {/* Subtle Logo */}
             <div className="mb-6 flex justify-center">
               <Image
-                src="/images/preppeo logo package/logo_color_wo_bg.png"
-                alt="Preppeo"
+                src="/images/main_logo.png"
+                alt="Shrividhya Classes"
                 width={600}
                 height={180}
                 className="w-auto h-36 object-contain opacity-90"
@@ -286,14 +286,9 @@ export default function Home() {
                   gradient: "from-orange-500 to-orange-600",
                 },
                 {
-                  name: "GMAT",
-                  color: "bg-red-500",
-                  gradient: "from-red-500 to-red-600",
-                },
-                {
-                  name: "SAT",
-                  color: "bg-indigo-500",
-                  gradient: "from-indigo-500 to-indigo-600",
+                  name: "MYP",
+                  color: "bg-teal-500",
+                  gradient: "from-teal-500 to-teal-600",
                 },
               ].map((board) => (
                 <Card
@@ -339,8 +334,8 @@ export default function Home() {
           <div className="mb-8 flex justify-center animate-fade-in">
             <div className="relative group">
               <Image
-                src="/images/preppeo logo package/logo_color_wo_bg.png"
-                alt="Preppeo Logo"
+                src="/images/main_logo.png"
+                alt="Shrividhya Classes Logo"
                 width={1200}
                 height={360}
                 priority
@@ -387,7 +382,7 @@ export default function Home() {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-foreground mb-12">
-            Why Choose Preppeo LMS?
+            Why Choose Shrividhya Classes?
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center">
@@ -478,14 +473,9 @@ export default function Home() {
                 gradient: "from-orange-500 to-orange-600",
               },
               {
-                name: "GMAT",
-                color: "bg-red-500",
-                gradient: "from-red-500 to-red-600",
-              },
-              {
-                name: "SAT",
-                color: "bg-indigo-500",
-                gradient: "from-indigo-500 to-indigo-600",
+                name: "MYP",
+                color: "bg-teal-500",
+                gradient: "from-teal-500 to-teal-600",
               },
             ].map((board) => (
               <Card

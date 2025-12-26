@@ -36,7 +36,6 @@ export const ROUTE_ACCESS: RouteAccess[] = [
   { path: "/courses/icse", accessLevel: "public" },
   { path: "/courses/igcse", accessLevel: "public" },
   { path: "/courses/isc", accessLevel: "public" },
-  { path: "/about", accessLevel: "public" },
   { path: "/contact", accessLevel: "public" },
   { path: "/auth", accessLevel: "public" },
   { path: "/auth/callback", accessLevel: "public" },
@@ -280,7 +279,6 @@ export function getRedirectPath(
 export const NAVIGATION_MENU = {
   public: [
     { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
     { label: "FAQ", href: "/faq" },
   ],

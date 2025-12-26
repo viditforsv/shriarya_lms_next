@@ -130,14 +130,14 @@ export default function AuthPage() {
             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center overflow-hidden shadow-xl p-2">
               <Image
                 src="/images/preppeo_icon.png"
-                alt="Preppeo Logo"
+                alt="Shrividhya Classes Logo"
                 width={64}
                 height={64}
                 className="object-contain"
               />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Preppeo</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Shrividhya Classes</h1>
           <p className="text-muted-foreground text-lg">
             Your gateway to knowledge and growth
           </p>

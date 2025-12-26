@@ -301,7 +301,7 @@ export default function PricingPage() {
             <CardHeader>
               <CardTitle className="text-3xl text-[#1e293b] mb-4">Ready to Start Learning?</CardTitle>
               <CardDescription className="text-lg">
-                Join thousands of students who are already learning with ShriArya LMS
+                Join thousands of students who are already learning with Shrividhya Classes
               </CardDescription>
             </CardHeader>
             <CardContent>

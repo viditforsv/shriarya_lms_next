@@ -19,7 +19,7 @@ export async function createClient() {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        storageKey: "preppeo-lms-session",
+        storageKey: "shrividhya-lms-session",
       },
       cookies: {
         getAll() {

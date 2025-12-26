@@ -1,11 +1,13 @@
 "use client";
 
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+
 /**
  * QUESTION BANK PAGE - Guidelines and Architecture
  * ================================================
  *
  * This page provides a comprehensive interface for browsing, filtering, and managing
- * mathematics questions in the ShriArya LMS system.
+ * mathematics questions in the Shrividhya Classes system.
  *
  * SIDEBAR FUNCTIONALITY GUIDELINES:
  * ================================
@@ -708,6 +710,14 @@ export default function QuestionBankPage() {
    */
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Question Bank", isActive: true },
+          ]}
+        />
+      </div>
       {/* PAGE HEADER */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

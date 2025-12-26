@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/design-system/components/breadcrumb";
 
 export const metadata: Metadata = {
-  title: "Terms of Use | Preppeo",
+  title: "Terms of Use | Shrividhya Classes",
   description:
-    "Read our Terms of Use to understand the rules and conditions for using Preppeo's learning management services and website.",
+    "Read our Terms of Use to understand the rules and conditions for using Shrividhya Classes' learning management services and website.",
   alternates: {
-    canonical: "https://preppeo.com/terms-of-use",
+    canonical: "https://shrividhya.in/terms-of-use",
   },
   robots: {
     index: true,
@@ -61,7 +61,7 @@ export default function TermsOfUse() {
                   >
                     Privacy Policy
                   </a>
-                  , govern Preppeo&apos;s relationship with you in
+                  , govern Shrividhya Classes&apos; relationship with you in
                   relation to this website.
                 </p>
               </section>
@@ -70,7 +70,7 @@ export default function TermsOfUse() {
               <section className="mb-8">
                 <div className="bg-primary/5 border-l-4 border-primary p-6 rounded-lg text-foreground">
                   <p className="font-semibold mb-2">
-                    The term <b>&ldquo;Preppeo&rdquo;</b> or{" "}
+                    The term <b>&ldquo;Shrividhya Classes&rdquo;</b> or{" "}
                     <b>&ldquo;we&rdquo;</b> or <b>&ldquo;us&rdquo;</b> refers to
                     the owner of the website, operated by <b>Shrivyapar Private Limited</b>, whose registered/operational office
                     is:
@@ -172,7 +172,7 @@ export default function TermsOfUse() {
                 <ul className="list-disc pl-6 mb-6 text-foreground space-y-2">
                   <li>
                     All trademarks reproduced on this website which are not the
-                    property of, or licensed to, Preppeo (Shrivyapar Private Limited) are
+                    property of, or licensed to, Shrividhya Classes (Shrivyapar Private Limited) are
                     acknowledged on the website.
                   </li>
                 </ul>
@@ -252,10 +252,10 @@ export default function TermsOfUse() {
                 </p>
                 <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
                   <p className="font-semibold text-primary text-lg mb-2">
-                    📧 contact@preppeo.com
+                    📧 contact@shrividhya.in
                   </p>
                   <p className="font-semibold text-primary text-lg">
-                    📧 vidit@preppeo.com
+                    📧 vidit@shrividhya.in
                   </p>
                   <p className="text-muted-foreground mt-4 text-sm">
                     Shrivyapar Private Limited<br />

@@ -1,7 +1,7 @@
 import { UserProfile } from "@/types/auth";
 
 export class SessionStorage {
-  private static readonly PROFILE_KEY = "preppeo-profile";
+  private static readonly PROFILE_KEY = "shrividhya-profile";
 
   static saveProfile(profile: UserProfile): void {
     if (typeof window === "undefined") return;

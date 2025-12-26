@@ -57,7 +57,7 @@ export function CompletionStep({ onComplete }: OnboardingStepProps) {
 
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            🎉 Welcome to Preppeo LMS!
+            🎉 Welcome to Shrividhya Classes!
           </h2>
           <p className="text-muted-foreground">
             You&apos;ve successfully completed the setup process. Your

@@ -19,9 +19,9 @@ const videoPaths = {
 }
 
 const videoAltText = {
-  celebration: "Preppeo mascot celebrating student success in test preparation",
-  explaining: "Preppeo mascot explaining educational concepts and test prep strategies",
-  thinking: "Preppeo mascot thinking about learning and academic success",
+  celebration: "Shrividhya Classes mascot celebrating student success in test preparation",
+  explaining: "Shrividhya Classes mascot explaining educational concepts and test prep strategies",
+  thinking: "Shrividhya Classes mascot thinking about learning and academic success",
 }
 
 export function MascotVideo({

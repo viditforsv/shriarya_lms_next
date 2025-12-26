@@ -33,42 +33,27 @@ const lato = Lato({
 });
 
 // Get the base URL for Open Graph images
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://preppeo.com";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://shrividhya.in";
 
 export const metadata: Metadata = {
-  title: "Preppeo LMS - Learning Management System",
+  title: "Shrividhya Classes - Learning Management System",
   description:
     "A modern learning management system built with Next.js and Supabase",
   icons: {
     icon: "/images/favicon.ico",
-    apple: "/images/apple-touch-icon.png",
-    other: [
-      {
-        rel: "icon",
-        type: "image/png",
-        sizes: "32x32",
-        url: "/images/favicon-32x32.png",
-      },
-      {
-        rel: "icon",
-        type: "image/png",
-        sizes: "16x16",
-        url: "/images/favicon-16x16.png",
-      },
-    ],
   },
   openGraph: {
-    title: "Preppeo LMS - Learning Management System",
+    title: "Shrividhya Classes - Learning Management System",
     description:
       "A modern learning management system built with Next.js and Supabase",
     url: baseUrl,
-    siteName: "Preppeo LMS",
+    siteName: "Shrividhya Classes",
     images: [
       {
-        url: "/images/preppeo_logo.png",
+        url: "/images/main_logo.png",
         width: 1200,
         height: 630,
-        alt: "Preppeo LMS Logo",
+        alt: "Shrividhya Classes Logo",
       },
     ],
     locale: "en_US",
@@ -76,10 +61,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Preppeo LMS - Learning Management System",
+    title: "Shrividhya Classes - Learning Management System",
     description:
       "A modern learning management system built with Next.js and Supabase",
-    images: ["/images/preppeo_logo.png"],
+    images: ["/images/main_logo.png"],
   },
 };
 

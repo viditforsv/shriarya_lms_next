@@ -1,4 +1,4 @@
-# Preppeo LMS - Learning Management System
+# Shrividhya Classes - Learning Management System
 
 A modern, feature-rich Learning Management System built with Next.js 15, shadcn/ui, and Supabase.
 
@@ -41,7 +41,7 @@ A modern, feature-rich Learning Management System built with Next.js 15, shadcn/
 
 ```bash
 git clone <your-repo-url>
-cd nextjs_preppeo
+cd nextjs_shrividhya_lms
 ```
 
 ### 2. Install dependencies

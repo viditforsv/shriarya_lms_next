@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/design-system/compon
 import { Input } from '@/design-system/components/ui/input';
 import { Clock, Calculator, Flag, Eye, ChevronLeft, ChevronRight, CheckCircle2, BookOpen, Calculator as CalcIcon, AlertCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/design-system/components/ui/dialog';
-import { Progress } from '@/design-system/components/ui/progress';
 
 export default function GRETestPage() {
   const {
@@ -100,9 +99,6 @@ export default function GRETestPage() {
 
   // Section Selection Screen
   if (!testStarted) {
-    const verbalSections = test.sections.filter(s => s.sectionType === 'verbal');
-    const quantSections = test.sections.filter(s => s.sectionType === 'quantitative');
-    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
         <Card className="w-full max-w-4xl shadow-lg">

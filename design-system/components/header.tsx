@@ -77,8 +77,6 @@ export function Header() {
           hasDropdown: false,
         },
         { name: "Free Tools", href: "/tools", hasDropdown: false },
-        { name: "FAQ", href: "/faq", hasDropdown: false },
-        { name: "Contact", href: "/contact", hasDropdown: false },
         {
           name: "Site Administration",
           href: "/admin/site-administration",
@@ -96,8 +94,6 @@ export function Header() {
         },
         { name: "Free Tools", href: "/tools", hasDropdown: false },
         { name: "My Courses", href: "/courses/enrolled", hasDropdown: false },
-        { name: "FAQ", href: "/faq", hasDropdown: false },
-        { name: "Contact", href: "/contact", hasDropdown: false },
       ];
     } else {
       // Public users (not logged in)
@@ -109,9 +105,6 @@ export function Header() {
           hasDropdown: false,
         },
         { name: "Free Tools", href: "/tools", hasDropdown: false },
-        { name: "About", href: "/about", hasDropdown: false },
-        { name: "FAQ", href: "/faq", hasDropdown: false },
-        { name: "Contact", href: "/contact", hasDropdown: false },
       ];
     }
   };
@@ -129,15 +122,15 @@ export function Header() {
           >
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
               <Image
-                src="/images/preppeo_logo.png"
-                alt="Preppeo LMS Logo"
+                src="/images/main_logo.png"
+                alt="Shrividhya Classes Logo"
                 width={120}
                 height={40}
                 className="object-contain"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Preppeo</h1>
+              <h1 className="text-xl font-bold text-foreground">Shrividhya Classes</h1>
             </div>
           </Link>
 

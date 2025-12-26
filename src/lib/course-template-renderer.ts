@@ -46,7 +46,7 @@ export function renderCourseWithTemplate(
     instructor: String(
       templateData.instructor ||
         defaultValues.instructor ||
-        "Shri Arya Education"
+        "Shrividhya Classes"
     ),
     duration: String(
       courseData.duration ||

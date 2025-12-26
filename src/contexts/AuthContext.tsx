@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Persist profile in localStorage when it changes
   useEffect(() => {
     if (profile && typeof window !== "undefined") {
-      localStorage.setItem("shriarya-profile", JSON.stringify(profile));
+      localStorage.setItem("shrividhya-profile", JSON.stringify(profile));
     }
   }, [profile]);
 
@@ -240,7 +240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Save to localStorage for persistence
         if (typeof window !== "undefined") {
           localStorage.setItem(
-            "shriarya-profile",
+            "shrividhya-profile",
             JSON.stringify(fallbackProfile)
           );
         }
@@ -580,9 +580,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           // Clear profile from localStorage
           if (typeof window !== "undefined") {
-            localStorage.removeItem("shriarya-profile");
+            localStorage.removeItem("shrividhya-profile");
             // Also clear Supabase session storage
-            localStorage.removeItem("shriarya-lms-session");
+            localStorage.removeItem("shrividhya-lms-session");
             console.log("✅ Cleared profile and session from localStorage");
           }
 
@@ -803,9 +803,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Clear profile from localStorage
         if (typeof window !== "undefined") {
-          localStorage.removeItem("shriarya-profile");
+          localStorage.removeItem("shrividhya-profile");
           // Also clear Supabase session storage as fallback
-          localStorage.removeItem("shriarya-lms-session");
+          localStorage.removeItem("shrividhya-lms-session");
           console.log("✅ Cleared profile and session from localStorage");
         }
 
@@ -824,9 +824,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setSession(null);
       if (typeof window !== "undefined") {
-        localStorage.removeItem("shriarya-profile");
+        localStorage.removeItem("shrividhya-profile");
         // Also clear Supabase session storage directly as fallback
-        localStorage.removeItem("shriarya-lms-session");
+        localStorage.removeItem("shrividhya-lms-session");
         console.log("✅ Cleared Supabase session storage as fallback");
       }
 

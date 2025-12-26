@@ -150,7 +150,7 @@ const FAQPage = memo(function FAQPage() {
       category: "general",
       question: "How do I contact customer support?",
       answer:
-        "You can reach our support team through multiple channels: email support@shriarya.com, live chat on our website, or submit a ticket through our helpdesk system. We typically respond within 24 hours.",
+        "You can reach our support team through multiple channels: email support@shrividhya.in, live chat on our website, or submit a ticket through our helpdesk system. We typically respond within 24 hours.",
     },
   ];
 
@@ -356,7 +356,7 @@ const FAQPage = memo(function FAQPage() {
                     className="border-primary hover:bg-primary hover:text-white rounded-sm"
                     onClick={() =>
                       window.open(
-                        "mailto:contact@preppeo.com?subject=Support Request",
+                        "mailto:contact@shrividhya.in?subject=Support Request",
                         "_blank"
                       )
                     }

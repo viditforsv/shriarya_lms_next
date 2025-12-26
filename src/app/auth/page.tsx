@@ -129,7 +129,7 @@ export default function AuthPage() {
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center overflow-hidden shadow-xl p-2">
               <Image
-                src="/images/preppeo_icon.png"
+                src="/images/main_logo.png"
                 alt="Shrividhya Classes Logo"
                 width={64}
                 height={64}

@@ -21,9 +21,9 @@ CREATE TABLE public.assignment_submissions (
   teacher_comments text,
   grading_status text DEFAULT 'pending'::text CHECK (grading_status = ANY (ARRAY['pending'::text, 'graded'::text, 'returned'::text])),
   CONSTRAINT assignment_submissions_pkey PRIMARY KEY (id),
+  CONSTRAINT assignment_submissions_graded_by_fkey FOREIGN KEY (graded_by) REFERENCES auth.users(id),
   CONSTRAINT assignment_submissions_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT assignment_submissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
-  CONSTRAINT assignment_submissions_graded_by_fkey FOREIGN KEY (graded_by) REFERENCES auth.users(id)
+  CONSTRAINT assignment_submissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.course_template_fields (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -36,8 +36,7 @@ CREATE TABLE public.course_template_fields (
   default_value jsonb,
   validation_rules jsonb DEFAULT '{}'::jsonb,
   display_order integer DEFAULT 0,
-  CONSTRAINT course_template_fields_pkey PRIMARY KEY (id),
-  CONSTRAINT course_template_fields_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.courses_templates(id)
+  CONSTRAINT course_template_fields_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.courses (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -59,8 +58,7 @@ CREATE TABLE public.courses (
   validity_days integer DEFAULT 365,
   thumbnail_url text,
   CONSTRAINT courses_pkey PRIMARY KEY (id),
-  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id),
-  CONSTRAINT courses_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.courses_templates(id)
+  CONSTRAINT courses_instructor_id_fkey FOREIGN KEY (instructor_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.courses_chapters (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -70,7 +68,9 @@ CREATE TABLE public.courses_chapters (
   description text,
   is_locked boolean DEFAULT false,
   created_at timestamp with time zone DEFAULT now(),
+  course_id uuid,
   CONSTRAINT courses_chapters_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_chapters_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
   CONSTRAINT courses_chapters_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.courses_units(id)
 );
 CREATE TABLE public.courses_enrollments (
@@ -143,7 +143,9 @@ CREATE TABLE public.courses_topics (
   description text,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  course_id uuid,
   CONSTRAINT courses_topics_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_topics_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
   CONSTRAINT courses_topics_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.courses_chapters(id)
 );
 CREATE TABLE public.courses_units (
@@ -156,6 +158,22 @@ CREATE TABLE public.courses_units (
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT courses_units_pkey PRIMARY KEY (id),
   CONSTRAINT courses_units_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
+);
+CREATE TABLE public.gre_questions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  type text NOT NULL CHECK (type = ANY (ARRAY['single-choice'::text, 'multi-select'::text, 'numeric-entry'::text, 'text-select'::text])),
+  prompt text NOT NULL,
+  passage_id uuid,
+  options jsonb DEFAULT '[]'::jsonb,
+  correct_answer text NOT NULL,
+  section_type text NOT NULL CHECK (section_type = ANY (ARRAY['verbal'::text, 'quantitative'::text])),
+  difficulty integer CHECK (difficulty >= 1 AND difficulty <= 10),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  created_by uuid,
+  is_active boolean NOT NULL DEFAULT true,
+  CONSTRAINT gre_questions_pkey PRIMARY KEY (id),
+  CONSTRAINT gre_questions_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.lesson_feedback (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -173,16 +191,14 @@ CREATE TABLE public.lesson_feedback (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT lesson_feedback_pkey PRIMARY KEY (id),
-  CONSTRAINT lesson_feedback_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id),
-  CONSTRAINT lesson_feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
-  CONSTRAINT lesson_feedback_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES auth.users(id)
+  CONSTRAINT lesson_feedback_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES auth.users(id),
+  CONSTRAINT lesson_feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.lesson_tags (
   lesson_id uuid NOT NULL,
   tag_name text NOT NULL,
   created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT lesson_tags_pkey PRIMARY KEY (lesson_id, tag_name),
-  CONSTRAINT lesson_tags_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
+  CONSTRAINT lesson_tags_pkey PRIMARY KEY (lesson_id, tag_name)
 );
 CREATE TABLE public.payments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -190,10 +206,10 @@ CREATE TABLE public.payments (
   course_id uuid NOT NULL,
   amount numeric NOT NULL,
   currency character varying NOT NULL DEFAULT 'INR'::character varying,
-  provider character varying NOT NULL CHECK (provider::text = ANY (ARRAY['razorpay'::character varying, 'stripe'::character varying]::text[])),
+  provider character varying NOT NULL CHECK (provider::text = ANY (ARRAY['razorpay'::character varying::text, 'stripe'::character varying::text])),
   payment_id character varying NOT NULL,
   order_id character varying,
-  status character varying NOT NULL DEFAULT 'pending'::character varying CHECK (status::text = ANY (ARRAY['pending'::character varying, 'completed'::character varying, 'failed'::character varying, 'refunded'::character varying]::text[])),
+  status character varying NOT NULL DEFAULT 'pending'::character varying CHECK (status::text = ANY (ARRAY['pending'::character varying::text, 'completed'::character varying::text, 'failed'::character varying::text, 'refunded'::character varying::text])),
   metadata jsonb DEFAULT '{}'::jsonb,
   refund_amount numeric DEFAULT 0,
   refund_reason text,
@@ -251,8 +267,7 @@ CREATE TABLE public.qa_history (
   action_reason text,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT qa_history_pkey PRIMARY KEY (id),
-  CONSTRAINT qa_history_action_by_fkey FOREIGN KEY (action_by) REFERENCES auth.users(id),
-  CONSTRAINT qa_history_qa_id_fkey FOREIGN KEY (qa_id) REFERENCES public.qa_questions(id)
+  CONSTRAINT qa_history_action_by_fkey FOREIGN KEY (action_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.qa_questions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -265,7 +280,6 @@ CREATE TABLE public.qa_questions (
   difficulty_appropriateness integer CHECK (difficulty_appropriateness >= 1 AND difficulty_appropriateness <= 5),
   clarity_rating integer CHECK (clarity_rating >= 1 AND clarity_rating <= 5),
   solution_quality integer CHECK (solution_quality >= 1 AND solution_quality <= 5),
-  overall_rating numeric DEFAULT (((((COALESCE(content_accuracy, 0) + COALESCE(difficulty_appropriateness, 0)) + COALESCE(clarity_rating, 0)) + COALESCE(solution_quality, 0)))::numeric / 4.0),
   revision_count integer DEFAULT 0,
   last_revision_date timestamp with time zone,
   revision_notes text,
@@ -275,6 +289,7 @@ CREATE TABLE public.qa_questions (
   qa_tags ARRAY DEFAULT '{}'::text[],
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  overall_rating numeric DEFAULT (((((COALESCE(content_accuracy, 0) + COALESCE(difficulty_appropriateness, 0)) + COALESCE(clarity_rating, 0)) + COALESCE(solution_quality, 0)))::numeric / 4.0),
   CONSTRAINT qa_questions_pkey PRIMARY KEY (id),
   CONSTRAINT question_qa_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id),
   CONSTRAINT question_qa_reviewer_id_fkey FOREIGN KEY (reviewer_id) REFERENCES auth.users(id)
@@ -293,8 +308,8 @@ CREATE TABLE public.question_assignments (
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT question_assignments_pkey PRIMARY KEY (id),
   CONSTRAINT question_assignments_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.question_bank(id),
-  CONSTRAINT question_assignments_assigned_to_fkey FOREIGN KEY (assigned_to) REFERENCES auth.users(id),
-  CONSTRAINT question_assignments_assigned_by_fkey FOREIGN KEY (assigned_by) REFERENCES auth.users(id)
+  CONSTRAINT question_assignments_assigned_by_fkey FOREIGN KEY (assigned_by) REFERENCES auth.users(id),
+  CONSTRAINT question_assignments_assigned_to_fkey FOREIGN KEY (assigned_to) REFERENCES auth.users(id)
 );
 CREATE TABLE public.question_bank (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -308,7 +323,7 @@ CREATE TABLE public.question_bank (
   question_text text NOT NULL,
   tags ARRAY DEFAULT '{}'::text[],
   section text,
-  subject text NOT NULL DEFAULT 'IBDP Mathematics AA HL'::text CHECK (subject = ANY (ARRAY['Mathematics'::text, 'IBDP Mathematics AA HL'::text, 'IBDP Mathematics AA SL'::text, 'IBDP Mathematics AI HL'::text, 'IBDP Mathematics AI SL'::text, 'CBSE Mathematics'::text, 'ICSE Mathematics'::text, 'IGCSE Mathematics'::text, 'Physics'::text, 'IBDP Physics HL'::text, 'IBDP Physics SL'::text, 'CBSE Physics'::text, 'ICSE Physics'::text, 'IGCSE Physics'::text, 'Chemistry'::text, 'IBDP Chemistry HL'::text, 'IBDP Chemistry SL'::text, 'CBSE Chemistry'::text, 'ICSE Chemistry'::text, 'IGCSE Chemistry'::text, 'Biology'::text, 'IBDP Biology HL'::text, 'IBDP Biology SL'::text, 'CBSE Biology'::text, 'ICSE Biology'::text, 'IGCSE Biology'::text, 'English'::text, 'IBDP English A'::text, 'IBDP English B'::text, 'CBSE English'::text, 'ICSE English'::text, 'IGCSE English'::text, 'Computer Science'::text, 'IBDP Computer Science HL'::text, 'IBDP Computer Science SL'::text, 'CBSE Computer Science'::text, 'ICSE Computer Science'::text, 'IGCSE Computer Science'::text])),
+  subject text NOT NULL DEFAULT 'IBDP Mathematics AA HL'::text,
   explanation text,
   calculator text,
   correct_answer text,
@@ -417,8 +432,7 @@ CREATE TABLE public.user_progress (
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT user_progress_pkey PRIMARY KEY (id),
   CONSTRAINT user_progress_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
-  CONSTRAINT user_progress_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id),
-  CONSTRAINT user_progress_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.courses_lessons(id)
+  CONSTRAINT user_progress_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id)
 );
 CREATE TABLE public.user_role_assignments (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

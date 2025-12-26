@@ -1,0 +1,18 @@
+{
+  "lint": {
+    "cssConflict": false,
+    "invalidApply": false,
+    "invalidConfigPath": false,
+    "invalidScreen": false,
+    "invalidTailwindDirective": false,
+    "invalidVariant": false,
+    "recommendedVariantOrder": false
+  },
+  "experimental": {
+    "classRegex": [
+      ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+      ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^\"'`]*)(?:'|\"|`)"]
+    ]
+  }
+}
+

@@ -7,10 +7,10 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
-import { Card, CardHeader } from "@/app/components-demo/ui/ui-components/card";
-import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm";
-import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm";
+} from "@/design-system/components/tabs";
+import { Card, CardHeader } from "@/design-system/components/ui/card";
+import { SignInForm } from "@/design-system/components/form-components/SignInForm";
+import { SignUpForm } from "@/design-system/components/form-components/SignUpForm";
 import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -40,7 +40,7 @@ export default function AuthPage() {
   useEffect(() => {
     if (!loading && user && profile) {
       // Check for redirect parameter first, then next parameter, then role-based default
-      const redirectParam = searchParams.get("redirect");
+      const redirectParam = searchParams.get("redirect") || searchParams.get("redirectTo");
       const roleBasedPath =
         profile.role === "student"
           ? "/student"
@@ -93,7 +93,7 @@ export default function AuthPage() {
             roleBasedPath
           );
           // Check for redirect parameter first, then next parameter, then role-based default
-          const redirectParam = searchParams.get("redirect");
+          const redirectParam = searchParams.get("redirect") || searchParams.get("redirectTo");
           const redirectUrl = redirectParam || next || roleBasedPath;
           router.push(redirectUrl);
         } catch (err) {
@@ -104,14 +104,14 @@ export default function AuthPage() {
 
       handleOAuthCallback();
     }
-  }, [code, next, router]);
+  }, [code, next, router, searchParams]);
 
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-emerald-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -119,59 +119,64 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-emerald-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+      
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-sm flex items-center justify-center overflow-hidden">
+            <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center overflow-hidden shadow-xl p-2">
               <Image
-                src="/images/main_logo.webp"
-                alt="ShriArya LMS Logo"
+                src="/images/preppeo_icon.png"
+                alt="Preppeo Logo"
                 width={64}
                 height={64}
+                className="object-contain"
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">ShriArya</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Preppeo</h1>
+          <p className="text-muted-foreground text-lg">
             Your gateway to knowledge and growth
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-sm">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
+            <p className="text-red-700 text-sm font-medium">{error}</p>
           </div>
         )}
 
         {code && (
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-sm">
+          <div className="mb-4 p-4 bg-primary/10 border-l-4 border-primary rounded-lg">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto mb-2"></div>
-              <p className="text-blue-600 text-sm">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+              <p className="text-primary text-sm font-medium">
                 Completing authentication...
               </p>
             </div>
           </div>
         )}
 
-        <Card className="w-full">
+        <Card className="w-full shadow-2xl border-0 rounded-xl overflow-hidden">
           <CardHeader className="pb-4">
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 rounded-sm bg-[#feefea] p-1">
+              <TabsList className="grid w-full grid-cols-2 rounded-lg bg-gray-100 p-1">
                 <TabsTrigger
                   value="signin"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md font-medium transition-all duration-200"
                 >
                   Sign In
                 </TabsTrigger>
                 <TabsTrigger
                   value="signup"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md font-medium transition-all duration-200"
                 >
                   Sign Up
                 </TabsTrigger>

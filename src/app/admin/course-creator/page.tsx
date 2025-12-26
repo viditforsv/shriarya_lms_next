@@ -6,17 +6,17 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   Plus,
   BookOpen,
@@ -110,6 +110,102 @@ interface Course {
   textbookName?: string;
 }
 
+// Small helper types used in this file to avoid `any`
+type Primitive = string | number | boolean | null | undefined;
+
+// DB row shapes returned by API endpoints (minimal fields used here)
+type DBUnit = {
+  id: string;
+  unit_order: number;
+  unit_name?: string;
+  description?: string;
+};
+type DBChapter = {
+  id: string;
+  unit_id: string;
+  chapter_order: number;
+  chapter_name?: string;
+  description?: string;
+};
+type DBLesson = {
+  id: string;
+  lesson_order: number;
+  title?: string;
+  slug?: string;
+  topic_badge?: string;
+  description?: string;
+  content?: string;
+  content_url?: string;
+  video_url?: string;
+  pdf_url?: string;
+  duration?: string;
+  is_preview?: boolean;
+  chapter?: { id: string } | null;
+  quiz_id?: string | null;
+  solution_url?: string | null;
+};
+
+// Props types for sortable components
+type SortableChapterProps = {
+  chapter: Chapter;
+  unit: Unit;
+  chapterIndex: number;
+  editingChapter: string | null;
+  setEditingChapter: (id: string | null) => void;
+  updateChapter: (
+    unitId: string,
+    chapterId: string,
+    field: keyof Chapter,
+    value: Primitive
+  ) => void;
+  addLesson: (unitId: string, chapterId: string) => void;
+  deleteChapter: (unitId: string, chapterId: string) => void;
+  collapsedChapters: Set<string>;
+  toggleChapterCollapse: (chapterId: string) => void;
+  allUnits: Unit[];
+  moveChapterToUnit: (
+    newUnitId: string,
+    chapterId: string,
+    oldUnitId: string
+  ) => void;
+  children?: React.ReactNode;
+};
+
+type SortableLessonProps = {
+  lesson: Lesson;
+  lessonIndex: number;
+  unit: Unit;
+  chapter: Chapter;
+  setEditingLesson: (
+    v: { unitId: string; chapterId: string; lessonId: string } | null
+  ) => void;
+  deleteLesson: (unitId: string, chapterId: string, lessonId: string) => void;
+  allChapters: Chapter[];
+  moveLessonToChapter: (
+    unitId: string,
+    newChapterId: string,
+    lessonId: string,
+    oldChapterId: string
+  ) => void;
+};
+
+type ChapterLessonsProps = {
+  chapter: Chapter;
+  unit: Unit;
+  collapsedChapters: Set<string>;
+  setEditingLesson: (
+    v: { unitId: string; chapterId: string; lessonId: string } | null
+  ) => void;
+  deleteLesson: (unitId: string, chapterId: string, lessonId: string) => void;
+  allChapters: Chapter[];
+  moveLessonToChapter: (
+    unitId: string,
+    newChapterId: string,
+    lessonId: string,
+    oldChapterId: string
+  ) => void;
+};
+
 // Sortable Chapter Component
 const SortableChapter = React.memo(function SortableChapter({
   chapter,
@@ -125,7 +221,7 @@ const SortableChapter = React.memo(function SortableChapter({
   allUnits,
   moveChapterToUnit,
   children,
-}: any) {
+}: SortableChapterProps) {
   const {
     attributes,
     listeners,
@@ -205,7 +301,7 @@ const SortableChapter = React.memo(function SortableChapter({
                 onClick={(e) => e.stopPropagation()}
                 title="Move to unit"
               >
-                {allUnits.map((u: any) => (
+                {allUnits.map((u: Unit) => (
                   <option key={u.id} value={u.id}>
                     Unit: {u.title}
                   </option>
@@ -247,7 +343,7 @@ const SortableLesson = React.memo(function SortableLesson({
   deleteLesson,
   allChapters,
   moveLessonToChapter,
-}: any) {
+}: SortableLessonProps) {
   const {
     attributes,
     listeners,
@@ -294,7 +390,7 @@ const SortableLesson = React.memo(function SortableLesson({
           onClick={(e) => e.stopPropagation()}
           title="Move to chapter"
         >
-          {allChapters.map((c: any) => (
+          {allChapters.map((c: Chapter) => (
             <option key={c.id} value={c.id}>
               Ch: {c.title}
             </option>
@@ -351,14 +447,14 @@ const ChapterLessons = React.memo(
     deleteLesson,
     allChapters,
     moveLessonToChapter,
-  }: any) {
+  }: ChapterLessonsProps) {
     const isCollapsed = collapsedChapters.has(chapter.id);
 
     if (isCollapsed) return null;
 
     return (
       <div className="space-y-2 ml-6 mt-2">
-        {chapter.lessons.map((lesson: any, lessonIndex: number) => (
+        {chapter.lessons.map((lesson: Lesson, lessonIndex: number) => (
           <SortableLesson
             key={lesson.id}
             lesson={lesson}
@@ -414,8 +510,8 @@ export default function CourseCreatorPage() {
   const [courseStatus, setCourseStatus] = useState<"draft" | "published">(
     "draft"
   );
-  const [existingCourses, setExistingCourses] = useState<any[]>([]);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+  const [, setExistingCourses] = useState<unknown[]>([]);
+  const [, setSelectedCourseId] = useState<string>("");
   const [coursesWithStats, setCoursesWithStats] = useState<
     Array<{
       id: string;
@@ -571,7 +667,7 @@ export default function CourseCreatorPage() {
     setEditingLesson({ unitId, chapterId, lessonId: newLesson.id });
   };
 
-  const updateUnit = (unitId: string, field: keyof Unit, value: any) => {
+  const updateUnit = (unitId: string, field: keyof Unit, value: Primitive) => {
     setCourse((prev) => ({
       ...prev,
       units: prev.units.map((unit) =>
@@ -579,7 +675,9 @@ export default function CourseCreatorPage() {
           ? {
               ...unit,
               [field]: value,
-              ...(field === "title" ? { slug: generateSlug(value) } : {}),
+              ...(field === "title"
+                ? { slug: generateSlug(String(value)) }
+                : {}),
             }
           : unit
       ),
@@ -590,7 +688,7 @@ export default function CourseCreatorPage() {
     unitId: string,
     chapterId: string,
     field: keyof Chapter,
-    value: any
+    value: Primitive
   ) => {
     setCourse((prev) => ({
       ...prev,
@@ -604,7 +702,7 @@ export default function CourseCreatorPage() {
                       ...chapter,
                       [field]: value,
                       ...(field === "title"
-                        ? { slug: generateSlug(value) }
+                        ? { slug: generateSlug(String(value)) }
                         : {}),
                     }
                   : chapter
@@ -620,7 +718,7 @@ export default function CourseCreatorPage() {
     chapterId: string,
     lessonId: string,
     field: keyof Lesson,
-    value: any
+    value: Primitive
   ) => {
     setCourse((prev) => ({
       ...prev,
@@ -638,7 +736,7 @@ export default function CourseCreatorPage() {
                               ...lesson,
                               [field]: value,
                               ...(field === "title"
-                                ? { slug: generateSlug(value) }
+                                ? { slug: generateSlug(String(value)) }
                                 : {}),
                             }
                           : lesson
@@ -953,7 +1051,7 @@ export default function CourseCreatorPage() {
 
       // If editing, include the course ID in the payload (for PUT)
       if (isEditing && course.id) {
-        (coursePayload as any).id = course.id;
+        (coursePayload as { id?: string }).id = course.id;
       }
 
       // Create or update the course
@@ -1164,36 +1262,40 @@ export default function CourseCreatorPage() {
       const allLessons = lessonsData.lessons || [];
 
       // Transform database structure to component format
-      const units = allUnits
-        .sort((a: any, b: any) => a.unit_order - b.unit_order)
-        .map((unit: any) => {
+      const units = (allUnits as DBUnit[])
+        .sort((a: DBUnit, b: DBUnit) => a.unit_order - b.unit_order)
+        .map((unit: DBUnit) => {
           // Get chapters for this unit
-          const unitChapters = allChapters
-            .filter((ch: any) => ch.unit_id === unit.id)
-            .sort((a: any, b: any) => a.chapter_order - b.chapter_order)
-            .map((chapter: any) => {
+          const unitChapters = (allChapters as DBChapter[])
+            .filter((ch: DBChapter) => ch.unit_id === unit.id)
+            .sort(
+              (a: DBChapter, b: DBChapter) => a.chapter_order - b.chapter_order
+            )
+            .map((chapter: DBChapter) => {
               // Get lessons for this chapter
-              const chapterLessons = allLessons
-                .filter((lesson: any) => lesson.chapter?.id === chapter.id)
-                .sort((a: any, b: any) => a.lesson_order - b.lesson_order)
-                .map((lesson: any) => {
+              const chapterLessons = (allLessons as DBLesson[])
+                .filter((lesson: DBLesson) => lesson.chapter?.id === chapter.id)
+                .sort(
+                  (a: DBLesson, b: DBLesson) => a.lesson_order - b.lesson_order
+                )
+                .map((lesson: DBLesson) => {
                   // Determine lesson type based on content
                   let lessonType: "video" | "document" | "quiz" | "assignment" =
                     "video";
                   if (lesson.video_url) {
                     lessonType = "video";
-                  } else if (lesson.pdf_url || lesson.content) {
-                    lessonType = "document";
                   } else if (lesson.quiz_id) {
                     lessonType = "quiz";
                   } else if (lesson.pdf_url && lesson.solution_url) {
                     lessonType = "assignment";
+                  } else if (lesson.pdf_url || lesson.content) {
+                    lessonType = "document";
                   }
 
                   return {
                     id: lesson.id,
-                    title: lesson.title,
-                    slug: lesson.slug,
+                    title: lesson.title || "",
+                    slug: lesson.slug || "",
                     description: lesson.topic_badge || lesson.description || "",
                     content: lesson.content || "",
                     contentUrl: lesson.content_url,
@@ -1209,7 +1311,7 @@ export default function CourseCreatorPage() {
 
               return {
                 id: chapter.id,
-                title: chapter.chapter_name,
+                title: chapter.chapter_name || "",
                 slug:
                   chapter.chapter_name?.toLowerCase().replace(/\s+/g, "-") ||
                   "",
@@ -1221,7 +1323,7 @@ export default function CourseCreatorPage() {
 
           return {
             id: unit.id,
-            title: unit.unit_name,
+            title: unit.unit_name || "",
             slug: unit.unit_name?.toLowerCase().replace(/\s+/g, "-") || "",
             description: unit.description || "",
             chapters: unitChapters,
@@ -1294,32 +1396,6 @@ export default function CourseCreatorPage() {
         }`
       );
     }
-  };
-
-  const createNewCourse = () => {
-    setCourse({
-      title: "",
-      slug: "",
-      description: "",
-      curriculum: "CBSE",
-      subject: "Mathematics",
-      grade: "Class 9",
-      level: "",
-      price: 0,
-      isFree: true,
-      duration: "40 hours",
-      validityDays: 365,
-      units: [],
-      tags: [],
-      learningOutcomes: [],
-      prerequisites: [],
-      examBoard: "CBSE",
-      academicYear: "2025-26",
-      textbookName: "NCERT",
-    });
-    setCourseStatus("draft");
-    setIsEditing(false);
-    setSelectedCourseId("");
   };
 
   // Load courses on component mount
@@ -1436,22 +1512,22 @@ export default function CourseCreatorPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 rounded-sm bg-[#feefea] p-1">
+          <TabsList className="grid w-full grid-cols-3 rounded-lg bg-gray-100 p-1">
             <TabsTrigger
               value="basic-info"
-              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+              className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
             >
               Basic Info
             </TabsTrigger>
             <TabsTrigger
               value="structure"
-              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+              className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
             >
               Structure & Content
             </TabsTrigger>
             <TabsTrigger
               value="preview"
-              className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+              className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
             >
               Preview & Publish
             </TabsTrigger>

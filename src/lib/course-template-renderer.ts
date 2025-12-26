@@ -95,14 +95,9 @@ export function renderCourseWithTemplate(
  * Fetches course from database and applies template
  */
 export async function getCourseWithTemplate(): Promise<RenderedCourse | null> {
-  try {
-    // This would typically fetch from your database
-    // For now, we'll return null and implement the actual fetching later
-    return null;
-  } catch (error) {
-    console.error("Error fetching course with template:", error);
-    return null;
-  }
+  // This would typically fetch from your database
+  // For now, we'll return null and implement the actual fetching later
+  return null;
 }
 
 /**

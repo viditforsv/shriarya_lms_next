@@ -146,7 +146,16 @@ export async function PUT(request: Request) {
 
     const supabase = await createClient();
 
-    const updateData: any = {};
+    interface UpdateData {
+      title?: string;
+      content?: string;
+      content_html?: string;
+      metadata?: Record<string, unknown>;
+      order_index?: number;
+      is_active?: boolean;
+    }
+
+    const updateData: UpdateData = {};
     if (title !== undefined) updateData.title = title;
     if (content !== undefined) updateData.content = content;
     if (content_html !== undefined) updateData.content_html = content_html;

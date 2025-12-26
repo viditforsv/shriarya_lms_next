@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+} from "@/design-system/components/ui/card";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
 import { Upload, X, Image as ImageIcon, Check } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";

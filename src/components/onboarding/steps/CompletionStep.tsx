@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
 import { CheckCircle, BookOpen, Target, Users, ArrowRight } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { OnboardingStepProps } from "../../OnboardingFlow";
@@ -57,7 +57,7 @@ export function CompletionStep({ onComplete }: OnboardingStepProps) {
 
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            🎉 Welcome to ShriArya LMS!
+            🎉 Welcome to Preppeo LMS!
           </h2>
           <p className="text-muted-foreground">
             You&apos;ve successfully completed the setup process. Your
@@ -139,7 +139,7 @@ export function CompletionStep({ onComplete }: OnboardingStepProps) {
         <h3 className="text-lg font-semibold text-center">What&apos;s Next?</h3>
         <div className="grid grid-cols-1 gap-3">
           {nextActions.map((action, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow">
+            <Card key={index}>
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-[#e27447]/10 rounded-sm flex items-center justify-center flex-shrink-0">

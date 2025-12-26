@@ -46,19 +46,26 @@ export async function POST(request: NextRequest) {
         provider: "razorpay",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const razorpayError = error as {
+      message?: string;
+      response?: unknown;
+      code?: string;
+      description?: string;
+    };
+
     console.error("🔥 Razorpay Error:", error);
-    console.error("🔥 Error Response:", error.response);
-    console.error("🔥 Error Message:", error.message);
-    console.error("🔥 Error Code:", error.code);
-    console.error("🔥 Error Description:", error.description);
+    console.error("🔥 Error Response:", razorpayError.response);
+    console.error("🔥 Error Message:", razorpayError.message);
+    console.error("🔥 Error Code:", razorpayError.code);
+    console.error("🔥 Error Description:", razorpayError.description);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
-        error: error,
-        details: error.description || error.message,
+        message: razorpayError.message || "Payment creation failed",
+        error: error instanceof Error ? error.message : String(error),
+        details: razorpayError.description || razorpayError.message || "Unknown error",
       },
       { status: 400 }
     );

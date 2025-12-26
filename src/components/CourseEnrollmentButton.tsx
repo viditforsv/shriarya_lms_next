@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { formatAmount } from "@/lib/payments/config";

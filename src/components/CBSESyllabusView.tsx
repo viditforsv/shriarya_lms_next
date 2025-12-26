@@ -4,9 +4,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Progress } from "@/design-system/components/ui/progress";
 import { BookOpen, Clock, CheckCircle } from "lucide-react";
 
 interface CBSEUnit {

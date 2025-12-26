@@ -2,23 +2,24 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Input } from "@/design-system/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Search,
   Filter,
@@ -31,8 +32,6 @@ import {
   SortAsc,
   SortDesc,
 } from "lucide-react";
-import Image from "next/image";
-import { useAuth } from "@/contexts/AuthContext";
 // import { getAllCourses } from '@/lib/course-config'
 // import { CourseConfig } from '@/lib/course-config'
 
@@ -74,9 +73,6 @@ interface FilterState {
 }
 
 export default function CourseDiscoveryPage() {
-  const { profile } = useAuth();
-  const isAdmin = profile?.role === "admin";
-
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     curriculum: "all",
@@ -111,17 +107,83 @@ export default function CourseDiscoveryPage() {
       try {
         console.log("Fetching courses from API...");
         const response = await fetch("/api/courses");
-        console.log("Response status:", response.status);
+        
+        console.log("Response received:", {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
+        
         if (response.ok) {
-          const data = await response.json();
-          console.log("Courses data:", data);
-          setCourses(data.courses || []);
+          const contentType = response.headers.get("content-type");
+          console.log("Content-Type:", contentType);
+          
+          if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log("Courses data:", data);
+            setCourses(data.courses || []);
+          } else {
+            const text = await response.text();
+            console.error("Unexpected content type. Response:", text.substring(0, 200));
+            setCourses([]);
+          }
         } else {
-          console.error("Failed to fetch courses:", response.statusText);
+          // Try to get error details from response
+          const contentType = response.headers.get("content-type");
+          let errorData: Record<string, unknown> = {};
+          let errorText = "";
+          
+          console.log("Error response content-type:", contentType);
+          
+          try {
+            if (contentType && contentType.includes("application/json")) {
+              errorText = await response.text();
+              if (errorText) {
+                try {
+                  errorData = JSON.parse(errorText);
+                } catch (parseError) {
+                  console.error("Failed to parse JSON:", parseError);
+                  errorData = { error: errorText, raw: errorText };
+                }
+              }
+            } else {
+              // Try to read as text for non-JSON responses
+              errorText = await response.text();
+              errorData = { 
+                error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+                raw: errorText 
+              };
+            }
+          } catch (readError) {
+            console.error("Could not read error response:", readError);
+            errorData = { 
+              error: `HTTP ${response.status}: ${response.statusText}`,
+              readError: readError instanceof Error ? readError.message : String(readError)
+            };
+          }
+          
+          console.error("Failed to fetch courses:", {
+            status: response.status,
+            statusText: response.statusText,
+            contentType,
+            error: errorData.error || errorData.message || "Unknown error",
+            details: errorData.details,
+            hint: errorData.hint,
+            code: errorData.code,
+            fullError: errorData,
+            rawResponse: errorText || "No response body",
+          });
           setCourses([]);
         }
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        // Network error or fetch failed entirely
+        console.error("Network error fetching courses:", {
+          error,
+          name: error instanceof Error ? error.name : "Unknown",
+          message: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+        });
         setCourses([]);
       }
     };
@@ -202,9 +264,9 @@ export default function CourseDiscoveryPage() {
   // Filter and sort courses
   const filteredCourses = useMemo(() => {
     const filtered = courses.filter((course) => {
-      // Only show published courses for non-admins
-      // Admins can see both published and draft courses
-      if (!isAdmin && course.status !== "published") {
+      // Show published and draft courses to all users
+      // Draft courses will be shown as "upcoming"
+      if (course.status === "archived") {
         return false;
       }
 
@@ -337,7 +399,7 @@ export default function CourseDiscoveryPage() {
     });
 
     return filtered;
-  }, [courses, filters, isAdmin]);
+  }, [courses, filters]);
 
   const updateFilter = (key: keyof FilterState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -370,11 +432,11 @@ export default function CourseDiscoveryPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#feefea] to-[#fffefd] border-b border-[#feefea]">
+      <div className="bg-gradient-to-r from-white to-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+              <h1 className="text-3xl font-bold text-foreground mb-2">
                 Discover Courses
               </h1>
               <p className="text-muted-foreground">
@@ -658,10 +720,15 @@ interface CourseCardProps {
   viewMode: "grid" | "list";
 }
 
+interface CourseConfigWithThumbnail extends CourseConfig {
+  thumbnail_url?: string;
+}
+
 // Helper function to get thumbnail URL with fallback
 function getThumbnailUrl(course: CourseConfig): string {
   // Check both thumbnail and thumbnail_url fields (API inconsistency)
-  const thumbnailUrl = course.thumbnail || (course as any).thumbnail_url;
+  const courseWithThumbnail = course as CourseConfigWithThumbnail;
+  const thumbnailUrl = course.thumbnail || courseWithThumbnail.thumbnail_url;
 
   // If course has a thumbnail, use it
   if (thumbnailUrl && thumbnailUrl !== "/images/courses/default.jpg") {
@@ -692,7 +759,7 @@ function getThumbnailUrl(course: CourseConfig): string {
     <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#e27447;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#3bb273;stop-opacity:1" />
           <stop offset="100%" style="stop-color:#d1653a;stop-opacity:1" />
         </linearGradient>
       </defs>
@@ -709,11 +776,13 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
   if (viewMode === "list") {
     return (
       <Link href={`/courses/${course.slug}`} className="block">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex gap-6">
-              <div className="w-64 h-32 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                {thumbnailUrl.includes("/api/cdn-proxy") ? (
+              <div className="w-64 h-32 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden relative">
+                {thumbnailUrl.startsWith("data:") || thumbnailUrl.includes("/api/cdn-proxy") ? (
+                  // Use regular img tag for data URIs and proxy URLs (Next.js Image doesn't support query strings in local patterns)
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={thumbnailUrl}
                     alt={`${course.title} thumbnail`}
@@ -743,7 +812,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                   />
                 )}
                 <div
-                  className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center"
+                  className="w-full h-full bg-gradient-to-br from-primary to-emerald-600 rounded-lg flex items-center justify-center absolute inset-0"
                   style={{ display: "none" }}
                 >
                   <BookOpen className="w-8 h-8 text-white" />
@@ -764,9 +833,9 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
                       {course.status === "draft" && (
                         <Badge
                           variant="outline"
-                          className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                          className="border-blue-500 text-blue-700 bg-blue-50"
                         >
-                          Draft
+                          Upcoming
                         </Badge>
                       )}
                     </div>
@@ -836,10 +905,12 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
 
   return (
     <Link href={`/courses/${course.slug}`} className="block">
-      <Card className="hover:shadow-md transition-shadow group cursor-pointer">
+        <Card className="">
         <CardHeader className="pb-4">
           <div className="w-full h-32 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
-            {thumbnailUrl.includes("/api/cdn-proxy") ? (
+            {thumbnailUrl.startsWith("data:") || thumbnailUrl.includes("/api/cdn-proxy") ? (
+              // Use regular img tag for data URIs and proxy URLs (Next.js Image doesn't support query strings in local patterns)
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={thumbnailUrl}
                 alt={`${course.title} thumbnail`}
@@ -869,14 +940,14 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
               />
             )}
             <div
-              className="w-full h-full bg-gradient-to-br from-[#e27447] to-[#d1653a] rounded-lg flex items-center justify-center absolute inset-0"
+              className="w-full h-full bg-gradient-to-br from-primary to-emerald-600 rounded-lg flex items-center justify-center absolute inset-0"
               style={{ display: "none" }}
             >
               <BookOpen className="w-12 h-12 text-white" />
             </div>
           </div>
           <div className="mb-2">
-            <CardTitle className="text-lg line-clamp-2 group-hover:text-[#e27447] transition-colors mb-2">
+            <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors mb-2">
               {course.title}
             </CardTitle>
             <div className="flex items-center gap-2 mb-2">
@@ -886,9 +957,9 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
               {course.status === "draft" && (
                 <Badge
                   variant="outline"
-                  className="border-yellow-500 text-yellow-700 bg-yellow-50"
+                  className="border-blue-500 text-blue-700 bg-blue-50"
                 >
-                  Draft
+                  Upcoming
                 </Badge>
               )}
             </div>
@@ -925,7 +996,7 @@ function CourseCard({ course, viewMode }: CourseCardProps) {
             <div className="flex flex-wrap gap-2"></div>
 
             {/* Action Button */}
-            <Button className="w-full group-hover:bg-[#e27447] group-hover:text-white transition-colors">
+            <Button className="w-full group-hover:bg-primary group-hover:text-white transition-colors">
               View Course
             </Button>
           </div>

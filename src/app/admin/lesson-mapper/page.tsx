@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import { createClient } from "@/lib/supabase/client";
 import { Save } from "lucide-react";
 
@@ -84,7 +84,7 @@ export default function LessonMapperPage() {
     };
 
     fetchCourses();
-  }, []);
+  }, [selectedCourseId, supabase]);
 
   // Fetch units, chapters, and lessons when course changes
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function LessonMapperPage() {
     };
 
     fetchData();
-  }, [selectedCourseId]);
+  }, [selectedCourseId, supabase]);
 
   const updateLessonEdit = (
     lessonId: string,

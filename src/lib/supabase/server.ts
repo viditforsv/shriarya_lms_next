@@ -1,19 +1,25 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import {
+  getSupabaseUrl,
+  getSupabaseAnonKey,
+  validateSupabaseConfig,
+} from "./env";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  validateSupabaseConfig();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    getSupabaseUrl(),
+    getSupabaseAnonKey(),
     {
       auth: {
         flowType: "pkce",
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        storageKey: "shriarya-lms-session",
+        storageKey: "preppeo-lms-session",
       },
       cookies: {
         getAll() {
@@ -41,10 +47,11 @@ export async function createClient() {
 export async function createApiClient() {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
+  validateSupabaseConfig();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    getSupabaseUrl(),
+    getSupabaseAnonKey(),
     {
       auth: { flowType: "pkce" },
       cookies: {

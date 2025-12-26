@@ -9,27 +9,25 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Textarea } from "@/app/components-demo/ui/textarea";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Textarea } from "@/design-system/components/textarea";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   ArrowLeft,
   Save,
   FileText,
   Video,
-  FileCheck,
   Lightbulb,
   Calculator,
   BookOpen,
-  Hash,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -69,7 +67,7 @@ export default function AdminLessonEditorPage({
   params: Promise<{ lessonId: string }>;
 }) {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -165,7 +163,10 @@ export default function AdminLessonEditorPage({
     }
   };
 
-  const updateField = (field: keyof Lesson, value: any) => {
+  const updateField = (
+    field: keyof Lesson,
+    value: string | number | boolean
+  ) => {
     setLesson((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
@@ -275,31 +276,31 @@ export default function AdminLessonEditorPage({
 
       {/* Editor Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 rounded-sm bg-[#feefea] p-1">
+        <TabsList className="grid w-full grid-cols-4 rounded-lg bg-gray-100 p-1">
           <TabsTrigger
             value="basic"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
           >
             <BookOpen className="w-4 h-4 mr-2" />
             Basic Info
           </TabsTrigger>
           <TabsTrigger
             value="content"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
           >
             <FileText className="w-4 h-4 mr-2" />
             Content
           </TabsTrigger>
           <TabsTrigger
             value="media"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
           >
             <Video className="w-4 h-4 mr-2" />
             Media & Files
           </TabsTrigger>
           <TabsTrigger
             value="concepts"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white font-medium"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white font-medium"
           >
             <Lightbulb className="w-4 h-4 mr-2" />
             Concepts & Formulas
@@ -518,7 +519,8 @@ export default function AdminLessonEditorPage({
                     className="rounded-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    HTML or plain text. If empty, concept section won't appear.
+                    HTML or plain text. If empty, concept section won&apos;t
+                    appear.
                   </p>
                 </div>
               </CardContent>
@@ -563,8 +565,8 @@ export default function AdminLessonEditorPage({
                     className="rounded-sm font-mono"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    LaTeX, HTML, or plain text. If empty, formula section won't
-                    appear.
+                    LaTeX, HTML, or plain text. If empty, formula section
+                    won&apos;t appear.
                   </p>
                 </div>
               </CardContent>

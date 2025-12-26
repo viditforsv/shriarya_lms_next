@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 interface RazorpayPaymentProps {
   orderId: string;
@@ -9,12 +8,18 @@ interface RazorpayPaymentProps {
   currency: string;
   userEmail: string;
   userName: string;
-  onSuccess: (paymentData: any) => void;
+  onSuccess: (paymentData: {
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
+    courseId: string;
+  }) => void;
   onError: (error: string) => void;
 }
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
 }
@@ -28,8 +33,6 @@ export function RazorpayPayment({
   onSuccess,
   onError,
 }: RazorpayPaymentProps) {
-  const router = useRouter();
-
   useEffect(() => {
     const loadRazorpayScript = () => {
       return new Promise((resolve) => {
@@ -63,7 +66,10 @@ export function RazorpayPayment({
         theme: {
           color: "#e27447", // Your brand color
         },
-        handler: function (response: any) {
+        handler: function (response: {
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) {
           // Payment successful
           onSuccess({
             razorpayOrderId: orderId,

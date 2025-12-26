@@ -44,9 +44,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    interface SubmissionWithProfile {
+      graded_file_path?: string | null;
+      profiles?: { id: string; first_name: string; last_name: string } | { id: string; first_name: string; last_name: string }[] | null;
+      [key: string]: unknown;
+    }
+
     // Generate signed URLs for graded PDFs
     const submissionsWithUrls = await Promise.all(
-      (submissions || []).map(async (submission: any) => {
+      (submissions || []).map(async (submission: SubmissionWithProfile) => {
         let gradedDownloadUrl = null;
 
         if (submission.graded_file_path) {

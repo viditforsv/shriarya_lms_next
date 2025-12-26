@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 
 // GET /api/courses/[slug]/stats - Get course enrollment statistics (admin only)
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
@@ -33,10 +33,7 @@ export async function GET(
     }
 
     // Use service role key to bypass RLS and get reliable counts
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabaseAdmin = createSupabaseApiClient();
 
     // First, get the course ID from slug
     const { data: course, error: courseError } = await supabaseAdmin
@@ -116,7 +113,28 @@ export async function GET(
     }
 
     // Transform participants data
-    const participants = (participantsData || []).map((enrollment: any) => ({
+    interface EnrollmentData {
+      id: string;
+      enrolled_at: string;
+      is_active: boolean;
+      student?: {
+        id: string;
+        email: string;
+        first_name: string | null;
+        last_name: string | null;
+        role: string;
+        created_at: string;
+      } | Array<{
+        id: string;
+        email: string;
+        first_name: string | null;
+        last_name: string | null;
+        role: string;
+        created_at: string;
+      }>;
+    }
+
+    const participants = (participantsData || []).map((enrollment: EnrollmentData) => ({
       enrollmentId: enrollment.id,
       enrolledAt: enrollment.enrolled_at,
       isActive: enrollment.is_active,

@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+} from "@/design-system/components/ui/card";
+import { Progress } from "@/design-system/components/ui/progress";
 import { ArrowLeft, ArrowRight, X, CheckCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -104,12 +104,11 @@ const steps = [
 
 export function OnboardingFlow() {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const {
     data,
     isLoading,
     updateStep,
-    completeStep,
     skipStep,
     completeOnboarding,
   } = useOnboarding();

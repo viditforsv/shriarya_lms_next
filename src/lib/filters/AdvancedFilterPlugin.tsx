@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
 import { X, Filter, RotateCcw } from "lucide-react";
 import AdvancedFilterBuilder from "@/components/AdvancedFilterBuilder";
 
@@ -22,7 +22,7 @@ export interface FilterCondition {
     | "ilike"
     | "is"
     | "not";
-  value: any;
+  value: unknown;
   logic?: "AND" | "OR";
 }
 
@@ -63,7 +63,7 @@ export interface FilterPluginConfig {
   buildRequestParams?: (
     advancedFilters: AdvancedFilter[],
     legacyFilters: Record<string, string>
-  ) => Record<string, any>;
+  ) => Record<string, string | number | boolean>;
 
   // Preview functionality
   enablePreview?: boolean;
@@ -177,7 +177,7 @@ export function useAdvancedFilterPlugin(config: FilterPluginConfig) {
     if (config.enablePreview) {
       previewFilters();
     }
-  }, [advancedFilters, legacyFilters, previewFilters]);
+  }, [advancedFilters, legacyFilters, previewFilters, config.enablePreview]);
 
   // Check if any filters are active
   const hasActiveFilters = () => {
@@ -285,8 +285,8 @@ export function FilterPluginUI({
               ? config.customFilterDisplay
                 ? config.customFilterDisplay(advancedFilters)
                 : advancedFilters.map((filter, index) => {
-                    const condition = filter as any;
-                    const operatorInfo = {
+                    const condition = filter as FilterCondition;
+                    const operatorInfo: Record<string, string> = {
                       eq: "=",
                       neq: "≠",
                       gt: ">",
@@ -307,9 +307,8 @@ export function FilterPluginUI({
                         variant="secondary"
                         className="flex items-center gap-1"
                       >
-                        {condition.field}{" "}
-                        {(operatorInfo as any)[condition.operator]}{" "}
-                        {condition.value}
+                        {condition.field} {operatorInfo[condition.operator]}{" "}
+                        {String(condition.value)}
                         <X
                           className="w-3 h-3 cursor-pointer hover:text-red-600"
                           onClick={() => {

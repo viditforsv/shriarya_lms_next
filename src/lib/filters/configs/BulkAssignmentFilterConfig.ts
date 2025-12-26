@@ -43,17 +43,20 @@ export const bulkAssignmentFilterConfig: FilterPluginConfig = {
 
   enablePreview: true, // Bulk assignments need preview functionality
 
-  buildRequestParams: (
-    advancedFilters,
-    legacyFilters,
-    additionalParams = {}
-  ) => ({
-    ...(advancedFilters.length > 0 && {
-      advanced_filters: JSON.stringify(advancedFilters),
-    }),
-    ...(Object.keys(legacyFilters).length > 0 && { filters: legacyFilters }),
-    preview: true,
-    limit: 1,
-    ...additionalParams,
-  }),
+  buildRequestParams: (advancedFilters, legacyFilters) => {
+    const params: Record<string, string | number | boolean> = {
+      preview: true,
+      limit: 1,
+    };
+
+    if (advancedFilters.length > 0) {
+      params.advanced_filters = JSON.stringify(advancedFilters);
+    }
+
+    if (Object.keys(legacyFilters).length > 0) {
+      Object.assign(params, legacyFilters);
+    }
+
+    return params;
+  },
 };

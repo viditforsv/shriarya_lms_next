@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 // QA Status Types
 export type QAStatus =
@@ -57,10 +57,7 @@ export interface QAComment {
 // Get QA records for questions
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { searchParams } = new URL(request.url);
     const questionId = searchParams.get("question_id");
@@ -160,10 +157,7 @@ export async function POST(request: NextRequest) {
   console.log("🚀 Request method:", request.method);
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const body = await request.json();
     console.log("QA API POST request body:", JSON.stringify(body, null, 2));
@@ -182,10 +176,7 @@ export async function POST(request: NextRequest) {
 
     if (!currentUserId && authHeader) {
       // Try to extract user from token
-      const supabaseAuth = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
+      const supabaseAuth = createSupabaseApiClient();
       const token = authHeader.replace("Bearer ", "");
       const {
         data: { user },

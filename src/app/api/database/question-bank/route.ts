@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     let result;
 
     switch (action) {
-      case "list":
+      case "list": {
         // Get paginated questions
         const filters: Partial<QuestionBankRow> = {};
 
@@ -36,12 +36,14 @@ export async function GET(request: NextRequest) {
           filters
         );
         break;
+      }
 
-      case "stats":
+      case "stats": {
         result = await questionBankDB.getQuestionStats();
         break;
+      }
 
-      case "search":
+      case "search": {
         const searchTerm = searchParams.get("q");
         if (!searchTerm) {
           return NextResponse.json(
@@ -51,8 +53,9 @@ export async function GET(request: NextRequest) {
         }
         result = await questionBankDB.searchQuestions(searchTerm);
         break;
+      }
 
-      case "pyq":
+      case "pyq": {
         const year = searchParams.get("year");
         if (!year) {
           return NextResponse.json(
@@ -62,14 +65,16 @@ export async function GET(request: NextRequest) {
         }
         result = await questionBankDB.getPYQQuestions(year);
         break;
+      }
 
-      case "difficulty":
+      case "difficulty": {
         const min = parseInt(searchParams.get("min") || "1");
         const max = parseInt(searchParams.get("max") || "10");
         result = await questionBankDB.getQuestionsByDifficultyRange(min, max);
         break;
+      }
 
-      case "board-subject":
+      case "board-subject": {
         const boardParam = searchParams.get("board");
         const subjectParam = searchParams.get("subject");
         if (!boardParam || !subjectParam) {
@@ -83,6 +88,7 @@ export async function GET(request: NextRequest) {
           subjectParam
         );
         break;
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

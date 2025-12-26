@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   BookOpen,
   FileText,
@@ -159,7 +158,7 @@ export default function StudentDashboard() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Student Dashboard
           </h1>
           <p className="text-muted-foreground">
@@ -177,11 +176,11 @@ export default function StudentDashboard() {
                   <p className="text-sm text-muted-foreground mb-1">
                     My Courses
                   </p>
-                  <p className="text-2xl font-bold text-[#1e293b]">
+                  <p className="text-2xl font-bold text-foreground">
                     {stats.totalCourses}
                   </p>
                 </div>
-                <BookOpen className="w-8 h-8 text-[#e27447]" />
+                <BookOpen className="w-8 h-8 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -249,7 +248,7 @@ export default function StudentDashboard() {
           <Card className="mb-8 rounded-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-[#e27447]" />
+                <Target className="w-5 h-5 text-primary" />
                 Concept Mastery
               </CardTitle>
               <CardDescription>
@@ -297,7 +296,7 @@ export default function StudentDashboard() {
           <Card className="rounded-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-[#e27447]" />
+                <BookOpen className="w-5 h-5 text-primary" />
                 My Enrolled Courses
               </CardTitle>
               <CardDescription>Continue learning</CardDescription>
@@ -320,9 +319,9 @@ export default function StudentDashboard() {
                       key={enrollment.id}
                       href={`/courses/${enrollment.courses.slug}`}
                     >
-                      <div className="flex items-center gap-3 p-3 border rounded-sm hover:bg-[#feefea]/40 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-3 p-3 border rounded-sm hover:bg-primary/10 transition-colors cursor-pointer">
                         <div className="w-12 h-12 bg-[#e27447]/10 rounded-sm flex items-center justify-center">
-                          <BookOpen className="w-6 h-6 text-[#e27447]" />
+                          <BookOpen className="w-6 h-6 text-primary" />
                         </div>
                         <div className="flex-1">
                           <p className="font-medium">

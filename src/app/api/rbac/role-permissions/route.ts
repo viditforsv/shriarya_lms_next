@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 // GET /api/rbac/role-permissions - Get role-permission assignments (simplified)
 export async function GET() {
   try {
     // Use service role key to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     // Get roles with their permissions from JSONB field
     const { data: roles, error: rolesError } = await supabase
@@ -64,10 +61,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     // Use service role key to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
     const { roleId, permissionId, granted } = await request.json();
 
     // Get current role data

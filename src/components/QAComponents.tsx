@@ -1,13 +1,13 @@
 "use client";
 
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import { Flag, CheckCircle, XCircle, Clock, Edit, Archive } from "lucide-react";
 
 export type QAStatus =

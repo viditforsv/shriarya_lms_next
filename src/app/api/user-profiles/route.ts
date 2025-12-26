@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 // GET /api/user-profiles - Get all user profiles
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role");

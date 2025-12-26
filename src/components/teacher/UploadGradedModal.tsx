@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +11,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/app/components-demo/ui/dialog";
-import { Textarea } from "@/app/components-demo/ui/textarea";
+} from "@/design-system/components/dialog";
+import { Textarea } from "@/design-system/components/textarea";
 import { Upload, X } from "lucide-react";
 
 interface Submission {

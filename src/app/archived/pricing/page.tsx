@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from "@/app/components-demo/ui/ui-components/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components-demo/ui/ui-components/card"
-import { Badge } from "@/app/components-demo/ui/ui-components/badge"
+import { Button } from "@/design-system/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/design-system/components/ui/card"
+import { Badge } from "@/design-system/components/ui/badge"
 import { Check } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -53,7 +53,7 @@ export default function PricingPage() {
         <section className="mb-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Free Plan */}
-            <Card className="relative p-8 hover:shadow-lg transition-shadow duration-300">
+            <Card className="relative p-8">
               <CardHeader className="text-center pb-6">
                 <CardTitle className="text-2xl text-[#1e293b]">Free</CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -84,7 +84,7 @@ export default function PricingPage() {
                   </li>
                 </ul>
                 <Link href="/auth">
-                  <Button variant="outline" className="w-full mt-6 border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
+                  <Button variant="outline" className="w-full mt-6 border-primary hover:bg-primary hover:text-white">
                     Get Started Free
                   </Button>
                 </Link>
@@ -92,7 +92,7 @@ export default function PricingPage() {
             </Card>
 
             {/* Student Plan */}
-            <Card className="relative p-8 border-2 border-[#e27447] hover:shadow-lg transition-shadow duration-300 transform scale-105">
+            <Card className="relative p-8 border-2 border-[#e27447] transform scale-105">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-[#e27447] text-white border-0 px-4 py-2">
                   Most Popular
@@ -138,7 +138,7 @@ export default function PricingPage() {
                   </li>
                 </ul>
                 <Link href="/auth">
-                  <Button className="w-full mt-6 bg-[#e27447] hover:bg-[#e27447]/90">
+                  <Button className="w-full mt-6 bg-primary hover:bg-primary/90">
                     Start Learning
                   </Button>
                 </Link>
@@ -146,7 +146,7 @@ export default function PricingPage() {
             </Card>
 
             {/* Premium Plan */}
-            <Card className="relative p-8 hover:shadow-lg transition-shadow duration-300">
+            <Card className="relative p-8">
               <CardHeader className="text-center pb-6">
                 <CardTitle className="text-2xl text-[#1e293b]">Premium</CardTitle>
                 <CardDescription className="text-muted-foreground">
@@ -187,7 +187,7 @@ export default function PricingPage() {
                   </li>
                 </ul>
                 <Link href="/contact">
-                  <Button variant="outline" className="w-full mt-6 border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
+                  <Button variant="outline" className="w-full mt-6 border-primary hover:bg-primary hover:text-white">
                     Contact Sales
                   </Button>
                 </Link>
@@ -307,12 +307,12 @@ export default function PricingPage() {
             <CardContent>
               <div className="flex gap-4 justify-center">
                 <Link href="/auth">
-                  <Button size="lg" className="bg-[#e27447] hover:bg-[#e27447]/90">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90">
                     Start Free Trial
                   </Button>
                 </Link>
                 <Link href="/contact">
-                  <Button size="lg" variant="outline" className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white">
+                  <Button size="lg" variant="outline" className="border-primary hover:bg-primary hover:text-white">
                     Contact Us
                   </Button>
                 </Link>

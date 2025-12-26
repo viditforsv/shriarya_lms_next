@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 export async function GET(
   request: NextRequest,
@@ -9,10 +9,7 @@ export async function GET(
     const { id } = await params;
 
     // Use service role key for API routes to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { data: question, error } = await supabase
       .from("question_bank")
@@ -47,10 +44,7 @@ export async function PUT(
     const { id } = await params;
 
     // Use service role key for API routes to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
     const body = await request.json();
 
     // Remove fields that shouldn't be updated
@@ -93,10 +87,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Use service role key for API routes to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     // Soft delete by setting is_active to false
     const { error } = await supabase

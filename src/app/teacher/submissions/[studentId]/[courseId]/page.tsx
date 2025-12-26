@@ -1,36 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/app/components-demo/ui/dialog";
-import { Textarea } from "@/app/components-demo/ui/textarea";
-import {
-  FileText,
-  Download,
-  Upload,
-  CheckCircle,
-  Clock,
-  ArrowLeft,
-} from "lucide-react";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Badge } from "@/design-system/components/ui/badge";
+import {} from "@/design-system/components/dialog";
+import { FileText, Download, Upload, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { UploadGradedModal } from "@/components/teacher/UploadGradedModal";
 
@@ -77,13 +54,7 @@ export default function StudentSubmissionsPage({
     params.then(setResolvedParams);
   }, [params]);
 
-  useEffect(() => {
-    if (resolvedParams && user) {
-      loadSubmissions();
-    }
-  }, [resolvedParams, user]);
-
-  const loadSubmissions = async () => {
+  const loadSubmissions = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -110,7 +81,13 @@ export default function StudentSubmissionsPage({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [resolvedParams?.studentId, resolvedParams?.courseId]);
+
+  useEffect(() => {
+    if (resolvedParams && user) {
+      loadSubmissions();
+    }
+  }, [resolvedParams, user, loadSubmissions]);
 
   // Sanitize filename for display (remove UUIDs and timestamps)
   const sanitizeFileName = (fileName: string) => {
@@ -191,12 +168,12 @@ export default function StudentSubmissionsPage({
           <div>
             <Link
               href="/teacher/dashboard"
-              className="flex items-center gap-2 text-muted-foreground hover:text-[#e27447] mb-4"
+              className="flex items-center gap-2 text-muted-foreground hover:text-primary mb-4"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               {studentInfo
                 ? `${studentInfo.first_name} ${studentInfo.last_name}'s`
                 : "Student"}{" "}
@@ -241,7 +218,7 @@ export default function StudentSubmissionsPage({
                 No submissions found
               </h3>
               <p className="text-muted-foreground">
-                This student hasn't submitted any assignments yet.
+                This student hasn&apos;t submitted any assignments yet.
               </p>
             </div>
           </Card>

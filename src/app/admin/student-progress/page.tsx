@@ -1,25 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { AdminOnly } from "@/app/components-demo/ui/form-components/RoleGuard";
+import { useEffect, useState, useCallback } from "react";
+import { AdminOnly } from "@/design-system/components/form-components/RoleGuard";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Users,
   TrendingUp,
@@ -31,7 +30,6 @@ import {
   BookOpen,
   BarChart3,
 } from "lucide-react";
-import Link from "next/link";
 
 interface ClassAnalytics {
   overview: {
@@ -86,7 +84,6 @@ interface StudentProfile {
 }
 
 export default function StudentProgressDashboard() {
-  const { profile } = useAuth();
   const [analytics, setAnalytics] = useState<ClassAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
@@ -100,32 +97,7 @@ export default function StudentProgressDashboard() {
     "overview" | "students" | "tags"
   >("overview");
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCourse) {
-      fetchAnalytics();
-    }
-  }, [selectedCourse]);
-
-  const fetchCourses = async () => {
-    try {
-      const response = await fetch("/api/courses");
-      if (response.ok) {
-        const data = await response.json();
-        setCourses(data.courses || []);
-        if (data.courses && data.courses.length > 0) {
-          setSelectedCourse(data.courses[0].id);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
-  };
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       const url = selectedCourse
@@ -140,7 +112,9 @@ export default function StudentProgressDashboard() {
         // Fetch student profiles
         if (data.classAnalytics?.studentRankings) {
           await fetchStudentProfiles(
-            data.classAnalytics.studentRankings.map((s: any) => s.studentId)
+            data.classAnalytics.studentRankings.map(
+              (s: { studentId: string }) => s.studentId
+            )
           );
         }
       }
@@ -148,6 +122,31 @@ export default function StudentProgressDashboard() {
       console.error("Error fetching analytics:", error);
     } finally {
       setLoading(false);
+    }
+  }, [selectedCourse]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCourse) {
+      fetchAnalytics();
+    }
+  }, [selectedCourse, fetchAnalytics]);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch("/api/courses");
+      if (response.ok) {
+        const data = await response.json();
+        setCourses(data.courses || []);
+        if (data.courses && data.courses.length > 0) {
+          setSelectedCourse(data.courses[0].id);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
     }
   };
 
@@ -176,19 +175,6 @@ export default function StudentProgressDashboard() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-  };
-
-  const getMasteryColor = (level: string) => {
-    switch (level) {
-      case "red":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "yellow":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "green":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
   };
 
   if (loading && !analytics) {

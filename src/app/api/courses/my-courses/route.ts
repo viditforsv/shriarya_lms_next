@@ -1,13 +1,10 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
-    // Create a direct Supabase client without SSR
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    // Create a Supabase client with environment-based credentials
+    const supabase = await createClient()
 
     // Get the authorization header
     const authHeader = request.headers.get('authorization')

@@ -96,7 +96,7 @@ export class PaymentService {
   ): Promise<PaymentVerificationResult> {
     try {
       switch (provider) {
-        case "razorpay":
+        case "razorpay": {
           const { razorpayOrderId, razorpayPaymentId, razorpaySignature } =
             paymentData;
           const isValid = RazorpayService.verifyPayment(
@@ -121,6 +121,7 @@ export class PaymentService {
               error: "Invalid payment signature",
             };
           }
+        }
 
         default:
           return {
@@ -155,13 +156,14 @@ export class PaymentService {
   }> {
     try {
       switch (provider) {
-        case "razorpay":
+        case "razorpay": {
           const razorpayRefund = await RazorpayService.refundPayment(
             paymentId,
             amount,
             reason
           );
           return razorpayRefund;
+        }
 
         default:
           return {
@@ -189,10 +191,7 @@ export class PaymentService {
   /**
    * Get recommended payment provider for user
    */
-  static getRecommendedProvider(
-    userCountry?: string,
-    currency: string = "INR"
-  ): PaymentProvider {
+  static getRecommendedProvider(): PaymentProvider {
     return getRecommendedPaymentProvider();
   }
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
-} from "@/app/components-demo/ui/avatar";
+} from "@/design-system/components/avatar";
 import { cn } from "@/lib/utils";
 import { AvatarPicker } from "./AvatarPicker";
 
@@ -30,6 +30,8 @@ export function AvatarUpload({
   onAvatarUpdate,
   size = "lg",
 }: AvatarUploadProps) {
+  // userEmail is part of the interface but not currently used
+  void userEmail;
   const [avatar, setAvatar] = useState<string | null>(currentAvatar || null);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -98,7 +100,6 @@ export function AvatarUpload({
         currentAvatar={avatar}
         userName={userName}
         userId={userId}
-        userEmail={userEmail}
         googleAvatar={googleAvatar}
         onAvatarUpdate={(newAvatar) => {
           setAvatar(newAvatar);

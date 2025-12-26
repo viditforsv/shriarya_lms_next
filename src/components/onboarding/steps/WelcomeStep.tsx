@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
 import { BookOpen, Users, Award, Clock, ArrowRight } from "lucide-react";
 import { OnboardingStepProps } from "../../OnboardingFlow";
 
@@ -39,7 +39,7 @@ export function WelcomeStep({ onNext }: OnboardingStepProps) {
 
         <div>
           <h2 className="text-xl font-semibold text-foreground mb-2">
-            Welcome to ShriArya LMS!
+            Welcome to Preppeo LMS!
           </h2>
           <p className="text-muted-foreground">
             We&apos;re excited to have you join our learning community.

@@ -13,7 +13,15 @@ interface RecordAttemptParams {
 
 interface AttemptResponse {
   success: boolean;
-  attempt?: any;
+  attempt?: {
+    id: string;
+    question_id: string;
+    user_id: string;
+    is_correct: boolean;
+    time_taken_seconds: number;
+    created_at: string;
+    [key: string]: unknown;
+  };
   error?: string;
 }
 

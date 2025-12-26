@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
 import { Settings, Target, Clock, BookOpen, ArrowRight } from "lucide-react";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { OnboardingStepProps } from "../../OnboardingFlow";
@@ -197,7 +196,7 @@ export function PreferencesStep({ onNext }: OnboardingStepProps) {
             {experienceLevels.map((level) => (
               <button
                 key={level.id}
-                onClick={() => setExperienceLevel(level.id as any)}
+                onClick={() => setExperienceLevel(level.id as "beginner" | "intermediate" | "advanced")}
                 className={`w-full p-3 rounded-sm border text-left transition-all duration-200 ${
                   experienceLevel === level.id
                     ? "border-[#e27447] bg-[#e27447]/5"
@@ -237,7 +236,7 @@ export function PreferencesStep({ onNext }: OnboardingStepProps) {
             {studySchedules.map((schedule) => (
               <button
                 key={schedule.id}
-                onClick={() => setStudySchedule(schedule.id as any)}
+                onClick={() => setStudySchedule(schedule.id as "flexible" | "structured" | "intensive")}
                 className={`w-full p-3 rounded-sm border text-left transition-all duration-200 ${
                   studySchedule === schedule.id
                     ? "border-[#e27447] bg-[#e27447]/5"

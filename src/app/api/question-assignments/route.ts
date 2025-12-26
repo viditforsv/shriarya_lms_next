@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 // GET /api/question-assignments - Get assignments for a user or question
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { searchParams } = new URL(request.url);
     const assignedTo = searchParams.get("assigned_to");
@@ -119,10 +116,7 @@ export async function GET(request: NextRequest) {
 // POST /api/question-assignments - Create a new assignment
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const body = await request.json();
     const {
@@ -195,10 +189,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/question-assignments - Update assignment status
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const body = await request.json();
     const { id, status, notes } = body;
@@ -243,10 +234,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/question-assignments - Delete an assignment
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

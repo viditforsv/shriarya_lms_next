@@ -86,6 +86,11 @@ export const ROUTE_ACCESS: RouteAccess[] = [
     requiredRole: "content_manager",
   },
   {
+    path: "/question-bank/new/[type]",
+    accessLevel: "authenticated",
+    requiredRole: "content_manager",
+  },
+  {
     path: "/question-bank/[id]",
     accessLevel: "authenticated",
     requiredRole: "content_manager",

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Progress } from "@/design-system/components/ui/progress";
 import {
   ChevronDown,
   ChevronRight,
@@ -13,7 +13,6 @@ import {
   BookOpen,
   FileText,
   CheckCircle,
-  Clock,
   Lock,
   Unlock,
   Play,

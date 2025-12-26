@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card"
-import { Badge } from "@/app/components-demo/ui/ui-components/badge"
+import { Card, CardContent } from "@/design-system/components/ui/card"
+import { Badge } from "@/design-system/components/ui/badge"
 // import { Testimonial, testimonialsDatabase, getFeaturedTestimonials, getTestimonialsByService } from "@/data/testimonials"
 
 interface Testimonial {
@@ -98,7 +98,7 @@ export function Testimonials({
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayTestimonials.map((testimonial) => (
-          <Card key={testimonial.id} className="hover:shadow-lg transition-shadow duration-300">
+          <Card key={testimonial.id} className="">
             <CardContent className="pt-6">
               {/* Rating */}
               <div className="flex items-center mb-4">

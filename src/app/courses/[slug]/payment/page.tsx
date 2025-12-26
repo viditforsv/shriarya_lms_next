@@ -4,18 +4,27 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
 import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
 }
@@ -28,6 +37,9 @@ interface Course {
   currency: string;
   slug: string;
   thumbnail: string;
+  status?: string;
+  originalPrice?: number;
+  discountPercent?: number;
 }
 
 export default function CoursePaymentPage() {
@@ -86,6 +98,17 @@ export default function CoursePaymentPage() {
           return;
         }
 
+        // Calculate discount for draft (upcoming) courses - 50% off
+        const isUpcoming = courseData.status === "draft";
+        const originalPrice = courseData.price || 0;
+        const discountPercent = isUpcoming ? 50 : 0;
+        const discountedPrice = isUpcoming ? originalPrice * 0.5 : originalPrice;
+        
+        // Update course data with discounted price
+        courseData.price = discountedPrice;
+        courseData.originalPrice = originalPrice;
+        courseData.discountPercent = discountPercent;
+
         // Check if user is already enrolled
         if (user) {
           const { data: enrollment } = await supabase
@@ -133,15 +156,21 @@ export default function CoursePaymentPage() {
 
       setStatus("Creating order...");
 
-      // Create Razorpay order
+      // Create Razorpay order (use discounted price if available)
+      const finalAmount = course.discountPercent && course.discountPercent > 0 
+        ? course.price 
+        : course.price;
+      
       const createResponse = await fetch("/api/payments/create-razorpay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: course.price,
+          amount: finalAmount,
           currency: course.currency || "INR",
           courseId: course.id,
           courseName: course.title,
+          discountPercent: course.discountPercent || 0,
+          originalPrice: course.originalPrice || course.price,
         }),
       });
 
@@ -186,7 +215,7 @@ export default function CoursePaymentPage() {
         theme: {
           color: "#e27447",
         },
-        handler: async function (response: any) {
+        handler: async function (response: RazorpayResponse) {
           setStatus("Verifying payment...");
 
           try {
@@ -311,9 +340,11 @@ export default function CoursePaymentPage() {
               <div className="bg-gray-50 rounded-sm p-6 border">
                 <div className="flex items-start space-x-4">
                   {course.thumbnail && (
-                    <img
+                    <Image
                       src={course.thumbnail}
                       alt={course.title}
+                      width={96}
+                      height={96}
                       className="w-24 h-24 object-cover rounded-sm"
                     />
                   )}
@@ -326,20 +357,54 @@ export default function CoursePaymentPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-[#e27447]">
-                      ₹{course.price?.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {course.currency || "INR"}
-                    </div>
+                    {course.discountPercent && course.discountPercent > 0 ? (
+                      <div>
+                        <div className="flex items-center gap-2 justify-end mb-1">
+                          <span className="text-lg line-through text-muted-foreground">
+                            ₹{course.originalPrice?.toLocaleString()}
+                          </span>
+                          <Badge className="bg-green-600 text-white">
+                            {course.discountPercent}% OFF
+                          </Badge>
+                        </div>
+                        <div className="text-2xl font-bold text-primary">
+                          ₹{course.price?.toLocaleString()}
+                        </div>
+                        <div className="text-xs text-green-600 font-medium">
+                          Early Bird Discount
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-2xl font-bold text-primary">
+                          ₹{course.price?.toLocaleString()}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {course.currency || "INR"}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
+              {/* Discount Notice for Upcoming Courses */}
+              {course.discountPercent && course.discountPercent > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-sm p-4">
+                  <h4 className="font-semibold mb-2 text-green-900">
+                    🎉 Early Bird Special
+                  </h4>
+                  <p className="text-sm text-green-800">
+                    Enroll now and save {course.discountPercent}%! This course is currently in development and will be available soon. 
+                    Early enrollments get lifetime access at a discounted price.
+                  </p>
+                </div>
+              )}
+
               {/* What's Included */}
               <div className="bg-blue-50 border border-blue-200 rounded-sm p-4">
                 <h4 className="font-semibold mb-3 text-blue-900">
-                  What's Included
+                  What&apos;s Included
                 </h4>
                 <ul className="space-y-2 text-sm text-blue-800">
                   <li className="flex items-center">
@@ -358,6 +423,12 @@ export default function CoursePaymentPage() {
                     <Check className="w-4 h-4 mr-2" />
                     Progress tracking
                   </li>
+                  {course.discountPercent && course.discountPercent > 0 && (
+                    <li className="flex items-center">
+                      <Check className="w-4 h-4 mr-2" />
+                      Early access when course launches
+                    </li>
+                  )}
                 </ul>
               </div>
 
@@ -383,6 +454,8 @@ export default function CoursePaymentPage() {
               >
                 {isProcessing
                   ? "Processing..."
+                  : course.discountPercent && course.discountPercent > 0
+                  ? `Pay ₹${course.price?.toLocaleString()} (${course.discountPercent}% OFF)`
                   : `Pay ₹${course.price?.toLocaleString()}`}
               </Button>
 

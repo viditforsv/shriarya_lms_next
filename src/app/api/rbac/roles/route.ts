@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 // GET /api/rbac/roles - Get all roles
 export async function GET() {
   try {
     // Use service role key to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     const { data: roles, error } = await supabase
       .from("roles")

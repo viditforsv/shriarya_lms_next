@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import { Calculator } from "lucide-react";
 
 interface Solution {
@@ -494,8 +494,8 @@ export function LinearEquationSolver() {
 
         <div className="mt-6 p-4 bg-muted/50 rounded-sm">
           <p className="text-sm text-muted-foreground">
-            <strong>Methods:</strong> Uses Cramer's Rule for determinants and
-            Gaussian elimination
+            <strong>Methods:</strong> Uses Cramer&apos;s Rule for determinants
+            and Gaussian elimination
             <br />
             System must have unique solutions (non-zero determinant)
           </p>

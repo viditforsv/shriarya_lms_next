@@ -1,0 +1,1924 @@
+{
+  "title": "GRE Quant",
+  "slug": "gre-quant",
+  "description": "Complete GRE Quant preparation with topic-wise question banks, varied practice sets, and mock tests covering Algebra, Arithmetic, Geometry, and Data Analysis.",
+  "curriculum": "GRE",
+  "subject": "Quantitative Reasoning",
+  "grade": "12+",
+  "level": null,
+  "price": 4000,
+  "validity_days": 365,
+  "status": "draft",
+  "thumbnail_url": "https://shrividhyaclasses.b-cdn.net/lms_qb_images/GRE%20Quant.png",
+  "template_data": {
+    "duration": "3 Months",
+    "units": [
+      {
+        "unit_name": "Quantitative Reasinging Applications",
+        "unit_order": 1,
+        "description": "Quantitative Reasinging Applications - Complete coverage of all topics",
+        "chapters": [
+          {
+            "chapter_name": "Quantitative Comparisons",
+            "chapter_order": 1,
+            "description": "Quantitative Comparisons - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Inequality logic",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "GRE QC format tricks",
+                    "slug": "gre-lid-001",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: GRE QC format tricks",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Estimation",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Elimination strategies",
+                    "slug": "gre-lid-002",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Elimination strategies",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Word Problems",
+            "chapter_order": 2,
+            "description": "Word Problems - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Rate problems",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Translation practice",
+                    "slug": "gre-lid-003",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Translation practice",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Work problems",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Logical traps",
+                    "slug": "gre-lid-004",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Logical traps",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Mixture problems",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Setting up equations",
+                    "slug": "gre-lid-005",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Setting up equations",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Percent word problems",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Reverse percent",
+                    "slug": "gre-lid-006",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Reverse percent",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Ratio word problems",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Proportion setup",
+                    "slug": "gre-lid-007",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Proportion setup",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Data Sufficiency",
+            "chapter_order": 3,
+            "description": "Data Sufficiency - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Interpreting question conditions",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Recognizing redundant data",
+                    "slug": "gre-lid-008",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Recognizing redundant data",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Statement analysis",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Recognizing sufficient data",
+                    "slug": "gre-lid-009",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Recognizing sufficient data",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "GRE Strategy",
+            "chapter_order": 4,
+            "description": "GRE Strategy - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Estimation",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Strategic guessing",
+                    "slug": "gre-lid-010",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Strategic guessing",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Plugging in",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Time saving techniques",
+                    "slug": "gre-lid-011",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Time saving techniques",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Approximation",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Answer elimination",
+                    "slug": "gre-lid-012",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Answer elimination",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unit_name": "Data Analytics",
+        "unit_order": 2,
+        "description": "Data Analytics - Complete coverage of all topics",
+        "chapters": [
+          {
+            "chapter_name": "Descriptive Statistics",
+            "chapter_order": 1,
+            "description": "Descriptive Statistics - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Mean",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Data summary",
+                    "slug": "gre-lid-013",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Data summary",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Median",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Central tendency",
+                    "slug": "gre-lid-014",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Central tendency",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Mode",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Frequency analysis",
+                    "slug": "gre-lid-015",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Frequency analysis",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Range",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Data spread",
+                    "slug": "gre-lid-016",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Data spread",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Standard Deviation",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Variance interpretation",
+                    "slug": "gre-lid-017",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Variance interpretation",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Z-score",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Standardization",
+                    "slug": "gre-lid-018",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Standardization",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Data Interpretation",
+            "chapter_order": 2,
+            "description": "Data Interpretation - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Tables",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Reading data sets",
+                    "slug": "gre-lid-019",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Reading data sets",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Graphs",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Comparing data sets",
+                    "slug": "gre-lid-020",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Comparing data sets",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Charts",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Trend analysis",
+                    "slug": "gre-lid-021",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Trend analysis",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Scatterplots",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Correlation interpretation",
+                    "slug": "gre-lid-022",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Correlation interpretation",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Probability",
+            "chapter_order": 3,
+            "description": "Probability - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Basic probability",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Sample space and events",
+                    "slug": "gre-lid-023",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sample space and events",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Mutually exclusive events",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Either/or probability",
+                    "slug": "gre-lid-024",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Either/or probability",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Independent events",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Multiplication rule",
+                    "slug": "gre-lid-025",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Multiplication rule",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Dependent events",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Conditional probability",
+                    "slug": "gre-lid-026",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Conditional probability",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Complementary events",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "P(not A) = 1 - P(A)",
+                    "slug": "gre-lid-027",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: P(not A) = 1 - P(A)",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Random variables",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Discrete and continuous",
+                    "slug": "gre-lid-028",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Discrete and continuous",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Expected value",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "Mean of probability distribution",
+                    "slug": "gre-lid-029",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Mean of probability distribution",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Variance and standard deviation",
+                "topic_order": 8,
+                "lessons": [
+                  {
+                    "title": "Spread of distributions",
+                    "slug": "gre-lid-030",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Spread of distributions",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Normal distribution",
+                "topic_order": 9,
+                "lessons": [
+                  {
+                    "title": "Bell curve and properties",
+                    "slug": "gre-lid-031",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Bell curve and properties",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Counting Methods",
+            "chapter_order": 4,
+            "description": "Counting Methods - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Permutations",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Order matters",
+                    "slug": "gre-lid-032",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Order matters",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Combinations",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Choosing objects",
+                    "slug": "gre-lid-033",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Choosing objects",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Factorial",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "n! logic and simplification",
+                    "slug": "gre-lid-034",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: n! logic and simplification",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Venn diagrams",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Set operations and overlaps",
+                    "slug": "gre-lid-035",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Set operations and overlaps",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unit_name": "Geometry",
+        "unit_order": 3,
+        "description": "Geometry - Complete coverage of all topics",
+        "chapters": [
+          {
+            "chapter_name": "Lines & Angles",
+            "chapter_order": 1,
+            "description": "Lines & Angles - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Parallel lines",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Transversal angle relationships",
+                    "slug": "gre-lid-036",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Transversal angle relationships",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Vertical angles",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Equal angle pairs",
+                    "slug": "gre-lid-037",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Equal angle pairs",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Supplementary angles",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Sum = 180°",
+                    "slug": "gre-lid-038",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sum = 180°",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Complementary angles",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Sum = 90°",
+                    "slug": "gre-lid-039",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sum = 90°",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Triangles",
+            "chapter_order": 2,
+            "description": "Triangles - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Triangle properties",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Sum of angles = 180°",
+                    "slug": "gre-lid-040",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sum of angles = 180°",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Triangle inequality",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Side length relationships",
+                    "slug": "gre-lid-041",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Side length relationships",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Similar triangles",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Proportional sides",
+                    "slug": "gre-lid-042",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Proportional sides",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Pythagorean theorem",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "a² + b² = c²",
+                    "slug": "gre-lid-043",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: a² + b² = c²",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "30-60-90 triangles",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Side ratios 1:√3:2",
+                    "slug": "gre-lid-044",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Side ratios 1:√3:2",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "45-45-90 triangles",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Side ratios 1:1:√2",
+                    "slug": "gre-lid-045",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Side ratios 1:1:√2",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Area of triangle",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "½ × base × height",
+                    "slug": "gre-lid-046",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: ½ × base × height",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Quadrilaterals & Polygons",
+            "chapter_order": 3,
+            "description": "Quadrilaterals & Polygons - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Parallelograms",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Opposite sides equal and parallel",
+                    "slug": "gre-lid-047",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Opposite sides equal and parallel",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Rectangles",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "All angles 90°",
+                    "slug": "gre-lid-048",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: All angles 90°",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Squares",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Equal sides and angles",
+                    "slug": "gre-lid-049",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Equal sides and angles",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Trapezoids",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "One pair of parallel sides",
+                    "slug": "gre-lid-050",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: One pair of parallel sides",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Regular polygons",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Equal sides and angles",
+                    "slug": "gre-lid-051",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Equal sides and angles",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Perimeter",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Sum of all sides",
+                    "slug": "gre-lid-052",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sum of all sides",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Area formulas",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "Rectangle/parallelogram/trapezoid",
+                    "slug": "gre-lid-053",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Rectangle/parallelogram/trapezoid",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Diagonal properties",
+                "topic_order": 8,
+                "lessons": [
+                  {
+                    "title": "Bisection and perpendicularity",
+                    "slug": "gre-lid-054",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Bisection and perpendicularity",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Circles",
+            "chapter_order": 4,
+            "description": "Circles - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Circumference",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "C = 2πr",
+                    "slug": "gre-lid-055",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: C = 2πr",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Area",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "A = πr²",
+                    "slug": "gre-lid-056",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: A = πr²",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Arcs",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Arc length formula",
+                    "slug": "gre-lid-057",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Arc length formula",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Sectors",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Sector area formula",
+                    "slug": "gre-lid-058",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sector area formula",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Central angles",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Angle at center",
+                    "slug": "gre-lid-059",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Angle at center",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Inscribed angles",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Angle = ½ central angle",
+                    "slug": "gre-lid-060",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Angle = ½ central angle",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Tangents",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "Perpendicular to radius",
+                    "slug": "gre-lid-061",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Perpendicular to radius",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Chords",
+                "topic_order": 8,
+                "lessons": [
+                  {
+                    "title": "Chord properties and theorems",
+                    "slug": "gre-lid-062",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Chord properties and theorems",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "3D Geometry",
+            "chapter_order": 5,
+            "description": "3D Geometry - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Cubes",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Volume = s³",
+                    "slug": "gre-lid-063",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Volume = s³",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Surface area = 6s²",
+                    "slug": "gre-lid-064",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Surface area = 6s²",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Rectangular solids",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Volume = l × w × h",
+                    "slug": "gre-lid-065",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Volume = l × w × h",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Cylinders",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Volume = πr²h",
+                    "slug": "gre-lid-066",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Volume = πr²h",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Surface area = 2πr² + 2πrh",
+                    "slug": "gre-lid-067",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Surface area = 2πr² + 2πrh",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Cones",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Volume = ⅓πr²h",
+                    "slug": "gre-lid-068",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Volume = ⅓πr²h",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Spheres",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Volume = ⁴⁄₃πr³",
+                    "slug": "gre-lid-069",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Volume = ⁴⁄₃πr³",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Surface area = 4πr²",
+                    "slug": "gre-lid-070",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Surface area = 4πr²",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Volume ratios",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Scaling and proportions",
+                    "slug": "gre-lid-071",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Scaling and proportions",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Coordinate Geometry",
+            "chapter_order": 6,
+            "description": "Coordinate Geometry - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Distance formula",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "d = √[(x₂-x₁)² + (y₂-y₁)²]",
+                    "slug": "gre-lid-072",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: d = √[(x₂-x₁)² + (y₂-y₁)²]",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Midpoint formula",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "M = ((x₁+x₂)/2",
+                    "slug": "gre-lid-073",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: M = ((x₁+x₂)/2",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Slope",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "m = (y₂-y₁)/(x₂-x₁)",
+                    "slug": "gre-lid-074",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: m = (y₂-y₁)/(x₂-x₁)",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Slope-intercept form",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "y = mx + b",
+                    "slug": "gre-lid-075",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: y = mx + b",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Parallel lines",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Equal slopes",
+                    "slug": "gre-lid-076",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Equal slopes",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Perpendicular lines",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "m₁ × m₂ = -1",
+                    "slug": "gre-lid-077",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: m₁ × m₂ = -1",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "X and Y intercepts",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "Setting y=0 and x=0",
+                    "slug": "gre-lid-078",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Setting y=0 and x=0",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unit_name": "Algebra",
+        "unit_order": 4,
+        "description": "Algebra - Complete coverage of all topics",
+        "chapters": [
+          {
+            "chapter_name": "Linear Equations",
+            "chapter_order": 1,
+            "description": "Linear Equations - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Solving for single variable",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Isolation techniques",
+                    "slug": "gre-lid-079",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Isolation techniques",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Systems of equations",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Elimination method",
+                    "slug": "gre-lid-080",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Elimination method",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Substitution method",
+                    "slug": "gre-lid-081",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Substitution method",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Word problem translation",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Setting up equations",
+                    "slug": "gre-lid-082",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Setting up equations",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Quadratic Equations & Expressions",
+            "chapter_order": 2,
+            "description": "Quadratic Equations & Expressions - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Factoring",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Middle term splitting",
+                    "slug": "gre-lid-083",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Middle term splitting",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Difference of squares",
+                    "slug": "gre-lid-084",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Difference of squares",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Quadratic formula",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "x = [-b ± √(b²-4ac)]/(2a)",
+                    "slug": "gre-lid-085",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: x = [-b ± √(b²-4ac)]/(2a)",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Discriminant",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "b² - 4ac for root analysis",
+                    "slug": "gre-lid-086",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: b² - 4ac for root analysis",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Sum of roots",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "α + β = -b/a",
+                    "slug": "gre-lid-087",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: α + β = -b/a",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Product of roots",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "αβ = c/a",
+                    "slug": "gre-lid-088",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: αβ = c/a",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Exponent rules",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "aᵐ × aⁿ = aᵐ⁺ⁿ",
+                    "slug": "gre-lid-089",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: aᵐ × aⁿ = aᵐ⁺ⁿ",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Radical simplification",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "√(ab) = √a × √b",
+                    "slug": "gre-lid-090",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: √(ab) = √a × √b",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Inequalities",
+            "chapter_order": 3,
+            "description": "Inequalities - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Linear inequalities",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Solving and graphing",
+                    "slug": "gre-lid-091",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Solving and graphing",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Quadratic inequalities",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Sign analysis method",
+                    "slug": "gre-lid-092",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sign analysis method",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Absolute value inequalities",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "|x| < a and |x| > a",
+                    "slug": "gre-lid-093",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: |x| < a and |x| > a",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Range finding",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Solution sets on number line",
+                    "slug": "gre-lid-094",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Solution sets on number line",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Functions & Graphs",
+            "chapter_order": 4,
+            "description": "Functions & Graphs - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Function notation",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "f(x) evaluation",
+                    "slug": "gre-lid-095",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: f(x) evaluation",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Domain",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Input values",
+                    "slug": "gre-lid-096",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Input values",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Range",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Output values",
+                    "slug": "gre-lid-097",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Output values",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Function composition",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "f(g(x))",
+                    "slug": "gre-lid-098",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: f(g(x))",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Transformations",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Shifts and reflections",
+                    "slug": "gre-lid-099",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Shifts and reflections",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Word graphs",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Interpreting real-world scenarios",
+                    "slug": "gre-lid-100",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Interpreting real-world scenarios",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Sequences & Series",
+            "chapter_order": 5,
+            "description": "Sequences & Series - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Arithmetic progression",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "aₙ = a₁ + (n-1)d",
+                    "slug": "gre-lid-101",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: aₙ = a₁ + (n-1)d",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Arithmetic sum",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Sₙ = n/2 × (2a₁ + (n-1)d)",
+                    "slug": "gre-lid-102",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sₙ = n/2 × (2a₁ + (n-1)d)",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Geometric progression",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "aₙ = a₁ × rⁿ⁻¹",
+                    "slug": "gre-lid-103",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: aₙ = a₁ × rⁿ⁻¹",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Geometric sum",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Sₙ = a₁(rⁿ - 1)/(r - 1)",
+                    "slug": "gre-lid-104",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sₙ = a₁(rⁿ - 1)/(r - 1)",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Applications",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Problem solving with sequences",
+                    "slug": "gre-lid-105",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Problem solving with sequences",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unit_name": "Arithmetic",
+        "unit_order": 5,
+        "description": "Arithmetic - Complete coverage of all topics",
+        "chapters": [
+          {
+            "chapter_name": "Number Properties",
+            "chapter_order": 1,
+            "description": "Number Properties - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Integers",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Positive/negative/zero",
+                    "slug": "gre-lid-106",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Positive/negative/zero",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Even and Odd",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Properties and operations",
+                    "slug": "gre-lid-107",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Properties and operations",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Divisibility rules",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Tests for 2 through 11",
+                    "slug": "gre-lid-108",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Tests for 2 through 11",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Prime numbers",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Identification and properties",
+                    "slug": "gre-lid-109",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Identification and properties",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Prime factorization",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Breaking down to primes",
+                    "slug": "gre-lid-110",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Breaking down to primes",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "LCM",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Least common multiple",
+                    "slug": "gre-lid-111",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Least common multiple",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "HCF/GCD",
+                "topic_order": 7,
+                "lessons": [
+                  {
+                    "title": "Highest common factor",
+                    "slug": "gre-lid-112",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Highest common factor",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Factors and Multiples",
+                "topic_order": 8,
+                "lessons": [
+                  {
+                    "title": "Finding and counting",
+                    "slug": "gre-lid-113",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Finding and counting",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Remainder theorems",
+                "topic_order": 9,
+                "lessons": [
+                  {
+                    "title": "Division remainders",
+                    "slug": "gre-lid-114",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Division remainders",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Ratios & Proportions",
+            "chapter_order": 2,
+            "description": "Ratios & Proportions - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Ratios",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Simplifying and comparing",
+                    "slug": "gre-lid-115",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Simplifying and comparing",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Proportions",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Cross multiplication",
+                    "slug": "gre-lid-116",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Cross multiplication",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Direct proportion",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "y = kx",
+                    "slug": "gre-lid-117",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: y = kx",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Inverse proportion",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "xy = k",
+                    "slug": "gre-lid-118",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: xy = k",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Rates",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Unit conversion",
+                    "slug": "gre-lid-119",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Unit conversion",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Percentages & Fractions",
+            "chapter_order": 3,
+            "description": "Percentages & Fractions - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Percent to fraction",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Conversion techniques",
+                    "slug": "gre-lid-120",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Conversion techniques",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Percent change",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Increase/decrease formula",
+                    "slug": "gre-lid-121",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Increase/decrease formula",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Successive percentages",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Combined effect",
+                    "slug": "gre-lid-122",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Combined effect",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Reverse percentages",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Finding original value",
+                    "slug": "gre-lid-123",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Finding original value",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Fraction simplification",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Common denominators",
+                    "slug": "gre-lid-124",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Common denominators",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Decimal conversion",
+                "topic_order": 6,
+                "lessons": [
+                  {
+                    "title": "Fraction ↔ decimal",
+                    "slug": "gre-lid-125",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Fraction ↔ decimal",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Averages & Mixtures",
+            "chapter_order": 4,
+            "description": "Averages & Mixtures - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Mean",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Sum/count",
+                    "slug": "gre-lid-126",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Sum/count",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Weighted mean",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Different weights",
+                    "slug": "gre-lid-127",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Different weights",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Combined averages",
+                "topic_order": 3,
+                "lessons": [
+                  {
+                    "title": "Merging groups",
+                    "slug": "gre-lid-128",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Merging groups",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Mixture problems",
+                "topic_order": 4,
+                "lessons": [
+                  {
+                    "title": "Alligation method",
+                    "slug": "gre-lid-129",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Alligation method",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Concentration",
+                "topic_order": 5,
+                "lessons": [
+                  {
+                    "title": "Mixing solutions",
+                    "slug": "gre-lid-130",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Mixing solutions",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "chapter_name": "Time, Work & Distance",
+            "chapter_order": 5,
+            "description": "Time, Work & Distance - Detailed lessons and practice",
+            "topics": [
+              {
+                "topic_name": "Speed = Distance/Time",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Relative speed",
+                    "slug": "gre-lid-131",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Relative speed",
+                    "type": "document"
+                  }
+                ]
+              },
+              {
+                "topic_name": "Work = Rate × Time",
+                "topic_order": 2,
+                "lessons": [
+                  {
+                    "title": "Combined work",
+                    "slug": "gre-lid-132",
+                    "lesson_order": 1,
+                    "description": "Lesson 1: Combined work",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Pipes & cisterns",
+                    "slug": "gre-lid-133",
+                    "lesson_order": 2,
+                    "description": "Lesson 2: Pipes & cisterns",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "GRE",
+      "test-prep",
+      "quantitative-reasoning",
+      "mathematics",
+      "algebra",
+      "geometry",
+      "arithmetic",
+      "data-analytics"
+    ]
+  }
+}

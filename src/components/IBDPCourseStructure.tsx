@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/app/components-demo/ui/ui-components/collapsible";
+} from "@/design-system/components/ui/collapsible";
 import { Play, ChevronRight, ChevronDown, BookOpen, Clock } from "lucide-react";
 
 interface Lesson {
@@ -22,8 +22,8 @@ interface Lesson {
   slug: string;
   lesson_order: number;
   is_preview: boolean;
-  content?: string;
-  chapter?: {
+  content: string;
+  chapter: {
     id: string;
     chapter_name: string;
     chapter_order: number;
@@ -32,18 +32,21 @@ interface Lesson {
       unit_name: string;
       unit_order: number;
     };
-  };
-}
-
-interface Unit {
-  name: string;
-  chapters: Chapter[];
+  } | null;
 }
 
 interface Chapter {
-  name: string;
-  lessons: Lesson[];
+  id: string;
+  chapter_name: string;
   chapter_order: number;
+  lessons: Lesson[];
+}
+
+interface Unit {
+  id: string;
+  unit_name: string;
+  unit_order: number;
+  chapters: Chapter[];
 }
 
 interface IBDPCourseStructureProps {
@@ -59,83 +62,73 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCourseStructure = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  const fetchCourseStructure = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        // Fetch all units with chapters for the course
-        const unitsResponse = await fetch(
-          `/api/courses/units?course_slug=${courseSlug}`
-        );
-        if (!unitsResponse.ok) {
-          throw new Error("Failed to fetch units");
-        }
-        const unitsData = await unitsResponse.json();
-        const allUnits = unitsData.units || [];
+      const unitsResponse = await fetch(
+        `/api/courses/units?course_slug=${courseSlug}`
+      );
+      if (!unitsResponse.ok) throw new Error("Failed to fetch units");
 
-        // Fetch lessons for the course
-        const lessonsResponse = await fetch(
-          `/api/lessons?course_slug=${courseSlug}`
-        );
-        if (!lessonsResponse.ok) {
-          throw new Error("Failed to fetch lessons");
-        }
-        const lessonsData = await lessonsResponse.json();
-        const lessons: Lesson[] = lessonsData.lessons || [];
+      const unitsData = await unitsResponse.json();
+      const allUnits: Unit[] = unitsData.units || [];
 
-        // Group lessons by chapter
-        const lessonsByChapter = new Map<string, Lesson[]>();
-        lessons.forEach((lesson) => {
-          if (lesson.chapter?.id) {
-            const chapterId = lesson.chapter.id;
-            if (!lessonsByChapter.has(chapterId)) {
-              lessonsByChapter.set(chapterId, []);
-            }
-            lessonsByChapter.get(chapterId)!.push(lesson);
+      const lessonsResponse = await fetch(
+        `/api/lessons?course_slug=${courseSlug}`
+      );
+      if (!lessonsResponse.ok) throw new Error("Failed to fetch lessons");
+
+      const lessonsData = await lessonsResponse.json();
+      const lessons: Lesson[] = lessonsData.lessons || [];
+
+      // Group lessons by chapter
+      const lessonsByChapter = new Map<string, Lesson[]>();
+      lessons.forEach((lesson) => {
+        const chapterId = lesson.chapter?.id;
+        if (chapterId) {
+          if (!lessonsByChapter.has(chapterId)) {
+            lessonsByChapter.set(chapterId, []);
           }
-        });
-
-        // Build the complete course structure
-        const unitsArray: Unit[] = allUnits
-          .sort((a: any, b: any) => a.unit_order - b.unit_order)
-          .map((unit: any) => {
-            const unitChapters = (unit.chapters || [])
-              .sort((a: any, b: any) => a.chapter_order - b.chapter_order)
-              .map((chapter: any) => ({
-                name: chapter.chapter_name,
-                lessons:
-                  lessonsByChapter
-                    .get(chapter.id)
-                    ?.sort((a, b) => a.lesson_order - b.lesson_order) || [],
-                chapter_order: chapter.chapter_order,
-              }));
-
-            return {
-              name: unit.unit_name,
-              chapters: unitChapters,
-            };
-          });
-
-        setUnits(unitsArray);
-
-        // Expand first unit by default
-        if (unitsArray.length > 0) {
-          setExpandedUnits(new Set([unitsArray[0].name]));
+          lessonsByChapter.get(chapterId)!.push(lesson);
         }
-      } catch (err) {
-        console.error("Error fetching course structure:", err);
-        setError("Failed to load course structure");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      });
 
-    fetchCourseStructure();
+      // Build complete structure
+      const unitsArray: Unit[] = allUnits
+        .sort((a, b) => a.unit_order - b.unit_order)
+        .map((unit) => ({
+          ...unit,
+          chapters: (unit.chapters || [])
+            .sort((a, b) => a.chapter_order - b.chapter_order)
+            .map((chapter) => ({
+              ...chapter,
+              lessons:
+                lessonsByChapter
+                  .get(chapter.id)
+                  ?.sort((a, b) => a.lesson_order - b.lesson_order) || [],
+            })),
+        }));
+
+      setUnits(unitsArray);
+
+      if (unitsArray.length > 0) {
+        setExpandedUnits(new Set([unitsArray[0].unit_name]));
+      }
+    } catch (err) {
+      console.error("Error fetching course structure:", err);
+      setError("Failed to load course structure");
+    } finally {
+      setIsLoading(false);
+    }
   }, [courseSlug]);
 
-  const toggleUnit = (unitName: string) => {
+  useEffect(() => {
+    fetchCourseStructure();
+  }, [fetchCourseStructure]);
+
+  const toggleUnit = useCallback((unitName: string) => {
     setExpandedUnits((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(unitName)) {
@@ -145,9 +138,9 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
       }
       return newSet;
     });
-  };
+  }, []);
 
-  const toggleChapter = (chapterName: string) => {
+  const toggleChapter = useCallback((chapterName: string) => {
     setExpandedChapters((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(chapterName)) {
@@ -157,12 +150,14 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
       }
       return newSet;
     });
-  };
+  }, []);
 
-  const handleLessonClick = (lesson: Lesson) => {
-    // Navigate to the lesson page
-    window.location.href = `/courses/${courseSlug}/lesson/${lesson.slug}`;
-  };
+  const handleLessonClick = useCallback(
+    (lesson: Lesson) => {
+      window.location.href = `/courses/${courseSlug}/lesson/${lesson.slug}`;
+    },
+    [courseSlug]
+  );
 
   if (isLoading) {
     return (
@@ -186,17 +181,17 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
   return (
     <div className="space-y-4">
       {units.map((unit) => {
-        const isUnitExpanded = expandedUnits.has(unit.name);
+        const isUnitExpanded = expandedUnits.has(unit.unit_name);
         const totalLessons = unit.chapters.reduce(
           (sum, chapter) => sum + chapter.lessons.length,
           0
         );
 
         return (
-          <Card key={unit.name} className="overflow-hidden">
+          <Card key={unit.id} className="overflow-hidden">
             <Collapsible
               open={isUnitExpanded}
-              onOpenChange={() => toggleUnit(unit.name)}
+              onOpenChange={() => toggleUnit(unit.unit_name)}
             >
               <CollapsibleTrigger asChild>
                 <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
@@ -204,7 +199,9 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
                     <div className="flex items-center space-x-3">
                       <BookOpen className="h-5 w-5 text-primary" />
                       <div>
-                        <CardTitle className="text-lg">{unit.name}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {unit.unit_name}
+                        </CardTitle>
                         <CardDescription>
                           {unit.chapters.length} chapters • {totalLessons}{" "}
                           lessons
@@ -230,7 +227,7 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
                   <div className="space-y-3">
                     {unit.chapters.map((chapter) => {
                       const isChapterExpanded = expandedChapters.has(
-                        chapter.name
+                        chapter.chapter_name
                       );
                       const previewLessons = chapter.lessons.filter(
                         (lesson) => lesson.is_preview
@@ -238,12 +235,14 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
 
                       return (
                         <Card
-                          key={chapter.name}
+                          key={chapter.id}
                           className="border-l-4 border-l-primary/20"
                         >
                           <Collapsible
                             open={isChapterExpanded}
-                            onOpenChange={() => toggleChapter(chapter.name)}
+                            onOpenChange={() =>
+                              toggleChapter(chapter.chapter_name)
+                            }
                           >
                             <CollapsibleTrigger asChild>
                               <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors py-3">
@@ -256,7 +255,7 @@ export function IBDPCourseStructure({ courseSlug }: IBDPCourseStructureProps) {
                                     />
                                     <div>
                                       <CardTitle className="text-base">
-                                        {chapter.name}
+                                        {chapter.chapter_name}
                                       </CardTitle>
                                       <CardDescription className="text-sm">
                                         {chapter.lessons.length} lessons

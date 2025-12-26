@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseApiClient } from "@/lib/supabase/api-client";
 
 export async function GET() {
   try {
     // Use service role key for API routes to bypass RLS
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createSupabaseApiClient();
 
     // Fetch all questions to extract unique values
     const { data: questions, error } = await supabase
       .from("question_bank")
       .select(
-        "boards, course_types, levels, subject, topic, difficulty, question_type, is_pyq, grade"
+        "boards, course_types, levels, subject, topic, difficulty, question_type, is_pyq, grade, section"
       );
 
     if (error) {
@@ -33,6 +30,8 @@ export async function GET() {
     const uniqueDifficulties = new Set<number>();
     const uniqueQuestionTypes = new Set<string>();
     const uniqueGrades = new Set<string>();
+    // Map of board -> sections
+    const sectionsByBoard = new Map<string, Set<string>>();
     let hasPYQ = false;
     let hasPractice = false;
 
@@ -53,6 +52,37 @@ export async function GET() {
       if (q.topic) uniqueTopics.add(q.topic);
       if (q.question_type) uniqueQuestionTypes.add(q.question_type);
       if (q.grade) uniqueGrades.add(q.grade);
+      
+      // Section by board mapping
+      // Handle section as either string, array, or comma-separated string
+      if (q.section && q.boards && Array.isArray(q.boards)) {
+        // Extract sections - handle multiple formats
+        let sections: string[] = [];
+        
+        if (Array.isArray(q.section)) {
+          // If section is already an array
+          sections = q.section.filter((s): s is string => typeof s === "string" && s.trim().length > 0);
+        } else if (typeof q.section === "string") {
+          // If section is a string, check if it's comma-separated
+          sections = q.section
+            .split(/[,;|]/) // Split by comma, semicolon, or pipe
+            .map((s) => s.trim())
+            .filter((s) => s.length > 0);
+        }
+        
+        // Add each unique section to each board
+        if (sections.length > 0) {
+          q.boards.forEach((board: string) => {
+            if (!sectionsByBoard.has(board)) {
+              sectionsByBoard.set(board, new Set<string>());
+            }
+            // Add all sections for this question to each board
+            sections.forEach((section) => {
+              sectionsByBoard.get(board)!.add(section);
+            });
+          });
+        }
+      }
 
       // Number fields
       if (q.difficulty) uniqueDifficulties.add(q.difficulty);
@@ -75,6 +105,12 @@ export async function GET() {
       if (qa.priority_level) uniquePriorityLevels.add(qa.priority_level);
     });
 
+    // Convert sectionsByBoard map to object
+    const sectionsByBoardObj: Record<string, string[]> = {};
+    sectionsByBoard.forEach((sections, board) => {
+      sectionsByBoardObj[board] = Array.from(sections).sort();
+    });
+
     return NextResponse.json({
       boards: Array.from(uniqueBoards).sort(),
       course_types: Array.from(uniqueCourseTypes).sort(),
@@ -84,6 +120,7 @@ export async function GET() {
       difficulties: Array.from(uniqueDifficulties).sort((a, b) => a - b),
       question_types: Array.from(uniqueQuestionTypes).sort(),
       grades: Array.from(uniqueGrades).sort(),
+      sections_by_board: sectionsByBoardObj,
       has_pyq: hasPYQ,
       has_practice: hasPractice,
       qa_statuses: Array.from(uniqueQAStatuses).sort(),

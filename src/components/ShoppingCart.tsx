@@ -4,11 +4,9 @@ import { useCart } from "@/contexts/CartContext";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
 import { X, ShoppingCart as CartIcon } from "lucide-react";
 import Link from "next/link";
 import {
@@ -17,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/app/components-demo/ui/sheet";
+} from "@/design-system/components/sheet";
 
 export function ShoppingCart() {
   const { items, removeFromCart, totalPrice, itemCount } = useCart();

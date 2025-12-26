@@ -1,31 +1,33 @@
 "use client";
 
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Label } from "@/design-system/components/ui/label";
+import { Input } from "@/design-system/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import { Filter } from "lucide-react";
+
+type FilterField = {
+  value: string;
+  label: string;
+  type?: "text" | "number" | "boolean" | "select";
+  options?: string[];
+};
 
 interface LegacyFilterFormProps {
   filters: Record<string, string>;
   onFilterChange: (key: string, value: string) => void;
-  availableFields: Array<{
-    value: string;
-    label: string;
-    type?: "text" | "number" | "boolean" | "select";
-    options?: string[];
-  }>;
+  availableFields: FilterField[];
   className?: string;
 }
 
@@ -35,7 +37,7 @@ export default function LegacyFilterForm({
   availableFields,
   className = "",
 }: LegacyFilterFormProps) {
-  const renderFieldInput = (field: any) => {
+  const renderFieldInput = (field: FilterField) => {
     const value = filters[field.value] || "";
 
     switch (field.type) {
@@ -77,7 +79,7 @@ export default function LegacyFilterForm({
               />
             </SelectTrigger>
             <SelectContent>
-              {field.options?.map((option: any) => (
+              {field.options?.map((option: string) => (
                 <SelectItem key={option} value={option}>
                   {option}
                 </SelectItem>

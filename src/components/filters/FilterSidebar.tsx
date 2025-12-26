@@ -1,22 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/select";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Search,
   Filter,
   ChevronLeft,
-  ChevronRight,
   RotateCcw,
   X,
 } from "lucide-react";
@@ -24,13 +23,11 @@ import {
   useAdvancedFilterPlugin,
   FilterPluginUI,
 } from "@/lib/filters/AdvancedFilterPlugin";
-import { questionBankFilterConfig } from "@/lib/filters/configs/QuestionBankFilterConfig";
 
 interface FilterSidebarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   filterPlugin: ReturnType<typeof useAdvancedFilterPlugin>;
-  onFiltersChange: () => void;
   hasActiveFilters: () => boolean;
   clearAllFilters: () => void;
   className?: string;
@@ -40,7 +37,6 @@ export default function FilterSidebar({
   searchTerm,
   onSearchChange,
   filterPlugin,
-  onFiltersChange,
   hasActiveFilters,
   clearAllFilters,
   className = "",
@@ -144,7 +140,7 @@ export default function FilterSidebar({
                   variant="secondary"
                   className="flex items-center gap-1 w-fit"
                 >
-                  Search: "{searchTerm}"
+                  Search: &quot;{searchTerm}&quot;
                   <X
                     className="w-3 h-3 cursor-pointer hover:text-red-600"
                     onClick={() => onSearchChange("")}
@@ -154,8 +150,14 @@ export default function FilterSidebar({
 
               {filterPlugin.advancedFilters.length > 0
                 ? filterPlugin.advancedFilters.map((filter, index) => {
-                    const condition = filter as any;
-                    const operatorInfo = {
+                    interface FilterCondition {
+                      field: string;
+                      operator: string;
+                      value: string | number | boolean | null;
+                    }
+
+                    const condition = filter as FilterCondition;
+                    const operatorInfo: Record<string, string> = {
                       eq: "=",
                       neq: "≠",
                       gt: ">",
@@ -177,8 +179,8 @@ export default function FilterSidebar({
                         className="flex items-center gap-1 w-fit"
                       >
                         {condition.field}{" "}
-                        {(operatorInfo as any)[condition.operator]}{" "}
-                        {condition.value}
+                        {operatorInfo[condition.operator] || condition.operator}{" "}
+                        {String(condition.value)}
                         <X
                           className="w-3 h-3 cursor-pointer hover:text-red-600"
                           onClick={() => {

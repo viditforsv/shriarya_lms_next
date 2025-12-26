@@ -12,12 +12,10 @@ export async function GET(request: NextRequest) {
     const curriculum = searchParams.get("curriculum") || "";
     const subject = searchParams.get("subject") || "";
     const price = searchParams.get("price") || "0";
-    const thumbnail = searchParams.get("thumbnail");
 
     // Color scheme matching your brand
     const primaryColor = "#e27447";
     const secondaryColor = "#d1653a";
-    const backgroundColor = "#ffffff";
     const textColor = "#1e293b";
     const mutedColor = "#64748b";
 

@@ -87,33 +87,34 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Label } from "@/design-system/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/components-demo/ui/dialog";
+} from "@/design-system/components/dialog";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Search,
   Filter,
   Eye,
@@ -122,8 +123,18 @@ import {
   X,
 } from "lucide-react";
 import { QAStatusBadge, QAPriorityBadge } from "@/components/QAComponents";
-import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
+import { Skeleton } from "@/design-system/components/ui/skeleton";
 import { renderMultiPartQuestion } from "@/components/MathRenderer";
+import { MultiSelect } from "@/components/MultiSelect";
+import { TopicAutocomplete } from "@/components/TopicAutocomplete";
+import { DifficultyRangeSlider } from "@/components/DifficultyRangeSlider";
+import { FilterChips } from "@/components/FilterChips";
+import { TagInput } from "@/components/TagInput";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/design-system/components/ui/collapsible";
 // import QuestionBankQueryBuilder from "@/components/QuestionBankQueryBuilder";
 
 /**
@@ -193,6 +204,7 @@ interface FilterOptions {
   difficulties: number[]; // Available difficulty levels
   question_types: string[]; // Available question types
   grades: string[]; // Available grades
+  sections_by_board: Record<string, string[]>; // Sections grouped by board
   has_pyq: boolean; // Whether PYQ questions exist
   has_practice: boolean; // Whether practice questions exist
   qa_statuses: string[]; // Available QA statuses
@@ -249,6 +261,7 @@ export default function QuestionBankPage() {
     difficulties: [],
     question_types: [],
     grades: [],
+    sections_by_board: {},
     has_pyq: false,
     has_practice: false,
     qa_statuses: [],
@@ -258,18 +271,24 @@ export default function QuestionBankPage() {
   // Filter loading state
   const [loadingFilters, setLoadingFilters] = useState(true);
 
+  // Mobile filter sidebar state
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
   // ===== FILTER STATE MANAGEMENT =====
 
   // Simple filters state - stores current filter selections
-  // "any" means no filter applied, specific values filter by that criteria
+  // Arrays for multi-select, empty array = no filter
+  // Single values for other filters, "any" or empty = no filter
   const [simpleFilters, setSimpleFilters] = useState({
-    boards: "any", // Educational board filter
-    course_types: "any", // Course type filter (AA, HL, SL, etc.)
-    levels: "any", // Academic level filter
-    subject: "any", // Subject area filter
+    boards: [] as string[], // Educational board filter (multi-select)
+    course_types: [] as string[], // Course type filter (multi-select)
+    levels: [] as string[], // Academic level filter (multi-select)
+    subject: [] as string[], // Subject area filter (multi-select)
     topic: "", // Topic filter (text-based, empty string = no filter)
-    tags: "", // Tags filter (comma-separated, empty string = no filter)
-    difficulty: "any", // Difficulty rating filter
+    tags: [] as string[], // Tags filter (array, empty array = no filter)
+    section: [] as string[], // Section filter (multi-select, depends on board selection)
+    difficulty_min: null as number | null, // Difficulty min (range)
+    difficulty_max: null as number | null, // Difficulty max (range)
     question_type: "any", // Question type filter
     is_pyq: "any", // PYQ filter: "pyq", "practice", "any"
     qa_status: "any", // QA status filter
@@ -296,12 +315,52 @@ export default function QuestionBankPage() {
         ...(searchTerm && { search: searchTerm }), // Only add search if not empty
       });
 
-      // Add simple filters - only include non-empty, non-"any" values
-      Object.entries(simpleFilters).forEach(([key, value]) => {
-        if (value && value !== "any") {
-          params.append(key, value);
-        }
-      });
+      // Add simple filters - handle arrays and single values
+      // Multi-select filters (arrays)
+      if (simpleFilters.boards.length > 0) {
+        params.append("boards", simpleFilters.boards.join(","));
+      }
+      if (simpleFilters.course_types.length > 0) {
+        params.append("course_types", simpleFilters.course_types.join(","));
+      }
+      if (simpleFilters.levels.length > 0) {
+        params.append("levels", simpleFilters.levels.join(","));
+      }
+      if (simpleFilters.subject.length > 0) {
+        params.append("subject", simpleFilters.subject.join(","));
+      }
+      if (simpleFilters.tags.length > 0) {
+        params.append("tags", simpleFilters.tags.join(","));
+      }
+      
+      // Single value filters
+      if (simpleFilters.topic) {
+        params.append("topic", simpleFilters.topic);
+      }
+      if (simpleFilters.section.length > 0) {
+        params.append("section", simpleFilters.section.join(","));
+      }
+      if (simpleFilters.difficulty_min !== null) {
+        params.append("difficulty_min", simpleFilters.difficulty_min.toString());
+      }
+      if (simpleFilters.difficulty_max !== null) {
+        params.append("difficulty_max", simpleFilters.difficulty_max.toString());
+      }
+      if (simpleFilters.question_type && simpleFilters.question_type !== "any") {
+        params.append("question_type", simpleFilters.question_type);
+      }
+      if (simpleFilters.is_pyq && simpleFilters.is_pyq !== "any") {
+        params.append("is_pyq", simpleFilters.is_pyq);
+      }
+      if (simpleFilters.qa_status && simpleFilters.qa_status !== "any") {
+        params.append("qa_status", simpleFilters.qa_status);
+      }
+      if (simpleFilters.priority_level && simpleFilters.priority_level !== "any") {
+        params.append("priority_level", simpleFilters.priority_level);
+      }
+      if (simpleFilters.is_flagged && simpleFilters.is_flagged !== "any") {
+        params.append("is_flagged", simpleFilters.is_flagged);
+      }
 
       // Add advanced query if available (currently disabled)
       if (advancedQuery) {
@@ -331,23 +390,62 @@ export default function QuestionBankPage() {
         if (contentType && contentType.includes("application/json")) {
           try {
             const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-            if (errorData.details) {
-              errorMessage += `: ${errorData.details}`;
+            // Check for "Too many results" error
+            if (errorData.error === "Too many results" && errorData.message) {
+              errorMessage = errorData.message;
+            } else {
+              errorMessage = errorData.error || errorMessage;
+              if (errorData.details) {
+                errorMessage += `: ${errorData.details}`;
+              }
             }
-            console.error("API Error:", errorData);
+            // Enhanced error logging - log each property separately for better visibility
+            console.error("=== API ERROR ===");
+            console.error("Status:", response.status);
+            console.error("Status Text:", response.statusText);
+            console.error("Error Data:", errorData);
+            console.error("Error Message:", errorData.error);
+            console.error("Error Details:", errorData.details);
+            console.error("Error Hint:", errorData.hint);
+            console.error("Error Code:", errorData.code);
+            console.error("Full Error Object:", JSON.stringify(errorData, null, 2));
+            console.error("Request URL:", response.url);
+            console.error("Request Params:", {
+              page: pagination.page,
+              limit: pagination.limit,
+              search: searchTerm,
+              filters: simpleFilters,
+            });
+            console.error("=================");
           } catch (e) {
             console.error("Failed to parse error response as JSON:", e);
+            console.error("Response status:", response.status);
+            console.error("Response statusText:", response.statusText);
           }
         } else {
           // Response is HTML or other format, get text instead
           try {
             const errorText = await response.text();
-            console.error("Non-JSON error response:", errorText);
+            console.error("Non-JSON error response:", {
+              status: response.status,
+              statusText: response.statusText,
+              contentType,
+              text: errorText.substring(0, 500), // First 500 chars
+            });
+            errorMessage = `Server error (${response.status}): ${response.statusText}`;
           } catch (e) {
             console.error("Failed to read error response:", e);
+            errorMessage = `Failed to fetch questions (Status: ${response.status})`;
           }
         }
+        
+        // Always log the full response for debugging
+        console.error("=== FULL ERROR RESPONSE ===");
+        console.error("Status:", response.status);
+        console.error("Status Text:", response.statusText);
+        console.error("URL:", response.url);
+        console.error("Headers:", Object.fromEntries(response.headers.entries()));
+        console.error("===========================");
 
         setError(errorMessage);
         setQuestions([]);
@@ -434,12 +532,38 @@ export default function QuestionBankPage() {
    *
    * Updates a specific filter value and resets pagination to page 1.
    * This ensures filtered results start from the first page.
+   * Handles both array and single value filters.
+   * Also clears section when boards change.
    */
-  const handleSimpleFilterChange = (key: string, value: string) => {
-    setSimpleFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleSimpleFilterChange = (key: string, value: string | string[] | number | null) => {
+    setSimpleFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        [key]: value,
+      };
+      
+      // Clear section if boards are cleared or changed
+      if (key === "boards") {
+        const newBoards = value as string[];
+        // If boards are cleared, clear all sections
+        if (newBoards.length === 0) {
+          newFilters.section = [];
+        } else {
+          // Filter out sections that are no longer valid for selected boards
+          const validSections = new Set<string>();
+          newBoards.forEach((board) => {
+            const sections = filterOptions.sections_by_board[board] || [];
+            sections.forEach((section) => validSections.add(section));
+          });
+          // Keep only sections that are still valid
+          newFilters.section = prev.section.filter((section) =>
+            validSections.has(section)
+          );
+        }
+      }
+      
+      return newFilters;
+    });
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
@@ -451,17 +575,19 @@ export default function QuestionBankPage() {
    * This provides a quick way to clear all applied filters.
    */
   const clearAllFilters = () => {
-    // Reset all filters to default values
+      // Reset all filters to default values
     setSimpleFilters({
-      difficulty: "any",
-      boards: "any",
-      course_types: "any",
-      levels: "any",
+      boards: [],
+      course_types: [],
+      levels: [],
+      subject: [],
+      topic: "",
+      tags: [],
+      section: [],
+      difficulty_min: null,
+      difficulty_max: null,
       question_type: "any",
       is_pyq: "any",
-      subject: "any",
-      topic: "",
-      tags: "",
       qa_status: "any",
       priority_level: "any",
       is_flagged: "any",
@@ -479,9 +605,21 @@ export default function QuestionBankPage() {
    * Used to show/hide the "Clear All Filters" button.
    */
   const hasActiveFilters = () => {
-    const hasSimpleFilters = Object.values(simpleFilters).some(
-      (value) => value !== "any"
-    );
+    const hasSimpleFilters = 
+      simpleFilters.boards.length > 0 ||
+      simpleFilters.course_types.length > 0 ||
+      simpleFilters.levels.length > 0 ||
+      simpleFilters.subject.length > 0 ||
+      simpleFilters.tags.length > 0 ||
+      simpleFilters.topic !== "" ||
+      simpleFilters.section.length > 0 ||
+      simpleFilters.difficulty_min !== null ||
+      simpleFilters.difficulty_max !== null ||
+      simpleFilters.question_type !== "any" ||
+      simpleFilters.is_pyq !== "any" ||
+      simpleFilters.qa_status !== "any" ||
+      simpleFilters.priority_level !== "any" ||
+      simpleFilters.is_flagged !== "any";
     return searchTerm || hasSimpleFilters || advancedQuery;
   };
 
@@ -573,9 +711,9 @@ export default function QuestionBankPage() {
       {/* PAGE HEADER */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Question Bank
               </h1>
               <p className="mt-2 text-sm text-gray-600">
@@ -585,7 +723,7 @@ export default function QuestionBankPage() {
             {/* Add Question Button */}
             <Button
               onClick={() => router.push("/question-bank/new")}
-              className="bg-orange-600 hover:bg-orange-700 text-white rounded-sm"
+              className="bg-orange-600 hover:bg-orange-700 text-white rounded-sm w-full sm:w-auto"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Question
@@ -595,9 +733,26 @@ export default function QuestionBankPage() {
       </div>
 
       {/* MAIN CONTENT LAYOUT */}
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden bg-white border-b border-gray-200 p-4">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            {showMobileFilters ? "Hide Filters" : "Show Filters"}
+          </Button>
+        </div>
+
         {/* FILTER SIDEBAR */}
-        <div className="w-80 bg-white border-r border-gray-200 p-4">
+        <div
+          className={`
+          w-full lg:w-80 bg-white border-r border-gray-200 p-4 lg:min-h-screen overflow-y-auto
+          ${showMobileFilters ? "block" : "hidden lg:block"}
+        `}
+        >
           <div className="space-y-4">
             {/* SEARCH SECTION */}
             <div>
@@ -620,319 +775,479 @@ export default function QuestionBankPage() {
               </div>
             </div>
 
+            {/* FILTER CHIPS */}
+            {hasActiveFilters() && (
+              <FilterChips
+                filters={[
+                  ...(searchTerm
+                    ? [
+                        {
+                          key: "search",
+                          label: "Search",
+                          value: searchTerm,
+                          category: "Search",
+                          onRemove: () => handleSearch(""),
+                        },
+                      ]
+                    : []),
+                  ...simpleFilters.boards.map((board) => ({
+                    key: `board-${board}`,
+                    label: "Board",
+                    value: board,
+                    category: "Quick Filters",
+                    onRemove: () =>
+                      handleSimpleFilterChange(
+                        "boards",
+                        simpleFilters.boards.filter((b) => b !== board)
+                      ),
+                  })),
+                  ...simpleFilters.course_types.map((ct) => ({
+                    key: `course_type-${ct}`,
+                    label: "Course Type",
+                    value: ct,
+                    category: "Quick Filters",
+                    onRemove: () =>
+                      handleSimpleFilterChange(
+                        "course_types",
+                        simpleFilters.course_types.filter((c) => c !== ct)
+                      ),
+                  })),
+                  ...simpleFilters.levels.map((level) => ({
+                    key: `level-${level}`,
+                    label: "Level",
+                    value: level,
+                    category: "Quick Filters",
+                    onRemove: () =>
+                      handleSimpleFilterChange(
+                        "levels",
+                        simpleFilters.levels.filter((l) => l !== level)
+                      ),
+                  })),
+                  ...simpleFilters.subject.map((subj) => ({
+                    key: `subject-${subj}`,
+                    label: "Subject",
+                    value: subj,
+                    category: "Quick Filters",
+                    onRemove: () =>
+                      handleSimpleFilterChange(
+                        "subject",
+                        simpleFilters.subject.filter((s) => s !== subj)
+                      ),
+                  })),
+                  ...simpleFilters.tags.map((tag) => ({
+                    key: `tag-${tag}`,
+                    label: "Tag",
+                    value: tag,
+                    category: "Quick Filters",
+                    onRemove: () =>
+                      handleSimpleFilterChange(
+                        "tags",
+                        simpleFilters.tags.filter((t) => t !== tag)
+                      ),
+                  })),
+                  ...(simpleFilters.topic
+                    ? [
+                        {
+                          key: "topic",
+                          label: "Topic",
+                          value: simpleFilters.topic,
+                          category: "Quick Filters",
+                          onRemove: () => handleSimpleFilterChange("topic", ""),
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.section.length > 0
+                    ? simpleFilters.section.map((section) => ({
+                        key: `section-${section}`,
+                        label: "Section",
+                        value: section,
+                        category: "Quick Filters",
+                        onRemove: () =>
+                          handleSimpleFilterChange(
+                            "section",
+                            simpleFilters.section.filter((s) => s !== section)
+                          ),
+                      }))
+                    : []),
+                  ...(simpleFilters.difficulty_min !== null ||
+                  simpleFilters.difficulty_max !== null
+                    ? [
+                        {
+                          key: "difficulty",
+                          label: "Difficulty",
+                          value: `${simpleFilters.difficulty_min ?? 1}-${simpleFilters.difficulty_max ?? 10}`,
+                          category: "Other Filters",
+                          onRemove: () => {
+                            handleSimpleFilterChange("difficulty_min", null);
+                            handleSimpleFilterChange("difficulty_max", null);
+                          },
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.question_type !== "any"
+                    ? [
+                        {
+                          key: "question_type",
+                          label: "Question Type",
+                          value: simpleFilters.question_type,
+                          category: "Other Filters",
+                          onRemove: () =>
+                            handleSimpleFilterChange("question_type", "any"),
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.is_pyq !== "any"
+                    ? [
+                        {
+                          key: "is_pyq",
+                          label: "PYQ",
+                          value: simpleFilters.is_pyq === "true" ? "PYQ Only" : "Practice Only",
+                          category: "Other Filters",
+                          onRemove: () =>
+                            handleSimpleFilterChange("is_pyq", "any"),
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.qa_status !== "any"
+                    ? [
+                        {
+                          key: "qa_status",
+                          label: "QA Status",
+                          value: simpleFilters.qa_status,
+                          category: "Quality Assurance",
+                          onRemove: () =>
+                            handleSimpleFilterChange("qa_status", "any"),
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.priority_level !== "any"
+                    ? [
+                        {
+                          key: "priority_level",
+                          label: "Priority",
+                          value: simpleFilters.priority_level,
+                          category: "Quality Assurance",
+                          onRemove: () =>
+                            handleSimpleFilterChange("priority_level", "any"),
+                        },
+                      ]
+                    : []),
+                  ...(simpleFilters.is_flagged !== "any"
+                    ? [
+                        {
+                          key: "is_flagged",
+                          label: "Flagged",
+                          value: simpleFilters.is_flagged === "true" ? "Flagged" : "Not Flagged",
+                          category: "Quality Assurance",
+                          onRemove: () =>
+                            handleSimpleFilterChange("is_flagged", "any"),
+                        },
+                      ]
+                    : []),
+                ]}
+                onClearAll={clearAllFilters}
+              />
+            )}
+
             {/* QUICK FILTERS SECTION */}
-            <div className="border-t border-gray-200 pt-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
-                Quick Filters
-              </h3>
+            <Collapsible defaultOpen={true}>
+              <CollapsibleTrigger className="w-full">
+                <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-gray-700">
+                    Quick Filters
+                  </h3>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-3 pt-3">
+                {/* 1. Board */}
+                <div>
+                  <MultiSelect
+                    options={filterOptions.boards}
+                    selected={simpleFilters.boards}
+                    onChange={(selected) =>
+                      handleSimpleFilterChange("boards", selected)
+                    }
+                    placeholder="Select boards..."
+                    searchPlaceholder="Search boards..."
+                    disabled={loadingFilters}
+                    label="Board"
+                  />
+                </div>
 
-              {/* 1. Board */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Board</Label>
-                <Select
-                  value={simpleFilters.boards}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("boards", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={loadingFilters ? "Loading..." : "Any board"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any board</SelectItem>
-                    {filterOptions.boards.map((board) => (
-                      <SelectItem key={board} value={board}>
-                        {board}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* 2. Subject */}
+                <div>
+                  <MultiSelect
+                    options={filterOptions.subjects}
+                    selected={simpleFilters.subject}
+                    onChange={(selected) =>
+                      handleSimpleFilterChange("subject", selected)
+                    }
+                    placeholder="Select subjects..."
+                    searchPlaceholder="Search subjects..."
+                    disabled={loadingFilters}
+                    label="Subject"
+                  />
+                </div>
 
-              {/* 2. Course Type */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Course Type</Label>
-                <Select
-                  value={simpleFilters.course_types}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("course_types", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={
-                        loadingFilters ? "Loading..." : "Any course type"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any course type</SelectItem>
-                    {filterOptions.course_types.map((courseType) => (
-                      <SelectItem key={courseType} value={courseType}>
-                        {courseType}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* 3. Course Type */}
+                <div>
+                  <MultiSelect
+                    options={filterOptions.course_types}
+                    selected={simpleFilters.course_types}
+                    onChange={(selected) =>
+                      handleSimpleFilterChange("course_types", selected)
+                    }
+                    placeholder="Select course types..."
+                    searchPlaceholder="Search course types..."
+                    disabled={loadingFilters}
+                    label="Course Type"
+                  />
+                </div>
 
-              {/* 3. Level */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Level</Label>
-                <Select
-                  value={simpleFilters.levels}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("levels", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={loadingFilters ? "Loading..." : "Any level"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any level</SelectItem>
-                    {filterOptions.levels.map((level) => (
-                      <SelectItem key={level} value={level}>
-                        {level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* 4. Level */}
+                <div>
+                  <MultiSelect
+                    options={filterOptions.levels}
+                    selected={simpleFilters.levels}
+                    onChange={(selected) =>
+                      handleSimpleFilterChange("levels", selected)
+                    }
+                    placeholder="Select levels..."
+                    searchPlaceholder="Search levels..."
+                    disabled={loadingFilters}
+                    label="Level"
+                  />
+                </div>
 
-              {/* 4. Subject */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Subject</Label>
-                <Select
-                  value={simpleFilters.subject}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("subject", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={
-                        loadingFilters ? "Loading..." : "Any subject"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any subject</SelectItem>
-                    {filterOptions.subjects.map((subject) => (
-                      <SelectItem key={subject} value={subject}>
-                        {subject.charAt(0).toUpperCase() + subject.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* 5. Section (depends on board selection) */}
+                <div>
+                  <MultiSelect
+                    options={(() => {
+                      // Get unique sections from all selected boards
+                      const allSections = new Set<string>();
+                      simpleFilters.boards.forEach((board) => {
+                        const sections = filterOptions.sections_by_board[board] || [];
+                        sections.forEach((section) => allSections.add(section));
+                      });
+                      return Array.from(allSections).sort();
+                    })()}
+                    selected={simpleFilters.section}
+                    onChange={(selected) =>
+                      handleSimpleFilterChange("section", selected)
+                    }
+                    placeholder={
+                      simpleFilters.boards.length === 0
+                        ? "Select board first"
+                        : "Select sections..."
+                    }
+                    searchPlaceholder="Search sections..."
+                    disabled={loadingFilters || simpleFilters.boards.length === 0}
+                    label="Section"
+                  />
+                  {simpleFilters.boards.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Select a board to see sections
+                    </p>
+                  )}
+                </div>
 
-              {/* 5. Topic */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Topic</Label>
-                <Input
-                  placeholder="Enter topic..."
-                  value={simpleFilters.topic || ""}
-                  onChange={(e) =>
-                    handleSimpleFilterChange("topic", e.target.value)
-                  }
-                  className="h-8 rounded-sm"
-                />
-              </div>
+                {/* 6. Topic */}
+                <div>
+                  <TopicAutocomplete
+                    value={simpleFilters.topic}
+                    onChange={(value) => handleSimpleFilterChange("topic", value)}
+                    suggestions={filterOptions.topics}
+                    placeholder="Enter topic..."
+                    disabled={loadingFilters}
+                    label="Topic"
+                  />
+                </div>
 
-              {/* 6. Tags */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Tags</Label>
-                <Input
-                  placeholder="Enter tags (comma-separated)..."
-                  value={simpleFilters.tags || ""}
-                  onChange={(e) =>
-                    handleSimpleFilterChange("tags", e.target.value)
-                  }
-                  className="h-8 rounded-sm"
-                />
-              </div>
+                {/* 7. Tags */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Tags</Label>
+                  <TagInput
+                    tags={simpleFilters.tags}
+                    onChange={(tags) => handleSimpleFilterChange("tags", tags)}
+                    placeholder="Add tags..."
+                    maxTags={10}
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
 
-              {/* Other Filters */}
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <h4 className="text-xs font-medium text-gray-600 mb-3">
-                  Other Filters
-                </h4>
-              </div>
+            {/* OTHER FILTERS SECTION */}
+            <Collapsible defaultOpen={true}>
+              <CollapsibleTrigger className="w-full">
+                <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-gray-700">
+                    Other Filters
+                  </h3>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-3 pt-3">
+                {/* Difficulty */}
+                <div>
+                  <DifficultyRangeSlider
+                    min={simpleFilters.difficulty_min}
+                    max={simpleFilters.difficulty_max}
+                    onChange={(min, max) => {
+                      handleSimpleFilterChange("difficulty_min", min);
+                      handleSimpleFilterChange("difficulty_max", max);
+                    }}
+                    disabled={loadingFilters}
+                    label="Difficulty"
+                  />
+                </div>
 
-              {/* Difficulty */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Difficulty</Label>
-                <Select
-                  value={simpleFilters.difficulty}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("difficulty", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={
-                        loadingFilters ? "Loading..." : "Any difficulty"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any difficulty</SelectItem>
-                    {filterOptions.difficulties.map((diff) => (
-                      <SelectItem key={diff} value={diff.toString()}>
-                        {diff} / 10
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Question Type */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Question Type</Label>
+                  <Select
+                    value={simpleFilters.question_type}
+                    onValueChange={(value) =>
+                      handleSimpleFilterChange("question_type", value)
+                    }
+                    disabled={loadingFilters}
+                  >
+                    <SelectTrigger className="h-8 rounded-sm">
+                      <SelectValue
+                        placeholder={loadingFilters ? "Loading..." : "Any type"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any type</SelectItem>
+                      {filterOptions.question_types.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() +
+                            type.slice(1).replace("_", " ")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Question Type */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Question Type</Label>
-                <Select
-                  value={simpleFilters.question_type}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("question_type", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={loadingFilters ? "Loading..." : "Any type"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any type</SelectItem>
-                    {filterOptions.question_types.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() +
-                          type.slice(1).replace("_", " ")}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* PYQ Filter */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">
-                  Previous Year Question
-                </Label>
-                <Select
-                  value={simpleFilters.is_pyq}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("is_pyq", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={loadingFilters ? "Loading..." : "Any"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    {filterOptions.has_pyq && (
-                      <SelectItem value="true">PYQ Only</SelectItem>
-                    )}
-                    {filterOptions.has_practice && (
-                      <SelectItem value="false">Practice Only</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                {/* PYQ Filter */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">
+                    Previous Year Question
+                  </Label>
+                  <Select
+                    value={simpleFilters.is_pyq}
+                    onValueChange={(value) =>
+                      handleSimpleFilterChange("is_pyq", value)
+                    }
+                    disabled={loadingFilters}
+                  >
+                    <SelectTrigger className="h-8 rounded-sm">
+                      <SelectValue
+                        placeholder={loadingFilters ? "Loading..." : "Any"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      {filterOptions.has_pyq && (
+                        <SelectItem value="true">PYQ Only</SelectItem>
+                      )}
+                      {filterOptions.has_practice && (
+                        <SelectItem value="false">Practice Only</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* QUALITY ASSURANCE FILTERS SECTION */}
-            <div className="border-t border-gray-200 pt-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
-                Quality Assurance
-              </h3>
+            <Collapsible defaultOpen={true}>
+              <CollapsibleTrigger className="w-full">
+                <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-gray-700">
+                    Quality Assurance
+                  </h3>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-3 pt-3">
 
-              {/* QA Status */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">QA Status</Label>
-                <Select
-                  value={simpleFilters.qa_status}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("qa_status", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={loadingFilters ? "Loading..." : "Any status"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any status</SelectItem>
-                    {filterOptions.qa_statuses.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status.charAt(0).toUpperCase() +
-                          status.slice(1).replace("_", " ")}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* QA Status */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">QA Status</Label>
+                  <Select
+                    value={simpleFilters.qa_status}
+                    onValueChange={(value) =>
+                      handleSimpleFilterChange("qa_status", value)
+                    }
+                    disabled={loadingFilters}
+                  >
+                    <SelectTrigger className="h-8 rounded-sm">
+                      <SelectValue
+                        placeholder={loadingFilters ? "Loading..." : "Any status"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any status</SelectItem>
+                      {filterOptions.qa_statuses.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status.charAt(0).toUpperCase() +
+                            status.slice(1).replace("_", " ")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Priority Level */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Priority Level</Label>
-                <Select
-                  value={simpleFilters.priority_level}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("priority_level", value)
-                  }
-                  disabled={loadingFilters}
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue
-                      placeholder={
-                        loadingFilters ? "Loading..." : "Any priority"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any priority</SelectItem>
-                    {filterOptions.priority_levels.map((priority) => (
-                      <SelectItem key={priority} value={priority}>
-                        {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Priority Level */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Priority Level</Label>
+                  <Select
+                    value={simpleFilters.priority_level}
+                    onValueChange={(value) =>
+                      handleSimpleFilterChange("priority_level", value)
+                    }
+                    disabled={loadingFilters}
+                  >
+                    <SelectTrigger className="h-8 rounded-sm">
+                      <SelectValue
+                        placeholder={
+                          loadingFilters ? "Loading..." : "Any priority"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any priority</SelectItem>
+                      {filterOptions.priority_levels.map((priority) => (
+                        <SelectItem key={priority} value={priority}>
+                          {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Flagged Status */}
-              <div className="mb-3">
-                <Label className="text-xs text-gray-600">Flagged Status</Label>
-                <Select
-                  value={simpleFilters.is_flagged}
-                  onValueChange={(value) =>
-                    handleSimpleFilterChange("is_flagged", value)
-                  }
-                >
-                  <SelectTrigger className="h-8 rounded-sm">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="true">Flagged Only</SelectItem>
-                    <SelectItem value="false">Not Flagged</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                {/* Flagged Status */}
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Flagged Status</Label>
+                  <Select
+                    value={simpleFilters.is_flagged}
+                    onValueChange={(value) =>
+                      handleSimpleFilterChange("is_flagged", value)
+                    }
+                  >
+                    <SelectTrigger className="h-8 rounded-sm">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="true">Flagged Only</SelectItem>
+                      <SelectItem value="false">Not Flagged</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* ADVANCED FILTERS SECTION (Currently Disabled) */}
             <div>
@@ -963,44 +1278,6 @@ export default function QuestionBankPage() {
               </Dialog>
             </div>
 
-            {/* Clear Filters */}
-            {/* CLEAR ALL FILTERS BUTTON */}
-            {hasActiveFilters() && (
-              <div>
-                <Button
-                  variant="outline"
-                  onClick={clearAllFilters}
-                  className="w-full rounded-sm text-red-600 border-red-300 hover:bg-red-50"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Clear All Filters
-                </Button>
-              </div>
-            )}
-
-            {/* ACTIVE FILTERS SUMMARY */}
-            {hasActiveFilters() && (
-              <div className="text-sm text-gray-600">
-                <div className="font-medium mb-1">Active Filters:</div>
-                {searchTerm && (
-                  <div className="text-xs">
-                    • Search: &quot;{searchTerm}&quot;
-                  </div>
-                )}
-                {Object.entries(simpleFilters).map(
-                  ([key, value]) =>
-                    value &&
-                    value !== "any" && (
-                      <div key={key} className="text-xs">
-                        • {key.replace("_", " ")}: {value}
-                      </div>
-                    )
-                )}
-                {advancedQuery && (
-                  <div className="text-xs">• Advanced Query Active</div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
@@ -1034,7 +1311,7 @@ export default function QuestionBankPage() {
             )}
 
             {/* Results Summary */}
-            <div className="mb-6 flex justify-between items-center">
+            <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-4">
                 <div className="text-sm text-gray-600">
                   Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
@@ -1045,7 +1322,7 @@ export default function QuestionBankPage() {
                   of {pagination.total} {hasActiveFilters() ? "filtered " : ""}
                   questions
                   {hasActiveFilters() && totalQuestions > pagination.total && (
-                    <span className="text-gray-400 ml-1">
+                    <span className="text-gray-400 ml-1 hidden sm:inline">
                       (from {totalQuestions} total questions)
                     </span>
                   )}
@@ -1053,7 +1330,9 @@ export default function QuestionBankPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Show:</span>
+                <span className="text-sm text-gray-600 hidden sm:inline">
+                  Show:
+                </span>
                 <Select
                   value={pagination.limit.toString()}
                   onValueChange={(value) => {
@@ -1103,7 +1382,7 @@ export default function QuestionBankPage() {
                 {questions.map((question, index) => (
                   <Card
                     key={question.id}
-                    className="hover:shadow-lg transition-shadow"
+                    className=""
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between">
@@ -1234,10 +1513,11 @@ export default function QuestionBankPage() {
                               </span>
                             )}
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <Button
                             size="sm"
                             variant="outline"
+                            className="w-full sm:w-auto"
                             onClick={() =>
                               window.open(
                                 `/question-bank/${question.id}`,
@@ -1245,11 +1525,13 @@ export default function QuestionBankPage() {
                               )
                             }
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-4 h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">View</span>
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
+                            className="w-full sm:w-auto"
                             onClick={() =>
                               window.open(
                                 `/question-bank/${question.id}/edit`,
@@ -1257,7 +1539,8 @@ export default function QuestionBankPage() {
                               )
                             }
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-4 h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Edit</span>
                           </Button>
                         </div>
                       </div>
@@ -1269,18 +1552,19 @@ export default function QuestionBankPage() {
 
             {/* PAGINATION CONTROLS */}
             {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2 mt-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => goToPage(pagination.page - 1)}
                   disabled={pagination.page === 1}
+                  className="w-full sm:w-auto"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-4 h-4 mr-2" />
                   Previous
                 </Button>
 
-                <div className="flex items-center space-x-1">
+                <div className="hidden sm:flex items-center space-x-1">
                   {(() => {
                     const totalPages = pagination.totalPages;
                     const currentPage = pagination.page;
@@ -1339,14 +1623,20 @@ export default function QuestionBankPage() {
                   })()}
                 </div>
 
+                {/* Mobile page indicator */}
+                <div className="sm:hidden text-sm text-gray-600">
+                  Page {pagination.page} of {pagination.totalPages}
+                </div>
+
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => goToPage(pagination.page + 1)}
                   disabled={pagination.page === pagination.totalPages}
+                  className="w-full sm:w-auto"
                 >
                   Next
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             )}

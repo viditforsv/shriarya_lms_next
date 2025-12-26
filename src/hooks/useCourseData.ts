@@ -40,12 +40,10 @@ interface CourseContentSection {
 
 export function useCourseData(courseSlug: string) {
   const { user } = useAuth();
-  const [courseData, setCourseData] = useState<CourseData | null>(null);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [courseContent, setCourseContent] = useState<CourseContentSection[]>(
-    []
-  );
-  const [courseProgress, setCourseProgress] = useState(0);
+  const [courseData] = useState<CourseData | null>(null);
+  const [lessons] = useState<Lesson[]>([]);
+  const [courseContent] = useState<CourseContentSection[]>([]);
+  const [courseProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -212,15 +210,6 @@ export function useCourseData(courseSlug: string) {
 
         setError("This hook needs to be updated");
         return;
-
-        // Organize lessons into sections (you can customize this logic)
-        // const sections = organizeLessonsIntoSections(courseLessons, isEnrolled);
-        // setCourseContent(sections);
-
-        // Simulate progress (replace with actual progress tracking)
-        if (user) {
-          setCourseProgress(35); // This should come from actual progress tracking
-        }
       } catch (err) {
         console.error("Error loading course data:", err);
         setError("Failed to load course data");

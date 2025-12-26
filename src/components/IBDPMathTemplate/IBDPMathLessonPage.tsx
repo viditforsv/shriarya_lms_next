@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Input } from "@/design-system/components/ui/input";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   ChevronDown,
   ChevronRight,
@@ -22,7 +21,6 @@ import {
   RotateCcw,
   Play,
 } from "lucide-react";
-import { IBDPQuestionCard } from "./IBDPQuestionCard";
 import { IBDPQuestionSession } from "./IBDPQuestionSession";
 import { IBDPConceptsTab } from "./IBDPConceptsTab";
 
@@ -97,17 +95,22 @@ export function IBDPMathLessonPage({
   const [activeTab, setActiveTab] = useState<"questions" | "concepts">(
     "questions"
   );
-  const [completedQuestions, setCompletedQuestions] = useState<Set<string>>(
-    new Set()
-  );
-  const [reviewLaterQuestions, setReviewLaterQuestions] = useState<Set<string>>(
-    new Set()
-  );
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [completedQuestions] = useState<Set<string>>(new Set());
+  const [reviewLaterQuestions] = useState<Set<string>>(new Set());
+  const [selectedTag] = useState<string | null>(null);
   const [lastLesson, setLastLesson] = useState<string | null>(null);
   const [lessonContent, setLessonContent] = useState<{
-    concepts: any[];
-    formulas: any[];
+    concepts: Array<{
+      title: string;
+      content: string;
+      metadata?: { keyPoints?: string[] };
+    }>;
+    formulas: Array<{
+      id: string;
+      title: string;
+      content: string;
+      metadata?: { description?: string };
+    }>;
   }>({ concepts: [], formulas: [] });
 
   // Auto-expand current lesson's unit and chapter
@@ -187,41 +190,6 @@ export function IBDPMathLessonPage({
     });
   };
 
-  const handleMarkDone = (
-    questionId: string,
-    timeSpent: number,
-    result: "correct" | "incorrect" | "skip"
-  ) => {
-    setCompletedQuestions((prev) => new Set([...prev, questionId]));
-
-    // TODO: Save to database
-    console.log("Question completed:", { questionId, timeSpent, result });
-
-    // Update progress
-    const progress = (completedQuestions.size + 1) / questions.length;
-    onProgressUpdate?.(currentLesson.id, progress * 100);
-  };
-
-  const handleReviewLater = (questionId: string) => {
-    setReviewLaterQuestions((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(questionId)) {
-        newSet.delete(questionId);
-      } else {
-        newSet.add(questionId);
-      }
-      return newSet;
-    });
-
-    // TODO: Save to database
-    console.log("Review later toggled:", questionId);
-  };
-
-  const handleTagClick = (tag: string) => {
-    setSelectedTag(tag);
-    setActiveTab("concepts");
-  };
-
   const filteredUnits = units.map((unit) => ({
     ...unit,
     chapters: unit.chapters.map((chapter) => ({
@@ -266,7 +234,7 @@ export function IBDPMathLessonPage({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full rounded-sm mb-3 text-[#e27447] border-[#e27447] hover:bg-[#feefea]"
+                  className="w-full rounded-sm mb-3 text-[#e27447] border-[#e27447] hover:bg-gray-100"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Resume Last Lesson
@@ -286,7 +254,7 @@ export function IBDPMathLessonPage({
             </div>
 
             {/* Current Lesson Progress */}
-            <div className="mt-3 p-3 bg-[#feefea] rounded-sm border border-[#e27447]">
+            <div className="mt-3 p-3 bg-gray-100 rounded-sm border border-[#e27447]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-[#1e293b]">
                   Lesson Progress
@@ -374,9 +342,9 @@ export function IBDPMathLessonPage({
                                 <Link
                                   key={lesson.id}
                                   href={`/courses/${courseSlug}/lesson/${lesson.slug}`}
-                                  className={`block p-3 pl-16 text-sm hover:bg-[#feefea]/40 transition-colors ${
+                                  className={`block p-3 pl-16 text-sm hover:bg-gray-100/40 transition-colors ${
                                     isCurrent
-                                      ? "bg-[#feefea] border-r-2 border-[#e27447] font-medium text-[#e27447]"
+                                      ? "bg-gray-100 border-r-2 border-[#e27447] font-medium text-[#e27447]"
                                       : "text-gray-600"
                                   }`}
                                 >
@@ -453,13 +421,13 @@ export function IBDPMathLessonPage({
             <TabsList className="grid w-full grid-cols-2 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
               <TabsTrigger
                 value="questions"
-                className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
               >
                 Questions
               </TabsTrigger>
               <TabsTrigger
                 value="concepts"
-                className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
               >
                 Concepts & Formula
               </TabsTrigger>

@@ -1,15 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { useState } from "react";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   BookOpen,
   Clock,
@@ -19,7 +13,6 @@ import {
   GraduationCap,
   Briefcase,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { OnboardingStepProps } from "../../OnboardingFlow";
 
 interface Course {
@@ -38,8 +31,6 @@ interface Course {
 }
 
 export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [educationalBackground, setEducationalBackground] =
     useState<string>("");
@@ -259,15 +250,6 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
       return allCourses.filter((course) => course.exam === selectedExam);
     }
   };
-
-  useEffect(() => {
-    // Simulate API delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleCourseSelect = async (courseId: string) => {
     const newSelectedCourses = selectedCourses.includes(courseId)
@@ -538,7 +520,7 @@ export function CourseDiscoveryStep({ onNext }: OnboardingStepProps) {
               {filteredCourses.map((course) => (
                 <div
                   key={course.id}
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-md border rounded-sm p-4 ${
+                  className={`cursor-pointer transition-all duration-200 border-2 rounded-sm p-4 ${
                     selectedCourses.includes(course.id)
                       ? "ring-2 ring-[#e27447] bg-[#e27447]/5 border-[#e27447]"
                       : "border-border hover:border-[#e27447]/50"

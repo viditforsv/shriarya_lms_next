@@ -36,8 +36,19 @@ interface Analytics {
     yellow: number;
     green: number;
   };
-  recentAttempts: any[];
-  overallStats: any;
+  recentAttempts: Array<{
+    id: string;
+    question_id: string;
+    is_correct: boolean;
+    time_taken_seconds: number;
+    [key: string]: unknown;
+  }>;
+  overallStats: {
+    totalQuestions: number;
+    attemptedQuestions: number;
+    correctAnswers: number;
+    [key: string]: unknown;
+  };
 }
 
 interface UseStudentProgressOptions {
@@ -123,6 +134,7 @@ export function useStudentProgress(options: UseStudentProgressOptions = {}) {
       fetchAnalytics();
       fetchTagMastery();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId, courseId, autoFetch]);
 
   return {

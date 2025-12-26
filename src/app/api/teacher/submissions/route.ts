@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch student info for display (exclude sensitive data)
-    const { data: studentData, error: studentError } = await supabase
+    const { data: studentData } = await supabase
       .from("profiles")
       .select("first_name, last_name, email")
       .eq("id", studentId)
@@ -90,9 +90,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    interface Submission {
+      file_path?: string | null;
+      graded_file_path?: string | null;
+      [key: string]: unknown;
+    }
+
     // Generate signed URLs for each submission file
     const submissionsWithUrls = await Promise.all(
-      (submissions || []).map(async (submission: any) => {
+      (submissions || []).map(async (submission: Submission) => {
         let downloadUrl = null;
         let gradedDownloadUrl = null;
 

@@ -29,7 +29,7 @@ interface AuthContextType {
     password: string,
     fullName: string,
     role?: UserRole
-  ) => Promise<void>;
+  ) => Promise<{ user: User; session: Session | null; needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -704,11 +704,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
+      if (!data.user) {
+        throw new Error("User creation failed - no user data returned");
+      }
+
       console.log("✅ signUp - Auth user created successfully:", {
-        userId: data.user?.id,
-        email: data.user?.email,
+        userId: data.user.id,
+        email: data.user.email,
         needsConfirmation: !data.session,
       });
+
+      // Create profile immediately using API route (bypasses RLS with service role)
+      try {
+        console.log("🔵 signUp - Creating profile via API...");
+        const profileResponse = await fetch("/api/profiles/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: data.user.id,
+            email: data.user.email || email,
+            firstName: firstName,
+            lastName: lastName,
+            role: role,
+          }),
+        });
+
+        if (!profileResponse.ok) {
+          const errorData = await profileResponse.json();
+          console.error("❌ signUp - Profile creation error:", errorData);
+          // Don't throw - profile might already exist or will be created later
+          // The profile will be created when user confirms email and signs in
+        } else {
+          const profileData = await profileResponse.json();
+          console.log("✅ signUp - Profile created successfully:", profileData);
+        }
+      } catch (profileError) {
+        console.error("❌ signUp - Error calling profile API:", profileError);
+        // Don't throw - profile creation is not critical for signup success
+        // It will be created when user confirms email and signs in
+      }
+
+      return {
+        user: data.user,
+        session: data.session,
+        needsConfirmation: !data.session,
+      };
     },
     [supabase]
   );
@@ -796,20 +838,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     // Automatically detect environment and use appropriate URL
+    // Always use window.location.origin when available (client-side)
+    // This ensures we use the actual deployed URL, not localhost
     let siteUrl: string;
 
     if (typeof window !== "undefined") {
-      // Client-side: use current origin
+      // Client-side: always use current origin (works for localhost, preview, and production)
       siteUrl = window.location.origin;
     } else {
-      // Server-side: use environment variable or fallback
-      siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+      // Server-side: use environment variable (should match the deployment URL)
+      siteUrl = 
+        process.env.NEXT_PUBLIC_APP_URL || 
+        process.env.NEXT_PUBLIC_SITE_URL || 
+        "http://localhost:3000";
     }
 
     // Debug logging
     console.log("AuthContext - Site URL:", siteUrl);
     console.log(
-      "AuthContext - Environment variable:",
+      "AuthContext - Environment variable (APP_URL):",
+      process.env.NEXT_PUBLIC_APP_URL
+    );
+    console.log(
+      "AuthContext - Environment variable (SITE_URL):",
       process.env.NEXT_PUBLIC_SITE_URL
     );
     console.log(
@@ -817,11 +868,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       typeof window !== "undefined" ? window.location.origin : "server"
     );
 
+    const redirectUrl = `${siteUrl}/auth/callback`;
+    console.log("AuthContext - Redirect URL:", redirectUrl);
+
     // Use the newer auth method that handles PKCE automatically
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${siteUrl}/auth/callback`,
+        redirectTo: redirectUrl,
       },
     });
 

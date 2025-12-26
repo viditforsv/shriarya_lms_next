@@ -2,13 +2,13 @@
 
 import QuestionAssignmentManager from "@/components/QuestionAssignmentManager";
 import BulkAssignmentManager from "@/components/BulkAssignmentManager";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 
 export default function QuestionAssignmentsPage() {
   return (

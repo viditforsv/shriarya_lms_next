@@ -1,13 +1,19 @@
 import { createBrowserClient } from "@supabase/ssr";
+import {
+  getSupabaseUrl,
+  getSupabaseAnonKey,
+  validateSupabaseConfig,
+} from "./env";
 
 export function createClient() {
+  validateSupabaseConfig();
   return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    getSupabaseUrl(),
+    getSupabaseAnonKey(),
     {
       auth: {
         persistSession: true,
-        storageKey: "shriarya-lms-session", // keep consistent
+        storageKey: "preppeo-lms-session", // keep consistent
         autoRefreshToken: true,
         detectSessionInUrl: true,
         flowType: "pkce",
@@ -18,7 +24,7 @@ export function createClient() {
         params: { eventsPerSecond: 2 },
       },
       global: {
-        headers: { "X-Client-Info": "shriarya-lms-nextjs" },
+        headers: { "X-Client-Info": "preppeo-lms-nextjs" },
       },
     }
   );

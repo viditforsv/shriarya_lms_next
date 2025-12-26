@@ -8,16 +8,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Progress } from "@/design-system/components/ui/progress";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   Play,
   ChevronRight,
@@ -35,9 +35,6 @@ import { useRouter } from "next/navigation";
 import { RenderedCourse, CourseTemplate } from "@/types/course-templates";
 import { DynamicCourseRenderer } from "@/components/DynamicCourseRenderer";
 import { createClient } from "@/lib/supabase/client";
-import { createStudentHash } from "@/lib/student-utils";
-
-// @ts-ignore - TypeScript module resolution issue
 import { IBDPCourseStructure } from "@/components/IBDPCourseStructure";
 import { UnifiedCourseStructure } from "@/components/UnifiedCourseStructure";
 import { useCart } from "@/contexts/CartContext";
@@ -490,7 +487,15 @@ export function CoursePageClient({
         }
         if (!chaptersError && chaptersData) {
           // Transform chapters data to match our interface
-          const transformedChapters: Chapter[] = (chaptersData as any[]).map(
+          interface ChapterData {
+            id: string;
+            chapter_name: string;
+            chapter_order: number;
+            unit_id: string;
+            unit?: Unit | Unit[];
+          }
+
+          const transformedChapters: Chapter[] = (chaptersData as ChapterData[]).map(
             (chapter) => ({
               id: chapter.id,
               chapter_name: chapter.chapter_name,
@@ -674,7 +679,7 @@ export function CoursePageClient({
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e27447] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading course...</p>
         </div>
       </div>
@@ -713,7 +718,7 @@ export function CoursePageClient({
                       onChange={(e) =>
                         setEditValues({ ...editValues, title: e.target.value })
                       }
-                      className="text-4xl font-bold text-[#1e293b] border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1"
+                      className="text-4xl font-bold text-foreground border-2 border-primary rounded-sm px-3 py-2 flex-1"
                       autoFocus
                     />
                     <Button
@@ -740,7 +745,7 @@ export function CoursePageClient({
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 flex-1">
-                    <h1 className="text-4xl font-bold text-[#1e293b]">
+                    <h1 className="text-4xl font-bold text-foreground">
                       {course.title}
                     </h1>
                     {profile?.role === "admin" && (
@@ -749,15 +754,8 @@ export function CoursePageClient({
                         className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
                         title="Edit title"
                       >
-                        <Edit className="w-4 h-4 text-[#e27447]" />
+                        <Edit className="w-4 h-4 text-primary" />
                       </button>
-                    )}
-                    {/* Debug indicator - remove later */}
-                    {process.env.NODE_ENV === "development" && (
-                      <span className="text-xs text-gray-500">
-                        (Admin: {profile?.role || "none"}, isAdmin:{" "}
-                        {isAdmin ? "true" : "false"})
-                      </span>
                     )}
                   </div>
                 )}
@@ -778,7 +776,7 @@ export function CoursePageClient({
                           description: e.target.value,
                         })
                       }
-                      className="text-xl text-muted-foreground border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1 min-h-[100px]"
+                      className="text-xl text-muted-foreground border-2 border-primary rounded-sm px-3 py-2 flex-1 min-h-[100px]"
                       autoFocus
                     />
                     <div className="flex flex-col gap-2">
@@ -817,12 +815,20 @@ export function CoursePageClient({
                       className="absolute top-0 right-0 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
                       title="Edit description"
                     >
-                      <Edit className="w-4 h-4 text-[#e27447]" />
+                      <Edit className="w-4 h-4 text-primary" />
                     </button>
                   )}
                 </div>
               )}
               <div className="flex items-center flex-wrap gap-2">
+                {course.status === "draft" && (
+                  <Badge
+                    variant="outline"
+                    className="border-blue-500 text-blue-700 bg-blue-50"
+                  >
+                    Upcoming
+                  </Badge>
+                )}
                 {isEnrolled && (
                   <Badge
                     variant="default"
@@ -889,7 +895,7 @@ export function CoursePageClient({
                     <Badge
                       key={index}
                       variant="outline"
-                      className="border-[#e27447] text-[#e27447] hover:bg-[#e27447] hover:text-white transition-colors"
+                      className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
                     >
                       {tag}
                     </Badge>
@@ -902,7 +908,7 @@ export function CoursePageClient({
                   {(course.price || 0) > 0 || isAdmin ? (
                     editingField === "price" ? (
                       <div className="flex items-center justify-end gap-2 mb-2">
-                        <span className="text-2xl font-bold text-[#e27447]">
+                        <span className="text-2xl font-bold text-primary">
                           ₹
                         </span>
                         <input
@@ -914,7 +920,7 @@ export function CoursePageClient({
                               price: parseFloat(e.target.value) || 0,
                             })
                           }
-                          className="text-2xl font-bold text-[#e27447] border-2 border-[#e27447] rounded-sm px-3 py-2 w-32 text-right"
+                          className="text-2xl font-bold text-primary border-2 border-primary rounded-sm px-3 py-2 w-32 text-right"
                           autoFocus
                           min="0"
                           step="0.01"
@@ -944,7 +950,7 @@ export function CoursePageClient({
                     ) : (
                       <div className="text-right mb-2 relative">
                         {(course.price || 0) > 0 && (
-                          <div className="text-2xl font-bold text-[#e27447]">
+                          <div className="text-2xl font-bold text-primary">
                             ₹{course.price?.toLocaleString()}
                           </div>
                         )}
@@ -954,7 +960,7 @@ export function CoursePageClient({
                             className="absolute -top-1 -left-8 p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-300 bg-white shadow-sm"
                             title="Edit price"
                           >
-                            <Edit className="w-4 h-4 text-[#e27447]" />
+                            <Edit className="w-4 h-4 text-primary" />
                           </button>
                         )}
                       </div>
@@ -1000,7 +1006,7 @@ export function CoursePageClient({
                         <Button
                           onClick={handleEnroll}
                           disabled={authLoading}
-                          className="bg-[#e27447] hover:bg-[#d1653a] rounded-sm"
+                          className="bg-primary hover:bg-primary/90 rounded-sm"
                         >
                           {authLoading
                             ? "Loading..."
@@ -1033,7 +1039,7 @@ export function CoursePageClient({
                       : "introduction"
                   }`}
                 >
-                  <Button className="bg-[#e27447] hover:bg-[#d1653a]">
+                  <Button className="bg-primary hover:bg-primary/90">
                     <Play className="w-4 h-4 mr-2" />
                     {isEnrolled ? "Continue Learning" : "Start Learning"}
                   </Button>
@@ -1049,26 +1055,26 @@ export function CoursePageClient({
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="w-full">
               <TabsList
-                className={`grid w-full rounded-sm bg-[#feefea] p-1 ${
+                className={`grid w-full rounded-sm bg-primary/10 p-1 ${
                   isAdmin ? "grid-cols-3" : "grid-cols-2"
                 }`}
               >
                 <TabsTrigger
                   value="overview"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
                 >
                   Overview
                 </TabsTrigger>
                 <TabsTrigger
                   value="content"
-                  className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                  className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
                 >
                   Content
                 </TabsTrigger>
                 {isAdmin && (
                   <TabsTrigger
                     value="participants"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Participants
@@ -1093,11 +1099,11 @@ export function CoursePageClient({
                       {/* Official CBSE Syllabus Link */}
                       {(courseParams.slug === "cbse-mathematics-class-9" ||
                         courseParams.slug === "cbse-mathematics-class-10") && (
-                        <div className="mb-6 p-4 bg-[#feefea] border border-[#e27447] rounded-sm">
+                        <div className="mb-6 p-4 bg-primary/10 border border-primary rounded-sm">
                           <div className="flex items-start space-x-3">
                             <div className="flex-shrink-0">
                               <svg
-                                className="w-6 h-6 text-[#e27447]"
+                                className="w-6 h-6 text-primary"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1111,7 +1117,7 @@ export function CoursePageClient({
                               </svg>
                             </div>
                             <div className="flex-1">
-                              <h4 className="font-semibold text-[#1e293b] mb-1">
+                              <h4 className="font-semibold text-foreground mb-1">
                                 Official CBSE Syllabus 2025-26
                               </h4>
                               <p className="text-sm text-muted-foreground mb-3">
@@ -1124,7 +1130,7 @@ export function CoursePageClient({
                                 href="https://cbseacademic.nic.in/web_material/CurriculumMain26/Sec/Maths_Sec_2025-26.pdf"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center text-[#e27447] hover:text-[#d1653a] font-medium text-sm"
+                                className="inline-flex items-center text-primary hover:text-[#d1653a] font-medium text-sm"
                               >
                                 <span>Download Official Syllabus PDF</span>
                                 <svg
@@ -1293,10 +1299,12 @@ export function CoursePageClient({
                                             {chapterLessons
                                               .sort((a, b) => a.order - b.order)
                                               .map((lesson) => {
-                                                const canAccess =
-                                                  isEnrolled ||
-                                                  lesson.isPreview ||
-                                                  course?.price === 0;
+                                                // For draft (upcoming) courses, only enrolled users can access
+                                                const canAccess = course?.status === "draft"
+                                                  ? isEnrolled
+                                                  : (isEnrolled ||
+                                                      lesson.isPreview ||
+                                                      course?.price === 0);
 
                                                 return (
                                                   <Link
@@ -1320,7 +1328,7 @@ export function CoursePageClient({
                                                             lesson.id
                                                           )
                                                             ? "bg-green-100 text-green-700"
-                                                            : "bg-[#e27447]/10 text-[#e27447]"
+                                                            : "bg-primary/10 text-primary"
                                                         } text-xs font-medium flex-shrink-0`}
                                                       >
                                                         {completedLessonIds.has(
@@ -1338,7 +1346,7 @@ export function CoursePageClient({
                                                               lesson.id
                                                             )
                                                               ? "text-gray-500 line-through"
-                                                              : "text-gray-700 group-hover:text-[#e27447]"
+                                                              : "text-gray-700 group-hover:text-primary"
                                                           }`}
                                                         >
                                                           {lesson.title}
@@ -1411,21 +1419,21 @@ export function CoursePageClient({
                       <CardContent>
                         {loadingStats ? (
                           <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                             <p className="mt-4 text-sm text-muted-foreground">
                               Loading statistics...
                             </p>
                           </div>
                         ) : courseStats ? (
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                            <Card className="bg-primary/10 border-primary/20">
                               <CardHeader className="pb-3">
                                 <CardTitle className="text-lg font-semibold">
                                   Total Students
                                 </CardTitle>
                               </CardHeader>
                               <CardContent>
-                                <div className="text-3xl font-bold text-[#e27447]">
+                                <div className="text-3xl font-bold text-primary">
                                   {courseStats.totalStudents}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-1">
@@ -1434,14 +1442,14 @@ export function CoursePageClient({
                               </CardContent>
                             </Card>
 
-                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                            <Card className="bg-primary/10 border-primary/20">
                               <CardHeader className="pb-3">
                                 <CardTitle className="text-lg font-semibold">
                                   Active Students
                                 </CardTitle>
                               </CardHeader>
                               <CardContent>
-                                <div className="text-3xl font-bold text-[#e27447]">
+                                <div className="text-3xl font-bold text-primary">
                                   {courseStats.activeStudents}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-1">
@@ -1450,14 +1458,14 @@ export function CoursePageClient({
                               </CardContent>
                             </Card>
 
-                            <Card className="bg-[#feefea] border-[#e27447]/20">
+                            <Card className="bg-primary/10 border-primary/20">
                               <CardHeader className="pb-3">
                                 <CardTitle className="text-lg font-semibold">
                                   Recent Enrollments
                                 </CardTitle>
                               </CardHeader>
                               <CardContent>
-                                <div className="text-3xl font-bold text-[#e27447]">
+                                <div className="text-3xl font-bold text-primary">
                                   {courseStats.recentEnrollments}
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-1">
@@ -1486,7 +1494,7 @@ export function CoursePageClient({
                       <CardContent>
                         {loadingStats ? (
                           <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e27447] mx-auto"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                             <p className="mt-4 text-sm text-muted-foreground">
                               Loading participants...
                             </p>
@@ -1520,16 +1528,9 @@ export function CoursePageClient({
                                     key={participant.enrollmentId}
                                     className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                                     onClick={() => {
-                                      if (
-                                        participant.student?.id &&
-                                        participant.student?.email &&
-                                        course?.slug
-                                      ) {
-                                        const studentHash = createStudentHash(
-                                          participant.student.email
-                                        );
+                                      if (participant.student?.id) {
                                         router.push(
-                                          `/admin/student-progress/${course.slug}/${studentHash}`
+                                          `/admin/student-progress/${course?.id}/${participant.student.id}`
                                         );
                                       }
                                     }}
@@ -1593,17 +1594,9 @@ export function CoursePageClient({
                                             className="rounded-sm text-xs"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              if (
-                                                participant.student?.id &&
-                                                participant.student?.email &&
-                                                course?.slug
-                                              ) {
-                                                const studentHash =
-                                                  createStudentHash(
-                                                    participant.student.email
-                                                  );
+                                              if (participant.student?.id) {
                                                 router.push(
-                                                  `/admin/student-progress/${course.slug}/${studentHash}`
+                                                  `/admin/student-progress/${course?.id}/${participant.student.id}`
                                                 );
                                               }
                                             }}

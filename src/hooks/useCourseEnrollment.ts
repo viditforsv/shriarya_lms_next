@@ -104,7 +104,7 @@ export function useCourseEnrollment() {
         return false;
       }
     },
-    [user]
+    [user, supabase]
   );
 
   return {

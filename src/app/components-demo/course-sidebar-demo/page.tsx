@@ -1,6 +1,6 @@
 'use client'
 
-import { CourseSidebarExample } from '@/app/components-demo/ui/layout-components/course-sidebar'
+import { CourseSidebarExample } from '@/design-system/components/layout-components/course-sidebar'
 
 export default function CourseSidebarDemo() {
   return (

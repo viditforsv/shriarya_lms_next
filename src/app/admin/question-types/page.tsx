@@ -7,36 +7,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Input } from "@/design-system/components/ui/input";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Plus,
-  ChevronRight,
-  ChevronDown,
-  FileText,
   Edit,
   Trash2,
   BookOpen,
   ListChecks,
   CheckCircle,
-  GripVertical,
 } from "lucide-react";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-  DragOverlay,
-  useDraggable,
-  useDroppable,
-} from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 interface QuestionType {
   id: string;
@@ -69,10 +52,8 @@ const DEFAULT_QUESTION_TYPES: QuestionType[] = [
     description: "Open-ended questions requiring written responses",
     count: 234,
     exampleQuestion: {
-      question:
-        "Explain the concept of limits in calculus with a practical example.",
-      answer:
-        "A limit describes the value that a function approaches as the input approaches a particular point. For example, as x approaches 0, the limit of sin(x)/x is 1.",
+      question: "2x + 4 = 0, what is the value of x?",
+      answer: "-2",
     },
   },
   {
@@ -162,76 +143,11 @@ const DEFAULT_QUESTION_TYPES: QuestionType[] = [
   },
 ];
 
-// Draggable Item Component
-function DraggableItem({
-  id,
-  children,
-}: {
-  id: string;
-  children: React.ReactNode;
-}) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id,
-    });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`cursor-grab active:cursor-grabbing ${
-        isDragging ? "opacity-50" : ""
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
-
-// Droppable Area Component
-function DroppableArea({
-  id,
-  children,
-  matched = false,
-}: {
-  id: string;
-  children: React.ReactNode;
-  matched?: boolean;
-}) {
-  const { setNodeRef, isOver } = useDroppable({
-    id,
-  });
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`p-3 border-2 rounded-sm transition-all ${
-        isOver
-          ? "border-blue-500 bg-blue-50"
-          : matched
-          ? "border-green-500 bg-green-50"
-          : "border-gray-300"
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function QuestionTypesPage() {
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>(
     DEFAULT_QUESTION_TYPES
   );
   const [selectedType, setSelectedType] = useState<string>("1");
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["all"])
-  );
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "" });
@@ -252,30 +168,10 @@ export default function QuestionTypesPage() {
   ];
 
   const [matches, setMatches] = useState<Record<string, string>>({});
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  const sensors = useSensors(useSensor(PointerSensor));
-
-  // Correct answers mapping
-  const correctMatches: Record<string, string> = {
-    "left-1": "right-1", // Evaluate limits → L'Hospital's Rule
-    "left-2": "right-2", // Find roots → Intermediate Value Theorem
-    "left-3": "right-3", // Analyze behavior → Mean Value Theorem
-  };
 
   const selectedQuestionType = questionTypes.find(
     (type) => type.id === selectedType
   );
-
-  const toggleSection = (sectionId: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(sectionId)) {
-      newExpanded.delete(sectionId);
-    } else {
-      newExpanded.add(sectionId);
-    }
-    setExpandedSections(newExpanded);
-  };
 
   const handleAdd = () => {
     if (!formData.name.trim()) return;
@@ -342,35 +238,6 @@ export default function QuestionTypesPage() {
       selected === question.exampleQuestion.answer ||
       (typeof selected === "string" &&
         question.exampleQuestion.answer?.includes(selected))
-    );
-  };
-
-  const handleDragStart = (event: DragEndEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveId(null);
-
-    if (!over) return;
-
-    // If dragging from left column to right column, create a match
-    if (
-      active.id.toString().startsWith("left-") &&
-      over.id.toString().startsWith("right-")
-    ) {
-      setMatches({
-        ...matches,
-        [active.id.toString()]: over.id.toString(),
-      });
-    }
-  };
-
-  const isItemMatched = (itemId: string) => {
-    return (
-      Object.keys(matches).includes(itemId) ||
-      Object.values(matches).includes(itemId)
     );
   };
 
@@ -589,10 +456,36 @@ export default function QuestionTypesPage() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="p-4 bg-muted rounded-sm">
+                        <div className="p-4 bg-background rounded-sm border">
                           <p className="font-medium mb-3">
                             {selectedQuestionType.exampleQuestion.question}
                           </p>
+
+                          {/* Subjective/Short Answer Input */}
+                          {selectedQuestionType.id === "2" && (
+                            <div className="space-y-3">
+                              <Input
+                                type="number"
+                                step="any"
+                                value={
+                                  (selectedAnswers[selectedType] as string) ||
+                                  ""
+                                }
+                                onChange={(e) =>
+                                  handleAnswerSelect(
+                                    selectedType,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Enter your answer (integer or decimal)"
+                                className="rounded-sm"
+                                disabled={showAnswer[selectedType]}
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Enter an integer or decimal value.
+                              </p>
+                            </div>
+                          )}
 
                           {/* Fill in the Blank Input */}
                           {selectedQuestionType.id === "4" && (
@@ -701,9 +594,6 @@ export default function QuestionTypesPage() {
                               <div className="max-w-3xl">
                                 {leftItems.map((leftItem, idx) => {
                                   const matchId = matches[leftItem.id] || "";
-                                  const matchedRight = rightItems.find(
-                                    (r) => r.id === matchId
-                                  );
                                   const hasMatch = matchId !== "";
 
                                   return (
@@ -892,25 +782,37 @@ export default function QuestionTypesPage() {
                             selectedQuestionType.exampleQuestion.answer && (
                               <div
                                 className={`mt-4 p-3 border rounded-sm ${
-                                  isAnswerCorrect(selectedType)
+                                  selectedQuestionType.id === "2"
+                                    ? "bg-blue-50 border-blue-200"
+                                    : isAnswerCorrect(selectedType)
                                     ? "bg-green-50 border-green-200"
                                     : "bg-red-50 border-red-200"
                                 }`}
                               >
+                                {selectedQuestionType.id !== "2" && (
+                                  <p
+                                    className={`text-sm font-medium mb-1 ${
+                                      isAnswerCorrect(selectedType)
+                                        ? "text-green-800"
+                                        : "text-red-800"
+                                    }`}
+                                  >
+                                    {isAnswerCorrect(selectedType)
+                                      ? "✓ Correct!"
+                                      : "✗ Incorrect"}
+                                  </p>
+                                )}
                                 <p
-                                  className={`text-sm font-medium mb-1 ${
-                                    isAnswerCorrect(selectedType)
-                                      ? "text-green-800"
-                                      : "text-red-800"
+                                  className={`text-sm whitespace-pre-line ${
+                                    selectedQuestionType.id === "2"
+                                      ? "text-blue-700"
+                                      : "text-green-700"
                                   }`}
                                 >
-                                  {isAnswerCorrect(selectedType)
-                                    ? "✓ Correct!"
-                                    : "✗ Incorrect"}
-                                </p>
-                                <p className="text-sm text-green-700 whitespace-pre-line">
                                   <span className="font-medium">
-                                    Correct Answer:{" "}
+                                    {selectedQuestionType.id === "2"
+                                      ? "Sample Answer: "
+                                      : "Correct Answer: "}
                                   </span>
                                   {selectedQuestionType.exampleQuestion.answer}
                                 </p>

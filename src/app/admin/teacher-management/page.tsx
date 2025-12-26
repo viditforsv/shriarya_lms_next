@@ -1,20 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Badge as BadgeComponent } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Input } from "@/design-system/components/ui/input";
 import { Users, Search, UserCheck, UserX, GraduationCap } from "lucide-react";
 
 interface User {
@@ -38,6 +34,28 @@ export default function TeacherManagementPage() {
     "all" | "student" | "teacher" | "admin" | "content_manager"
   >("all");
 
+  const filterUsers = useCallback(() => {
+    let filtered = users;
+
+    // Filter by search term
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (user) =>
+          user.email?.toLowerCase().includes(searchLower) ||
+          user.first_name?.toLowerCase().includes(searchLower) ||
+          user.last_name?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Filter by role
+    if (filterRole !== "all") {
+      filtered = filtered.filter((user) => user.role === filterRole);
+    }
+
+    setFilteredUsers(filtered);
+  }, [users, searchTerm, filterRole]);
+
   useEffect(() => {
     if (currentUser && profile?.role === "admin") {
       loadUsers();
@@ -46,7 +64,7 @@ export default function TeacherManagementPage() {
 
   useEffect(() => {
     filterUsers();
-  }, [searchTerm, filterRole, users]);
+  }, [filterUsers]);
 
   const loadUsers = async () => {
     try {
@@ -69,28 +87,6 @@ export default function TeacherManagementPage() {
     }
   };
 
-  const filterUsers = () => {
-    let filtered = users;
-
-    // Filter by search term
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (user) =>
-          user.email?.toLowerCase().includes(searchLower) ||
-          user.first_name?.toLowerCase().includes(searchLower) ||
-          user.last_name?.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Filter by role
-    if (filterRole !== "all") {
-      filtered = filtered.filter((user) => user.role === filterRole);
-    }
-
-    setFilteredUsers(filtered);
-  };
-
   const handleToggleTeacherRole = async (
     userId: string,
     currentRole: string
@@ -98,7 +94,7 @@ export default function TeacherManagementPage() {
     const newRole = currentRole === "teacher" ? "student" : "teacher";
 
     try {
-      const success = await updateUserRole(userId, newRole as any);
+      const success = await updateUserRole(userId, newRole as "student" | "teacher");
       if (success) {
         setSuccess(
           `User ${

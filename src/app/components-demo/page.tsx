@@ -1,23 +1,23 @@
 "use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Pagination } from "@/app/components-demo/ui/pagination";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Pagination } from "@/design-system/components/pagination";
 import {
   Sidebar,
   SidebarItem,
-} from "@/app/components-demo/ui/layout-components/sidebar";
-import { SignInForm } from "@/app/components-demo/ui/form-components/SignInForm";
-import { SignUpForm } from "@/app/components-demo/ui/form-components/SignUpForm";
-import { MCQQuestionExample } from "@/app/components-demo/ui/course-components/mcq-question";
+} from "@/design-system/components/layout-components/sidebar";
+import { SignInForm } from "@/design-system/components/form-components/SignInForm";
+import { SignUpForm } from "@/design-system/components/form-components/SignUpForm";
+import { MCQQuestionExample } from "@/design-system/components/course-components/mcq-question";
 
 import { useState, useEffect, useCallback, memo } from "react";
 
@@ -423,27 +423,27 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#1e293b] rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#1e293b] rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#1e293b</p>
         </div>
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#e27447] rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#e27447] rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#e27447</p>
         </div>
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#ffffff] border-2 border-slate-200 rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#ffffff] border-2 border-slate-200 rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#ffffff</p>
         </div>
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#feefea] rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#feefea] rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#feefea</p>
         </div>
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#fffefd] border-2 border-slate-200 rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#fffefd] border-2 border-slate-200 rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#fffefd</p>
         </div>
         <div className="text-center group">
-          <div className="w-16 h-16 bg-[#d6ebf4] rounded-lg mx-auto mb-3 shadow-md group-hover:shadow-lg transition-shadow duration-200"></div>
+          <div className="w-16 h-16 bg-[#d6ebf4] rounded-lg mx-auto mb-3 shadow-md group-"></div>
           <p className="text-sm font-medium text-slate-700">#d6ebf4</p>
         </div>
       </div>
@@ -462,7 +462,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">
               Button Variants
@@ -487,7 +487,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">
               Button Sizes
@@ -524,7 +524,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">
               Basic Inputs
@@ -565,7 +565,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">
               Validation States
@@ -622,7 +622,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">Basic Card</CardTitle>
             <CardDescription className="text-slate-600">
@@ -637,7 +637,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <Card className="border-slate-200 shadow-sm ">
           <CardHeader className="bg-slate-50/50">
             <CardTitle className="text-xl text-slate-800">
               Card with Footer
@@ -1130,7 +1130,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 mb-6">
+          <Card className="border-slate-200 shadow-sm ">
             <CardHeader className="bg-slate-50/50">
               <CardTitle className="text-xl text-slate-800">CDN URL</CardTitle>
               <CardDescription className="text-slate-600">
@@ -1338,7 +1338,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
       <div className="flex">
         <Sidebar
           title="Component Library"
-          subtitle="ShriArya LMS Components"
+          subtitle="Preppeo LMS Components"
           items={sidebarItems}
           activeItem={activeTab}
           onItemClick={(item) => setActiveTab(item.id)}
@@ -1371,7 +1371,7 @@ const ComponentsDemoPage = memo(function ComponentsDemoPage() {
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                 Comprehensive collection of reusable UI components for the
-                ShriArya LMS platform
+                Preppeo LMS platform
               </p>
             </div>
 

@@ -1,17 +1,16 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { AdminOnly } from "@/app/components-demo/ui/form-components/RoleGuard";
+import { AdminOnly } from "@/design-system/components/form-components/RoleGuard";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Users,
   BookOpen,
@@ -22,6 +21,8 @@ import {
   Plus,
   BarChart3,
   UserCheck,
+  ClipboardList,
+  ListChecks,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -149,6 +150,18 @@ export default function SiteAdministrationPage() {
           href: "/question-bank",
           icon: FileText,
           description: "Manage question bank and questions",
+        },
+        {
+          name: "Quiz Creator",
+          href: "/admin/quiz-creator",
+          icon: ClipboardList,
+          description: "Create quizzes from question bank",
+        },
+        {
+          name: "Quiz Manager",
+          href: "/admin/quiz-manager",
+          icon: ListChecks,
+          description: "View and manage all quizzes",
         },
         {
           name: "Question Assignments",

@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import { Plus, Edit, Trash2, Eye, BookOpen, Settings } from "lucide-react";
 import { CourseTemplate } from "@/types/course-templates";
 
@@ -172,7 +172,7 @@ export default function CourseTemplatesPage() {
             {templates.map((template) => (
               <Card
                 key={template.id}
-                className="hover:shadow-md transition-shadow"
+                className=""
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between mb-2">

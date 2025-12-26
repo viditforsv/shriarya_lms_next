@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/app/components-demo/ui/ui-components/button"
+import { Button } from "@/design-system/components/ui/button"
 import { useState, useEffect } from "react"
 
 export function WhatsAppFloat() {
@@ -24,7 +24,7 @@ export function WhatsAppFloat() {
       <Button
         onClick={handleWhatsAppClick}
         size="lg"
-        className="bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 p-0 flex items-center justify-center"
+        className="bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full w-16 h-16 shadow-lg "
         aria-label="Contact us on WhatsApp"
       >
         <svg

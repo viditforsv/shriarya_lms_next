@@ -8,15 +8,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
 import {
   ArrowLeft,
   Search,
   ChevronDown,
   ChevronUp,
-  MessageCircle,
   Mail,
   Phone,
   BookOpen,
@@ -174,7 +173,7 @@ const FAQPage = memo(function FAQPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
+      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-primary py-6 relative">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link
@@ -191,7 +190,7 @@ const FAQPage = memo(function FAQPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#1e293b] mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Frequently Asked Questions
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -210,7 +209,7 @@ const FAQPage = memo(function FAQPage() {
               placeholder="Search FAQs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-4 py-3 rounded-sm border-[#feefea] focus:border-[#e27447] focus:ring-[#e27447]"
+              className="pl-12 pr-4 py-3 rounded-sm border-gray-200 focus:border-primary focus:ring-[#e27447]"
             />
           </div>
         </div>
@@ -228,8 +227,8 @@ const FAQPage = memo(function FAQPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`rounded-sm ${
                   selectedCategory === category.id
-                    ? "bg-[#e27447] hover:bg-[#e27447]/90 text-white"
-                    : "border-[#feefea] hover:border-[#e27447] hover:bg-[#feefea]"
+                    ? "bg-primary hover:bg-primary/90 text-white"
+                    : "border-gray-200 hover:border-primary hover:bg-primary/10"
                 }`}
               >
                 <Icon className="w-4 h-4 mr-2" />
@@ -247,14 +246,14 @@ const FAQPage = memo(function FAQPage() {
               return (
                 <Card
                   key={faq.id}
-                  className="rounded-sm border-[#feefea] hover:border-[#e27447] transition-colors"
+                  className="rounded-sm border-gray-200 hover:border-primary transition-colors"
                 >
                   <CardHeader
                     className="cursor-pointer"
                     onClick={() => toggleExpanded(faq.id)}
                   >
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-[#1e293b] pr-4">
+                      <CardTitle className="text-lg text-foreground pr-4">
                         {faq.question}
                       </CardTitle>
                       <Button
@@ -263,9 +262,9 @@ const FAQPage = memo(function FAQPage() {
                         className="rounded-sm"
                       >
                         {isExpanded ? (
-                          <ChevronUp className="w-5 h-5 text-[#e27447]" />
+                          <ChevronUp className="w-5 h-5 text-primary" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 text-[#e27447]" />
+                          <ChevronDown className="w-5 h-5 text-primary" />
                         )}
                       </Button>
                     </div>
@@ -284,7 +283,7 @@ const FAQPage = memo(function FAQPage() {
             <Card className="rounded-sm text-center py-12">
               <CardContent>
                 <HelpCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-[#1e293b] mb-2">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                   No FAQs Found
                 </h3>
                 <p className="text-muted-foreground mb-4">
@@ -307,9 +306,9 @@ const FAQPage = memo(function FAQPage() {
 
         {/* Contact Support Section */}
         <div className="max-w-4xl mx-auto mt-16">
-          <Card className="bg-[#feefea] border-[#e27447] rounded-sm">
+          <Card className="bg-primary/10 border-primary rounded-sm">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-[#1e293b] mb-2">
+              <CardTitle className="text-2xl font-bold text-foreground mb-2">
                 Still Need Help?
               </CardTitle>
               <CardDescription className="text-lg">
@@ -320,17 +319,17 @@ const FAQPage = memo(function FAQPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                     <WhatsAppIcon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-semibold text-[#1e293b] mb-2">
+                  <h3 className="font-semibold text-foreground mb-2">
                     Live Chat
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     Chat with our support team on WhatsApp
                   </p>
                   <Button
-                    className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                    className="bg-primary hover:bg-primary/90 rounded-sm"
                     onClick={() =>
                       window.open(
                         "https://wa.me/918130711689?text=Hello! I would like to get support.",
@@ -343,10 +342,10 @@ const FAQPage = memo(function FAQPage() {
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                     <Mail className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-semibold text-[#1e293b] mb-2">
+                  <h3 className="font-semibold text-foreground mb-2">
                     Email Support
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -354,10 +353,10 @@ const FAQPage = memo(function FAQPage() {
                   </p>
                   <Button
                     variant="outline"
-                    className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white rounded-sm"
+                    className="border-primary hover:bg-primary hover:text-white rounded-sm"
                     onClick={() =>
                       window.open(
-                        "mailto:contact@shrividhya.in?subject=Support Request",
+                        "mailto:contact@preppeo.com?subject=Support Request",
                         "_blank"
                       )
                     }
@@ -367,10 +366,10 @@ const FAQPage = memo(function FAQPage() {
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                     <Phone className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-semibold text-[#1e293b] mb-2">
+                  <h3 className="font-semibold text-foreground mb-2">
                     Phone Support
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -378,7 +377,7 @@ const FAQPage = memo(function FAQPage() {
                   </p>
                   <Button
                     variant="outline"
-                    className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white rounded-sm"
+                    className="border-primary hover:bg-primary hover:text-white rounded-sm"
                     onClick={() => window.open("tel:+918130711689", "_blank")}
                   >
                     Call Now

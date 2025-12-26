@@ -3,34 +3,25 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Input } from "@/design-system/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Users,
   Search,
-  UserCheck,
   GraduationCap,
   BookOpen,
-  CheckCircle,
   RefreshCw,
 } from "lucide-react";
-import Link from "next/link";
 
 interface Teacher {
   id: string;
@@ -81,6 +72,7 @@ export default function StudentTeacherAssignmentPage() {
 
   useEffect(() => {
     filterStudents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTeacher, selectedCourse, searchTerm, students]);
 
   const loadData = async () => {
@@ -122,11 +114,33 @@ export default function StudentTeacherAssignmentPage() {
 
       if (enrollmentsError) throw enrollmentsError;
 
-      const transformedEnrollments = (enrollmentsData || []).map((e: any) => ({
-        ...e,
-        user: Array.isArray(e.user) ? e.user[0] : e.user,
-        course: Array.isArray(e.course) ? e.course[0] : e.course,
-      }));
+      const transformedEnrollments = (enrollmentsData || []).map(
+        (e: {
+          id: string;
+          student_id: string;
+          course_id: string;
+          enrolled_at: string;
+          is_active: boolean;
+          assigned_teacher_id?: string;
+          enrollment_type: string;
+          user: Array<{
+            id: string;
+            email: string;
+            first_name: string | null;
+            last_name: string | null;
+            role: string;
+          }>;
+          course: Array<{
+            id: string;
+            title: string;
+            slug: string;
+          }>;
+        }) => ({
+          ...e,
+          user: Array.isArray(e.user) ? e.user[0] : e.user,
+          course: Array.isArray(e.course) ? e.course[0] : e.course,
+        })
+      );
 
       setStudents(transformedEnrollments);
       setFilteredStudents(transformedEnrollments);
@@ -164,11 +178,33 @@ export default function StudentTeacherAssignmentPage() {
 
       if (enrollmentsError) throw enrollmentsError;
 
-      const transformedEnrollments = (enrollmentsData || []).map((e: any) => ({
-        ...e,
-        user: Array.isArray(e.user) ? e.user[0] : e.user,
-        course: Array.isArray(e.course) ? e.course[0] : e.course,
-      }));
+      const transformedEnrollments = (enrollmentsData || []).map(
+        (e: {
+          id: string;
+          student_id: string;
+          course_id: string;
+          enrolled_at: string;
+          is_active: boolean;
+          assigned_teacher_id?: string;
+          enrollment_type: string;
+          user: Array<{
+            id: string;
+            email: string;
+            first_name: string | null;
+            last_name: string | null;
+            role: string;
+          }>;
+          course: Array<{
+            id: string;
+            title: string;
+            slug: string;
+          }>;
+        }) => ({
+          ...e,
+          user: Array.isArray(e.user) ? e.user[0] : e.user,
+          course: Array.isArray(e.course) ? e.course[0] : e.course,
+        })
+      );
 
       setStudents(transformedEnrollments);
     } catch (err) {

@@ -30,21 +30,38 @@ export function PaymentFlow({
   >("select");
   const [selectedProvider, setSelectedProvider] =
     useState<PaymentProvider | null>(null);
-  const [paymentData, setPaymentData] = useState<any>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentData, setPaymentData] = useState<{
+    orderId: string;
+    amount: number;
+    currency: string;
+  } | null>(null);
   const router = useRouter();
 
   const handlePaymentMethodSelect = (provider: PaymentProvider) => {
     setSelectedProvider(provider);
   };
 
-  const handlePaymentCreate = (data: any) => {
-    setPaymentData(data);
+  const handlePaymentCreate = (data: {
+    success: boolean;
+    orderId?: string;
+    [key: string]: unknown;
+  }) => {
+    // Extract payment data from API response
+    const paymentInfo = {
+      orderId: data.orderId || "",
+      amount: typeof data.amount === "number" ? data.amount : 0,
+      currency: typeof data.currency === "string" ? data.currency : "INR",
+    };
+    setPaymentData(paymentInfo);
     setCurrentStep("payment");
   };
 
-  const handlePaymentSuccess = async (paymentResponse: any) => {
-    setIsProcessing(true);
+  const handlePaymentSuccess = async (paymentResponse: {
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
+    courseId: string;
+  }) => {
     setCurrentStep("processing");
 
     try {
@@ -74,8 +91,6 @@ export function PaymentFlow({
       console.error("Payment verification error:", error);
       alert("Payment verification failed. Please contact support.");
       setCurrentStep("select");
-    } finally {
-      setIsProcessing(false);
     }
   };
 

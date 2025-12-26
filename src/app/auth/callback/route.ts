@@ -16,13 +16,20 @@ export async function GET(request: Request) {
       // Instead, we'll redirect to the client with the code
 
       console.log("Auth callback - Redirecting to client-side handling");
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+      // Use APP_URL first, then SITE_URL, then fallback to origin
+      const baseUrl = 
+        process.env.NEXT_PUBLIC_APP_URL || 
+        process.env.NEXT_PUBLIC_SITE_URL || 
+        origin;
 
       // Redirect to the main auth page with the code
       return NextResponse.redirect(`${baseUrl}/auth?code=${code}&next=${next}`);
     } catch (error) {
       console.error("Auth callback - Unexpected error:", error);
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+      const baseUrl = 
+        process.env.NEXT_PUBLIC_APP_URL || 
+        process.env.NEXT_PUBLIC_SITE_URL || 
+        origin;
       return NextResponse.redirect(
         `${baseUrl}/auth?error=Authentication failed`
       );
@@ -30,7 +37,10 @@ export async function GET(request: Request) {
   }
 
   // Return the user to an error page with instructions
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+  const baseUrl = 
+    process.env.NEXT_PUBLIC_APP_URL || 
+    process.env.NEXT_PUBLIC_SITE_URL || 
+    origin;
   console.log(
     "Auth callback - No code, redirecting to:",
     `${baseUrl}/auth?error=No authentication code received`

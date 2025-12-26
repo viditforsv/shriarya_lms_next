@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import {
   PaymentMethod,
   PaymentProvider,
@@ -22,7 +22,11 @@ interface PaymentMethodSelectorProps {
   courseId: string;
   userCountry?: string;
   onPaymentMethodSelect: (provider: PaymentProvider) => void;
-  onPaymentCreate: (paymentData: any) => void;
+  onPaymentCreate: (paymentData: {
+    success: boolean;
+    orderId?: string;
+    [key: string]: unknown;
+  }) => void;
 }
 
 export function PaymentMethodSelector({
@@ -43,10 +47,7 @@ export function PaymentMethodSelector({
   useEffect(() => {
     // Get available payment methods
     const methods = PaymentService.getPaymentMethods(userCountry, currency);
-    const recommended = PaymentService.getRecommendedProvider(
-      userCountry,
-      currency
-    );
+    const recommended = PaymentService.getRecommendedProvider();
 
     setPaymentMethods(methods);
     setRecommendedProvider(recommended);
@@ -71,11 +72,13 @@ export function PaymentMethodSelector({
 
       const data = await response.json();
       console.log("Razorpay test response:", data);
-      
+
       if (data.configured) {
         alert("✅ Razorpay is configured and working!");
       } else {
-        alert("⚠️ Razorpay credentials are missing. Please check environment variables.");
+        alert(
+          "⚠️ Razorpay credentials are missing. Please check environment variables."
+        );
       }
     } catch (error) {
       console.error("Connection test failed:", error);
@@ -87,7 +90,7 @@ export function PaymentMethodSelector({
     }
   };
 
-  const handleCreatePayment = async () => {
+  const handlePaymentCreate = async () => {
     if (!selectedProvider) return;
 
     setIsLoading(true);
@@ -225,7 +228,7 @@ export function PaymentMethodSelector({
           Test Razorpay
         </Button>
         <Button
-          onClick={handleCreatePayment}
+          onClick={handlePaymentCreate}
           disabled={!selectedProvider || isLoading}
           className="bg-orange-600 hover:bg-orange-700"
         >

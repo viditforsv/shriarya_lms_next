@@ -1,7 +1,7 @@
 /**
  * Image URL Conversion Utility
  * ===========================
- * 
+ *
  * This utility helps convert LaTeX image references to CDN URLs
  * and provides functions to manage image URLs in question content.
  */
@@ -17,17 +17,13 @@ export function convertLatexImageToCDN(
   imageUrl: string
 ): string {
   // Pattern to match \includegraphics commands
-  const includegraphicsPattern = /\\includegraphics(?:\[[^\]]*\])?\{[^}]+\}/g;
-  
+  const includegraphicsPattern = /\\includegraphics(?:\[[^\]]*\])?\\{[^}]+\\}/g;
+
   return latexContent.replace(includegraphicsPattern, (match) => {
-    // Extract the filename from the original command
-    const filenameMatch = match.match(/\{([^}]+)\}/);
-    const originalFilename = filenameMatch ? filenameMatch[1] : '';
-    
     // Replace with CDN URL, preserving any options
-    const optionsMatch = match.match(/\\includegraphics(\[[^\]]*\])?/);
-    const options = optionsMatch ? optionsMatch[1] : '';
-    
+    const optionsMatch = match.match(/\\includegraphics(\\[[^\\]]*\\])?/);
+    const options = optionsMatch ? optionsMatch[1] : "";
+
     return `\\includegraphics${options}{${imageUrl}}`;
   });
 }
@@ -41,11 +37,11 @@ export function extractImageFilenames(latexContent: string): string[] {
   const includegraphicsPattern = /\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}/g;
   const filenames: string[] = [];
   let match;
-  
+
   while ((match = includegraphicsPattern.exec(latexContent)) !== null) {
     filenames.push(match[1]);
   }
-  
+
   return filenames;
 }
 
@@ -68,12 +64,14 @@ export function generateQuestionImageCDNUrl(
   filename: string,
   questionId?: string
 ): string {
-  const cdnBaseUrl = process.env.NEXT_PUBLIC_BUNNY_CDN_URL || 'https://shrividhyaclasses.b-cdn.net';
-  
+  const cdnBaseUrl =
+    process.env.NEXT_PUBLIC_BUNNY_CDN_URL ||
+    "https://shrividhyaclasses.b-cdn.net";
+
   // Clean filename and add timestamp for uniqueness
-  const cleanFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const cleanFilename = filename.replace(/[^a-zA-Z0-9.-]/g, "_");
   const timestamp = Date.now();
-  
+
   if (questionId) {
     return `${cdnBaseUrl}/question-images/${questionId}/${timestamp}-${cleanFilename}`;
   } else {
@@ -83,10 +81,10 @@ export function generateQuestionImageCDNUrl(
 
 /**
  * Example usage for your specific question:
- * 
+ *
  * Original LaTeX:
  * \includegraphics[width=0.4\textwidth]{IBDP_QB_AA SL_Practice Question_Moodle_Integral Calculus_2.png}
- * 
+ *
  * After conversion:
  * \includegraphics[width=0.4\textwidth]{https://your-cdn.com/question-images/1234567890-IBDP_QB_AA_SL_Practice_Question_Moodle_Integral_Calculus_2.png}
  */

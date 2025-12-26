@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const pdfUrl = searchParams.get('url') || 'https://shrividhyaclasses.b-cdn.net/past_year_paper/CBSE/CBSE10/Maths/Maths/2022/compartment/Maths_Basic/430-6-1mathsbasic.pdf';
     
     // Get the origin from the request to set proper Referer
-    const origin = request.headers.get('origin') || request.headers.get('referer') || 'https://courses.shrividhya.in';
+    const origin = request.headers.get('origin') || request.headers.get('referer') || 'https://courses.preppeo.com';
     
     const response = await fetch(pdfUrl, {
       headers: {

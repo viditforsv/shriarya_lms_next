@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   BookOpen,
   FileText,
@@ -22,9 +23,6 @@ import {
   CheckCircle2,
   CheckCircle,
   Upload,
-  Clock,
-  Unlock,
-  Eye,
   ArrowLeft,
   ArrowRight,
   Lightbulb,
@@ -39,14 +37,14 @@ import {
   Flag,
   Image as ImageIcon,
 } from "lucide-react";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Textarea } from "@/app/components-demo/ui/textarea";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { VideoResource } from "@/app/components-demo/ui/youtube-video";
+import { Input } from "@/design-system/components/ui/input";
+import { Textarea } from "@/design-system/components/textarea";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Button } from "@/design-system/components/ui/button";
+import { VideoResource } from "@/design-system/components/youtube-video";
 import { renderMixedContent } from "@/components/MathRenderer";
-import { Switch } from "@/app/components-demo/ui/switch";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { Switch } from "@/design-system/components/switch";
+import { Label } from "@/design-system/components/ui/label";
 import { IBDPQuestionSession } from "@/components/IBDPMathTemplate/IBDPQuestionSession";
 import {
   Dialog,
@@ -55,7 +53,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/app/components-demo/ui/dialog";
+} from "@/design-system/components/dialog";
+import { QuizPlayer } from "@/components/QuizPlayer";
+import { useScreenshotPrevention } from "@/hooks/useScreenshotPrevention";
 
 interface LessonContent {
   id: string;
@@ -160,7 +160,9 @@ export function UnifiedLessonPage({
   const [currentMessage, setCurrentMessage] = useState("");
   const [isAITyping, setIsAITyping] = useState(false);
   const [isAssignmentTabActive, setIsAssignmentTabActive] = useState(false);
-  const [isSolutionTabActive, setIsSolutionTabActive] = useState(false);
+
+  // Screenshot prevention for PDF viewer
+  const pdfContainerRef = useScreenshotPrevention(!!lesson.pdf_url && isAssignmentTabActive);
 
   // Inline editing state for admins
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -293,7 +295,7 @@ export function UnifiedLessonPage({
 
     // More comprehensive YouTube URL patterns
     const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^#&\?]{11})/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^#&?]{11})/,
       /^([a-zA-Z0-9_-]{11})$/,
     ];
 
@@ -315,6 +317,16 @@ export function UnifiedLessonPage({
   const hasPDFSolution = !!lesson.solution_url;
   const hasQuiz = !!lesson.quiz_id;
   const hasQuestions = questions.length > 0;
+
+  // Debug logging
+  useEffect(() => {
+    console.log("UnifiedLessonPage - Lesson data:", {
+      id: lesson.id,
+      title: lesson.title,
+      quiz_id: lesson.quiz_id,
+      hasQuiz,
+    });
+  }, [lesson, hasQuiz]);
   // Check for notes - can be in content, concept, or formula fields
   const hasNotes = !!(
     lesson.content ||
@@ -325,53 +337,69 @@ export function UnifiedLessonPage({
   );
 
   // Build tabs array dynamically
-  const availableTabs = [];
-  // Questions tab - prioritize it as first tab if available
-  if (hasQuestions) {
-    availableTabs.push({
-      id: "questions",
-      label: "Questions",
-      icon: FileCheck,
-    });
+  interface TabItem {
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
   }
-  if (hasConcepts || hasFormulas) {
-    availableTabs.push({
-      id: "content",
-      label: "Concepts & Formulas",
-      icon: BookOpen,
-    });
-  }
-  if (hasVideo) {
-    availableTabs.push({ id: "video", label: "Video", icon: Video });
-  }
-  if (hasNotes) {
-    availableTabs.push({ id: "notes", label: "Concepts", icon: FileText });
-  }
-  if (hasPDFAssignment) {
-    availableTabs.push({
-      id: "assignment",
-      label: "Assignment",
-      icon: FileText,
-    });
-  }
-  if (hasPDFSolution) {
-    availableTabs.push({
-      id: "solution",
-      label: "Solution",
-      icon: CheckCircle2,
-    });
-  }
-  if (hasQuiz) {
-    availableTabs.push({ id: "quiz", label: "Quiz", icon: FileCheck });
-  }
+  const availableTabs: TabItem[] = useMemo(() => {
+    const tabs: TabItem[] = [];
+    // Questions tab - prioritize it as first tab if available
+    if (hasQuestions) {
+      tabs.push({
+        id: "questions",
+        label: "Questions",
+        icon: FileCheck,
+      });
+    }
+    if (hasConcepts || hasFormulas) {
+      tabs.push({
+        id: "content",
+        label: "Concepts & Formulas",
+        icon: BookOpen,
+      });
+    }
+    if (hasVideo) {
+      tabs.push({ id: "video", label: "Video", icon: Video });
+    }
+    if (hasNotes) {
+      tabs.push({ id: "notes", label: "Concepts", icon: FileText });
+    }
+    if (hasPDFAssignment) {
+      tabs.push({
+        id: "assignment",
+        label: "Assignment",
+        icon: FileText,
+      });
+    }
+    if (hasPDFSolution) {
+      tabs.push({
+        id: "solution",
+        label: "Solution",
+        icon: CheckCircle2,
+      });
+    }
+    if (hasQuiz) {
+      tabs.push({ id: "quiz", label: "Quiz", icon: FileCheck });
+    }
+    return tabs;
+  }, [hasQuestions, hasConcepts, hasFormulas, hasVideo, hasNotes, hasPDFAssignment, hasPDFSolution, hasQuiz]);
 
   const defaultTab = availableTabs[0]?.id || "content";
+
+  // Debug logging for tabs
+  useEffect(() => {
+    console.log(
+      "UnifiedLessonPage - Available tabs:",
+      availableTabs.map((t) => t.id)
+    );
+    console.log("UnifiedLessonPage - Default tab:", defaultTab);
+  }, [availableTabs, defaultTab]);
 
   // Initialize PDF tab states based on current tab
   useEffect(() => {
     const currentTab = activeTab || defaultTab;
     setIsAssignmentTabActive(currentTab === "assignment");
-    setIsSolutionTabActive(currentTab === "solution");
   }, [activeTab, defaultTab]);
 
   // Set default tab on mount
@@ -544,7 +572,7 @@ export function UnifiedLessonPage({
   return (
     <div>
       {/* Lesson Header - Clean and elegant like IBDP */}
-      <div className="mb-6">
+      <div className="mb-4 md:mb-6">
         {editingField === "title" ? (
           <div className="flex items-center gap-2 mb-2">
             <input
@@ -553,7 +581,7 @@ export function UnifiedLessonPage({
               onChange={(e) =>
                 setEditValues({ ...editValues, title: e.target.value })
               }
-              className="text-3xl font-bold text-[#1e293b] border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1"
+              className="text-2xl md:text-3xl font-bold text-[#1e293b] border-2 border-[#e27447] rounded-sm px-3 py-2 flex-1"
               autoFocus
             />
             <Button
@@ -581,7 +609,7 @@ export function UnifiedLessonPage({
         ) : (
           <>
             <div className="flex items-center gap-2 mb-2">
-              <h1 className="text-3xl font-bold text-[#1e293b]">
+              <h1 className="text-2xl md:text-3xl font-bold text-[#1e293b]">
                 {lesson.title}
               </h1>
               {isAdmin && (
@@ -669,12 +697,11 @@ export function UnifiedLessonPage({
             setActiveTab(value);
             // Force PDF iframes to reload when tab becomes active
             setIsAssignmentTabActive(value === "assignment");
-            setIsSolutionTabActive(value === "solution");
           }}
           className="w-full"
         >
           <TabsList
-            className={`grid w-full rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200 ${
+            className={`grid w-full rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200 overflow-x-auto ${
               availableTabs.length === 1
                 ? "grid-cols-1"
                 : availableTabs.length === 2
@@ -682,22 +709,22 @@ export function UnifiedLessonPage({
                 : availableTabs.length === 3
                 ? "grid-cols-3"
                 : availableTabs.length === 4
-                ? "grid-cols-4"
+                ? "grid-cols-2 md:grid-cols-4"
                 : availableTabs.length === 5
-                ? "grid-cols-5"
+                ? "grid-cols-3 md:grid-cols-5"
                 : availableTabs.length === 6
-                ? "grid-cols-6"
-                : "grid-cols-7"
+                ? "grid-cols-3 md:grid-cols-6"
+                : "grid-cols-3 md:grid-cols-7"
             }`}
           >
             {availableTabs.map((tab) => (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200"
+                className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 text-xs md:text-sm"
               >
-                <tab.icon className="w-4 h-4 mr-2" />
-                {tab.label}
+                <tab.icon className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">{tab.label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -858,7 +885,10 @@ export function UnifiedLessonPage({
                   ) : lesson.pdf_url ? (
                     <div className="space-y-4">
                       {/* Assignment PDF Embedder - Full height like CBSE Class 9 */}
-                      <div className="w-full h-[800px] border-2 border-[#feefea] rounded-sm overflow-hidden bg-gray-50">
+                      <div 
+                        ref={pdfContainerRef}
+                        className="w-full h-[500px] md:h-[800px] border-2 border-[#feefea] rounded-sm overflow-hidden bg-gray-50"
+                      >
                         {isAssignmentTabActive && (
                           <iframe
                             key={`assignment-${lesson.id}-${lesson.pdf_url}`}
@@ -939,23 +969,22 @@ export function UnifiedLessonPage({
                       )}
 
                       {/* Assignment Actions */}
-                      <div className="flex items-center justify-between mt-4">
+                      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between mt-4 gap-3">
                         <Button
                           variant="outline"
-                          className="rounded-sm"
+                          className="rounded-sm w-full md:w-auto"
                           onClick={() => window.open(lesson.pdf_url, "_blank")}
                         >
                           <FileText className="w-4 h-4 mr-2" />
                           Open in New Tab
                         </Button>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                           {hasPDFSolution && (
                             <Button
                               variant="outline"
-                              className="rounded-sm"
+                              className="rounded-sm w-full sm:w-auto"
                               onClick={() => {
                                 setActiveTab("solution");
-                                setIsSolutionTabActive(true);
                                 setIsAssignmentTabActive(false);
                               }}
                             >
@@ -964,7 +993,7 @@ export function UnifiedLessonPage({
                             </Button>
                           )}
                           {onMarkComplete && (
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center justify-between sm:justify-start space-x-3 p-3 sm:p-0 border sm:border-0 rounded-sm">
                               <Label
                                 htmlFor="complete-toggle"
                                 className="text-sm font-medium"
@@ -1084,7 +1113,7 @@ export function UnifiedLessonPage({
                   ) : lesson.solution_url ? (
                     <div className="space-y-4">
                       {/* Solution PDF Embedder - Full height like CBSE Class 9 */}
-                      <div className="w-full h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
+                      <div className="w-full h-[500px] md:h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
                         <iframe
                           src={lesson.solution_url}
                           className="w-full h-full"
@@ -1095,10 +1124,10 @@ export function UnifiedLessonPage({
                       </div>
 
                       {/* Solution Actions */}
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
                         <Button
                           variant="outline"
-                          className="rounded-sm"
+                          className="rounded-sm w-full md:w-auto"
                           onClick={() =>
                             window.open(lesson.solution_url, "_blank")
                           }
@@ -1106,15 +1135,14 @@ export function UnifiedLessonPage({
                           <FileText className="w-4 h-4 mr-2" />
                           Open in New Tab
                         </Button>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                           {hasPDFAssignment && (
                             <Button
                               variant="outline"
-                              className="rounded-sm"
+                              className="rounded-sm w-full sm:w-auto"
                               onClick={() => {
                                 setActiveTab("assignment");
                                 setIsAssignmentTabActive(true);
-                                setIsSolutionTabActive(false);
                               }}
                             >
                               <FileText className="w-4 h-4 mr-2" />
@@ -1123,7 +1151,7 @@ export function UnifiedLessonPage({
                           )}
                           {onMarkComplete && (
                             <Button
-                              className={`rounded-sm ${
+                              className={`rounded-sm w-full sm:w-auto ${
                                 isCompleted
                                   ? "bg-green-600 hover:bg-green-700"
                                   : "bg-[#e27447] hover:bg-[#e27447]/90"
@@ -1318,14 +1346,14 @@ export function UnifiedLessonPage({
                           : nestedTabCount === 3
                           ? "grid-cols-3"
                           : nestedTabCount === 4
-                          ? "grid-cols-4"
-                          : "grid-cols-4"
+                          ? "grid-cols-2 md:grid-cols-4"
+                          : "grid-cols-2 md:grid-cols-4"
                       }`}
                     >
                       {hasConceptTab && (
                         <TabsTrigger
                           value="concepts"
-                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                          className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200 text-xs md:text-sm"
                         >
                           Concepts
                         </TabsTrigger>
@@ -1333,7 +1361,7 @@ export function UnifiedLessonPage({
                       {hasFormulaTab && (
                         <TabsTrigger
                           value="formulas"
-                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                          className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200 text-xs md:text-sm"
                         >
                           Formulas
                         </TabsTrigger>
@@ -1341,7 +1369,7 @@ export function UnifiedLessonPage({
                       {hasNotesTab && (
                         <TabsTrigger
                           value="notes"
-                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                          className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200 text-xs md:text-sm"
                         >
                           Notes
                         </TabsTrigger>
@@ -1349,7 +1377,7 @@ export function UnifiedLessonPage({
                       {hasAITutorTab && (
                         <TabsTrigger
                           value="ai-tutor"
-                          className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200"
+                          className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-100 data-[state=inactive]:text-gray-700 data-[state=inactive]:bg-gray-50 data-[state=inactive]:border data-[state=inactive]:border-gray-200 text-xs md:text-sm"
                         >
                           AI Tutor
                         </TabsTrigger>
@@ -1881,20 +1909,23 @@ export function UnifiedLessonPage({
           {/* Quiz Tab */}
           {hasQuiz && (
             <TabsContent value="quiz" className="mt-6 space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quiz</CardTitle>
-                  <CardDescription>
-                    Test your understanding with this quiz
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    Quiz interface will be available here.
-                    {/* TODO: Integrate quiz component */}
-                  </p>
-                </CardContent>
-              </Card>
+              {lesson.quiz_id ? (
+                <QuizPlayer quizId={lesson.quiz_id} />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Quiz</CardTitle>
+                    <CardDescription>
+                      Test your understanding with this quiz
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-center py-8">
+                      No quiz available for this lesson yet.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           )}
         </Tabs>
@@ -1907,26 +1938,26 @@ export function UnifiedLessonPage({
       )}
 
       {/* Feedback Section - Suggest Changes */}
-      <div className="mt-8 mb-6">
+      <div className="mt-6 md:mt-8 mb-6">
         <Card className="rounded-sm border-2 border-dashed border-gray-300 bg-gray-50/50">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-[#e27447]/10 rounded-sm">
+                <div className="p-2 bg-[#e27447]/10 rounded-sm flex-shrink-0">
                   <AlertCircle className="w-5 h-5 text-[#e27447]" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-[#1e293b]">
+                  <h4 className="font-semibold text-[#1e293b] text-sm md:text-base">
                     Found an issue?
                   </h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     Help us improve by reporting mistakes or suggesting changes
                   </p>
                 </div>
               </div>
               <Button
                 variant="outline"
-                className="rounded-sm border-[#e27447] text-[#e27447] hover:bg-[#feefea]"
+                className="rounded-sm border-[#e27447] text-[#e27447] hover:bg-[#feefea] w-full sm:w-auto text-sm"
                 onClick={() => setShowFeedbackModal(true)}
               >
                 <Flag className="w-4 h-4 mr-2" />
@@ -1939,10 +1970,10 @@ export function UnifiedLessonPage({
 
       {/* Navigation Buttons - Like CBSE Class 9 */}
       {allLessons.length > 0 && (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-4 gap-3">
           <Button
             variant="outline"
-            className="rounded-sm"
+            className="rounded-sm w-full sm:w-auto"
             onClick={getPreviousLesson}
             disabled={
               !allLessons.find(
@@ -1954,7 +1985,7 @@ export function UnifiedLessonPage({
             Previous Lesson
           </Button>
           <Button
-            className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+            className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm w-full sm:w-auto"
             onClick={getNextLesson}
             disabled={
               !allLessons.find(
@@ -2069,9 +2100,11 @@ export function UnifiedLessonPage({
               ) : (
                 <div className="space-y-2">
                   <div className="relative border rounded-sm overflow-hidden">
-                    <img
+                    <Image
                       src={feedbackImagePreview}
                       alt="Feedback preview"
+                      width={800}
+                      height={192}
                       className="w-full h-48 object-contain bg-gray-50"
                     />
                     <Button

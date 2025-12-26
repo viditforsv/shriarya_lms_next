@@ -1,0 +1,155 @@
+Sl. No.,unit_name,chapter_name,topic_name,lesson_id,lesson_name,tags
+1,Number Systems,Real Numbers,Number System Classification,cbse_maths_10_001,Revision of number system hierarchy,"Number Systems, Classification, Hierarchy, Real Numbers, Revision"
+2,Number Systems,Real Numbers,Real Numbers,cbse_maths_10_002,Introduction to Real Numbers,"Number Systems, Real Numbers, Introduction"
+3,Number Systems,Real Numbers,Fundamental Theorem,cbse_maths_10_003,Fundamental Theorem of Arithmetic - Statements and Examples,"Fundamental Theorem of Arithmetic, Prime Factorization, Real Numbers"
+4,Number Systems,Real Numbers,Irrational Numbers,cbse_maths_10_004,"Proofs of Irrationality of √2, √3	, √5","Irrationality Proofs, Square Roots, Real Numbers"
+5,Number Systems,Real Numbers,Irrational Numbers,cbse_maths_10_005,Advanced Irrationality Proofs (3 + 2√5 etc.),"Irrationality Proofs, Real Numbers, Advanced Proofs, √5, 3+2√5"
+6,Number Systems,Real Numbers,Applications,cbse_maths_10_006,Real Numbers Practice Problems,"Real Numbers, Practice Problems"
+7,Number Systems,Real Numbers,Past Paper Questions,cbse_maths_10_007,1-2 Markers,
+8,Number Systems,Real Numbers,Past Paper Questions,cbse_maths_10_008,3-4 Markers,
+9,Number Systems,Real Numbers,Past Paper Questions,cbse_maths_10_009,5-6 Markers,
+10,Number Systems,Real Numbers,Past Paper Questions,cbse_maths_10_010,Case Studies,
+11,Algebra,Polynomials,Basics of Polynomials,cbse_maths_10_011,Introduction to Polynomials,"Algebra, Polynomials, Introduction"
+12,Algebra,Polynomials,Zeros and Roots of Polynomials,cbse_maths_10_012,Zeros of a Polynomial,"Zeros, Polynomial, Roots, Algebra"
+13,Algebra,Polynomials,Relations between Zeros and Coefficients,cbse_maths_10_013,Relationship between Zeros and Coefficients of Quadratic Polynomials,"Polynomials, Zeros, Coefficients, Quadratic Equations"
+14,Algebra,Polynomials,Methods of Finding Zeros,cbse_maths_10_014,Graphical and Algebraic Methods for Finding Zeros,"Polynomials, Zeros, Graphical Methods, Algebraic Methods"
+15,Algebra,Polynomials,Polynomial Applications and Problem Solving,cbse_maths_10_015,Polynomials Practice Problems,"Polynomials, Practice, Algebra"
+16,Algebra,Polynomials,Past Paper Questions,cbse_maths_10_016,1-2 Markers,
+17,Algebra,Polynomials,Past Paper Questions,cbse_maths_10_017,3-4 Markers,
+18,Algebra,Polynomials,Past Paper Questions,cbse_maths_10_018,5-6 Markers,
+19,Algebra,Polynomials,Past Paper Questions,cbse_maths_10_019,Case Studies,
+20,Algebra,Pair of Linear Equations,Basics of Linear Equations in Two Variables,cbse_maths_10_020,Introduction to Pair of Linear Equations in Two Variables,"Algebra, Linear Equations, Two Variables, Introduction"
+21,Algebra,Pair of Linear Equations,Graphical Representation and Consistency of Equations,cbse_maths_10_021,Graphical Method and Consistency/Inconsistency,"Graphical Method, Linear Equations, Consistency, Inconsistency, Algebra"
+22,Algebra,Pair of Linear Equations,Algebraic Conditions for Solutions,cbse_maths_10_022,Algebraic Conditions for Number of Solutions,"Pair of Linear Equations, Algebraic Conditions, Number of Solutions, Consistency, Algebra"
+23,Algebra,Pair of Linear Equations,Substitution Method of Solving Equations,cbse_maths_10_023,Solution by Substitution Method,"Linear Equations, Substitution Method, Algebraic Solution, Systems of Equations"
+24,Algebra,Pair of Linear Equations,Elimination Method of Solving Equations,cbse_maths_10_024,Solution by Elimination Method,"Algebra, Linear Equations, Elimination Method, Systems of Equations, Solution Methods"
+25,Algebra,Pair of Linear Equations,Word Problems on Linear Equations,cbse_maths_10_025,Simple Situational Problems,"Pair of Linear Equations, Word Problems, Applications, Algebra"
+26,Algebra,Pair of Linear Equations,Practice and Mixed Problem Set,cbse_maths_10_026,Linear Equations Practice Problems,"Linear Equations, Practice Problems"
+27,Algebra,Pair of Linear Equations,Past Paper Questions,cbse_maths_10_027,1-2 Markers,
+28,Algebra,Pair of Linear Equations,Past Paper Questions,cbse_maths_10_028,3-4 Markers,
+29,Algebra,Pair of Linear Equations,Past Paper Questions,cbse_maths_10_029,5-6 Markers,
+30,Algebra,Pair of Linear Equations,Past Paper Questions,cbse_maths_10_030,Case Studies,
+31,Algebra,Quadratic Equations,Basics of Quadratic Equations,cbse_maths_10_031,Introduction to Quadratic Equations,"Algebra, Quadratic Equations, Introduction"
+32,Algebra,Quadratic Equations,Standard Form and General Structure,cbse_maths_10_032,Standard Form of Quadratic Equation (ax² + bx + c = 0),"Quadratic Equation, Standard Form, ax²+bx+c=0, Algebra"
+33,Algebra,Quadratic Equations,Factorization Method of Solving Quadratics,cbse_maths_10_033,Solution by Factorization Method,"Quadratic Equations, Factorization Method, Roots, Solutions"
+34,Algebra,Quadratic Equations,Using Quadratic Formula to Find Roots,cbse_maths_10_034,Quadratic Formula,"Quadratic Formula, Roots, Quadratic Equations, Algebra, Solution"
+35,Algebra,Quadratic Equations,Discriminant and Types of Roots,cbse_maths_10_035,Discriminant and Nature of Roots,"Discriminant, Nature of Roots, Quadratic Equations"
+36,Algebra,Quadratic Equations,Applications of Quadratic Equations,cbse_maths_10_036,Situational Problems Based on Quadratic Equations,"Quadratic Equations, Word Problems, Applications, Algebra"
+37,Algebra,Quadratic Equations,Practice and Mixed Problem Set,cbse_maths_10_037,Quadratic Equations Practice Problems,"Quadratic Equations, Practice Problems, Algebra"
+38,Algebra,Quadratic Equations,Past Paper Questions,cbse_maths_10_038,1-2 Markers,
+39,Algebra,Quadratic Equations,Past Paper Questions,cbse_maths_10_039,3-4 Markers,
+40,Algebra,Quadratic Equations,Past Paper Questions,cbse_maths_10_040,5-6 Markers,
+41,Algebra,Quadratic Equations,Past Paper Questions,cbse_maths_10_041,Case Studies,
+42,Algebra,Arithmetic Progressions,Basics of Arithmetic Progressions,cbse_maths_10_042,Introduction to Arithmetic Progressions,"Arithmetic Progressions, AP, Introduction, Sequence, Series, Algebra"
+43,Algebra,Arithmetic Progressions,Need and Patterns in A.P.,cbse_maths_10_043,Motivation for Studying Arithmetic Progression,"Arithmetic Progression, Motivation, Introduction, Algebra"
+44,Algebra,Arithmetic Progressions,nth Term Formula and Derivation,cbse_maths_10_044,Derivation of nth Term of AP,"Arithmetic Progressions, nth Term, Derivation, Algebra"
+45,Algebra,Arithmetic Progressions,Sum of n Terms (Sₙ) of A.P.,cbse_maths_10_045,Derivation of Sum of First n Terms of AP,"Arithmetic Progressions, Sum Formula, nth Term, Derivation"
+46,Algebra,Arithmetic Progressions,Applications of A.P.,cbse_maths_10_046,Application of AP in Daily Life Problems,"Arithmetic Progressions, Applications, Word Problems, Algebra"
+47,Algebra,Arithmetic Progressions,Mixed Problems and Revision,cbse_maths_10_047,AP Practice Problems,"Arithmetic Progression, AP, Practice Problems, Algebra"
+48,Algebra,Arithmetic Progressions,Past Paper Questions,cbse_maths_10_048,1-2 Markers,
+49,Algebra,Arithmetic Progressions,Past Paper Questions,cbse_maths_10_049,3-4 Markers,
+50,Algebra,Arithmetic Progressions,Past Paper Questions,cbse_maths_10_050,5-6 Markers,
+51,Algebra,Arithmetic Progressions,Past Paper Questions,cbse_maths_10_051,Case Studies,
+52,Coordinate Geometry,Coordinate Geometry,Basics of Coordinate Plane,cbse_maths_10_052,Introduction to Coordinate Geometry,"Coordinate Geometry, Introduction, Cartesian Plane"
+53,Coordinate Geometry,Coordinate Geometry,Revision of Coordinate Concepts,cbse_maths_10_053,Review of Concepts of Coordinate Geometry,"Coordinate Geometry, Review, Concepts, Fundamentals"
+54,Coordinate Geometry,Coordinate Geometry,Distance Between Two Points,cbse_maths_10_054,Distance Formula,"Coordinate Geometry, Distance Formula, Analytic Geometry"
+55,Coordinate Geometry,Coordinate Geometry,Section Formula and Internal Division,cbse_maths_10_055,Section Formula (Internal Division),"Coordinate Geometry, Section Formula, Internal Division"
+56,Coordinate Geometry,Coordinate Geometry,Applications in Geometry,cbse_maths_10_056,Applications of Distance and Section Formulas,"Coordinate Geometry, Distance Formula, Section Formula, Applications"
+57,Coordinate Geometry,Coordinate Geometry,Practice and Problem Set,cbse_maths_10_057,Coordinate Geometry Practice Problems,"Coordinate Geometry, Practice Problems"
+58,Coordinate Geometry,Coordinate Geometry,Past Paper Questions,cbse_maths_10_058,1-2 Markers,
+59,Coordinate Geometry,Coordinate Geometry,Past Paper Questions,cbse_maths_10_059,3-4 Markers,
+60,Coordinate Geometry,Coordinate Geometry,Past Paper Questions,cbse_maths_10_060,5-6 Markers,
+61,Coordinate Geometry,Coordinate Geometry,Past Paper Questions,cbse_maths_10_061,Case Studies,
+62,Geometry,Triangles,Similarity and Congruence Basics,cbse_maths_10_062,Introduction to Similar Triangles,"Geometry, Triangles, Similarity, Introduction"
+63,Geometry,Triangles,Definitions and Counter Examples,cbse_maths_10_063,Definitions Examples and Counter Examples of Similar Triangles,"Similar Triangles, Definitions, Examples, Counter Examples, Geometry"
+64,Geometry,Triangles,Basic Proportionality Theorem (BPT),cbse_maths_10_064,Basic Proportionality Theorem (Proof),"Basic Proportionality Theorem, Thales Theorem, Proof, Triangles, Similarity"
+65,Geometry,Triangles,Converse of BPT,cbse_maths_10_065,Converse of Basic Proportionality Theorem,"Converse of Basic Proportionality Theorem, Triangles, Similarity, Geometry"
+66,Geometry,Triangles,Angle–Angle–Angle (AAA) Criterion,cbse_maths_10_066,AAA Similarity Criterion,"AAA, Similarity Criterion, Triangles, Geometry, Proofs"
+67,Geometry,Triangles,Side–Side–Side (SSS) Criterion,cbse_maths_10_067,SSS Similarity Criterion,"SSS Similarity Criterion, Triangles, Geometry, Similarity"
+68,Geometry,Triangles,Side–Angle–Side (SAS) Criterion,cbse_maths_10_068,SAS Similarity Criterion,"SAS Criterion, Similar Triangles, Geometry, Triangles"
+69,Geometry,Triangles,Applications of Triangle Similarity,cbse_maths_10_069,Applications of Similarity Criteria,"Similarity Criteria, Applications, Triangles, Geometry"
+70,Geometry,Triangles,Mixed Exercises on Triangles,cbse_maths_10_070,Triangles Practice Problems,"Geometry, Triangles, Practice Problems"
+71,Geometry,Triangles,Past Paper Questions,cbse_maths_10_071,1-2 Markers,
+72,Geometry,Triangles,Past Paper Questions,cbse_maths_10_072,3-4 Markers,
+73,Geometry,Triangles,Past Paper Questions,cbse_maths_10_073,5-6 Markers,
+74,Geometry,Triangles,Past Paper Questions,cbse_maths_10_074,Case Studies,
+75,Geometry,Circles,Basics of Circle and Tangent Concepts,cbse_maths_10_075,Introduction to Circles,"Circles, Geometry, Introduction"
+76,Geometry,Circles,Concept of Tangent to a Circle,cbse_maths_10_076,Tangent to a Circle at Point of Contact,"Tangent, Circle, Point of Contact, Geometry"
+77,Geometry,Circles,Tangent–Radius Perpendicular Theorem,cbse_maths_10_077,Tangent Perpendicular to Radius Theorem (Proof),"Tangent Theorem, Radius Perpendicularity, Circle Properties, Proof, Geometry"
+78,Geometry,Circles,Equal Tangents Theorem,cbse_maths_10_078,Equal Tangents from External Point Theorem (Proof),"Circles, Tangents, External Point, Theorem, Proof, Geometry"
+79,Geometry,Circles,Applications of Tangent Theorems,cbse_maths_10_079,Applications of Tangent Properties,"Circles, Tangent Properties, Applications, Geometry"
+80,Geometry,Circles,Practice and Mixed Exercises,cbse_maths_10_080,Circles Practice Problems,"Circles, Practice Problems, Geometry"
+81,Geometry,Circles,Past Paper Questions,cbse_maths_10_081,1-2 Markers,
+82,Geometry,Circles,Past Paper Questions,cbse_maths_10_082,3-4 Markers,
+83,Geometry,Circles,Past Paper Questions,cbse_maths_10_083,5-6 Markers,
+84,Geometry,Circles,Past Paper Questions,cbse_maths_10_084,Case Studies,
+85,Trigonometry,Introduction to Trigonometry,Basics of Trigonometric Ratios,cbse_maths_10_085,Introduction to Trigonometry,"Trigonometry, Introduction, Ratios, Angles"
+86,Trigonometry,Introduction to Trigonometry,Trigonometric Ratios for Acute Angles,cbse_maths_10_086,Trigonometric Ratios of Acute Angles,"Trigonometric Ratios, Acute Angles, Introduction to Trigonometry"
+87,Trigonometry,Introduction to Trigonometry,Existence and Definitions of Ratios,cbse_maths_10_087,Proof of Existence of Trigonometric Ratios,"Trigonometric Ratios, Proof, Existence, Introduction to Trigonometry"
+88,Trigonometry,Introduction to Trigonometry,Ratios at 0° and 90°,cbse_maths_10_088,Trigonometric Ratios at 0° and 90°,"Trigonometric Ratios, Special Angles, 0 Degrees, 90 Degrees"
+89,Trigonometry,Introduction to Trigonometry,Standard Trigonometric Values,cbse_maths_10_089,Values of Trigonometric Ratios (30° 45° 60°),"Trigonometric Ratios, Specific Angles, 30°, 45°, 60°, Values"
+90,Trigonometry,Introduction to Trigonometry,Relations among Ratios,cbse_maths_10_090,Relationships between Trigonometric Ratios,"Trigonometric Ratios, Relationships, Identities, Trigonometry"
+91,Trigonometry,Introduction to Trigonometry,Practice on Trig Ratios,cbse_maths_10_091,Trigonometric Ratios Practice,"Trigonometric Ratios, Practice, Introduction, Trigonometry"
+92,Trigonometry,Introduction to Trigonometry,Past Paper Questions,cbse_maths_10_092,1-2 Markers,
+93,Trigonometry,Introduction to Trigonometry,Past Paper Questions,cbse_maths_10_093,3-4 Markers,
+94,Trigonometry,Introduction to Trigonometry,Past Paper Questions,cbse_maths_10_094,5-6 Markers,
+95,Trigonometry,Introduction to Trigonometry,Past Paper Questions,cbse_maths_10_095,Case Studies,
+96,Trigonometry,Trigonometric Identities,Basics of Trigonometric Identities,cbse_maths_10_096,Introduction to Trigonometric Identities,"Trigonometric Identities, Introduction, Trigonometry"
+97,Trigonometry,Trigonometric Identities,Fundamental Trigonometric Identity,cbse_maths_10_097,Proof of sin²A + cos²A = 1,"Trigonometric Identities, Proof, sin²A + cos²A = 1, Pythagorean Identity"
+98,Trigonometry,Trigonometric Identities,Application of Identities,cbse_maths_10_098,Applications of sin²A + cos²A = 1,"Trigonometric Identities, sin²A + cos²A = 1, Applications"
+99,Trigonometry,Trigonometric Identities,Extended Trigonometric Identities,cbse_maths_10_099,Other Simple Trigonometric Identities,"Trigonometric Identities, Reciprocal Identities, Quotient Identities, Pythagorean Identities, Simplification"
+100,Trigonometry,Trigonometric Identities,Practice on Identities,cbse_maths_10_100,Trigonometric Identities Practice,"Trigonometric Identities, Practice, Trigonometry"
+101,Trigonometry,Trigonometric Identities,Past Paper Questions,cbse_maths_10_101,1-2 Markers,
+102,Trigonometry,Trigonometric Identities,Past Paper Questions,cbse_maths_10_102,3-4 Markers,
+103,Trigonometry,Trigonometric Identities,Past Paper Questions,cbse_maths_10_103,5-6 Markers,
+104,Trigonometry,Trigonometric Identities,Past Paper Questions,cbse_maths_10_104,Case Studies,
+105,Trigonometry,Heights and Distances,Introduction and Terminology,cbse_maths_10_105,Introduction to Heights and Distances,"Heights and Distances, Trigonometry, Applications, Introduction"
+106,Trigonometry,Heights and Distances,Angle of Elevation,cbse_maths_10_106,Angle of Elevation,"Angle of Elevation, Heights and Distances, Trigonometry"
+107,Trigonometry,Heights and Distances,Angle of Depression,cbse_maths_10_107,Angle of Depression,"Angle of Depression, Heights and Distances, Trigonometry"
+108,Trigonometry,Heights and Distances,Basic Problems on Heights and Distances,cbse_maths_10_108,Simple Problems on Heights and Distances,"Heights and Distances, Simple Problems, Trigonometry, Applications"
+109,Trigonometry,Heights and Distances,Problems Involving Standard Angles,cbse_maths_10_109,Problems with Angles 30° 45° 60°,"Heights and Distances, 30°, 45°, 60°, Trigonometry, Applications"
+110,Trigonometry,Heights and Distances,Practical Applications of Trigonometry,cbse_maths_10_110,Real Life Applications of Heights and Distances,"Heights and Distances, Applications, Real Life Problems, Trigonometry"
+111,Trigonometry,Heights and Distances,Comprehensive Practice,cbse_maths_10_111,Heights and Distances Practice,"Heights and Distances, Practice Problems, Trigonometry"
+112,Trigonometry,Heights and Distances,Past Paper Questions,cbse_maths_10_112,1-2 Markers,
+113,Trigonometry,Heights and Distances,Past Paper Questions,cbse_maths_10_113,3-4 Markers,
+114,Trigonometry,Heights and Distances,Past Paper Questions,cbse_maths_10_114,5-6 Markers,
+115,Trigonometry,Heights and Distances,Past Paper Questions,cbse_maths_10_115,Case Studies,
+116,Mensuration,Areas Related to Circles,Concept of Sectors and Segments,cbse_maths_10_116,Introduction to Areas Related to Circles,"Mensuration, Areas, Circles, Introduction"
+117,Mensuration,Areas Related to Circles,Area of a Sector,cbse_maths_10_117,Area of Sectors of a Circle,"Area, Sectors, Circle, Mensuration, Geometry"
+118,Mensuration,Areas Related to Circles,Area of a Segment,cbse_maths_10_118,Area of Segments of a Circle,"Area, Segments, Circles, Mensuration"
+119,Mensuration,Areas Related to Circles,Problems on Central Angles,cbse_maths_10_119,Problems with Central Angles 60° 90° 120°,"Central Angles, Sectors, Areas, Circles, 60°, 90°, 120°"
+120,Mensuration,Areas Related to Circles,Mixed Problems on Circles,cbse_maths_10_120,Areas Related to Circles Practice,"Areas Related to Circles, Mensuration, Practice Problems"
+121,Mensuration,Areas Related to Circles,Past Paper Questions,cbse_maths_10_121,1-2 Markers,
+122,Mensuration,Areas Related to Circles,Past Paper Questions,cbse_maths_10_122,3-4 Markers,
+123,Mensuration,Areas Related to Circles,Past Paper Questions,cbse_maths_10_123,5-6 Markers,
+124,Mensuration,Areas Related to Circles,Past Paper Questions,cbse_maths_10_124,Case Studies,
+125,Mensuration,Surface Areas and Volumes,Basics of 3D Shapes,cbse_maths_10_125,Introduction to Surface Areas and Volumes,"Mensuration, Surface Area, Volume, Introduction"
+126,Mensuration,Surface Areas and Volumes,Surface Areas and Volumes of Cuboids and Cubes,cbse_maths_10_126,Combinations of Cubes and Cuboids,"Surface Area, Volume, Cubes, Cuboids, Combinations"
+127,Mensuration,Surface Areas and Volumes,Spherical and Hemispherical Combinations,cbse_maths_10_127,Combinations of Spheres and Hemispheres,"Surface Area, Volume, Spheres, Hemispheres, Combinations"
+128,Mensuration,Surface Areas and Volumes,Cylindrical and Conical Combinations,cbse_maths_10_128,Combinations of Cylinders and Cones,"Cylinders, Cones, Combinations, Surface Area, Volume, Mensuration"
+129,Mensuration,Surface Areas and Volumes,Practice and Mixed 3D Problems,cbse_maths_10_129,Surface Areas and Volumes Practice,"Surface Area, Volume, Practice Problems, Mensuration"
+130,Mensuration,Surface Areas and Volumes,Past Paper Questions,cbse_maths_10_130,1-2 Markers,
+131,Mensuration,Surface Areas and Volumes,Past Paper Questions,cbse_maths_10_131,3-4 Markers,
+132,Mensuration,Surface Areas and Volumes,Past Paper Questions,cbse_maths_10_132,5-6 Markers,
+133,Mensuration,Surface Areas and Volumes,Past Paper Questions,cbse_maths_10_133,Case Studies,
+134,Statistics & Probability,Statistics,Introduction to Data and Statistics,cbse_maths_10_134,Introduction to Statistics,"Statistics, Introduction, Data, Probability"
+135,Statistics & Probability,Statistics,Mean of Grouped Data,cbse_maths_10_135,Mean of Grouped Data,"Mean, Grouped Data, Statistics"
+136,Statistics & Probability,Statistics,Mean – Direct Method,cbse_maths_10_136,Direct Method for Mean,"Direct Method, Mean, Grouped Data, Statistics"
+137,Statistics & Probability,Statistics,Mean – Assumed Mean Method,cbse_maths_10_137,Assumed Mean Method,"Assumed Mean Method, Mean, Grouped Data, Statistics"
+138,Statistics & Probability,Statistics,Mean – Step Deviation Method,cbse_maths_10_138,Step Deviation Method,"Step Deviation Method, Mean, Grouped Data, Statistics"
+139,Statistics & Probability,Statistics,Median of Grouped Data,cbse_maths_10_139,Median of Grouped Data (Algebraic Method),"Median, Grouped Data, Algebraic Method, Statistics"
+140,Statistics & Probability,Statistics,Mode of Grouped Data,cbse_maths_10_140,Mode of Grouped Data (Algebraic Method),"Mode, Grouped Data, Algebraic Method, Statistics"
+141,Statistics & Probability,Statistics,"Practice on Mean, Median, Mode",cbse_maths_10_141,Statistics Practice Problems,"Statistics, Practice Problems"
+142,Statistics & Probability,Statistics,Past Paper Questions,cbse_maths_10_142,1-2 Markers,
+143,Statistics & Probability,Statistics,Past Paper Questions,cbse_maths_10_143,3-4 Markers,
+144,Statistics & Probability,Statistics,Past Paper Questions,cbse_maths_10_144,5-6 Markers,
+145,Statistics & Probability,Statistics,Past Paper Questions,cbse_maths_10_145,Case Studies,
+146,Statistics & Probability,Probability,Introduction to Probability,cbse_maths_10_146,Introduction to Probability,"Probability, Introduction, Statistics"
+147,Statistics & Probability,Probability,Classical Probability Formula,cbse_maths_10_147,Classical Definition of Probability,"Classical Definition of Probability, Probability, Definition"
+148,Statistics & Probability,Probability,Basic Probability Problems,cbse_maths_10_148,Simple Problems on Probability,"Probability, Simple Problems, Applications"
+149,Statistics & Probability,Probability,Applications of Probability,cbse_maths_10_149,Real Life Applications of Probability,"Probability, Applications, Real Life Problems"
+150,Statistics & Probability,Probability,Practice and Revision,cbse_maths_10_150,Probability Practice Problems,"Probability, Practice Problems, Statistics"
+151,Statistics & Probability,Probability,Past Paper Questions,cbse_maths_10_151,1-2 Markers,
+152,Statistics & Probability,Probability,Past Paper Questions,cbse_maths_10_152,3-4 Markers,
+153,Statistics & Probability,Probability,Past Paper Questions,cbse_maths_10_153,5-6 Markers,
+154,Statistics & Probability,Probability,Past Paper Questions,cbse_maths_10_154,Case Studies,

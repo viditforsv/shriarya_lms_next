@@ -31,7 +31,7 @@ export async function GET(
     }
 
     // Get course slug
-    const { data: course, error: courseError } = await supabase
+    const { data: course } = await supabase
       .from("courses")
       .select("slug")
       .eq("id", lesson.course_id)

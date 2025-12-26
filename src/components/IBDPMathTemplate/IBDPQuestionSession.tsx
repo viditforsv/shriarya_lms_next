@@ -6,10 +6,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Progress } from "@/design-system/components/ui/progress";
 import {
   CheckCircle,
   Clock,
@@ -19,7 +19,7 @@ import {
   BookOpen,
   Target,
 } from "lucide-react";
-import { MathRenderer, renderMultiPartQuestion } from "@/components/MathRenderer";
+import { renderMultiPartQuestion } from "@/components/MathRenderer";
 
 interface Question {
   id: string;

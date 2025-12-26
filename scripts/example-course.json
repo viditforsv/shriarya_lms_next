@@ -1,0 +1,95 @@
+{
+  "title": "Mathematics Grade 9",
+  "slug": "mathematics-grade-9",
+  "description": "Complete Grade 9 Mathematics course covering algebra, geometry, and number systems",
+  "curriculum": "CBSE",
+  "subject": "Mathematics",
+  "grade": "9",
+  "level": "intermediate",
+  "price": 0,
+  "validity_days": 365,
+  "status": "draft",
+  "template_data": {
+    "units": [
+      {
+        "unit_name": "Number Systems",
+        "unit_order": 1,
+        "description": "Introduction to number systems and operations",
+        "chapters": [
+          {
+            "chapter_name": "Real Numbers",
+            "chapter_order": 1,
+            "description": "Understanding real numbers and their properties",
+            "topics": [
+              {
+                "topic_name": "Introduction to Real Numbers",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "What are Real Numbers?",
+                    "slug": "what-are-real-numbers",
+                    "lesson_order": 1,
+                    "description": "Introduction to the concept of real numbers",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Number Line Representation",
+                    "slug": "number-line-representation",
+                    "lesson_order": 2,
+                    "description": "How to represent numbers on a number line",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unit_name": "Algebra",
+        "unit_order": 2,
+        "description": "Algebraic expressions and equations",
+        "chapters": [
+          {
+            "chapter_name": "Linear Equations",
+            "chapter_order": 1,
+            "description": "Solving linear equations in one variable",
+            "topics": [
+              {
+                "topic_name": "Solving Linear Equations",
+                "topic_order": 1,
+                "lessons": [
+                  {
+                    "title": "Introduction to Linear Equations",
+                    "slug": "intro-linear-equations",
+                    "lesson_order": 1,
+                    "description": "Understanding what linear equations are",
+                    "type": "document"
+                  },
+                  {
+                    "title": "Solving by Isolation",
+                    "slug": "solving-by-isolation",
+                    "lesson_order": 2,
+                    "description": "Method of isolating the variable",
+                    "type": "document"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": ["mathematics", "grade-9", "cbse", "algebra", "geometry"],
+    "learningOutcomes": [
+      "Understand number systems and operations",
+      "Solve linear equations",
+      "Apply algebraic concepts to real-world problems"
+    ],
+    "prerequisites": [
+      "Basic arithmetic operations",
+      "Understanding of fractions and decimals"
+    ]
+  }
+}
+

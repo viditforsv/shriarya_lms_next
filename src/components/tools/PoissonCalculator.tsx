@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import { Calculator } from "lucide-react";
 
 type CalculationType = "exact" | "atMost" | "atLeast";

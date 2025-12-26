@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
 
@@ -52,9 +52,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    interface EnrollmentWithRelations {
+      student_id: string;
+      course_id: string;
+      user?: { id: string; email: string; first_name: string; last_name: string; role: string } | { id: string; email: string; first_name: string; last_name: string; role: string }[] | null;
+      course?: { id: string; title: string; slug: string; curriculum: string; subject: string; grade: string; level: string } | { id: string; title: string; slug: string; curriculum: string; subject: string; grade: string; level: string }[] | null;
+      [key: string]: unknown;
+    }
+
     // Get submission counts for each student
     const enrollmentsWithSubmissions = await Promise.all(
-      (enrollments || []).map(async (enrollment: any) => {
+      (enrollments || []).map(async (enrollment: EnrollmentWithRelations) => {
         // Count pending submissions for this student in this course
         const { count: pendingCount } = await supabase
           .from("assignment_submissions")

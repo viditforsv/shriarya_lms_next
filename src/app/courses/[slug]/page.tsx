@@ -2,7 +2,7 @@ import { CoursePageClient } from "./CoursePageClient";
 import type { Metadata } from "next";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "https://courses.shrividhya.in";
+  process.env.NEXT_PUBLIC_APP_URL || "https://courses.preppeo.com";
 
 export async function generateMetadata({
   params,
@@ -40,9 +40,9 @@ export async function generateMetadata({
       };
     }
 
-    const title = course.title || "ShriArya LMS Course";
+    const title = course.title || "Preppeo LMS Course";
     const description =
-      course.description?.substring(0, 160) || "Learn with ShriArya LMS";
+      course.description?.substring(0, 160) || "Learn with Preppeo LMS";
     const curriculum = course.curriculum || "";
     const subject = course.subject || "";
     const price = course.price || 0;
@@ -67,7 +67,7 @@ export async function generateMetadata({
         title: title,
         description: description,
         url: `${baseUrl}/courses/${slug}`,
-        siteName: "ShriArya LMS",
+        siteName: "Preppeo LMS",
         images: [
           {
             url: ogImageUrl,
@@ -89,8 +89,8 @@ export async function generateMetadata({
   } catch (error) {
     console.error("Error generating metadata:", error);
     return {
-      title: "ShriArya LMS Course",
-      description: "Learn with ShriArya LMS",
+      title: "Preppeo LMS Course",
+      description: "Learn with Preppeo LMS",
     };
   }
 }

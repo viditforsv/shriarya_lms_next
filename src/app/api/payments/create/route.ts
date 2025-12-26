@@ -151,23 +151,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const userCountry = searchParams.get("country");
-    const currency = searchParams.get("currency") || "INR";
-
     // Get available payment methods
-    const paymentMethods = PaymentService.getPaymentMethods(
-      userCountry || undefined,
-      currency
-    );
+    const paymentMethods = PaymentService.getPaymentMethods();
 
     // Get recommended provider
-    const recommendedProvider = PaymentService.getRecommendedProvider(
-      userCountry || undefined,
-      currency
-    );
+    const recommendedProvider = PaymentService.getRecommendedProvider();
 
     return NextResponse.json({
       paymentMethods,

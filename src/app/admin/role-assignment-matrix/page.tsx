@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import {
   Table,
   TableBody,
@@ -16,15 +16,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/app/components-demo/ui/table";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/table";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   ChevronDown,
   ChevronRight,
   Loader2,
-  ArrowLeft,
   Shield,
   Users,
   Settings,
@@ -380,7 +379,7 @@ export default function RoleAssignmentMatrixPage() {
             <div className="overflow-x-auto max-h-[70vh]">
               <Table>
                 <TableHeader className="sticky top-0 bg-white z-10">
-                  <TableRow className="bg-[#feefea]/30 hover:bg-[#feefea]/30">
+                  <TableRow className="bg-[#feefea]/30 hover:bg-primary/10/30">
                     <TableHead className="font-semibold text-[#1e293b] w-64 sticky left-0 bg-white border-r border-[#e27447]/20">
                       <div className="flex items-center justify-between">
                         <span className="font-dm-sans">Tasks</span>
@@ -397,7 +396,7 @@ export default function RoleAssignmentMatrixPage() {
                             onClick={collapseAll}
                             size="sm"
                             variant="outline"
-                            className="text-xs px-2 py-1 border-[#1e293b] text-[#1e293b] hover:bg-[#1e293b] hover:text-white"
+                            className="text-xs px-2 py-1 border-foreground text-foreground hover:bg-foreground hover:text-white"
                           >
                             Collapse All
                           </Button>
@@ -435,7 +434,7 @@ export default function RoleAssignmentMatrixPage() {
                       // Category Header Row
                       <TableRow
                         key={`${category.id}-header`}
-                        className="bg-[#feefea]/20 hover:bg-[#feefea]/30 border-b-2 border-[#e27447]/20"
+                        className="bg-[#feefea]/20 hover:bg-primary/10/30 border-b-2 border-[#e27447]/20"
                       >
                         <TableCell className="font-semibold text-[#1e293b] py-4 sticky left-0 bg-[#feefea]/20 border-r border-[#e27447]/20">
                           <button
@@ -513,7 +512,7 @@ export default function RoleAssignmentMatrixPage() {
                             return (
                               <TableRow
                                 key={`${category.id}-${permission.id}`}
-                                className="hover:bg-[#feefea]/10 transition-colors"
+                                className="hover:bg-primary/10/10 transition-colors"
                               >
                                 <TableCell className="font-medium text-[#1e293b] py-3 sticky left-0 bg-white border-r border-[#e27447]/20 pl-8">
                                   <span className="text-sm font-dm-sans">

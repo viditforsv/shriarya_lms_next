@@ -9,33 +9,20 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
-import {
-  ArrowLeft,
-  Search,
-  Edit,
-  Plus,
-  BookOpen,
-  FileText,
-  Calculator,
-} from "lucide-react";
+} from "@/design-system/components/select";
+import {} from "@/design-system/components/tabs";
+import { Search, Edit, BookOpen, FileText } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface Lesson {
@@ -65,10 +52,10 @@ interface Course {
 
 export default function AdminLessonEditorPage() {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
-  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [, setLessons] = useState<Lesson[]>([]);
   const [filteredLessons, setFilteredLessons] = useState<Lesson[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);

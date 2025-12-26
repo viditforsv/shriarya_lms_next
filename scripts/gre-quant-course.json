@@ -1,0 +1,18 @@
+{
+  "title": "GRE Quant",
+  "slug": "gre-quant",
+  "description": "Complete GRE Quant preparation with topic-wise question banks, varied practice sets, and mock tests covering Algebra, Arithmetic, Geometry, and Data Analysis.",
+  "curriculum": "GRE",
+  "subject": "Quantitative Reasoning",
+  "grade": "12+",
+  "level": null,
+  "price": 4000,
+  "validity_days": 365,
+  "status": "draft",
+  "thumbnail_url": "https://shrividhyaclasses.b-cdn.net/lms_qb_images/GRE%20Quant.png",
+  "template_data": {
+    "duration": "3 Months",
+    "units": []
+  }
+}
+

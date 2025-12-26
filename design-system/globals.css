@@ -1,0 +1,376 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "katex/dist/katex.min.css";
+@import "react-querybuilder/dist/query-builder.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-inter);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  /* Preppeo Brand Colors - Updated per Plan */
+  --background: #ffffff;
+  --foreground: #1b1919;
+  --card: #ffffff;
+  --card-foreground: #1b1919;
+  --popover: #ffffff;
+  --popover-foreground: #1b1919;
+  /* #003153 - Dark Navy (Primary - Authority) */
+  --primary: #003153;
+  --primary-foreground: #ffffff;
+  /* #3bb273 - Success Green (Trust/Success indicators) */
+  --success: #3bb273;
+  --success-foreground: #ffffff;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #1b1919;
+  --muted: #f0f0f0;
+  --muted-foreground: #737373;
+  /* #f4b400 - Amber (CTAs and highlights) */
+  --accent: #f4b400;
+  --accent-foreground: #1b1919;
+  --destructive: #dc2626;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #003153;
+  --chart-1: #003153;
+  --chart-2: #3bb273;
+  --chart-3: #f4b400;
+  --chart-4: #d7d7d1;
+  --chart-5: #737373;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1b1919;
+  --sidebar-primary: #003153;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f0f0;
+  --sidebar-accent-foreground: #1b1919;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #003153;
+}
+
+.dark {
+  /* Dark mode with Preppeo colors - Updated per Plan */
+  --background: #1b1919;
+  --foreground: #ffffff;
+  --card: #2a2828;
+  --card-foreground: #ffffff;
+  --popover: #2a2828;
+  --popover-foreground: #ffffff;
+  /* #003153 - Dark Navy (Primary - Authority) */
+  --primary: #003153;
+  --primary-foreground: #ffffff;
+  /* #3bb273 - Success Green (Trust/Success indicators) */
+  --success: #3bb273;
+  --success-foreground: #ffffff;
+  --secondary: #2a2828;
+  --secondary-foreground: #ffffff;
+  --muted: #3a3838;
+  --muted-foreground: #a3a3a3;
+  /* #f4b400 - Amber (CTAs and highlights) */
+  --accent: #f4b400;
+  --accent-foreground: #1b1919;
+  --destructive: #ef4444;
+  --border: #3a3838;
+  --input: #3a3838;
+  --ring: #003153;
+  --chart-1: #003153;
+  --chart-2: #3bb273;
+  --chart-3: #f4b400;
+  --chart-4: #737373;
+  --chart-5: #a3a3a3;
+  --sidebar: #2a2828;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #003153;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3a3838;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #3a3838;
+  --sidebar-ring: #003153;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+    /* Prevent layout shift during font loading */
+    font-display: swap;
+  }
+  :root {
+    --font-heading: var(--font-inter);
+    --font-body: var(--font-inter);
+  }
+  
+  /* Prevent layout shift for images */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Optimize font rendering */
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+  }
+  
+  h1 {
+    font-size: 48px;
+    line-height: 56px;
+  }
+  
+  h2 {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  
+  h3 {
+    font-size: 30px;
+    line-height: 38px;
+    font-weight: 600;
+  }
+  
+  h4 {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+  }
+  
+  h5 {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+  }
+  
+  h6 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+@layer utilities {
+  .slide-transition {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+  .slide-enter {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  
+  .slide-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Notification Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* Logo Fade In Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+/* Enhanced Math Rendering - Larger Fractions */
+.katex-math {
+  font-size: 1.1em !important;
+}
+
+.katex-math .katex-display {
+  font-size: 1.2em !important;
+}
+
+.katex-math .frac-line {
+  border-bottom-width: 0.08em !important;
+}
+
+.katex-math .frac-num,
+.katex-math .frac-den {
+  font-size: 1.1em !important;
+}
+
+/* Make cfrac (continued fractions) even larger */
+.katex-math .cfrac {
+  font-size: 1.15em !important;
+}
+
+.katex-math .cfrac .frac-line {
+  border-bottom-width: 0.1em !important;
+}
+
+.katex-math .cfrac .frac-num,
+.katex-math .cfrac .frac-den {
+  font-size: 1.15em !important;
+}
+
+/* Custom Query Builder Styles - Minimal and Intuitive */
+.queryBuilder-custom {
+  @apply bg-white border border-gray-200 rounded-sm p-4;
+}
+
+.ruleGroup-custom {
+  @apply bg-gray-50 border border-gray-200 rounded-sm p-4 mb-3;
+}
+
+.rule-custom {
+  @apply bg-white border border-gray-200 rounded-sm p-3 mb-2 flex items-center gap-3;
+}
+
+.field-custom,
+.operator-custom,
+.value-custom {
+  @apply px-3 py-2 border border-gray-300 rounded-sm bg-white text-sm;
+}
+
+.field-custom:focus,
+.operator-custom:focus,
+.value-custom:focus {
+  @apply outline-none ring-2 ring-orange-200 border-orange-300;
+}
+
+.addRule-custom,
+.addGroup-custom,
+.removeGroup-custom,
+.removeRule-custom {
+  @apply px-3 py-1.5 text-sm font-medium rounded-sm border transition-colors;
+}
+
+.addRule-custom {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300;
+}
+
+.addGroup-custom {
+  @apply bg-orange-100 hover:bg-orange-200 text-orange-700 border-orange-300;
+}
+
+.removeGroup-custom,
+.removeRule-custom {
+  @apply bg-red-100 hover:bg-red-200 text-red-700 border-red-300;
+}
+
+.combinators-custom {
+  @apply px-3 py-2 border border-gray-300 rounded-sm bg-gray-100 text-sm font-medium;
+}
+
+.combinators-custom:focus {
+  @apply outline-none ring-2 ring-orange-200 border-orange-300;
+}
+
+/* Hide default blue styling and make buttons more prominent */
+.queryBuilder-custom .ruleGroup-header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.queryBuilder-custom .ruleGroup-body {
+  @apply space-y-2;
+}
+
+.queryBuilder-custom .rule {
+  @apply flex items-center gap-3 flex-wrap;
+}
+
+.queryBuilder-custom .rule-fields {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+.queryBuilder-custom .rule-operators {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+.queryBuilder-custom .rule-value {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+/* Custom button styling */
+.queryBuilder-custom button {
+  @apply transition-all duration-150 ease-in-out;
+}
+
+.queryBuilder-custom button:hover {
+  @apply transform scale-105;
+}
+
+.queryBuilder-custom button:active {
+  @apply transform scale-95;
+}
+

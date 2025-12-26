@@ -1,25 +1,30 @@
 "use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import { Award, BookOpen, Globe, Target, Heart } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * AboutPage is the main landing page for Preppeo LMS. It displays the Hero Section,
+
+ * Mission Section, Values Section, What We Offer Section, and CTA Section.
+ * @returns {JSX.Element} The rendered AboutPage component
+ */
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
         {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-br from-secondary to-muted mb-20">
+        <section className="py-20 bg-gradient-to-br from-white via-green-50 to-emerald-50 mb-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-5xl font-bold text-foreground mb-6">
-              About Shriarya
+              About Preppeo
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               Empowering students with comprehensive learning solutions across
@@ -33,13 +38,13 @@ export default function AboutPage() {
         <section className="mb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-[#1e293b] mb-6">
+              <h2 className="text-3xl font-bold text-foreground mb-6">
                 Our Mission
               </h2>
               <p className="text-lg text-muted-foreground mb-6">
-                At Shriarya, our mission is to democratize education by
-                providing high-quality, curriculum-aligned learning resources to
-                students across India and beyond.
+                At Preppeo, our mission is to democratize education by providing
+                high-quality, curriculum-aligned learning resources to students
+                across India and beyond.
               </p>
               <p className="text-lg text-muted-foreground">
                 We believe every student deserves access to world-class
@@ -48,9 +53,9 @@ export default function AboutPage() {
                 traditional and digital learning.
               </p>
             </div>
-            <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] rounded-sm p-12 text-center">
-              <Globe className="w-24 h-24 text-[#e27447] mx-auto mb-6" />
-              <p className="text-lg text-[#1e293b] font-medium">
+            <div className="bg-gradient-to-br from-primary/10 to-emerald-50 rounded-xl p-12 text-center shadow-lg">
+              <Globe className="w-24 h-24 text-primary mx-auto mb-6" />
+              <p className="text-lg text-foreground font-medium">
                 Global Learning Impact
               </p>
             </div>
@@ -59,14 +64,14 @@ export default function AboutPage() {
 
         {/* Values Section */}
         <section className="mb-20">
-          <h2 className="text-3xl font-bold text-[#1e293b] mb-12 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             Our Values
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center p-8">
+            <Card className="text-center p-8 ">
               <CardHeader>
-                <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-[#e27447]" />
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Heart className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl">Student First</CardTitle>
               </CardHeader>
@@ -78,10 +83,10 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8">
+            <Card className="text-center p-8 ">
               <CardHeader>
-                <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Award className="w-8 h-8 text-[#e27447]" />
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Award className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl">Excellence</CardTitle>
               </CardHeader>
@@ -93,10 +98,10 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8">
+            <Card className="text-center p-8 ">
               <CardHeader>
-                <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-8 h-8 text-[#e27447]" />
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <BookOpen className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl">Innovation</CardTitle>
               </CardHeader>
@@ -112,13 +117,13 @@ export default function AboutPage() {
 
         {/* What We Offer Section */}
         <section className="mb-20">
-          <h2 className="text-3xl font-bold text-[#1e293b] mb-12 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             What We Offer
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center p-6">
-              <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Target className="w-8 h-8 text-[#e27447]" />
+            <Card className="text-center p-6 ">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Target className="w-8 h-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-lg">CBSE Curriculum</CardTitle>
@@ -130,9 +135,9 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6">
-              <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-[#e27447]" />
+            <Card className="text-center p-6 ">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <BookOpen className="w-8 h-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-lg">ICSE/ISC</CardTitle>
@@ -144,9 +149,9 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6">
-              <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Globe className="w-8 h-8 text-[#e27447]" />
+            <Card className="text-center p-6 ">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Globe className="w-8 h-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-lg">IBDP</CardTitle>
@@ -158,9 +163,9 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6">
-              <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-8 h-8 text-[#e27447]" />
+            <Card className="text-center p-6 ">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Award className="w-8 h-8 text-white" />
               </div>
               <CardHeader>
                 <CardTitle className="text-lg">IGCSE</CardTitle>
@@ -176,38 +181,34 @@ export default function AboutPage() {
 
         {/* CTA Section */}
         <section className="text-center">
-          <Card className="p-12 bg-gradient-to-br from-[#feefea] to-[#fffefd] border-[#e27447]">
-            <CardHeader>
-              <CardTitle className="text-3xl text-[#1e293b] mb-4">
-                Ready to Start Learning?
-              </CardTitle>
-              <CardDescription className="text-lg">
-                Join thousands of students who are already learning with
-                ShriArya LMS
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4 justify-center">
-                <Link href="/courses/discover">
-                  <Button
-                    size="lg"
-                    className="bg-[#e27447] hover:bg-[#e27447]/90"
-                  >
-                    Explore Courses
-                  </Button>
-                </Link>
-                <Link href="/contact">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white"
-                  >
-                    Contact Us
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-gradient-to-br from-primary to-emerald-600 rounded-xl p-12 shadow-xl">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Ready to Start Learning?
+            </h2>
+            <p className="text-xl text-white/90 mb-8">
+              Join thousands of students who are already learning with Preppeo
+              LMS
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/courses/discover">
+                <Button
+                  size="lg"
+                  className="bg-white hover:bg-gray-100 text-primary shadow-lg px-8 py-6 text-lg font-semibold"
+                >
+                  Explore Courses
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-6 text-lg"
+                >
+                  Contact Us
+                </Button>
+              </Link>
+            </div>
+          </div>
         </section>
       </div>
     </div>

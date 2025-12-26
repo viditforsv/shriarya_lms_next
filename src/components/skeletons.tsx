@@ -1,4 +1,4 @@
-import { Skeleton } from "@/app/components-demo/ui/ui-components/skeleton";
+import { Skeleton } from "@/design-system/components/ui/skeleton";
 
 export function LessonPageSkeleton() {
   return (

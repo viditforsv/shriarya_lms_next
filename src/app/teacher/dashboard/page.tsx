@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Users,
   BookOpen,
@@ -155,9 +153,9 @@ export default function TeacherDashboard() {
           {/* Header */}
           <div className="mb-8">
             <Badge variant="secondary" className="mb-2 rounded-sm">
-              ShriArya LMS
+              Preppeo LMS
             </Badge>
-            <h2 className="text-xl font-bold text-[#1e293b]">
+            <h2 className="text-xl font-bold text-foreground">
               Teacher Dashboard
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
@@ -173,7 +171,7 @@ export default function TeacherDashboard() {
                   className={`flex items-center justify-between px-4 py-3 rounded-sm cursor-pointer transition-colors ${
                     item.isActive
                       ? "bg-amber-50 text-amber-700 border-l-2 border-amber-400"
-                      : "text-[#1e293b] hover:bg-amber-50/40"
+                      : "text-foreground hover:bg-amber-50/40"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -196,13 +194,13 @@ export default function TeacherDashboard() {
           {/* Footer Links */}
           <div className="space-y-2 pt-4 border-t border-gray-200">
             <Link href="/">
-              <div className="flex items-center gap-3 px-4 py-3 text-[#1e293b] hover:bg-amber-50/40 rounded-sm transition-colors cursor-pointer">
+              <div className="flex items-center gap-3 px-4 py-3 text-foreground hover:bg-amber-50/40 rounded-sm transition-colors cursor-pointer">
                 <Home className="w-5 h-5" />
                 <span className="font-medium">Home</span>
               </div>
             </Link>
             <Link href="/profile">
-              <div className="flex items-center gap-3 px-4 py-3 text-[#1e293b] hover:bg-amber-50/40 rounded-sm transition-colors cursor-pointer">
+              <div className="flex items-center gap-3 px-4 py-3 text-foreground hover:bg-amber-50/40 rounded-sm transition-colors cursor-pointer">
                 <Settings className="w-5 h-5" />
                 <span className="font-medium">Settings</span>
               </div>
@@ -216,7 +214,7 @@ export default function TeacherDashboard() {
         <div className="px-6 py-8 max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               Teacher Dashboard
             </h1>
             <p className="text-muted-foreground">
@@ -237,7 +235,7 @@ export default function TeacherDashboard() {
                       <p className="text-sm text-muted-foreground">
                         Total Students
                       </p>
-                      <p className="text-2xl font-bold text-[#1e293b]">
+                      <p className="text-2xl font-bold text-foreground">
                         {stats.totalStudents}
                       </p>
                     </div>

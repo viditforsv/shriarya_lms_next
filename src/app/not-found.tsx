@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
 import {
   ArrowLeft,
   Home,
@@ -39,7 +39,7 @@ export default function NotFound() {
               <Button
                 asChild
                 size="lg"
-                className="bg-[#e27447] hover:bg-[#e27447]/90"
+                className="bg-primary hover:bg-primary/90"
               >
                 <Link href="/">
                   <div className="flex items-center space-x-2">
@@ -78,7 +78,7 @@ export default function NotFound() {
 
           {/* Quick Navigation Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            <Card className="hover:shadow-lg transition-shadow duration-300">
+            <Card>
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
                   <BookOpen className="w-8 h-8 text-[#e27447]" />
@@ -95,7 +95,7 @@ export default function NotFound() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow duration-300">
+            <Card>
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
                   <FileText className="w-8 h-8 text-[#e27447]" />
@@ -112,7 +112,7 @@ export default function NotFound() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow duration-300">
+            <Card>
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-[#feefea] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-[#e27447]" />
@@ -148,14 +148,14 @@ export default function NotFound() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white"
+                  className="border-primary hover:bg-primary hover:text-white"
                 >
                   <Link href="/contact">Contact Support</Link>
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="border-[#1e293b] hover:bg-[#1e293b] hover:text-white"
+                  className="border-primary hover:bg-primary hover:text-white"
                 >
                   <Link href="/help">Help Center</Link>
                 </Button>

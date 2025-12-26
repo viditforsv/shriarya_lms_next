@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import { CheckCircle, Edit, AlertCircle, Flag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 

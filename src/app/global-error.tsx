@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Card, CardContent } from "@/design-system/components/ui/card";
 import { AlertTriangle, Home, RefreshCw, HelpCircle } from "lucide-react";
 
 export default function GlobalError({

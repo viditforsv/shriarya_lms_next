@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   ChevronDown,
   Search,
@@ -120,7 +120,7 @@ export function Header() {
   const navigation = getNavigation();
 
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
+    <header className="bg-primary border-b border-primary sticky top-0 z-50 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -130,14 +130,15 @@ export function Header() {
           >
             <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
               <Image
-                src="/images/main_logo.webp"
-                alt="ShriArya LMS Logo"
-                width={40}
+                src="/images/preppeo_logo.png"
+                alt="Preppeo LMS Logo"
+                width={120}
                 height={40}
+                className="object-contain"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Shriarya</h1>
+              <h1 className="text-xl font-bold text-white">Preppeo</h1>
             </div>
           </Link>
 
@@ -147,10 +148,10 @@ export function Header() {
               <input
                 type="text"
                 placeholder="Search courses..."
-                className="w-full px-4 py-2 pl-10 pr-4 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all duration-200 bg-background text-foreground placeholder-muted-foreground cursor-pointer"
+                className="w-full px-4 py-2 pl-10 pr-4 border border-white/20 rounded-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200 bg-white/10 text-white placeholder-white/60 cursor-pointer"
                 readOnly
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
             </Link>
           </div>
 
@@ -160,7 +161,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-foreground hover:text-accent"
+                className="flex items-center px-3 py-2 text-sm font-medium transition-colors text-white hover:text-accent"
               >
                 {item.name}
               </Link>
@@ -178,9 +179,9 @@ export function Header() {
                 <div className="relative user-dropdown">
                   <button
                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-accent transition-colors rounded-sm hover:bg-accent/10"
+                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white hover:text-accent transition-colors rounded-sm hover:bg-white/10"
                   >
-                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center overflow-hidden">
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
                       {profile?.avatar_url ? (
                         <img
                           src={profile.avatar_url}
@@ -188,7 +189,7 @@ export function Header() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-xs font-semibold text-[#e27447]">
+                        <span className="text-xs font-semibold text-accent">
                           {profile?.first_name && profile?.last_name
                             ? `${profile.first_name[0]}${profile.last_name[0]}`
                             : user.email?.[0].toUpperCase() || "U"}
@@ -201,7 +202,7 @@ export function Header() {
                         : user.email}
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
+                      className={`w-4 h-4 text-white transition-transform ${
                         isUserDropdownOpen ? "rotate-180" : ""
                       }`}
                     />
@@ -209,10 +210,10 @@ export function Header() {
 
                   {/* User Dropdown Menu */}
                   {isUserDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm shadow-lg border border-[#feefea] z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
                       <div className="py-2">
-                        <div className="px-4 py-2 border-b border-[#feefea]">
-                          <p className="text-sm font-medium text-[#1e293b]">
+                        <div className="px-4 py-2 border-b border-gray-200">
+                          <p className="text-sm font-medium text-foreground">
                             {profile?.first_name && profile?.last_name
                               ? `${profile.first_name} ${profile.last_name}`
                               : user.email}
@@ -231,20 +232,20 @@ export function Header() {
 
                         <Link
                           href="/courses/enrolled"
-                          className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                          className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-primary/10 transition-colors"
                           onClick={() => setIsUserDropdownOpen(false)}
                         >
-                          <BookOpen className="w-4 h-4 mr-3 text-[#e27447]" />
+                          <BookOpen className="w-4 h-4 mr-3 text-primary" />
                           Dashboard
                         </Link>
 
                         {profile?.role === "admin" && (
                           <Link
                             href="/admin/site-administration"
-                            className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                            className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-primary/10 transition-colors"
                             onClick={() => setIsUserDropdownOpen(false)}
                           >
-                            <Settings className="w-4 h-4 mr-3 text-[#e27447]" />
+                            <Settings className="w-4 h-4 mr-3 text-primary" />
                             Site Administration
                           </Link>
                         )}
@@ -253,24 +254,24 @@ export function Header() {
                           profile?.role === "content_manager") && (
                           <Link
                             href="/question-bank"
-                            className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                            className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-primary/10 transition-colors"
                             onClick={() => setIsUserDropdownOpen(false)}
                           >
-                            <FileText className="w-4 h-4 mr-3 text-[#e27447]" />
+                            <FileText className="w-4 h-4 mr-3 text-primary" />
                             Question Bank
                           </Link>
                         )}
 
                         <Link
                           href="/profile"
-                          className="flex items-center px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                          className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-primary/10 transition-colors"
                           onClick={() => setIsUserDropdownOpen(false)}
                         >
-                          <User className="w-4 h-4 mr-3 text-[#e27447]" />
+                          <User className="w-4 h-4 mr-3 text-primary" />
                           Profile
                         </Link>
 
-                        <div className="border-t border-[#feefea] mt-2 pt-2">
+                        <div className="border-t border-gray-200 mt-2 pt-2">
                           <button
                             onClick={async (e) => {
                               e.preventDefault();
@@ -297,9 +298,9 @@ export function Header() {
                                 console.error("Sign out error:", error);
                               }
                             }}
-                            className="flex items-center w-full px-4 py-2 text-sm text-[#1e293b] hover:bg-[#feefea] transition-colors"
+                            className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-red-50 transition-colors"
                           >
-                            <LogOut className="w-4 h-4 mr-3 text-[#e27447]" />
+                            <LogOut className="w-4 h-4 mr-3 text-red-600" />
                             Sign Out
                           </button>
                         </div>

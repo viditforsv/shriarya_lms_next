@@ -6,17 +6,16 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Textarea } from "@/app/components-demo/ui/textarea";
+} from "@/design-system/components/tabs";
+import { Input } from "@/design-system/components/ui/input";
 import {
   BookOpen,
   MessageCircle,
@@ -27,7 +26,7 @@ import {
   ExternalLink,
   Download,
 } from "lucide-react";
-import { MathRenderer, renderMixedContent } from "@/components/MathRenderer";
+import { renderMixedContent } from "@/components/MathRenderer";
 
 interface Formula {
   id: string;
@@ -137,25 +136,25 @@ export function IBDPConceptsTab({
         <TabsList className="grid w-full grid-cols-4 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
           <TabsTrigger
             value="concepts"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
           >
             Concepts
           </TabsTrigger>
           <TabsTrigger
             value="formulas"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
           >
             Formulas
           </TabsTrigger>
           <TabsTrigger
             value="resources"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
           >
             Resources
           </TabsTrigger>
           <TabsTrigger
             value="ai-tutor"
-            className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+            className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
           >
             AI Tutor
           </TabsTrigger>
@@ -531,7 +530,7 @@ export function IBDPConceptsTab({
                 {recommendedQuestions.map((question) => (
                   <div
                     key={question.id}
-                    className="p-3 border border-gray-200 rounded-sm hover:bg-[#feefea]/50 transition-colors cursor-pointer"
+                    className="p-3 border border-gray-200 rounded-sm hover:bg-gray-100/50 transition-colors cursor-pointer"
                     onClick={() => onQuestionClick?.(question.id)}
                   >
                     <div className="flex items-start justify-between gap-3">

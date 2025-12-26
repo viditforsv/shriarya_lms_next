@@ -107,6 +107,13 @@ export async function GET(request: Request) {
             unit_name,
             unit_order
           )
+        ),
+        topic:courses_topics (
+          id,
+          topic_name,
+          topic_order,
+          topic_number,
+          chapter_id
         )
       `,
         { count: "exact" }

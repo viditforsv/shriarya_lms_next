@@ -12,6 +12,30 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // Configure image domains for Next.js Image component
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "shrividhyaclasses.b-cdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "**.supabase.in",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+    ],
+    // Allow any image source (for development)
+    unoptimized: process.env.NODE_ENV === "development",
+  },
+
   // Add headers to fix CSP issues with PDF embedding and CDN content
   async headers() {
     return [

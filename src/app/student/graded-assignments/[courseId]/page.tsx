@@ -1,25 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   FileText,
   Download,
-  CheckCircle,
-  Clock,
-  ArrowLeft,
 } from "lucide-react";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 interface GradedSubmission {
@@ -43,8 +39,14 @@ export default function GradedAssignmentsPage({
   const [resolvedParams, setResolvedParams] = useState<{
     courseId: string;
   } | null>(null);
+  interface Course {
+    id: string;
+    title: string;
+    slug: string;
+  }
+
   const [submissions, setSubmissions] = useState<GradedSubmission[]>([]);
-  const [course, setCourse] = useState<any>(null);
+  const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,13 +54,7 @@ export default function GradedAssignmentsPage({
     params.then(setResolvedParams);
   }, [params]);
 
-  useEffect(() => {
-    if (resolvedParams && user) {
-      loadData();
-    }
-  }, [resolvedParams, user]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -92,7 +88,13 @@ export default function GradedAssignmentsPage({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [resolvedParams?.courseId]);
+
+  useEffect(() => {
+    if (resolvedParams && user) {
+      loadData();
+    }
+  }, [resolvedParams, user, loadData]);
 
   const handleDownload = async (submission: GradedSubmission) => {
     if (submission.graded_download_url) {
@@ -142,7 +144,7 @@ export default function GradedAssignmentsPage({
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1e293b] mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Graded Assignments
           </h1>
           {course && <p className="text-muted-foreground">{course.title}</p>}
@@ -174,13 +176,13 @@ export default function GradedAssignmentsPage({
             {submissions.map((submission) => (
               <Card
                 key={submission.id}
-                className="rounded-sm hover:shadow-md transition-shadow"
+                className="rounded-sm "
               >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#feefea] rounded-sm flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-[#e27447]" />
+                      <div className="w-12 h-12 bg-primary/10 rounded-sm flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-primary" />
                       </div>
                       <div>
                         <CardTitle className="text-lg">
@@ -221,7 +223,7 @@ export default function GradedAssignmentsPage({
 
                     {/* Teacher Comments */}
                     {submission.teacher_comments && (
-                      <div className="p-4 bg-[#feefea] border-l-4 border-[#e27447] rounded-sm">
+                      <div className="p-4 bg-primary/10 border-l-4 border-[#e27447] rounded-sm">
                         <p className="text-sm font-medium mb-2">
                           Teacher Comments:
                         </p>

@@ -1,26 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import { Plus, Trash2, Filter, X, RotateCcw, Save } from "lucide-react";
 
 // Types for advanced filtering
+type FilterValue = string | number | boolean | string[] | null;
+
 interface FilterCondition {
   field: string;
   operator:
@@ -36,7 +38,7 @@ interface FilterCondition {
     | "ilike"
     | "is"
     | "not";
-  value: any;
+  value: FilterValue;
   logic?: "AND" | "OR";
 }
 
@@ -144,11 +146,12 @@ export default function AdvancedFilterBuilder({
   const updateCondition = (
     index: number,
     field: keyof FilterCondition,
-    value: any
+    value: FilterValue
   ) => {
     const updatedFilters = [...filters];
     if (updatedFilters[index] && !("conditions" in updatedFilters[index])) {
-      (updatedFilters[index] as FilterCondition)[field] = value;
+      const condition = updatedFilters[index] as FilterCondition;
+      (condition as unknown as Record<string, FilterValue>)[field] = value;
       setFilters(updatedFilters);
     }
   };
@@ -214,8 +217,8 @@ export default function AdvancedFilterBuilder({
 
   const renderValueInput = (
     field: string,
-    value: any,
-    onChange: (value: any) => void
+    value: FilterValue,
+    onChange: (value: FilterValue) => void
   ) => {
     const fieldType = getFieldValueType(field);
 
@@ -224,7 +227,7 @@ export default function AdvancedFilterBuilder({
         return (
           <Input
             type="number"
-            value={value || ""}
+            value={typeof value === "number" ? value : ""}
             onChange={(e) =>
               onChange(e.target.value ? parseInt(e.target.value) : "")
             }
@@ -246,10 +249,10 @@ export default function AdvancedFilterBuilder({
             </SelectContent>
           </Select>
         );
-      case "select":
+      case "select": {
         const options = getFieldOptions(field);
         return (
-          <Select value={value || ""} onValueChange={onChange}>
+          <Select value={typeof value === "string" ? value : ""} onValueChange={onChange}>
             <SelectTrigger>
               <SelectValue placeholder={`Select ${field}`} />
             </SelectTrigger>
@@ -262,11 +265,12 @@ export default function AdvancedFilterBuilder({
             </SelectContent>
           </Select>
         );
+      }
       default:
         return (
           <Input
             type="text"
-            value={value || ""}
+            value={typeof value === "string" ? value : ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder="Enter value"
           />
@@ -313,9 +317,6 @@ export default function AdvancedFilterBuilder({
                   return null;
                 } else {
                   const condition = filter as FilterCondition;
-                  const operatorInfo = OPERATORS.find(
-                    (op) => op.value === condition.operator
-                  );
 
                   return (
                     <div
@@ -447,7 +448,7 @@ export default function AdvancedFilterBuilder({
                     onValueChange={(value) =>
                       setNewCondition({
                         ...newCondition,
-                        operator: value as any,
+                        operator: value as FilterCondition["operator"],
                       })
                     }
                   >
@@ -501,15 +502,16 @@ export default function AdvancedFilterBuilder({
           <div className="text-sm text-gray-600 space-y-1">
             <p>
               • <strong>Difficulty of 9 OR difficulty of not 8:</strong> Add two
-              conditions: "difficulty equals 9" and "difficulty not equals 8"
+              conditions: &quot;difficulty equals 9&quot; and &quot;difficulty
+              not equals 8&quot;
             </p>
             <p>
               • <strong>Questions with marks greater than 5:</strong> Add
-              condition: "total_marks greater than 5"
+              condition: &quot;total_marks greater than 5&quot;
             </p>
             <p>
               • <strong>PYQ from years 2020-2023:</strong> Add condition:
-              "pyq_year in 2020,2021,2022,2023"
+              &quot;pyq_year in 2020,2021,2022,2023&quot;
             </p>
           </div>
         </div>

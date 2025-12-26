@@ -2,9 +2,9 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components-demo/ui/ui-components/card'
-import { Badge } from '@/app/components-demo/ui/ui-components/badge'
+import { Button } from '@/design-system/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/design-system/components/ui/card'
+import { Badge } from '@/design-system/components/ui/badge'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface CourseFile {
@@ -174,7 +174,7 @@ export default function StudentFileAccess() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {files.map((file) => (
-            <Card key={file.id} className="hover:shadow-lg transition-shadow">
+            <Card key={file.id} className="">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">

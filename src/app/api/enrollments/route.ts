@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         .single();
 
       targetUserId = profile?.role === "admin" && userId ? userId : user.id;
-    } catch (profileError) {
+    } catch {
       console.log("Profile fetch failed, using user ID:", user.id);
       // If profile fetch fails, just use the user's own ID
       targetUserId = user.id;
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if course exists and is published
+    // Check if course exists (allow draft and published courses)
     const { data: course } = await supabase
       .from("courses")
       .select("id, status, price")
@@ -125,9 +125,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    if (course.status !== "published") {
+    // Allow enrollment in published and draft (upcoming) courses
+    // Archived courses are not enrollable
+    if (course.status === "archived") {
       return NextResponse.json(
-        { error: "Course is not published" },
+        { error: "Course is archived and not available for enrollment" },
         { status: 403 }
       );
     }

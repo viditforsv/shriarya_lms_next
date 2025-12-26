@@ -9,15 +9,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/components-demo/ui/tabs";
+} from "@/design-system/components/tabs";
 import {
   BookOpen,
   Play,
@@ -32,18 +32,18 @@ import {
   MessageCircle,
   Eye,
   Upload,
-  Download,
   Loader2,
 } from "lucide-react";
-import { VideoResource } from "@/app/components-demo/ui/youtube-video";
-import { CollapsibleSidebar } from "@/app/components-demo/ui/layout-components/collapsible-sidebar";
+import { VideoResource } from "@/design-system/components/youtube-video";
+import { CollapsibleSidebar } from "@/design-system/components/layout-components/collapsible-sidebar";
 import { LessonPageSkeleton } from "@/components/skeletons";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { IBDPMathLessonPage } from "@/components/IBDPMathTemplate";
 import { UnifiedLessonPage } from "@/components/UnifiedLessonPage";
-import { UnifiedCourseStructure } from "@/components/UnifiedCourseStructure";
 import { renderMixedContent } from "@/components/MathRenderer";
+import { QuizPlayer } from "@/components/QuizPlayer";
+import { useScreenshotPrevention } from "@/hooks/useScreenshotPrevention";
 
 // Function to load questions for a lesson (client-side)
 function useQuestionsForLesson(lessonId: string) {
@@ -82,6 +82,7 @@ interface Course {
   created_at: string;
   template_data?: Record<string, unknown>;
   template_id?: string;
+  status?: string;
   profiles?: {
     first_name: string;
     last_name: string;
@@ -156,12 +157,14 @@ export default function DynamicLessonPage({
   >("idle");
   const [submissionError, setSubmissionError] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
 
   // Load questions for the lesson
-  const { questions, loading: questionsLoading } = useQuestionsForLesson(
+  const { questions } = useQuestionsForLesson(
     lesson?.id || ""
   );
+
+  // Screenshot prevention for PDF viewer
+  const pdfContainerRef = useScreenshotPrevention(!!lesson?.pdf_url && activeTab === "assignment");
 
   // Resolve params
   useEffect(() => {
@@ -216,6 +219,7 @@ export default function DynamicLessonPage({
           created_at: courseData.created_at,
           template_data: courseData.template_data || {},
           template_id: courseData.template_id,
+          status: courseData.status,
           profiles: {
             first_name: "System",
             last_name: "Admin",
@@ -224,6 +228,7 @@ export default function DynamicLessonPage({
         setCourse(course);
 
         // 2. Check enrollment status
+        let enrollmentStatus = false;
         if (user) {
           const { data: enrollmentData } = await supabase
             .from("courses_enrollments")
@@ -233,9 +238,17 @@ export default function DynamicLessonPage({
             .eq("is_active", true)
             .maybeSingle();
 
-          setIsEnrolled(!!enrollmentData);
+          enrollmentStatus = !!enrollmentData;
+          setIsEnrolled(enrollmentStatus);
         } else {
           setIsEnrolled(false);
+        }
+
+        // 3. Check if course is draft (upcoming) - prevent lesson access unless enrolled
+        if (courseData.status === "draft" && profile?.role !== "admin") {
+          if (!enrollmentStatus) {
+            throw new Error("This course is upcoming. Please enroll to access lessons when the course is published.");
+          }
         }
 
         // 3. Set default tab based on template
@@ -246,7 +259,7 @@ export default function DynamicLessonPage({
         }
 
         // 4. Fetch all lessons with unit/chapter structure
-        let { data: lessonsData, error: lessonsError } = await supabase
+        const { data: rawLessonsData, error: lessonsError } = await supabase
           .from("courses_lessons")
           .select(
             `
@@ -273,6 +286,9 @@ export default function DynamicLessonPage({
           )
           .eq("course_id", course.id)
           .order("lesson_order");
+        
+        // Type assertion for lessonsData - Supabase returns a more specific type
+        let lessonsData: Lesson[] | null = rawLessonsData as unknown as Lesson[] | null;
 
         // Fallback: If nested query doesn't return chapter data, fetch separately
         if (!lessonsError && lessonsData && lessonsData.length > 0) {
@@ -340,7 +356,7 @@ export default function DynamicLessonPage({
                 chapter: lesson.chapter_id
                   ? chaptersMap.get(lesson.chapter_id) || null
                   : null,
-              })) as any;
+              })) as unknown as Lesson[];
               console.log("✅ Manually joined chapter/unit data to lessons", {
                 chaptersMapSize: chaptersMap.size,
               });
@@ -462,6 +478,11 @@ export default function DynamicLessonPage({
     // Admin has access to everything
     if (profile?.role === "admin") {
       return true;
+    }
+
+    // If course is draft (upcoming), only enrolled users can access
+    if (course?.status === "draft") {
+      return isEnrolled;
     }
 
     const isFree = course?.price === 0;
@@ -636,7 +657,7 @@ export default function DynamicLessonPage({
         throw new Error(errorData.error || "Upload failed");
       }
 
-      const result = await response.json();
+      await response.json();
       setSubmissionStatus("success");
       setUploadedFile(null);
 
@@ -783,7 +804,7 @@ export default function DynamicLessonPage({
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 mb-4">
-              <Lock className="w-10 h-10 text-[#e27447]" />
+              <Lock className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold mb-3">Lesson Locked 🔒</h1>
             <p className="text-muted-foreground text-lg mb-2">
@@ -799,7 +820,7 @@ export default function DynamicLessonPage({
           </div>
 
           {/* Course Info Card */}
-          <div className="bg-white border-2 border-[#feefea] rounded-sm p-6 mb-6">
+          <div className="bg-white border-2 border-gray-200 rounded-sm p-6 mb-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="font-semibold text-lg mb-1">{course.title}</h3>
@@ -809,7 +830,7 @@ export default function DynamicLessonPage({
               </div>
               {course.price && course.price > 0 && (
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-[#e27447]">
+                  <div className="text-2xl font-bold text-primary">
                     ₹{course.price.toLocaleString()}
                   </div>
                 </div>
@@ -835,7 +856,7 @@ export default function DynamicLessonPage({
             {/* Action Buttons */}
             <div className="space-y-3">
               <Link href={`/courses/${resolvedParams?.slug}`} className="block">
-                <Button className="w-full bg-[#e27447] hover:bg-[#d1653a] rounded-sm text-base py-6">
+                <Button className="w-full bg-primary hover:bg-[#d1653a] rounded-sm text-base py-6">
                   {course.price && course.price > 0
                     ? "Enroll Now"
                     : "Enroll for Free"}
@@ -875,69 +896,70 @@ export default function DynamicLessonPage({
     return (
       <div className="min-h-screen bg-background">
         {/* Header - Matching CBSE Class 9 */}
-        <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
+        <div className="bg-gradient-to-br from-white to-gray-50 border-b border-primary py-4 md:py-6 relative">
           <div className="px-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center space-x-4">
                 <Link
                   href={`/courses/${resolvedParams?.slug}`}
-                  className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                  className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-sm md:text-base"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Course
+                  <span className="hidden sm:inline">Back to Course</span>
+                  <span className="sm:hidden">Back</span>
                 </Link>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleBookmarkToggle}
-                  className="rounded-sm"
+                  className="rounded-sm flex-1 sm:flex-none"
                 >
                   <Bookmark
-                    className={`w-4 h-4 mr-2 ${
-                      isBookmarked ? "fill-current" : ""
+                    className={`w-4 h-4 ${
+                      isBookmarked ? "fill-current mr-2" : "sm:mr-2"
                     }`}
                   />
-                  {isBookmarked ? "Bookmarked" : "Bookmark"}
+                  <span className="hidden sm:inline">{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
                 </Button>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="w-full px-0 py-8">
+        <div className="w-full px-0 py-4 md:py-8">
           {/* Course Breadcrumb - Matching CBSE Class 9 */}
-          <div className="mb-6 px-6">
-            <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Link href="/courses/discover" className="hover:text-foreground">
+          <div className="mb-4 md:mb-6 px-4 md:px-6">
+            <nav className="flex items-center space-x-2 text-xs md:text-sm text-muted-foreground overflow-x-auto pb-2">
+              <Link href="/courses/discover" className="hover:text-foreground whitespace-nowrap">
                 Courses
               </Link>
               <span>/</span>
               <Link
                 href={`/courses/${resolvedParams?.slug}`}
-                className="hover:text-foreground"
+                className="hover:text-foreground whitespace-nowrap truncate max-w-[150px] md:max-w-none"
               >
                 {course.title}
               </Link>
               <span>/</span>
-              <span className="text-foreground">{lesson.title}</span>
+              <span className="text-foreground whitespace-nowrap truncate max-w-[150px] md:max-w-none">{lesson.title}</span>
             </nav>
           </div>
 
-          <div className="flex">
+          <div className="flex flex-col lg:flex-row">
             {/* Left Sidebar - Using CollapsibleSidebar like CBSE Class 9 */}
             <CollapsibleSidebar
               currentLessonSlug={lesson.slug}
               courseSlug={resolvedParams?.slug || ""}
-              lessons={allLessons as any}
+              lessons={allLessons}
               isEnrolled={isEnrolled}
               completedLessonIds={completedLessonIds}
               courseId={course?.id}
             />
 
             {/* Main Content - Matching CBSE Class 9 layout */}
-            <div className="flex-1 px-6">
+            <div className="flex-1 px-4 md:px-6">
               <UnifiedLessonPage
                 lesson={{
                   id: lesson.id,
@@ -1140,57 +1162,58 @@ export default function DynamicLessonPage({
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#feefea] to-[#fffefd] border-b border-[#e27447] py-6 relative">
+      <div className="bg-gradient-to-br from-white to-gray-50 border-b border-primary py-4 md:py-6 relative">
         <div className="px-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-4">
               <Link
                 href={`/courses/${resolvedParams?.slug}`}
-                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors text-sm md:text-base"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Course
+                <span className="hidden sm:inline">Back to Course</span>
+                <span className="sm:hidden">Back</span>
               </Link>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleBookmarkToggle}
-                className="rounded-sm"
+                className="rounded-sm flex-1 sm:flex-none"
               >
                 <Bookmark
-                  className={`w-4 h-4 mr-2 ${
-                    isBookmarked ? "fill-current" : ""
+                  className={`w-4 h-4 ${
+                    isBookmarked ? "fill-current mr-2" : "sm:mr-2"
                   }`}
                 />
-                {isBookmarked ? "Bookmarked" : "Bookmark"}
+                <span className="hidden sm:inline">{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full px-0 py-8">
+      <div className="w-full px-0 py-4 md:py-8">
         {/* Course Breadcrumb */}
-        <div className="mb-6 px-6">
-          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/courses/discover" className="hover:text-foreground">
+        <div className="mb-4 md:mb-6 px-4 md:px-6">
+          <nav className="flex items-center space-x-2 text-xs md:text-sm text-muted-foreground overflow-x-auto pb-2">
+            <Link href="/courses/discover" className="hover:text-foreground whitespace-nowrap">
               Courses
             </Link>
             <span>/</span>
             <Link
               href={`/courses/${resolvedParams?.slug}`}
-              className="hover:text-foreground"
+              className="hover:text-foreground whitespace-nowrap truncate max-w-[150px] md:max-w-none"
             >
               {course.title}
             </Link>
             <span>/</span>
-            <span className="text-foreground">{lesson.title}</span>
+            <span className="text-foreground whitespace-nowrap truncate max-w-[150px] md:max-w-none">{lesson.title}</span>
           </nav>
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           {/* Left Sidebar - Course Navigation */}
           <CollapsibleSidebar
             currentLessonSlug={lesson.slug}
@@ -1202,22 +1225,22 @@ export default function DynamicLessonPage({
           />
 
           {/* Main Content */}
-          <div className="flex-1 px-6">
+          <div className="flex-1 px-4 md:px-6">
             {/* Lesson Header */}
-            <div className="bg-white rounded-sm border border-[#feefea] p-6 mb-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <Badge className="bg-[#e27447] text-white mb-2 rounded-sm">
+            <div className="bg-white rounded-sm border border-gray-200 p-4 md:p-6 mb-4 md:mb-6">
+              <div className="flex flex-col md:flex-row items-start justify-between mb-4 gap-3">
+                <div className="w-full md:w-auto">
+                  <Badge className="bg-primary text-white mb-2 rounded-sm text-xs md:text-sm">
                     Lesson {lesson.lesson_order}
                   </Badge>
-                  <h1 className="text-4xl font-bold text-[#1e293b] mb-2">
+                  <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
                     {lesson.title}
                   </h1>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 md:space-x-4 w-full md:w-auto justify-between md:justify-start">
                   <div className="flex items-center space-x-2">
                     <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-base text-muted-foreground">
+                    <span className="text-sm md:text-base text-muted-foreground">
                       30 min
                     </span>
                   </div>
@@ -1225,12 +1248,12 @@ export default function DynamicLessonPage({
                     {lesson.is_preview ? (
                       <>
                         <Eye className="w-4 h-4 text-blue-600" />
-                        <span className="text-base text-blue-600">Preview</span>
+                        <span className="text-sm md:text-base text-blue-600">Preview</span>
                       </>
                     ) : (
                       <>
                         <Unlock className="w-4 h-4 text-green-600" />
-                        <span className="text-base text-green-600">
+                        <span className="text-sm md:text-base text-green-600">
                           Unlocked
                         </span>
                       </>
@@ -1252,14 +1275,14 @@ export default function DynamicLessonPage({
                 <TabsList className="grid w-full grid-cols-2 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
                   <TabsTrigger
                     value="assignment"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Assignment
                   </TabsTrigger>
                   <TabsTrigger
                     value="solution"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Solution
@@ -1270,24 +1293,24 @@ export default function DynamicLessonPage({
                 <TabsList className="grid w-full grid-cols-3 rounded-sm bg-gray-100 p-1 shadow-sm border border-gray-200">
                   <TabsTrigger
                     value="video"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600 text-xs md:text-sm"
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    Video
+                    <Play className="w-4 h-4 md:mr-2" />
+                    <span className="hidden md:inline">Video</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="notes"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600 text-xs md:text-sm"
                   >
-                    <FileText className="w-4 h-4 mr-2" />
-                    Notes
+                    <FileText className="w-4 h-4 md:mr-2" />
+                    <span className="hidden md:inline">Notes</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="quiz"
-                    className="rounded-sm data-[state=active]:bg-[#e27447] data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600"
+                    className="rounded-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm font-medium transition-all duration-200 hover:bg-gray-200 data-[state=inactive]:text-gray-600 text-xs md:text-sm"
                   >
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    Quiz
+                    <BookOpen className="w-4 h-4 md:mr-2" />
+                    <span className="hidden md:inline">Quiz</span>
                   </TabsTrigger>
                 </TabsList>
               )}
@@ -1297,7 +1320,7 @@ export default function DynamicLessonPage({
                 <Card className="rounded-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
-                      <Play className="w-5 h-5 text-[#e27447]" />
+                      <Play className="w-5 h-5 text-primary" />
                       <span>Video Lesson</span>
                     </CardTitle>
                     <CardDescription>
@@ -1327,10 +1350,10 @@ export default function DynamicLessonPage({
                     ) : (
                       <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-sm flex items-center justify-center relative overflow-hidden">
                         <div className="text-center">
-                          <div className="w-20 h-20 bg-[#e27447] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#e27447]/90 transition-colors cursor-pointer">
+                          <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-primary/90 transition-colors cursor-pointer">
                             <Play className="w-8 h-8 text-white ml-1" />
                           </div>
-                          <h3 className="text-lg font-semibold text-[#1e293b] mb-2">
+                          <h3 className="text-lg font-semibold text-foreground mb-2">
                             {lesson.title}
                           </h3>
                           <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -1356,7 +1379,7 @@ export default function DynamicLessonPage({
                         className={`rounded-sm ${
                           isCompleted
                             ? "bg-green-600 hover:bg-green-700"
-                            : "bg-[#e27447] hover:bg-[#e27447]/90"
+                            : "bg-primary hover:bg-primary/90"
                         }`}
                         onClick={handleMarkComplete}
                         disabled={isMarkingComplete}
@@ -1388,7 +1411,7 @@ export default function DynamicLessonPage({
                 <Card className="rounded-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
-                      <FileText className="w-5 h-5 text-[#e27447]" />
+                      <FileText className="w-5 h-5 text-primary" />
                       <span>Lesson Notes</span>
                     </CardTitle>
                     <CardDescription>
@@ -1411,7 +1434,7 @@ export default function DynamicLessonPage({
                     {/* Additional Resources */}
                     {lesson.pdf_url && (
                       <div>
-                        <h3 className="text-lg font-semibold text-[#1e293b] mb-3">
+                        <h3 className="text-lg font-semibold text-foreground mb-3">
                           Additional Resources
                         </h3>
                         <div className="space-y-2">
@@ -1434,40 +1457,18 @@ export default function DynamicLessonPage({
 
               {/* Quiz Tab */}
               <TabsContent value="quiz" className="mt-6">
-                <Card className="rounded-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <BookOpen className="w-5 h-5 text-[#e27447]" />
-                      <span>Lesson Quiz</span>
-                    </CardTitle>
-                    <CardDescription>
-                      Test your understanding with these quiz questions
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-6">
-                      {lesson.quiz_id ? (
-                        <div className="prose prose-sm max-w-none">
-                          <h4 className="text-lg font-semibold text-[#1e293b] mb-3">
-                            ❓ Lesson Quiz:
-                          </h4>
-                          <p className="text-muted-foreground mb-4">
-                            Quiz ID: {lesson.quiz_id}
-                          </p>
-                          <p className="text-muted-foreground">
-                            Quiz questions will be loaded from the quizzes table
-                            using this ID.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                          <p>Quiz questions will be available soon</p>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                {lesson.quiz_id ? (
+                  <QuizPlayer quizId={lesson.quiz_id} />
+                ) : (
+                  <Card className="rounded-sm">
+                    <CardContent className="p-8">
+                      <div className="text-center py-8 text-muted-foreground">
+                        <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No quiz available for this lesson yet</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </TabsContent>
 
               {/* Practice Tab */}
@@ -1475,7 +1476,7 @@ export default function DynamicLessonPage({
                 <Card className="rounded-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
-                      <BookOpen className="w-5 h-5 text-[#e27447]" />
+                      <BookOpen className="w-5 h-5 text-primary" />
                       <span>Practice Exercises</span>
                     </CardTitle>
                     <CardDescription>
@@ -1486,14 +1487,14 @@ export default function DynamicLessonPage({
                     {practiceQuestions.map((question, index) => (
                       <div
                         key={question.id}
-                        className="border border-[#feefea] rounded-sm p-4"
+                        className="border border-gray-200 rounded-sm p-4"
                       >
                         <div className="flex items-start space-x-3">
-                          <div className="w-8 h-8 bg-[#e27447] text-white rounded-sm flex items-center justify-center text-sm font-medium flex-shrink-0">
+                          <div className="w-8 h-8 bg-primary text-white rounded-sm flex items-center justify-center text-sm font-medium flex-shrink-0">
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold text-[#1e293b] mb-3">
+                            <h4 className="font-semibold text-foreground mb-3">
                               {question.question}
                             </h4>
 
@@ -1508,7 +1509,7 @@ export default function DynamicLessonPage({
                                       <input
                                         type="radio"
                                         name={`question-${question.id}`}
-                                        className="text-[#e27447] focus:ring-[#e27447]"
+                                        className="text-primary focus:ring-primary"
                                         onChange={() =>
                                           handlePracticeAnswerChange(
                                             question.id,
@@ -1526,7 +1527,7 @@ export default function DynamicLessonPage({
                             ) : (
                               <textarea
                                 placeholder={question.placeholder}
-                                className="w-full p-3 border border-[#feefea] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#e27447] focus:border-[#e27447] resize-none"
+                                className="w-full p-3 border border-gray-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                                 rows={4}
                                 onChange={(e) =>
                                   handlePracticeAnswerChange(
@@ -1541,13 +1542,13 @@ export default function DynamicLessonPage({
                       </div>
                     ))}
 
-                    <div className="flex items-center justify-between pt-4 border-t border-[#feefea]">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                       <Button variant="outline" className="rounded-sm">
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Ask a Question
                       </Button>
                       <Button
-                        className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                        className="bg-primary hover:bg-primary/90 rounded-sm"
                         onClick={handleSubmitPractice}
                       >
                         Submit Answers
@@ -1562,7 +1563,7 @@ export default function DynamicLessonPage({
                 <Card className="rounded-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
-                      <FileText className="w-5 h-5 text-[#e27447]" />
+                      <FileText className="w-5 h-5 text-primary" />
                       <span>Assignment</span>
                     </CardTitle>
                     <CardDescription>
@@ -1573,7 +1574,10 @@ export default function DynamicLessonPage({
                     {lesson.pdf_url ? (
                       <div className="space-y-4">
                         {/* Assignment PDF Embedder - Try direct embedding first */}
-                        <div className="w-full h-[800px] border-2 border-[#feefea] rounded-sm overflow-hidden bg-gray-50">
+                        <div 
+                          ref={pdfContainerRef}
+                          className="w-full h-[500px] md:h-[800px] border-2 border-gray-200 rounded-sm overflow-hidden bg-gray-50"
+                        >
                           <iframe
                             src={lesson.pdf_url}
                             className="w-full h-full"
@@ -1663,7 +1667,7 @@ export default function DynamicLessonPage({
                               className={`rounded-sm ${
                                 isCompleted
                                   ? "bg-green-600 hover:bg-green-700"
-                                  : "bg-[#e27447] hover:bg-[#e27447]/90"
+                                  : "bg-primary hover:bg-primary/90"
                               }`}
                               onClick={handleMarkComplete}
                               disabled={isMarkingComplete}
@@ -1717,7 +1721,7 @@ export default function DynamicLessonPage({
                     {lesson.solution_url ? (
                       <div className="space-y-4">
                         {/* Solution PDF Embedder - Try direct embedding first */}
-                        <div className="w-full h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
+                        <div className="w-full h-[500px] md:h-[800px] border-2 border-green-100 rounded-sm overflow-hidden bg-gray-50">
                           <iframe
                             src={lesson.solution_url}
                             className="w-full h-full"
@@ -1752,7 +1756,7 @@ export default function DynamicLessonPage({
                               className={`rounded-sm ${
                                 isCompleted
                                   ? "bg-green-600 hover:bg-green-700"
-                                  : "bg-[#e27447] hover:bg-[#e27447]/90"
+                                  : "bg-primary hover:bg-primary/90"
                               }`}
                               onClick={handleMarkComplete}
                               disabled={isMarkingComplete}
@@ -1792,10 +1796,10 @@ export default function DynamicLessonPage({
             </Tabs>
 
             {/* Navigation */}
-            <div className="flex items-center justify-between mt-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-6 md:mt-8 gap-3">
               <Button
                 variant="outline"
-                className="rounded-sm"
+                className="rounded-sm w-full sm:w-auto"
                 onClick={getPreviousLesson}
                 disabled={
                   !allLessons.find(
@@ -1807,7 +1811,7 @@ export default function DynamicLessonPage({
                 Previous Lesson
               </Button>
               <Button
-                className="bg-[#e27447] hover:bg-[#e27447]/90 rounded-sm"
+                className="bg-primary hover:bg-primary/90 rounded-sm w-full sm:w-auto"
                 onClick={getNextLesson}
                 disabled={
                   !allLessons.find(

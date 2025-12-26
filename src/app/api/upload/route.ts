@@ -1,6 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { signBunnyUploadUrl } from "@/lib/bunnySigner";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,10 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Get authenticated user
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
 
     const token = authHeader.replace("Bearer ", "");
     const {
@@ -218,10 +215,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
 
     const { data: resources, error } = await supabase
       .from("resources")

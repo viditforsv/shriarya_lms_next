@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/app/components-demo/ui/ui-components/button'
+import { Button } from '@/design-system/components/ui/button'
 import { Trash2, AlertTriangle } from 'lucide-react'
 import { useCourseDeletion } from '@/hooks/useCourseDeletion'
 

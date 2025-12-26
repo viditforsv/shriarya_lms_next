@@ -1,25 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
+} from "@/design-system/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Textarea } from "@/app/components-demo/ui/textarea";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+} from "@/design-system/components/select";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
+import { Textarea } from "@/design-system/components/textarea";
 import { Loader2, Users, Filter, CheckCircle } from "lucide-react";
 import {
   useAdvancedFilterPlugin,
@@ -34,25 +33,16 @@ interface User {
   role: string;
 }
 
-interface BulkAssignmentFilters {
-  subject?: string;
-  difficulty?: string;
-  question_type?: string;
-  board?: string;
-  grade?: string;
-  topic?: string;
-  is_pyq?: boolean;
-  pyq_year?: string;
-  month?: string;
-  paper_number?: string;
-  qa_status?: string;
+interface AssignmentResult {
+  assigned_count: number;
+  [key: string]: unknown;
 }
 
 export default function BulkAssignmentManager() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [assigning, setAssigning] = useState(false);
-  const [lastAssignment, setLastAssignment] = useState<any>(null);
+  const [lastAssignment, setLastAssignment] = useState<AssignmentResult | null>(null);
 
   // Form state
   const [selectedUser, setSelectedUser] = useState("");
@@ -68,29 +58,10 @@ export default function BulkAssignmentManager() {
     showLegacyFilters: true,
     showAdvancedButton: true,
     showActiveFilters: true,
-    onPreviewChange: (count) => {
+    onPreviewChange: () => {
       // Preview count is handled by the plugin
     },
   });
-
-  // Available filter options - updated to match actual database values
-  const subjects = ["HL"]; // Based on actual database content
-  const difficulties = ["1", "2", "3", "4", "5"];
-  const questionTypes = ["MCQ", "Short Answer", "Long Answer", "Numerical"];
-  const boards = ["IBDP"]; // Based on actual database content
-  const grades = ["12"]; // Based on actual database content
-  const qaStatuses = ["pending", "reviewed", "approved", "rejected"];
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  // Auto-preview when user is selected or filters change
-  useEffect(() => {
-    if (selectedUser) {
-      previewAssignment();
-    }
-  }, [selectedUser, filterPlugin.advancedFilters, filterPlugin.legacyFilters]);
 
   const fetchUsers = async () => {
     try {
@@ -109,7 +80,7 @@ export default function BulkAssignmentManager() {
     }
   };
 
-  const previewAssignment = async () => {
+  const previewAssignment = useCallback(async () => {
     // Only require a user to be selected, not active filters
     // If no filters are set, show all questions
     if (!selectedUser) {
@@ -119,7 +90,7 @@ export default function BulkAssignmentManager() {
     setLoading(true);
     try {
       // Create a preview request to count matching questions
-      const requestBody: any = {
+      const requestBody: Record<string, unknown> = {
         assigned_to: selectedUser,
         max_questions: 1, // Just to get count
         preview: true,
@@ -152,7 +123,18 @@ export default function BulkAssignmentManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedUser, filterPlugin.advancedFilters, filterPlugin.legacyFilters, filterPlugin.config]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // Auto-preview when user is selected or filters change
+  useEffect(() => {
+    if (selectedUser) {
+      previewAssignment();
+    }
+  }, [selectedUser, previewAssignment]);
 
   const handleBulkAssign = async () => {
     if (!selectedUser) {
@@ -162,7 +144,7 @@ export default function BulkAssignmentManager() {
 
     setAssigning(true);
     try {
-      const requestBody: any = {
+      const requestBody: Record<string, unknown> = {
         assigned_to: selectedUser,
         assignment_type: assignmentType,
         priority,
@@ -208,21 +190,6 @@ export default function BulkAssignmentManager() {
     } finally {
       setAssigning(false);
     }
-  };
-
-  // Clear all filters function
-  const clearAllFilters = () => {
-    filterPlugin.clearAllFilters();
-  };
-
-  // Compute active filters for UI logic
-  const activeFilters = Object.entries(filterPlugin.legacyFilters).filter(
-    ([, value]) => value !== undefined && value !== ""
-  );
-
-  // Check if any filters are active
-  const hasActiveFilters = () => {
-    return filterPlugin.hasActiveFilters();
   };
 
   return (

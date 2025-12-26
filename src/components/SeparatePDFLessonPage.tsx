@@ -2,19 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
+import { Button } from "@/design-system/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Progress } from "@/app/components-demo/ui/ui-components/progress";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Progress } from "@/design-system/components/ui/progress";
 import {
   Alert,
   AlertDescription,
-} from "@/app/components-demo/ui/ui-components/alert";
+} from "@/design-system/components/ui/alert";
 import {
   Download,
   Upload,
@@ -32,11 +32,12 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { PDFAssignmentSidebar } from "@/components/PDFAssignmentSidebar";
 import { createClient } from "@/lib/supabase/client";
+import { useScreenshotPrevention } from "@/hooks/useScreenshotPrevention";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
-} from "@/app/components-demo/ui/sheet";
+} from "@/design-system/components/sheet";
 
 interface PDFAssignment {
   id: string;
@@ -73,6 +74,9 @@ export function SeparatePDFLessonPage({
   const [isUploading, setIsUploading] = useState(false);
   const [showPDFViewer, setShowPDFViewer] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Screenshot prevention for PDF viewer
+  const pdfContainerRef = useScreenshotPrevention(showPDFViewer && !!currentAssignment?.pdfUrl);
   const [submissionStatus, setSubmissionStatus] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle");
@@ -195,7 +199,7 @@ export function SeparatePDFLessonPage({
         throw new Error(errorData.error || "Upload failed");
       }
 
-      const result = await response.json();
+      await response.json();
 
       setUploadProgress(100);
       setIsUploading(false);
@@ -435,7 +439,10 @@ export function SeparatePDFLessonPage({
                   </div>
 
                   {showPDFViewer && (
-                    <div className="border rounded-lg p-4">
+                    <div 
+                      ref={pdfContainerRef}
+                      className="border rounded-lg p-4"
+                    >
                       <iframe
                         src={currentAssignment.pdfUrl}
                         width="100%"

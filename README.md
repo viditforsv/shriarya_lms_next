@@ -1,4 +1,4 @@
-# ShriArya LMS - Learning Management System
+# Preppeo LMS - Learning Management System
 
 A modern, feature-rich Learning Management System built with Next.js 15, shadcn/ui, and Supabase.
 
@@ -41,7 +41,7 @@ A modern, feature-rich Learning Management System built with Next.js 15, shadcn/
 
 ```bash
 git clone <your-repo-url>
-cd shriarya_lms_next
+cd nextjs_preppeo
 ```
 
 ### 2. Install dependencies

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
 import {
   useCourseEnrollment,
   useCourseAccess,
@@ -90,7 +90,7 @@ export function CourseEnrollment({
         <Button
           onClick={handleEnroll}
           disabled={loading === course.id}
-          className="bg-[#e27447] hover:bg-[#e27447]/90"
+          className="bg-primary hover:bg-primary/90"
         >
           {loading === course.id
             ? "Enrolling..."
@@ -135,7 +135,7 @@ export function CourseAccess({
           <p className="text-muted-foreground mb-4">
             You need to enroll in this course to access its content.
           </p>
-          <Button className="bg-[#e27447] hover:bg-[#e27447]/90">
+          <Button className="bg-primary hover:bg-primary/90">
             Enroll Now
           </Button>
         </div>

@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
-import { User, Mail, Calendar, MapPin } from "lucide-react";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
+import { Card, CardContent } from "@/design-system/components/ui/card";
+import { User, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { createClient } from "@/lib/supabase/client";
 import { OnboardingStepProps } from "../../OnboardingFlow";
 import Select from "react-select";
-import countries from "country-list";
 
 export function ProfileCompletionStep({ onNext }: OnboardingStepProps) {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

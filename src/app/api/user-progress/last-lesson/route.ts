@@ -1,6 +1,20 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+interface LessonData {
+  id: string;
+  title: string;
+  slug: string;
+  lesson_order: number;
+}
+
+interface UserProgressWithLesson {
+  id: string;
+  last_accessed_at: string;
+  lesson_id: string;
+  courses_lessons: LessonData | LessonData[] | null;
+}
+
 // GET - Get the last accessed lesson for a user in a specific course
 export async function GET(request: Request) {
   try {
@@ -74,13 +88,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ lastLesson: null });
     }
 
+    // Handle the case where courses_lessons might be an array or single object
+    const progressData = lastProgress as unknown as UserProgressWithLesson;
+    const lesson = Array.isArray(progressData.courses_lessons)
+      ? progressData.courses_lessons[0]
+      : progressData.courses_lessons;
+
+    if (!lesson) {
+      return NextResponse.json({ lastLesson: null });
+    }
+
     return NextResponse.json({
       lastLesson: {
-        id: (lastProgress.courses_lessons as any).id,
-        title: (lastProgress.courses_lessons as any).title,
-        slug: (lastProgress.courses_lessons as any).slug,
-        lesson_order: (lastProgress.courses_lessons as any).lesson_order,
-        last_accessed_at: lastProgress.last_accessed_at,
+        id: lesson.id,
+        title: lesson.title,
+        slug: lesson.slug,
+        lesson_order: lesson.lesson_order,
+        last_accessed_at: progressData.last_accessed_at,
       },
     });
   } catch (error) {

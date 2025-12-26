@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Card, CardContent } from "@/app/components-demo/ui/ui-components/card";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
+import { Button } from "@/design-system/components/ui/button";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
+import { Card, CardContent } from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
 import { Upload, X, Image as ImageIcon, ExternalLink } from "lucide-react";
 
 interface ImageUploadProps {
@@ -21,7 +21,6 @@ export default function ImageUpload({
   label,
   value,
   onChange,
-  placeholder = "No image uploaded",
   disabled = false,
   className = "",
 }: ImageUploadProps) {
@@ -71,7 +70,8 @@ export default function ImageUpload({
       const result = await response.json();
       
       if (result.success && result.url) {
-        onChange(result.url);
+        // Trim the URL to prevent Next.js errors about trailing spaces
+        onChange(result.url.trim());
         console.log("✅ Image uploaded successfully:", result.url);
       } else {
         throw new Error("Upload response missing URL");
@@ -203,7 +203,7 @@ export default function ImageUpload({
           type="url"
           placeholder="https://your-cdn.com/image.png"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value.trim())}
           disabled={disabled}
           className="text-sm"
         />

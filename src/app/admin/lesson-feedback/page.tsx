@@ -1,27 +1,28 @@
 "use client";
 
-import { useAuth } from "@/contexts/AuthContext";
-import { AdminOnly } from "@/app/components-demo/ui/form-components/RoleGuard";
+import Image from "next/image";
+import { useCallback } from "react";
+import { AdminOnly } from "@/design-system/components/form-components/RoleGuard";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
-import { Input } from "@/app/components-demo/ui/ui-components/input";
-import { Label } from "@/app/components-demo/ui/ui-components/label";
-import { Textarea } from "@/app/components-demo/ui/textarea";
+} from "@/design-system/components/ui/card";
+import { Button } from "@/design-system/components/ui/button";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
+import { Input } from "@/design-system/components/ui/input";
+import { Label } from "@/design-system/components/ui/label";
+import { Textarea } from "@/design-system/components/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components-demo/ui/select";
+} from "@/design-system/components/select";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +30,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/app/components-demo/ui/dialog";
+} from "@/design-system/components/dialog";
 import {
   Flag,
   AlertCircle,
@@ -37,8 +38,6 @@ import {
   Image as ImageIcon,
   Eye,
   CheckCircle2,
-  XCircle,
-  Clock,
   Search,
   Filter,
   Loader2,
@@ -79,7 +78,7 @@ interface FeedbackStats {
 }
 
 export default function LessonFeedbackPage() {
-  const { profile } = useAuth();
+  // const { profile } = useAuth();
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [stats, setStats] = useState<FeedbackStats>({
     total: 0,
@@ -105,10 +104,13 @@ export default function LessonFeedbackPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetchFeedback();
+    if (fetchFeedback) {
+      fetchFeedback();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, filterType, filterCourse, page]);
 
-  const fetchFeedback = async () => {
+  const fetchFeedback = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -133,7 +135,7 @@ export default function LessonFeedbackPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus, filterType, filterCourse, page]);
 
   const calculateStats = (feedbackList: Feedback[]) => {
     const newStats: FeedbackStats = {
@@ -620,9 +622,11 @@ export default function LessonFeedbackPage() {
                           rel="noopener noreferrer"
                           className="block"
                         >
-                          <img
+                          <Image
                             src={selectedFeedback.image_url}
                             alt="Feedback attachment"
+                            width={500}
+                            height={400}
                             className="max-w-full h-auto rounded-sm border"
                           />
                         </a>

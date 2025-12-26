@@ -1,29 +1,25 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { AdminOnly } from "@/app/components-demo/ui/form-components/RoleGuard";
+import { AdminOnly } from "@/design-system/components/form-components/RoleGuard";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/app/components-demo/ui/ui-components/card";
-import { Button } from "@/app/components-demo/ui/ui-components/button";
-import { Badge } from "@/app/components-demo/ui/ui-components/badge";
-import { Breadcrumb } from "@/app/components-demo/ui/breadcrumb";
+} from "@/design-system/components/ui/card";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Breadcrumb } from "@/design-system/components/breadcrumb";
 import {
   Users,
   BookOpen,
   TrendingUp,
   DollarSign,
-  Clock,
   Award,
   BarChart3,
   Activity,
   ArrowUpRight,
-  ArrowDownRight,
-  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -37,9 +33,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
   BarChart,
   Bar,
 } from "recharts";
@@ -70,8 +63,6 @@ interface DashboardStats {
     payments: number;
   }>;
 }
-
-const COLORS = ["#e27447", "#f97316", "#fb923c", "#fdba74", "#fed7aa"];
 
 export default function AdminDashboard() {
   const { profile } = useAuth();
@@ -183,8 +174,8 @@ export default function AdminDashboard() {
                   Admin Dashboard
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                  Welcome back, {profile?.full_name || "Administrator"}. Here's
-                  your platform overview.
+                  Welcome back, {profile?.full_name || "Administrator"}.
+                  Here&apos;s your platform overview.
                 </p>
               </div>
               <Badge variant="secondary" className="text-sm">

@@ -44,7 +44,7 @@ const PromotionalCard = React.forwardRef<HTMLDivElement, PromotionalCardProps>(
           <div className="flex-shrink-0">
             <a
               href={buttonHref}
-              className="inline-flex items-center gap-2 bg-[#E57342] hover:bg-[#D56538] text-white font-semibold px-8 py-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="inline-flex items-center gap-2 bg-[#E57342] hover:bg-[#D56538] text-white font-semibold px-8 py-4 rounded-sm shadow-lg "
             >
               {buttonText}
               <ArrowRight className="w-5 h-5" />
